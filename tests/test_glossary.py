@@ -285,7 +285,7 @@ def test_import_csv_alternate_headers():
     """Accept 'Source'/'Target' capitalized headers from xTranslator exports."""
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "alt.csv"
-        path.write_text("Source,Target,Category\nCompanion,Компаньйон,Characters\n")
+        path.write_text("Source,Target,Category\nCompanion,Компаньйон,Characters\n", encoding="utf-8")
         g = Glossary()
         count = g.import_csv(path)
         assert count == 1
@@ -313,7 +313,7 @@ def test_export_and_import_tbx():
         g1.export_tbx(path)
 
         assert path.exists()
-        content = path.read_text()
+        content = path.read_text(encoding="utf-8")
         assert "Companion" in content
         assert "Компаньйон" in content
         assert "Characters" in content
