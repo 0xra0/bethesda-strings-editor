@@ -54,6 +54,7 @@ from PySide6.QtWidgets import (
 )
 
 from bethesda_strings import BethesdaStringFile, EncodingConverter, XMLHandler
+from bethesda_strings.ba2_handler import BA2File
 from bethesda_strings.esp_handler import EspFile
 from gui.app_settings import (
     AppSettings,
@@ -79,6 +80,7 @@ logger = logging.getLogger(__name__)
 _VALID_DROP_EXTS = frozenset({
     ".strings", ".dlstrings", ".ilstrings",
     ".esp", ".esm", ".esl",
+    ".ba2",
 })
 
 
@@ -199,7 +201,7 @@ class _WelcomeWidget(QWidget):
         card_layout.addWidget(lbl_drop)
 
         # Supported formats
-        lbl_fmt = QLabel(".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl")
+        lbl_fmt = QLabel(".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2")
         lbl_fmt.setAlignment(Qt.AlignCenter)
         lbl_fmt.setStyleSheet("font-size: 11px; opacity: 0.28; letter-spacing: 0.5px;")
         card_layout.addWidget(lbl_fmt)
@@ -288,7 +290,7 @@ class _DropOverlay(QWidget):
         box_lay.addWidget(self._headline)
 
         self._sub_lbl = QLabel(
-            ".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl"
+            ".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2"
         )
         self._sub_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         box_lay.addWidget(self._sub_lbl)
@@ -367,6 +369,8 @@ class MainWindow(QMainWindow):
         # State variables
         self.current_file = None
         self.current_path = None
+        self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
+        self._current_ba2_entry: Optional[str] = None  # internal path of the loaded strings file
         self.settings: AppSettings = (
             settings if settings is not None else load_settings()
         )
@@ -1584,9 +1588,10 @@ class MainWindow(QMainWindow):
             self.tr("Open File"),
             "",
             self.tr(
-                "All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL);;"
+                "All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;"
                 "String Files (*.strings *.dlstrings *.ilstrings);;"
                 "Plugin Files (*.esp *.esm *.esl);;"
+                "BA2 Archives (*.ba2 *.BA2);;"
                 "All Files (*)"
             ),
         )
@@ -1600,6 +1605,8 @@ class MainWindow(QMainWindow):
         ext = Path(file_path).suffix.lower()
         if ext in (".esp", ".esm", ".esl"):
             self._open_esp_file(file_path)
+        elif ext == ".ba2":
+            self._open_ba2_file(file_path)
         else:
             self._open_strings_file(file_path)
 
@@ -1655,6 +1662,7 @@ class MainWindow(QMainWindow):
 
     def _open_strings_file(self, file_path: str):
         """Load a .strings / .dlstrings / .ilstrings file."""
+        self._close_current_ba2()
         try:
             self.statusBar().showMessage(
                 self.tr("Loading {filename}...").format(filename=Path(file_path).name)
@@ -1760,6 +1768,7 @@ class MainWindow(QMainWindow):
 
     def _open_esp_file(self, file_path: str):
         """Load an ESP/ESM/ESL plugin file."""
+        self._close_current_ba2()
         try:
             p = Path(file_path)
             self.statusBar().showMessage(
@@ -1818,6 +1827,104 @@ class MainWindow(QMainWindow):
         finally:
             self._update_ui_state()
 
+    def _close_current_ba2(self) -> None:
+        """Close the currently open BA2 archive and clear BA2 state."""
+        if self._current_ba2 is not None:
+            try:
+                self._current_ba2.close()
+            except Exception:
+                pass
+            self._current_ba2 = None
+            self._current_ba2_entry = None
+
+    def _open_ba2_file(self, file_path: str) -> None:
+        """Open a .ba2 archive and load one of its strings files for editing."""
+        from gui.ba2_picker_dialog import BA2PickerDialog
+        p = Path(file_path)
+        try:
+            self.statusBar().showMessage(
+                self.tr("Opening archive {filename}...").format(filename=p.name)
+            )
+            ba2 = BA2File(file_path)
+            strings_files = ba2.list_strings_files()
+        except Exception as e:
+            logger.error("Failed to open BA2 %s: %s", file_path, e, exc_info=True)
+            QMessageBox.critical(
+                self,
+                self.tr("Error"),
+                self.tr("Failed to open archive:\n{error}").format(error=e),
+            )
+            return
+
+        if not strings_files:
+            ba2.close()
+            QMessageBox.information(
+                self,
+                self.tr("No Strings Found"),
+                self.tr(
+                    "{name} does not contain any .strings / .dlstrings / .ilstrings files."
+                ).format(name=p.name),
+            )
+            return
+
+        if len(strings_files) == 1:
+            entry_name = strings_files[0]
+        else:
+            dlg = BA2PickerDialog(p.name, strings_files, parent=self)
+            if dlg.exec() != BA2PickerDialog.DialogCode.Accepted:
+                ba2.close()
+                return
+            entry_name = dlg.selected_entry()
+            if entry_name is None:
+                ba2.close()
+                return
+
+        try:
+            raw = ba2.extract(entry_name)
+            ext = Path(entry_name.replace("\\", "/")).suffix.lstrip(".")
+            string_file = BethesdaStringFile(file_extension=ext, buffer=raw)
+        except Exception as e:
+            logger.error("Failed to extract %s from %s: %s", entry_name, p.name, e, exc_info=True)
+            ba2.close()
+            QMessageBox.critical(
+                self,
+                self.tr("Error"),
+                self.tr("Failed to extract strings file from archive:\n{error}").format(error=e),
+            )
+            return
+
+        self._close_current_ba2()
+        self._current_ba2 = ba2
+        self._current_ba2_entry = entry_name
+
+        self.current_file = string_file
+        self.current_path = p  # track by .ba2 path
+
+        entry_display = Path(entry_name.replace("\\", "/")).name
+        self.lbl_file_info.setText(f"📦 {p.name}  /  {entry_display}")
+        self._update_encoding_label()
+        self.lbl_string_count.setText(
+            self.tr("Strings: {count}").format(count=len(string_file))
+        )
+
+        target_lang = self.combo_target_lang.currentText().lower()
+        self.table_model.load_from_bethesda_file(string_file, locale=target_lang)
+
+        self.file_loaded.emit(file_path)
+        self._add_to_recent(file_path)
+        self.statusBar().showMessage(
+            self.tr("Loaded {count} strings from {entry} (in {archive})").format(
+                count=len(string_file),
+                entry=entry_display,
+                archive=p.name,
+            )
+        )
+        if self._glossary_manager:
+            self._glossary_manager.load_project_glossary(p)
+        self._start_pre_estimation()
+        self._audit_log.file_opened(file_path, ".ba2", len(string_file))
+        self._update_ui_state()
+
     @Slot()
     def save_file(self):
         """Save current file."""
@@ -1830,16 +1937,23 @@ class MainWindow(QMainWindow):
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 self.table_model.apply_changes_to_esp_file(self.current_file, encoding)
                 self.current_file.save(self.current_path, encoding)
+                _count = len(self.current_file.strings)
+            elif self._current_ba2 is not None:
+                assert isinstance(self.current_file, BethesdaStringFile)
+                assert self._current_ba2_entry is not None
+                self.table_model.apply_changes_to_file(self.current_file)
+                raw = self.current_file.get_bytes()
+                self._current_ba2.save_with_replacement(
+                    self.current_path,
+                    {self._current_ba2_entry: raw},
+                )
+                _count = len(self.current_file)
             else:
                 assert isinstance(self.current_file, BethesdaStringFile)
                 self.table_model.apply_changes_to_file(self.current_file)
                 self.current_file.save(str(self.current_path))
+                _count = len(self.current_file)
             self.statusBar().showMessage(self.tr("Saved successfully ✓"))
-            _count = (
-                len(self.current_file.strings)
-                if isinstance(self.current_file, EspFile)
-                else len(self.current_file)
-            )
             self._audit_log.file_saved(
                 str(self.current_path), self.current_path.suffix.lower(), _count
             )
@@ -1858,17 +1972,25 @@ class MainWindow(QMainWindow):
             return
 
         is_esp = isinstance(self.current_file, EspFile)
-        default_name = (
-            f"{self.current_path.stem}_translated{self.current_path.suffix}"
-            if self.current_path
-            else ("output.esp" if is_esp else "output.strings")
-        )
+        is_ba2 = self._current_ba2 is not None
 
         if is_esp:
-            file_filter = self.tr(
-                "Plugin Files (*.esp *.esm *.esl);;All Files (*)"
+            default_name = (
+                f"{self.current_path.stem}_translated{self.current_path.suffix}"
+                if self.current_path else "output.esp"
             )
+            file_filter = self.tr("Plugin Files (*.esp *.esm *.esl);;All Files (*)")
+        elif is_ba2:
+            default_name = (
+                f"{self.current_path.stem}_translated{self.current_path.suffix}"
+                if self.current_path else "output.ba2"
+            )
+            file_filter = self.tr("BA2 Archives (*.ba2 *.BA2);;All Files (*)")
         else:
+            default_name = (
+                f"{self.current_path.stem}_translated{self.current_path.suffix}"
+                if self.current_path else "output.strings"
+            )
             file_filter = self.tr(
                 "Bethesda String Files (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;All Files (*)"
             )
@@ -1889,17 +2011,25 @@ class MainWindow(QMainWindow):
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 self.table_model.apply_changes_to_esp_file(self.current_file, encoding)
                 self.current_file.save(Path(file_path), encoding)
+                _count2 = len(self.current_file.strings)
+            elif is_ba2:
+                assert isinstance(self.current_file, BethesdaStringFile)
+                assert self._current_ba2 is not None
+                assert self._current_ba2_entry is not None
+                self.table_model.apply_changes_to_file(self.current_file)
+                raw = self.current_file.get_bytes()
+                self._current_ba2.save_with_replacement(
+                    file_path,
+                    {self._current_ba2_entry: raw},
+                )
+                _count2 = len(self.current_file)
             else:
                 assert isinstance(self.current_file, BethesdaStringFile)
                 self.table_model.apply_changes_to_file(self.current_file)
                 self.current_file.save(file_path)
+                _count2 = len(self.current_file)
             self.statusBar().showMessage(
                 self.tr("Saved to {filename}").format(filename=Path(file_path).name)
-            )
-            _count2 = (
-                len(self.current_file.strings)
-                if isinstance(self.current_file, EspFile)
-                else len(self.current_file)
             )
             self._audit_log.file_saved(
                 file_path, Path(file_path).suffix.lower(), _count2
@@ -3399,6 +3529,9 @@ class MainWindow(QMainWindow):
             self.settings.default_source_lang = self.combo_source_lang.currentData()
             self.settings.default_target_lang = self.combo_target_lang.currentData()
             self.settings.quality_level = self.spin_quality.value()
+
+            # Close open BA2 archive (file handle)
+            self._close_current_ba2()
 
             # Stop workers
             if self.ollama_worker:

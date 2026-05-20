@@ -122,6 +122,13 @@ class BethesdaStringFile:
             f.write(self._raw_buffer)
         logger.debug("Saved %s with encoding %s", file_path, self.encoding)
 
+    def get_bytes(self) -> bytes:
+        """Serialize to bytes without writing to disk (used when saving into a BA2)."""
+        self._rebuild()
+        if self._raw_buffer is None:
+            return b""
+        return bytes(self._raw_buffer)
+
     def set_encoding(self, encoding: str) -> None:
         """
         Manually override the detected encoding.

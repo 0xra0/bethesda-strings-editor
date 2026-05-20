@@ -203,15 +203,18 @@ class OllamaWorker(QObject):
     # lRulesNoTransListInDefault patterns.  Return original text immediately.
     _INPUT_NOTRANS_RE = re.compile(
         r"^[\W\d.]*$"                        # only non-word chars, digits, dots  (e.g. "---", "42.0")
-        r"|^\w*[\\/]\w"                      # backslash/forward-slash paths  (e.g. Data\Interface\x.dds)
+        r"|^\w.*[/\\].*\.\w+$"               # backslash/forward-slash paths with extension  (e.g. Data\Interface\x.dds)
         r"|^<[\w.]+(?:=[\w.]+)?/?>$"        # pure single-tag string  (e.g. <Global.PlayerName>)
         r"|^[A-Za-z\d]{3,}_[A-Za-z\d_]+$"  # VARIABLE_LIKE_NAMES  (e.g. NPC_Boss01, ACTOR_JOHNDOE)
         r"|^\w+[A-Z]+[_a-z\d]+[A-Z]+\w+$"  # CamelCase identifiers  (e.g. PlayerActorRef)
         r"|^.{1,2}$"                         # 1-2 char strings — too short to translate meaningfully
-        r"|^<[^>]+$"                         # unclosed tag — malformed, skip to avoid breakage
-        r"|^[^Ѐ-ӿ]+$",             # no Cyrillic at all — dev notes, English codes, pass through
+        r"|^<[^>]+$",                        # unclosed tag — malformed, skip to avoid breakage
         re.UNICODE,
     )
+    # Only applied when source language is Cyrillic (Russian/etc.) — English strings in a
+    # Cyrillic file are dev notes or codes and should pass through unchanged.
+    # Must NOT be applied when source_lang == "English" or every English string is skipped.
+    _INPUT_NOTRANS_NOCYRILLIC_RE = re.compile(r"^[^Ѐ-ӿ]+$", re.UNICODE)
 
     _REFUSAL_RE = re.compile(
         r"^(?:"
@@ -365,7 +368,15 @@ class OllamaWorker(QObject):
 
             # No-trans: pure punctuation, paths, identifiers, 1-2 char strings
             stripped = req.original_text.strip() if req.original_text else ""
-            if not stripped or self._INPUT_NOTRANS_RE.fullmatch(stripped):
+            is_notrans = (
+                not stripped
+                or self._INPUT_NOTRANS_RE.fullmatch(stripped)
+                or (
+                    req.source_lang != "English"
+                    and self._INPUT_NOTRANS_NOCYRILLIC_RE.fullmatch(stripped)
+                )
+            )
+            if is_notrans:
                 self.translation_ready.emit(req.index, req.original_text, req.string_id)
                 successful += 1
                 completed_count += 1
@@ -690,7 +701,10 @@ class OllamaWorker(QObject):
         # Skip strings that are clearly non-translatable (xTranslator NoTrans patterns):
         # pure punctuation/numbers, file paths, or a single bare tag.
         stripped = req.original_text.strip()
-        if self._INPUT_NOTRANS_RE.fullmatch(stripped):
+        if self._INPUT_NOTRANS_RE.fullmatch(stripped) or (
+            req.source_lang != "English"
+            and self._INPUT_NOTRANS_NOCYRILLIC_RE.fullmatch(stripped)
+        ):
             logger.debug(f"String {req.string_id}: matches NoTrans pattern, returning original")
             return req.original_text
 
