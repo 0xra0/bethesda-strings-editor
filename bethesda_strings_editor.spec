@@ -25,8 +25,8 @@ datas = [
     ('resources/app_icon.png',    'resources/'),
     ('resources/app_icon_64.png', 'resources/'),
     ('resources/style.qss',       'resources/'),
-    # Compiled Qt UI translation (build step: pyside6-lrelease uk_UA.ts → uk_UA.qm)
-    ('gui/translations/uk_UA.qm', 'gui/translations/'),
+    # Compiled Qt UI translations (build step: scripts/compile_translations.sh)
+    *[(str(p), 'gui/translations/') for p in __import__('pathlib').Path('gui/translations').glob('*.qm')],
     # Default protected-terms list shipped with the app
     ('protected_terms_starfield_hq.txt', '.'),
     # Default glossary

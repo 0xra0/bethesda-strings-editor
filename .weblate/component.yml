@@ -1,0 +1,33 @@
+# Weblate component configuration
+# https://docs.weblate.org/en/latest/admin/projects.html#component-configuration
+#
+# Register this repository at https://hosted.weblate.org/ to enable
+# community translations.  Weblate will auto-commit translated .ts files
+# and open PRs back to the main branch.
+
+slug: bethesda-strings-editor
+name: Bethesda Strings Editor
+
+file_format: ts          # Qt Linguist .ts files
+filemask: gui/translations/*.ts
+template: gui/translations/uk_UA.ts   # source-of-truth file
+
+source_language: uk     # Ukrainian is the primary translated language;
+                        # English strings are the actual source (in .ts <source> tags)
+
+license: MIT
+license_url: https://github.com/0xra0/bethesda-strings-editor/blob/main/LICENSE
+
+repo: https://github.com/0xra0/bethesda-strings-editor
+push: https://github.com/0xra0/bethesda-strings-editor
+branch: main
+
+vcs: git
+push_on_commit: false
+commit_pending_age: 24   # commit after 24h of no activity
+
+# Auto-translate using machine translation as a suggestion (not approved)
+suggestion_autoaccept: 0
+
+new_base: gui/translations/uk_UA.ts
+language_code_style: posix   # e.g. de_DE not de-DE

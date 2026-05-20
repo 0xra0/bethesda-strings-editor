@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+- Multi-language UI support: German (`de_DE`), Spanish (`es_ES`), French (`fr_FR`), Polish (`pl_PL`), Czech (`cs_CZ`) skeleton `.ts` files ready for community translation
+- RTL layout support — Arabic, Hebrew, Farsi, Urdu locales automatically mirror the UI via `Qt.LayoutDirection.RightToLeft`
+- Language selector in Settings shows all available languages with native names; marks complete translations with ✓
+- Restart-required notice appears inline when the UI language is changed
+- `TRANSLATING.md` — contributor guide covering Qt Linguist workflow, placeholder rules, and adding new languages
+- `.weblate/component.yml` — Weblate configuration for community-managed translations
+- `scripts/compile_translations.sh` now compiles all `*.ts` files in `gui/translations/` instead of only `uk_UA.ts`
+- PyInstaller spec bundles all compiled `*.qm` files automatically
+
+### Changed
+- `ui_language` setting now stores BCP-47 locale codes (`"uk_UA"`, `"en"`) instead of English display names; existing configs are migrated automatically (config version 16 → 17)
+- Translation loader in `main.py` is now generic — loads `gui/translations/{locale}.qm` for any configured locale
+
 ### Fixed
 - Glossary editor froze on open when the glossary contained many entries — the search index was being rebuilt once per entry during cloning (O(N²)). Now rebuilt once after all entries are inserted.
 

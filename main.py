@@ -31,6 +31,41 @@ logger = logging.getLogger(__name__)
 # Global theme manager instance
 theme_manager = ThemeManager()
 
+# RTL languages — Qt mirrors the entire layout automatically
+_RTL_LANGS = {"ar", "he", "fa", "ur"}
+
+
+def _load_translator(app: QApplication, translator: QTranslator, locale_code: str) -> None:
+    """Install a .qm translation file for *locale_code* (BCP-47, e.g. 'uk_UA').
+
+    Falls back silently to English when the .qm file is missing or fails to load.
+    Also configures QLocale and RTL layout direction.
+    """
+    lang = locale_code.split("_")[0] if locale_code else "en"
+
+    # RTL layout for Arabic / Hebrew / Farsi / Urdu
+    if lang in _RTL_LANGS:
+        app.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    else:
+        app.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
+    if not locale_code or locale_code == "en":
+        QLocale.setDefault(QLocale(QLocale.Language.English, QLocale.Country.UnitedStates))
+        return
+
+    qm_path = Path(__file__).parent / "gui" / "translations" / f"{locale_code}.qm"
+    if not qm_path.exists():
+        logger.warning("Translation file not found: %s", qm_path)
+        return
+
+    if translator.load(str(qm_path)):
+        app.installTranslator(translator)
+        qt_locale = QLocale(locale_code.replace("_", "-"))
+        QLocale.setDefault(qt_locale)
+        logger.info("Loaded UI translation: %s", locale_code)
+    else:
+        logger.error("Failed to load translation file: %s", qm_path)
+
 
 def main():
     """Main entry point for the application."""
@@ -58,23 +93,10 @@ def main():
     # Apply saved theme
     apply_theme(app, settings.theme)
 
-    # Setup translator
+    # Setup translator — generic locale-code based loader
     translator = QTranslator()
-    if settings.ui_language == "Ukrainian":
-        # First try to load from the gui/translations directory
-        translations_path = Path(__file__).parent / "gui" / "translations" / "uk_UA.qm"
-        if translations_path.exists():
-            if translator.load(str(translations_path)):
-                app.installTranslator(translator)
-                QLocale.setDefault(QLocale(QLocale.Ukrainian, QLocale.Ukraine))
-                logger.info("Ukrainian localization loaded")
-            else:
-                logger.error(f"Failed to load translation file: {translations_path}")
-        else:
-            logger.warning(f"Translation file not found: {translations_path}")
-    else:
-        # Set locale for proper string handling
-        QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
+    locale_code = settings.ui_language  # BCP-47, e.g. "uk_UA", "de_DE", "en"
+    _load_translator(app, translator, locale_code)
 
     window = MainWindow(settings=settings, theme_manager=theme_manager)
 

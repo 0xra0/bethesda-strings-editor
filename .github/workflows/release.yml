@@ -60,7 +60,11 @@ jobs:
 
       - name: Compile Qt translations
         shell: bash
-        run: pyside6-lrelease gui/translations/uk_UA.ts -qm gui/translations/uk_UA.qm
+        run: |
+          for ts in gui/translations/*.ts; do
+            qm="${ts%.ts}.qm"
+            pyside6-lrelease "$ts" -qm "$qm"
+          done
 
       - name: Build with PyInstaller
         run: pyinstaller bethesda_strings_editor.spec

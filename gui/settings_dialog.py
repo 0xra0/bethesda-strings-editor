@@ -217,10 +217,27 @@ class SettingsDialog(QDialog):
 
             # UI Language
             self.combo_ui_lang = QComboBox()
-            self.combo_ui_lang.addItem(self.tr("English"), "English")
-            self.combo_ui_lang.addItem(self.tr("Ukrainian"), "Ukrainian")
-            self.combo_ui_lang.setCurrentIndex(self.combo_ui_lang.findData(self._settings.ui_language))
+            # (locale_code, display_label, native_name, is_complete)
+            _UI_LANGUAGES = [
+                ("en",    "English",    "English",       True),
+                ("uk_UA", "Ukrainian",  "Українська",    True),
+                ("de_DE", "German",     "Deutsch",       False),
+                ("es_ES", "Spanish",    "Español",       False),
+                ("fr_FR", "French",     "Français",      False),
+                ("pl_PL", "Polish",     "Polski",        False),
+                ("cs_CZ", "Czech",      "Čeština",       False),
+            ]
+            for code, en_name, native, complete in _UI_LANGUAGES:
+                label = f"{native}  ({en_name})" if not complete else f"{native}  ({en_name}) ✓"
+                self.combo_ui_lang.addItem(label, code)
+            idx = self.combo_ui_lang.findData(self._settings.ui_language)
+            self.combo_ui_lang.setCurrentIndex(max(0, idx))
+            self._orig_ui_lang = self._settings.ui_language
+            self.combo_ui_lang.currentIndexChanged.connect(self._on_lang_changed)
+            lang_note = QLabel(self.tr("✓ = complete translation  ·  others are community work-in-progress"))
+            lang_note.setStyleSheet("color: palette(mid); font-style: italic; font-size: 11px;")
             theme_layout.addRow(self.tr("Interface Language:"), self.combo_ui_lang)
+            theme_layout.addRow(lang_note)
 
             # Theme action buttons
             theme_btn_layout = QHBoxLayout()
@@ -451,6 +468,28 @@ class SettingsDialog(QDialog):
         dialog.exec()
 
     @Slot(str)
+    @Slot(int)
+    def _on_lang_changed(self, _index: int) -> None:
+        """Show a restart-required notice when the UI language is changed."""
+        new_code = self.combo_ui_lang.currentData()
+        if new_code != self._orig_ui_lang:
+            if not hasattr(self, "_lang_restart_lbl"):
+                self._lang_restart_lbl = QLabel(
+                    self.tr("⚠  Restart the application to apply the new language.")
+                )
+                self._lang_restart_lbl.setStyleSheet(
+                    "color: #e8a020; font-style: italic; font-size: 11px;"
+                )
+                # Insert below the language row — find the form layout that owns combo_ui_lang
+                parent_layout = self.combo_ui_lang.parentWidget()
+                if parent_layout is not None:
+                    lo = parent_layout.layout()
+                    if lo is not None:
+                        lo.addRow(self._lang_restart_lbl)
+            self._lang_restart_lbl.setVisible(True)
+        elif hasattr(self, "_lang_restart_lbl"):
+            self._lang_restart_lbl.setVisible(False)
+
     def _on_theme_changed(self, theme_name: str):
         """Update theme description and apply a live preview to this dialog."""
         if not self._theme_manager:

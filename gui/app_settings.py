@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 16  # Increment when schema changes
+CONFIG_VERSION = 17  # Increment when schema changes
 
 
 @dataclass
@@ -51,7 +51,7 @@ class AppSettings:
 
     # ── Appearance ───────────────────────────────────────────────
     theme: str = "Slate"
-    ui_language: str = "Ukrainian"  # Options: English, Ukrainian
+    ui_language: str = "en"  # BCP-47 locale code, e.g. "en", "uk_UA", "de_DE"
 
     # ── Behavior ─────────────────────────────────────────────────
     auto_save: bool = False
@@ -237,6 +237,22 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("recent_files", [])
         logger.info("Migrated config to v16")
 
+    if from_version < 17:
+        # Migrate ui_language from English display names to locale codes
+        _name_to_locale = {
+            "Ukrainian": "uk_UA",
+            "English": "en",
+            "Spanish": "es_ES",
+            "French": "fr_FR",
+            "German": "de_DE",
+            "Polish": "pl_PL",
+            "Czech": "cs_CZ",
+        }
+        lang = data.get("ui_language", "en")
+        data["ui_language"] = _name_to_locale.get(lang, lang)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v17: ui_language=%s", data["ui_language"])
+
     if from_version < CONFIG_VERSION:
         logger.warning(
             f"Config version {from_version} is older than current {CONFIG_VERSION}. "
@@ -399,7 +415,7 @@ def load_settings_qsettings() -> AppSettings:
         protect_english_text=_b("protection/protect_english_text", False),
         protected_terms_file=_s("protection/terms_file", ""),
         theme=_s("appearance/theme", "Slate"),
-        ui_language=_s("appearance/ui_language", "Ukrainian"),
+        ui_language=_s("appearance/ui_language", "en"),
         auto_save=_b("behavior/auto_save", False),
         enable_cache=_b("performance/enable_cache", True),
         max_workers=_i("performance/max_workers", 10),
