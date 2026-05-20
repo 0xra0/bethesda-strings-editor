@@ -1,0 +1,133 @@
+# Modelfile for mamaylm-qr
+# MamayLM-Gemma-3-12B-IT — Ukrainian-specialist model for Quality Report retranslation.
+#
+# Purpose: second-pass retranslation of strings that failed QA in the first pass
+# (EMPTY_TRANSLATION, UNTRANSLATED, SOURCE_LANGUAGE_LEAK, tag mismatches, etc.).
+# The app injects a per-string retry_hint into the user turn at runtime describing
+# exactly what went wrong in the previous attempt.
+#
+# To build:
+#   ollama create mamaylm-qr -f Modelfile-mamaylm
+#
+# IMPORTANT — parameter precedence:
+#   The bethesda-strings-editor application overrides ALL parameters
+#   (temperature, num_ctx, num_predict, top_k, top_p, min_p,
+#   repeat_penalty, repeat_last_n, stop, and system) on every API call.
+#   The values below are defaults for direct use only:
+#     ollama run mamaylm-qr
+#     curl http://localhost:11434/api/generate -d '{"model":"mamaylm-qr",...}'
+
+FROM hf.co/INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v1.0-GGUF:Q4_K_M
+
+# ── Chat template (Gemma 3 format — same base architecture) ──────────────────
+TEMPLATE "{{ if .System }}<start_of_turn>system
+{{ .System }}<end_of_turn>
+{{ end }}{{ if .Prompt }}<start_of_turn>user
+{{ .Prompt }}<end_of_turn>
+{{ end }}<start_of_turn>model
+{{ .Response }}<end_of_turn>"
+
+# ── System prompt ─────────────────────────────────────────────────────────────
+# Optimised for quality-report second-pass retranslation.
+# Compared to translategemma3-st:
+#   • Opens with "CORRECTION PASS" framing — the model knows this is a retry.
+#   • Stronger Ukrainian-character rules (ы/э/ё/ъ) because UNTRANSLATED and
+#     SOURCE_LANGUAGE_LEAK are the #1 and #3 most common quality failures.
+#   • Explicit "you MUST produce output" guard for EMPTY_TRANSLATION strings.
+#   • Same tag-preservation rules, stronger "no guillemets" enforcement.
+SYSTEM "CORRECTION PASS — You are a professional Bethesda Starfield game localization translator fixing Ukrainian translations that FAILED quality checks.
+
+Your task: read the retry feedback above the text (if any), then translate the Russian source text into correct Ukrainian. Output ONLY the translated Ukrainian text — no preamble, no notes, no commentary, no labels, no «Translation:» prefix.
+
+MANDATORY RULES — violating any of these caused the previous failure:
+
+1. YOU MUST PRODUCE OUTPUT. Never return an empty response. Never copy the Russian text unchanged. Always translate.
+
+2. WRITE AUTHENTIC UKRAINIAN — not transliterated Russian:
+   • ы → и    (завжди → завжди, not завжды)
+   • э → е    (поэт → поет)
+   • ъ → drop (объект → об'єкт)
+   • ё: at word start or after vowel → йо (ёж → йожак); after consonant → ьо (льон)
+   • Use Ukrainian vocabulary, NOT Russian calques:
+     наразі (not сейчас), завдяки (not благодаря), але (not однако),
+     також (not тоже), вже (not уже), тому що (not потому что).
+   • Do NOT use Russian-only letters in your output under any circumstances.
+
+3. PRESERVE ALL FORMATTING TOKENS EXACTLY — copy character-for-character:
+   • Bethesda tags:  <Alias=…>  <Alias.Name=…>  <Token…>  <Global…>  <CurrentName>
+   • Numeric refs:   <0.Name>  <1.ValueInt>
+   • Inline:         <mag>  <dur>  <relat=…>  <basename=…>  <repetitions>  <area>
+   • HTML inline:    <b>  <i>  <u>  <br>  <br/>  <font …>  </font>
+   • Bracket codes:  [MALE]  [FEMALE]  [PLYR]  [FAILED]  [Firstname]  [Secondname]
+   • Struct breaks:  [[TK_…]]  [[STRUCT_BREAK_SGL_N]]  [[STRUCT_BREAK_DBL_N]]
+   • Printf:         %s  %d  %f  %x
+   • Brace vars:     {variable_name}  — NEVER translate the identifier inside braces
+   • Escape seqs:    \\n  \\t
+   Never add extra tokens. Never omit tokens. Never translate token content.
+
+4. NO GUILLEMETS. Do not wrap words in «» unless the source already has «».
+   Game UI strings must never gain quotation marks the source did not have.
+
+5. PRESERVE WHITESPACE. Match leading and trailing spaces exactly.
+
+6. MATCH CAPITALISATION. If the source starts uppercase, start uppercase.
+
+7. MATCH LINE BREAKS. Preserve the same number of \\n newlines as the source.
+
+8. TRANSLATE PARENTHESES CONTENT — content inside () is regular text, not a tag.
+
+Examples of correct output:
+  Склад оружия → Склад зброї
+  Тюремная база Спейсеров → Тюремна база Спейсерів
+  [Солгать] Я ничего не знаю. → [Збрехати] Я нічого не знаю.
+  Добыча ресурсов → Видобування ресурсів
+  Нажмите <mag> для взаимодействия. → Натисніть <mag> для взаємодії."
+
+# ── Generation parameters ─────────────────────────────────────────────────────
+
+# Low temperature: deterministic, consistent output.
+# Slightly above 0.1 to allow natural Ukrainian morphological variation
+# (MamayLM was trained on diverse Ukrainian text; too low suppresses that benefit).
+PARAMETER temperature 0.15
+
+# Context window: 4096 tokens.
+# Most Bethesda game strings are <300 tokens. 4096 covers even the longest
+# journal entries while keeping KV-cache footprint ~4× smaller than the 27B
+# model's 16384, which is the main bottleneck on CPU-only inference.
+PARAMETER num_ctx 4096
+
+# Max output: 512 tokens.
+# Ukrainian translations of Russian Bethesda strings are rarely longer than
+# the source. 512 tokens covers the longest strings with headroom.
+# The app uses an adaptive value (min(512, max(64, input_len * 2))).
+PARAMETER num_predict 512
+
+# Sampling — same as translategemma3-st but min_p raised to 0.03 to filter
+# low-probability tokens more aggressively (helps avoid partial-Russian output).
+PARAMETER top_k 40
+PARAMETER top_p 0.92
+PARAMETER min_p 0.03
+
+# Repeat penalty: lighter than default for Ukrainian's heavy inflection.
+# 1.07 prevents true hallucination loops while allowing legitimate
+# grammatical repetition of roots and case endings.
+PARAMETER repeat_penalty 1.07
+
+# Repeat window covers long strings (books, terminal logs, NPC monologues).
+PARAMETER repeat_last_n 256
+
+# ── Stop tokens ───────────────────────────────────────────────────────────────
+# Gemma turn-boundary markers
+PARAMETER stop <end_of_turn>
+PARAMETER stop <start_of_turn>
+# Role-bleeding guards
+PARAMETER stop user:
+PARAMETER stop model:
+PARAMETER stop <|user|>
+PARAMETER stop <|model|>
+# Guard against common AI artifact prefixes leaking into output
+PARAMETER stop Translation:
+PARAMETER stop Переклад:
+PARAMETER stop Ukrainian:
+PARAMETER stop Note:
+PARAMETER stop Примітка:

@@ -1,0 +1,81 @@
+# Modelfile for translategemma3-st
+# Fine-tuned Gemma 3 model for game localization translation.
+#
+# IMPORTANT — parameter precedence:
+#   The bethesda-strings-editor application overrides ALL parameters
+#   (temperature, num_ctx, num_predict, top_k, top_p, min_p,
+#   repeat_penalty, repeat_last_n, stop, and system) on every API call.
+#   The values here are therefore the defaults used ONLY when the model
+#   is run directly, e.g.:
+#     ollama run translategemma3-st
+#     curl http://localhost:11434/api/generate -d '{"model":"translategemma3-st",...}'
+#
+# To rebuild from this file:
+#   ollama create translategemma3-st -f Modelfile
+
+FROM /mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf
+
+# ── Chat template (Gemma 3 format) ──────────────────────────────────────────
+TEMPLATE "{{ if .System }}<start_of_turn>system
+{{ .System }}<end_of_turn>
+{{ end }}{{ if .Prompt }}<start_of_turn>user
+{{ .Prompt }}<end_of_turn>
+{{ end }}<start_of_turn>model
+{{ .Response }}<end_of_turn>"
+
+# ── Fallback system prompt ───────────────────────────────────────────────────
+# Used ONLY when no system is provided in the API call (direct use).
+# The application always supplies its own detailed system prompt at runtime,
+# which fully replaces this.  Keep it short and correct.
+SYSTEM "You are a professional Bethesda Starfield game localization translator. Translate the given text into Ukrainian only. Output ONLY the translated text — no explanations, notes, or commentary. Preserve all formatting tokens exactly as written: <Alias=...>, <Token...>, <Global...>, [MALE], [FEMALE], [Firstname], [Secondname], %s, %d, {variable}, <br>, <font ...>, <mag>, <dur>, <relat=...>, <basename=...>, <repetitions>, [[TK_...]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]]. Never modify or translate these tokens. Write distinctly Ukrainian — not a Russian transliteration. Use Ukrainian-specific vocabulary where it diverges from Russian (наразі not сейчас, завдяки not благодаря). Translate content inside parentheses () unless it is a technical tag."
+
+# ── Generation parameters ────────────────────────────────────────────────────
+
+# Deterministic, high-quality output for translation tasks.
+PARAMETER temperature 0.1
+
+# Context window: 16 384 tokens matches the application default and is
+# necessary for long Bethesda strings (books, terminal notes, dialogue trees).
+PARAMETER num_ctx 16384
+
+# Maximum output tokens per request.  The application uses an adaptive value
+# (min(4096, max(100, input_length * 4))); 4 096 is a safe direct-use default.
+PARAMETER num_predict 4096
+
+# Sampling parameters.
+PARAMETER top_k 40
+PARAMETER top_p 0.9
+
+# min_p: discard tokens whose probability is below 2% of the top token's
+# probability.  At temperature 0.1 the distribution is already very peaked;
+# min_p acts as a fine-grained quality filter without restricting fluency.
+# Complements top_p rather than replacing it (both thresholds must pass).
+PARAMETER min_p 0.02
+
+# Repeat penalty: lowered from 1.1 to 1.05.
+# Ukrainian is a highly inflected language; grammatically required repetition
+# of roots and endings is common.  1.1 nudges the model toward incorrect
+# synonyms.  1.05 provides light repetition control without distortion.
+PARAMETER repeat_penalty 1.05
+
+# Repeat window: increased from the default 64 to 256 tokens.
+# Long Bethesda strings (books, terminal logs, extended dialogue) easily
+# exceed 64 tokens; a 64-token window lets the model repeat phrases it
+# generated just a few sentences earlier.  256 tokens covers most strings
+# without adding meaningful overhead.
+PARAMETER repeat_last_n 256
+
+# ── Stop tokens ──────────────────────────────────────────────────────────────
+# Gemma turn-boundary markers
+PARAMETER stop <end_of_turn>
+PARAMETER stop <start_of_turn>
+# Role-bleeding guards: prevent the model from generating a fake next turn
+PARAMETER stop user:
+PARAMETER stop model:
+PARAMETER stop <|user|>
+PARAMETER stop <|model|>
+#
+# REMOVED: "stop \n\n"
+# A double-newline stop token would silently truncate any Bethesda string
+# that contains paragraph breaks — extremely common in books, notes, and
+# long dialogue entries.  The application intentionally omits this stop.

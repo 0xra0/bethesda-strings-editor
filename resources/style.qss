@@ -1,0 +1,125 @@
+/* Modern dark-ish theme for the translator */
+
+QMainWindow {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+QMenuBar {
+    background-color: #334155;
+    color: #f1f5f9;
+    border-bottom: 1px solid #475569;
+}
+
+QMenuBar::item:selected {
+    background-color: #475569;
+}
+
+QMenu {
+    background-color: #334155;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+}
+
+QMenu::item:selected {
+    background-color: #475569;
+}
+
+QToolBar {
+    background-color: #334155;
+    border-bottom: 1px solid #475569;
+    spacing: 4px;
+}
+
+QToolBar QToolButton {
+    color: #f1f5f9;
+    border-radius: 4px;
+}
+
+QToolBar QToolButton:hover {
+    background-color: #475569;
+}
+
+QStatusBar {
+    background-color: #334155;
+    color: #94a3b8;
+    border-top: 1px solid #475569;
+}
+
+QTableView {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    gridline-color: #334155;
+    selection-background-color: #3b82f6;
+    selection-color: white;
+}
+
+QHeaderView::section {
+    background-color: #334155;
+    color: #f1f5f9;
+    padding: 4px;
+    border: none;
+    border-right: 1px solid #475569;
+}
+
+QTableView::item {
+    padding: 4px;
+}
+
+QPushButton {
+    background-color: #475569;
+    color: #f1f5f9;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #64748b;
+}
+
+QPushButton:pressed {
+    background-color: #334155;
+}
+
+QPushButton:disabled {
+    background-color: #1e293b;
+    color: #64748b;
+}
+
+QLineEdit, QComboBox, QSpinBox {
+    background-color: #334155;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus {
+    border-color: #3b82f6;
+}
+
+QProgressBar {
+    border: 1px solid #475569;
+    border-radius: 4px;
+    text-align: center;
+    background-color: #334155;
+}
+
+QProgressBar::chunk {
+    background-color: #3b82f6;
+    border-radius: 3px;
+}
+
+QDialog {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+QCheckBox, QRadioButton {
+    color: #f1f5f9;
+}
+
+QLabel {
+    color: #f1f5f9;
+}

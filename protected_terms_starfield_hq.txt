@@ -1,0 +1,3381 @@
+# Starfield Protected Terms - High Quality Subset
+# Total terms: 3233
+# Format: Term,Category
+# Curated for use in TermProtector (lower noise than comprehensive).
+
+# === COMPANIES & CORPORATIONS (25) ===
+Aphelion Realty,company
+Argos Extractors,company
+Chunks,company
+Construx,company
+Enhance,company
+GalBank,company
+Generdyne,company
+HopeTech,company
+Infinity LTD,company
+KORE Kinetics,company
+Nova Galactic,company
+Reliant Medical,company
+Repair n' Go,company
+Ryujin Industries,company
+Slayton Aerospace,company
+SSNN,company
+Stroud-Eklund,company
+Taiyo,company
+Taiyo Astroneering,company
+Terrabrew,company
+Trade Authority,company
+Trident Luxury Lines,company
+UC Defense,company
+Xenofresh,company
+Xenofresh Corporation,company
+
+# === FACTIONS & ORGANIZATIONS (27) ===
+CeltCorp,faction
+Combatech,faction
+Constellation,faction
+Crimson Fleet,faction
+Cydonia Security,faction
+Dogstar,faction
+Ecliptic,faction
+Enlightened,faction
+Freestar Collective,faction
+Freestar Rangers,faction
+Horizon Defense,faction
+House Va'ruun,faction
+Light Scythe,faction
+Lunar Robotics,faction
+Nautilus,faction
+Nexum Local,faction
+Reladine,faction
+Sanctum Universum,faction
+Spacers,faction
+Trackers Alliance,faction
+UC Marines,faction
+UC Navy,faction
+UC Security,faction
+UC SysDef,faction
+UC Vanguard,faction
+United Colonies,faction
+Xiang,faction
+
+# === LOCATIONS & STAR SYSTEMS (93) ===
+Aggie's,location
+Akila,location
+Akila City,location
+Alpha Centauri,location
+Alpha Marae,location
+Alpha Ternion,location
+Andraphon,location
+Andromas III,location
+Bannoc,location
+Bannoc IV,location
+Bara,location
+Bayu Plaza,location
+Cantra,location
+Cassiopeia,location
+Charybdis,location
+Cheyenne,location
+Chthonia,location
+Cydonia,location
+Dalton,location
+Deimos,location
+Deimos Staryard,location
+Ebbside,location
+Europa,location
+Gagarin,location
+Gagarin Landing,location
+Gamma Vulpes,location
+Gryphon,location
+Hillex,location
+HopeTown,location
+Ikuchi Market,location
+Indum,location
+Ixyll,location
+Jemison,location
+Khayyam,location
+Kryx,location
+Kryx System,location
+Landing Pad,location
+Linnaeus,location
+Lizzy's,location
+Lumos,location
+Luyten's Rock,location
+Luyten's Star,location
+Mars,location
+MAST District,location
+Montara Luna,location
+Muphrid,location
+Narion,location
+NASA,location
+Neon Core,location
+New Atlantis,location
+New Homestead,location
+Niira,location
+Oborum,location
+Oborum III,location
+Oborum Prime,location
+Oborum Proxima,location
+Olympus,location
+Paradiso,location
+Porrima,location
+Prax,location
+Rasalhague,location
+Red Mile,location
+Rutherford,location
+Ryujin Tower,location
+Shoza II,location
+Sol,location
+Spaceport,location
+Stroud-Eklund Staryard,location
+Tau Ceti,location
+Ternion,location
+The Clinic,location
+The Core,location
+The Den,location
+The Eleos Retreat,location
+The Eye,location
+The Key,location
+The Lodge,location
+The Pup,location
+The Well,location
+Titan,location
+Toliman,location
+Ursae Majoris,location
+Ursae Minoris,location
+Valo,location
+Van Maanen's Star,location
+Vectera,location
+Vega,location
+Volii,location
+Volii Alpha,location
+Wolf,location
+Xi Ophiuchi,location
+Zeta Ophiuchi,location
+Zosma,location
+
+# === CHARACTERS & COMPANIONS (105) ===
+Administrator Chambers,character
+Adoring Fan,character
+Aja Mamasa,character
+Amanirenas,character
+Amira,character
+Amira Wolf,character
+Andreja,character
+Auralia,character
+Barrett,character
+Benjamin Bayu,character
+Billy Clayton,character
+Brogan,character
+Captain Brackenridge,character
+Captain Petrov,character
+Commander Ikande,character
+Commander John Tuala,character
+Cora,character
+Cora Coe,character
+Dalton Fiennes,character
+David,character
+Davis,character
+Davis Wilson,character
+Delgado,character
+DeMarcus,character
+Deputy MacIntyre,character
+Dexler,character
+Diego Moreno,character
+Dieter,character
+Dirk,character
+Duncan,character
+Duncan Lynch,character
+Ellie Yankton,character
+Emmet Goodman,character
+Eren,character
+Eren Bascolm,character
+Erick,character
+Ervin,character
+Estelle Vincent,character
+Genie,character
+Gennady Ayton,character
+Haddie,character
+Hadrian,character
+Helga Dubray,character
+Helgi,character
+Heller,character
+Huan,character
+Huan Daiyu,character
+Imogene,character
+James Newill,character
+John Tuala,character
+Jules,character
+Kaiser,character
+Keavy,character
+Kelton Frush,character
+Keoni Alpin,character
+Kibwe Ikande,character
+Kilman,character
+Komiko,character
+Landry Hollifeld,character
+Lieutenant Torres,character
+Lillian,character
+Lin,character
+Louisa Reyez,character
+Lucas Drexler,character
+Malai,character
+Marco,character
+Maria,character
+Marika Boros,character
+Markieff Sunderland,character
+Martha,character
+Masako,character
+Mathis Castillo,character
+Matteo Khatri,character
+Maurice,character
+Naeva,character
+Naeva Mora,character
+Noel,character
+Nyssa Marcano,character
+Nyx,character
+Oliver Campbell,character
+Orlase,character
+Percival,character
+Percival Walker,character
+Renee,character
+Robie,character
+Sam Coe,character
+Sandra,character
+Sanon,character
+Sarah Morgan,character
+Sebastian Banks,character
+Simon Ryczek,character
+Sloan,character
+Solomon Coe,character
+Sona,character
+Supervisor Lin,character
+Ularu Chen,character
+Vadik,character
+Vanguard Moara,character
+Vasco,character
+Vladimir,character
+Vladimir Sall,character
+Walter Stroud,character
+Wyatt Earp,character
+Yannick Legrande,character
+Zuri,character
+
+# === SHIPS & VEHICLES (18) ===
+Abyss Trekker,ship
+ECS Constant,ship
+Frontier,ship
+Haemosu,ship
+Kepler R,ship
+Kepler S,ship
+Narwhal,ship
+Polis II,ship
+Razorleaf,ship
+Siren of the Stars,ship
+Starborn Guardian,ship
+The Astraea,ship
+The Datura,ship
+The Scow,ship
+UC Vigilance,ship
+Vanguard Claymore,ship
+Wanderwell,ship
+Whisperwind,ship
+
+# === CREATURES & ALIENS (35) ===
+Aceles,creature
+Ankylosaurus,creature
+Ashta,creature
+Brainsprout,creature
+Cephalopod,creature
+Coralbug,creature
+Coralbug Stalker,creature
+Coralcrab,creature
+Coralcrab Stalker,creature
+Floatgel,creature
+Geophage,creature
+Glowbug,creature
+Hunterwulf,creature
+Kreet,creature
+Kreet Stalker,creature
+Kronosaurus,creature
+Leafstrider,creature
+Maggotmaw,creature
+Millwhale,creature
+Mossgnath,creature
+Mothwing,creature
+Nautiloid,creature
+Sailgator,creature
+Sharkwhale,creature
+Shieldshell,creature
+Spaceroach,creature
+Terrormorph,creature
+Terrormorphs,creature
+Toadface,creature
+Toadface Stalker,creature
+Triantrler,creature
+Tuskfrog,creature
+Twistfin,creature
+Vectorback,creature
+Vortex Jellyfish,creature
+
+# === SKILLS & PERKS (86) ===
+Aneutronic Fusion,skill
+Armor Penetration,skill
+Astrodynamics,skill
+Astrophysics,skill
+Automated Weapon Systems,skill
+Ballistic Weapon Systems,skill
+Ballistics,skill
+Boost Assault Training,skill
+Boost Pack Training,skill
+Botany,skill
+Boxing,skill
+Cellular Regeneration,skill
+Combat Medic,skill
+Commerce,skill
+Concealment,skill
+Crippling,skill
+Cyber Runner,skill
+Dagger,skill
+Deception,skill
+Decontamination,skill
+Demolitions,skill
+Diplomacy,skill
+Dueling,skill
+EM Weapons Systems,skill
+Energy Weapon Systems,skill
+Engine Systems,skill
+Environmental Conditioning,skill
+Fitness,skill
+Gastronomy,skill
+Geology,skill
+Gymnastics,skill
+Heavy Weapons,skill
+Heavy Weapons Certification,skill
+Incapacitation,skill
+Intimidation,skill
+Isolation,skill
+Lasers,skill
+Leadership,skill
+Lockpicking,skill
+Manipulation,skill
+Martial Arts,skill
+Medicine,skill
+Melee,skill
+Missile Weapon Systems,skill
+Missile Weapons,skill
+Negotiation,skill
+Nutrition,skill
+Outpost Engineering,skill
+Outpost Management,skill
+Pain Tolerance,skill
+Particle Beam Weapon Systems,skill
+Particle Beams,skill
+Payloads,skill
+Persuasion,skill
+Pickpocket,skill
+Piloting,skill
+Pistols,skill
+Planetary Habitation,skill
+Rapid Reloading,skill
+Rejuvenation,skill
+Research Methods,skill
+Rifles,skill
+Robotics,skill
+Scanning,skill
+Scavenging,skill
+Security,skill
+Sharpshooting,skill
+Shield Systems,skill
+Ship Command,skill
+Shotgun Certification,skill
+Shotguns,skill
+Sneak,skill
+Spacesuit Design,skill
+Special Projects,skill
+Starship Design,skill
+Stealth,skill
+Surveying,skill
+Targeting Control Systems,skill
+Team Leader,skill
+Theft,skill
+Weapon Engineering,skill
+Weapon Systems,skill
+Weight Lifting,skill
+Wellness,skill
+Xenobiology,skill
+Zoology,skill
+
+# === RESOURCES & MATERIALS (65) ===
+Adhesive,resource
+Aldumite,resource
+Alkanes,resource
+Aluminum,resource
+Antimony,resource
+Argon,resource
+Benzene,resource
+Beryllium,resource
+Caesium,resource
+Carboxylic Acids,resource
+Ceramic,resource
+Chlorine,resource
+Chlorosilanes,resource
+Cobalt,resource
+Comm Relay,resource
+Control Rod,resource
+Copper,resource
+Drilling Machine,resource
+Dysprosium,resource
+Europium,resource
+Fiber,resource
+Fluorine,resource
+Gravity Inducer,resource
+Helium-3,resource
+Ionic Liquids,resource
+Iridium,resource
+Isocentered Magnet,resource
+Isotopic Coolant,resource
+Krypton,resource
+Lead,resource
+Lithium,resource
+Lubricant,resource
+Luxury Textile,resource
+Mag Pressure Tank,resource
+Membrane,resource
+Memory Substrate,resource
+Mercury,resource
+Metabolic Agent,resource
+Microsecond Regulator,resource
+Molecular Sieve,resource
+Monopropellant,resource
+Neodymium,resource
+Neon,resource
+Neurologic,resource
+Neutral Capacitor,resource
+Nickel,resource
+Osmium,resource
+Palladium,resource
+Paramagnon Conductor,resource
+Plutonium,resource
+Polymer,resource
+Reactive Gauge,resource
+Rhodium,resource
+Ruthenium,resource
+Sealant,resource
+Solvent,resource
+Tau Grade Rheostat,resource
+Titanium,resource
+Tungsten,resource
+Uranium,resource
+Vanadium,resource
+Xenon,resource
+Yttrium,resource
+Zero Wire,resource
+Zirconium,resource
+
+# === ITEMS & WEAPONS (20) ===
+Beowulf,item
+Boost Pack,item
+Brawler's Equinox,item
+Conduction Grid,item
+Ember,item
+EquiNOX,item
+Eternity's Gate,item
+Experiment A-7,item
+Grav Drive,item
+Inflictor,item
+Lawgiver,item
+MagPulse,item
+MagShear,item
+Mantis,item
+Negotiator,item
+Novablast,item
+Particle Beam,item
+Quantum Essence,item
+Revenant,item
+Spacesuit,item
+
+# === LORE & STORY TERMS (15) ===
+Artifact,lore
+Artifacts,lore
+MAST,lore
+New Game Plus,lore
+Serpent's Embrace,lore
+Settled Systems,lore
+Shattered Space,lore
+Starborn,lore
+Starborn Temple,lore
+Starfield,lore
+The Great Serpent,lore
+The Unity,lore
+Unity,lore
+Va'ruun'kai,lore
+Zero G,lore
+
+# === UI & SYSTEM TERMS (20) ===
+AI,ui
+AP,ui
+CEO,ui
+Contraband,ui
+Cutter,ui
+Digipick,ui
+DLC,ui
+FX,ui
+HP,ui
+HQ,ui
+HUD,ui
+NG+,ui
+NPC,ui
+REV-8,ui
+Scanner,ui
+UC,ui
+VFX,ui
+VIP,ui
+Wanted,ui
+XP,ui
+
+# === SINGLE-WORD PROPER NOUNS (1782) ===
+Abbie,proper_noun
+Abello,proper_noun
+Abhay,proper_noun
+Abreu,proper_noun
+Achilles,proper_noun
+Acids,proper_noun
+Activators,proper_noun
+Actor,proper_noun
+Actuator,proper_noun
+Actuators,proper_noun
+Adams,proper_noun
+Adapters,proper_noun
+Addichrone,proper_noun
+Adella,proper_noun
+Adept,proper_noun
+Adisa,proper_noun
+Adler,proper_noun
+Adler's,proper_noun
+Administrator,proper_noun
+Admiral,proper_noun
+Aegis,proper_noun
+Aelys,proper_noun
+Aeriform,proper_noun
+Aerospace,proper_noun
+Affairs,proper_noun
+Agamon,proper_noun
+Aggie,proper_noun
+Aguerro,proper_noun
+Aguilar,proper_noun
+Ahnjong,proper_noun
+Aigner,proper_noun
+Akachi,proper_noun
+Akasaka,proper_noun
+Akila's,proper_noun
+Al-battani,proper_noun
+Alban,proper_noun
+Alban's,proper_noun
+Alchiba,proper_noun
+Aldret,proper_noun
+Alejandra,proper_noun
+Aleksy,proper_noun
+Alexis,proper_noun
+Algorab,proper_noun
+All-in-one,proper_noun
+Alliance,proper_noun
+Alonso,proper_noun
+Alpin,proper_noun
+Altair,proper_noun
+Aludra,proper_noun
+Amanda,proper_noun
+Ambassador,proper_noun
+Ambassador's,proper_noun
+Amber,proper_noun
+Ambusher,proper_noun
+Amelia,proper_noun
+America,proper_noun
+American,proper_noun
+Amino,proper_noun
+Amoli,proper_noun
+Amplifier,proper_noun
+Amplifies,proper_noun
+Amundsen,proper_noun
+Anansi,proper_noun
+Anastas,proper_noun
+Anderssen,proper_noun
+Andraste,proper_noun
+Andrea,proper_noun
+Andreja's,proper_noun
+Andres,proper_noun
+Andromas,proper_noun
+Aneutronic,proper_noun
+Angeles,proper_noun
+Angelo,proper_noun
+Annie,proper_noun
+Annihilator,proper_noun
+Announcer,proper_noun
+Antixeno,proper_noun
+Antonio,proper_noun
+Aphelion,proper_noun
+Apollo,proper_noun
+Apparel,proper_noun
+Applicant,proper_noun
+Approximate,proper_noun
+Aquilus,proper_noun
+Aranae,proper_noun
+Arboron,proper_noun
+Archangel,proper_noun
+Archer,proper_noun
+Arches,proper_noun
+Archimedes,proper_noun
+Archival,proper_noun
+Archives,proper_noun
+Arcturus,proper_noun
+Argos,proper_noun
+Armin,proper_noun
+Armistead,proper_noun
+Armistice,proper_noun
+Armstrong,proper_noun
+Arnie,proper_noun
+Arseny,proper_noun
+Arthur,proper_noun
+Asphalt,proper_noun
+Assassin,proper_noun
+Assassin's,proper_noun
+Astraea,proper_noun
+Astral,proper_noun
+Astrobase,proper_noun
+Athena,proper_noun
+Atlantean,proper_noun
+Atlantian,proper_noun
+Atlantis,proper_noun
+Atlas,proper_noun
+Atlatl,proper_noun
+Aurel,proper_noun
+Aurora,proper_noun
+Austin,proper_noun
+Authority's,proper_noun
+Autobahn,proper_noun
+Autocannon,proper_noun
+Autumn,proper_noun
+Autumn's,proper_noun
+Avalon,proper_noun
+Axelrod,proper_noun
+Ayton,proper_noun
+Ayumi,proper_noun
+Babylon,proper_noun
+Baccara,proper_noun
+Bachelor's,proper_noun
+Backpack,proper_noun
+Bailey,proper_noun
+Baines,proper_noun
+Bal'mor,proper_noun
+Bal'mor's,proper_noun
+Balam,proper_noun
+Ballast,proper_noun
+Ballistic,proper_noun
+Banda,proper_noun
+Banks,proper_noun
+Barakova,proper_noun
+Bardeen,proper_noun
+Barrel,proper_noun
+Barrett's,proper_noun
+Barretts,proper_noun
+Barron,proper_noun
+Bascolm,proper_noun
+Baseball,proper_noun
+Baseline,proper_noun
+Bastien,proper_noun
+Bastille,proper_noun
+Battleship,proper_noun
+Battlestim,proper_noun
+Bayu's,proper_noun
+Beagle,proper_noun
+Beams,proper_noun
+Becker,proper_noun
+Beetle,proper_noun
+Beginnings,proper_noun
+Believers,proper_noun
+Bellamy,proper_noun
+Belle,proper_noun
+Belli,proper_noun
+Bench,proper_noun
+Benjamin,proper_noun
+Bennu,proper_noun
+Benzenes,proper_noun
+Berg-ramirez,proper_noun
+Berserker,proper_noun
+Berth,proper_noun
+Bessel,proper_noun
+Betty,proper_noun
+Bianchi,proper_noun
+Billy,proper_noun
+Billy's,proper_noun
+Bindi,proper_noun
+Bingo,proper_noun
+Biochem,proper_noun
+Biochemical,proper_noun
+Bioscience,proper_noun
+Biosphere,proper_noun
+Biosuppressant,proper_noun
+Biota,proper_noun
+Biotics,proper_noun
+Bireme,proper_noun
+Birgit,proper_noun
+Bismark,proper_noun
+Bitlow,proper_noun
+Blackhawk,proper_noun
+Blade,proper_noun
+Blake,proper_noun
+Blake's,proper_noun
+Blister,proper_noun
+Bog's,proper_noun
+Bolide,proper_noun
+Bolivar,proper_noun
+Boneshell,proper_noun
+Boneyard,proper_noun
+Bonif,proper_noun
+Boone,proper_noun
+Booster,proper_noun
+Boostpack,proper_noun
+Borealus,proper_noun
+Bosch,proper_noun
+Botanists,proper_noun
+Bowden,proper_noun
+Brace,proper_noun
+Bracer,proper_noun
+Brackenridge,proper_noun
+Bradbury,proper_noun
+Brainsquid,proper_noun
+Brake,proper_noun
+Bravo,proper_noun
+Brennan,proper_noun
+Brennan's,proper_noun
+Breyson,proper_noun
+Breyson's,proper_noun
+Briggs,proper_noun
+Brightcage,proper_noun
+Brodie,proper_noun
+Brown,proper_noun
+Bryant,proper_noun
+Bumper,proper_noun
+Bunker,proper_noun
+Businesswoman,proper_noun
+Buster,proper_noun
+Butcher's,proper_noun
+Caelumite,proper_noun
+Cairo,proper_noun
+Caitlin,proper_noun
+Calderi,proper_noun
+Callum,proper_noun
+Calvert,proper_noun
+Cambridge,proper_noun
+Camden,proper_noun
+Cameron,proper_noun
+Campbell,proper_noun
+Can-uck,proper_noun
+Canard,proper_noun
+Candace,proper_noun
+Canister,proper_noun
+Captain,proper_noun
+Captain's,proper_noun
+Captin,proper_noun
+Carapace,proper_noun
+Caravan,proper_noun
+Caravel,proper_noun
+Carboxylic,proper_noun
+Carinae,proper_noun
+Carlos,proper_noun
+Carry-all,proper_noun
+Carter,proper_noun
+Carter's,proper_noun
+Cartridge,proper_noun
+Cartwright,proper_noun
+Casler,proper_noun
+Cassidy,proper_noun
+Cassie,proper_noun
+Castillo,proper_noun
+Catalina,proper_noun
+Cataxi,proper_noun
+Caterpillar,proper_noun
+Cavalry,proper_noun
+Caviar,proper_noun
+Caviar's,proper_noun
+Celebrai,proper_noun
+Centauri,proper_noun
+Centaurian,proper_noun
+Centaurus,proper_noun
+Ceo's,proper_noun
+Ceti's,proper_noun
+Chabra,proper_noun
+Chambers,proper_noun
+Chameleon,proper_noun
+Championship,proper_noun
+Chanda,proper_noun
+Chandra,proper_noun
+Charles,proper_noun
+Charlie,proper_noun
+Check-in,proper_noun
+Chen's,proper_noun
+Cherian,proper_noun
+Chiang,proper_noun
+Chief,proper_noun
+Chimera,proper_noun
+Chin's,proper_noun
+Chiral,proper_noun
+Chisolm,proper_noun
+Chloe,proper_noun
+Chris,proper_noun
+Christine,proper_noun
+Christmas,proper_noun
+Circle,proper_noun
+Citizen,proper_noun
+Citylife,proper_noun
+Civshuttle,proper_noun
+Claire,proper_noun
+Clarence,proper_noun
+Clarke,proper_noun
+Claws,proper_noun
+Clayton,proper_noun
+Cleanse,proper_noun
+Clemens,proper_noun
+Clinic,proper_noun
+Clinic's,proper_noun
+Clint,proper_noun
+Clint's,proper_noun
+Clover,proper_noun
+Clover's,proper_noun
+Cockpit,proper_noun
+Cockroach,proper_noun
+Codename,proper_noun
+Codos,proper_noun
+Coe's,proper_noun
+Collective's,proper_noun
+Collins,proper_noun
+Colonel,proper_noun
+Colonies,proper_noun
+Colonist,proper_noun
+Colossus,proper_noun
+Combines,proper_noun
+Commander,proper_noun
+Commander's,proper_noun
+Commercial,proper_noun
+Commonwealth,proper_noun
+Companionway,proper_noun
+Compensator,proper_noun
+Compound,proper_noun
+Comspike,proper_noun
+Condominiums,proper_noun
+Conductor,proper_noun
+Connect-pro,proper_noun
+Consortium,proper_noun
+Constant,proper_noun
+Constant's,proper_noun
+Constellation's,proper_noun
+Contusions,proper_noun
+Conveyor,proper_noun
+Copernicus,proper_noun
+Cora's,proper_noun
+Coral,proper_noun
+Coralcrawler,proper_noun
+Coralline,proper_noun
+Corbin,proper_noun
+Corpo,proper_noun
+Corporal,proper_noun
+Corsair,proper_noun
+Cosette,proper_noun
+Costa,proper_noun
+Cotylite,proper_noun
+Council,proper_noun
+Crane,proper_noun
+Crate,proper_noun
+Crater,proper_noun
+Craters,proper_noun
+Crawler,proper_noun
+Creators,proper_noun
+Credstik,proper_noun
+Credtank,proper_noun
+Credtanks,proper_noun
+Creeper,proper_noun
+Crevasse,proper_noun
+Crewman,proper_noun
+Crewmember,proper_noun
+Cricket,proper_noun
+Crimson,proper_noun
+Crocalypse,proper_noun
+Crossbow,proper_noun
+Crowd,proper_noun
+Crowdfit,proper_noun
+Crusade,proper_noun
+Cryopump,proper_noun
+Crystalline,proper_noun
+Cubes,proper_noun
+Cullen,proper_noun
+Curtis,proper_noun
+Cyber,proper_noun
+Cyberspace,proper_noun
+Cydonia's,proper_noun
+Cydonian,proper_noun
+Cydonians,proper_noun
+Cygnus,proper_noun
+D'angelo,proper_noun
+D'carys,proper_noun
+Daisuke,proper_noun
+Daiyu,proper_noun
+Dalitso,proper_noun
+Dalton's,proper_noun
+Damocles,proper_noun
+Dancer,proper_noun
+Dangan,proper_noun
+Daniel,proper_noun
+Darvish,proper_noun
+Datacore,proper_noun
+Datura,proper_noun
+Dawn's,proper_noun
+Dazra,proper_noun
+Decaran,proper_noun
+Decouple,proper_noun
+Deepala,proper_noun
+Deepcore,proper_noun
+Deepseeker,proper_noun
+Defender,proper_noun
+Deflector,proper_noun
+Defunct,proper_noun
+Deitrich,proper_noun
+Delano,proper_noun
+Delgado's,proper_noun
+Delta,proper_noun
+Demon,proper_noun
+Denebola,proper_noun
+Denis,proper_noun
+Depot,proper_noun
+Deputy,proper_noun
+Derek,proper_noun
+Desert,proper_noun
+Designer,proper_noun
+Destroyer,proper_noun
+Devastator,proper_noun
+Devils,proper_noun
+Devine,proper_noun
+Diana,proper_noun
+Dickens,proper_noun
+Diego,proper_noun
+Dietrich,proper_noun
+Diodes,proper_noun
+Director,proper_noun
+Director's,proper_noun
+Disassembler,proper_noun
+Disciple,proper_noun
+Disciples,proper_noun
+Disengage,proper_noun
+Dispel,proper_noun
+Disrupter,proper_noun
+Disruptor,proper_noun
+District,proper_noun
+Dmitri,proper_noun
+Docker,proper_noun
+Dolphin,proper_noun
+Dominion,proper_noun
+Donna,proper_noun
+Donovan,proper_noun
+Doolin,proper_noun
+Dragon,proper_noun
+Dragonfire,proper_noun
+Dragonstar,proper_noun
+Dreadnought,proper_noun
+Drexler,proper_noun
+Drexler's,proper_noun
+Drive's,proper_noun
+Drone,proper_noun
+Drone's,proper_noun
+Dubai,proper_noun
+Dubray,proper_noun
+Dullahan,proper_noun
+Dumas,proper_noun
+Dumbrosky,proper_noun
+Dumbrosky's,proper_noun
+Dunnigan's,proper_noun
+Durand,proper_noun
+Dusseau,proper_noun
+Dwarf,proper_noun
+Dynastic,proper_noun
+Eagle,proper_noun
+Earhart,proper_noun
+Earth,proper_noun
+Earth's,proper_noun
+Earthbound,proper_noun
+Ebbside's,proper_noun
+Ecliptic's,proper_noun
+Ecological,proper_noun
+Econohaul,proper_noun
+Egypt,proper_noun
+Eklund,proper_noun
+Elana,proper_noun
+Elbow,proper_noun
+Elemental,proper_noun
+Eleos,proper_noun
+Elevate,proper_noun
+Elgin,proper_noun
+Elias,proper_noun
+Elijah,proper_noun
+Ellicott,proper_noun
+Ellie,proper_noun
+Ellie's,proper_noun
+Elliot,proper_noun
+Eloise,proper_noun
+Em-class,proper_noun
+Emerson,proper_noun
+Emilian,proper_noun
+Emilio,proper_noun
+Emmeline,proper_noun
+Emmeline's,proper_noun
+Emmet,proper_noun
+Empath,proper_noun
+Emporium,proper_noun
+Enbayar,proper_noun
+Enceladus,proper_noun
+Enclosures,proper_noun
+Endler,proper_noun
+Endurance,proper_noun
+Engineer's,proper_noun
+Enlil,proper_noun
+Ensign,proper_noun
+Enviro,proper_noun
+Epsilon,proper_noun
+Eradicator,proper_noun
+Erdebrau,proper_noun
+Eren's,proper_noun
+Ergonomic,proper_noun
+Eridani,proper_noun
+Erika,proper_noun
+Ernesto,proper_noun
+Ervin's,proper_noun
+Estelle,proper_noun
+Eternity's,proper_noun
+Ethan,proper_noun
+Etherea,proper_noun
+Etherea's,proper_noun
+Eubanks,proper_noun
+Eulogy,proper_noun
+Euphorika,proper_noun
+Evgeny,proper_noun
+Exocrawler,proper_noun
+Extender,proper_noun
+Exterminator,proper_noun
+Extractor,proper_noun
+Extractors,proper_noun
+Extravaganza,proper_noun
+Eye's,proper_noun
+Ezekiel,proper_noun
+Fabricator,proper_noun
+Fabricators,proper_noun
+Faheem,proper_noun
+Falco,proper_noun
+Falcon,proper_noun
+Fallback,proper_noun
+Fallon,proper_noun
+Faraday,proper_noun
+Farmhand,proper_noun
+Fatigues,proper_noun
+Faye's,proper_noun
+Feature,proper_noun
+Felix,proper_noun
+Fergus,proper_noun
+Fermi,proper_noun
+Ferraro,proper_noun
+Festival,proper_noun
+Feynman,proper_noun
+Fiennes,proper_noun
+Filali,proper_noun
+Filburn,proper_noun
+Filburn's,proper_noun
+Fireleaf,proper_noun
+First's,proper_noun
+Fisheries,proper_noun
+Fixture,proper_noun
+Flange,proper_noun
+Flanges,proper_noun
+Flank,proper_noun
+Fleat,proper_noun
+Flechette,proper_noun
+Fleet,proper_noun
+Fleet's,proper_noun
+Fleeter,proper_noun
+Floater,proper_noun
+Flood,proper_noun
+Florence,proper_noun
+Flower,proper_noun
+Fluids,proper_noun
+Fluorescent,proper_noun
+Flyer,proper_noun
+Flynn,proper_noun
+Folder,proper_noun
+Foregrip,proper_noun
+Fortify,proper_noun
+Foucault,proper_noun
+Foundry,proper_noun
+Fournier,proper_noun
+Frank,proper_noun
+Frank's,proper_noun
+Frankenstein,proper_noun
+Frankie,proper_noun
+Frankie's,proper_noun
+Franklin,proper_noun
+Freebooter,proper_noun
+Freestar,proper_noun
+Freestar's,proper_noun
+Freestars,proper_noun
+French,proper_noun
+Frenzy,proper_noun
+Freya,proper_noun
+Frost,proper_noun
+Frostbite,proper_noun
+Frozen,proper_noun
+Frush,proper_noun
+Fullerton,proper_noun
+Fulton,proper_noun
+Functionary's,proper_noun
+Fuselage,proper_noun
+Fusor,proper_noun
+Gabriel,proper_noun
+Gagarin's,proper_noun
+Galactic,proper_noun
+Galathea,proper_noun
+Galbank's,proper_noun
+Galileo,proper_noun
+Galleon,proper_noun
+Gamma,proper_noun
+Gammarus,proper_noun
+Garcia,proper_noun
+Gardener,proper_noun
+Gassy,proper_noun
+Gastronomic,proper_noun
+Gauss,proper_noun
+Gayle,proper_noun
+Gemini,proper_noun
+Generator,proper_noun
+Generdyne's,proper_noun
+Genetics,proper_noun
+Genevieve,proper_noun
+Genghis,proper_noun
+Gennady,proper_noun
+Gensec,proper_noun
+Geologists,proper_noun
+Geophysical,proper_noun
+George,proper_noun
+Gershon,proper_noun
+Gertrude,proper_noun
+Gillespie,proper_noun
+Giuliana,proper_noun
+Glacier,proper_noun
+Gladius,proper_noun
+Gladys,proper_noun
+Gland,proper_noun
+Glider,proper_noun
+Glunch,proper_noun
+Goldenglow,proper_noun
+Gonzalez,proper_noun
+Goodman,proper_noun
+Goodman's,proper_noun
+Gossamer,proper_noun
+Gourmet,proper_noun
+Governor,proper_noun
+Governors,proper_noun
+Graff,proper_noun
+Grath,proper_noun
+Grav's,proper_noun
+Graviplas,proper_noun
+Gravitic,proper_noun
+Graviton,proper_noun
+Grazer,proper_noun
+Graziani,proper_noun
+Greenhouse,proper_noun
+Grendel,proper_noun
+Grid's,proper_noun
+Grinder,proper_noun
+Grissom,proper_noun
+Grommulon,proper_noun
+Groombridge,proper_noun
+Grove,proper_noun
+Growths,proper_noun
+Grylloba,proper_noun
+Gualter,proper_noun
+Guard's,proper_noun
+Guardian,proper_noun
+Gun's,proper_noun
+Guniibuu,proper_noun
+Gunslinger's,proper_noun
+Gurov,proper_noun
+Gustavo,proper_noun
+Gutierrez,proper_noun
+Habitat,proper_noun
+Hadek,proper_noun
+Hadrian's,proper_noun
+Hadron,proper_noun
+Halftown,proper_noun
+Halliday,proper_noun
+Hallucinogen,proper_noun
+Hammerhead,proper_noun
+Hank's,proper_noun
+Harada,proper_noun
+Harish,proper_noun
+Harper,proper_noun
+Harvest,proper_noun
+Harvey,proper_noun
+Hasanov,proper_noun
+Hasanov's,proper_noun
+Hasanovs,proper_noun
+Hatchet,proper_noun
+Hatoum,proper_noun
+Hauksson,proper_noun
+Hawkes,proper_noun
+Hawley,proper_noun
+Hayden,proper_noun
+Hazmat,proper_noun
+Headlock,proper_noun
+Heatleech,proper_noun
+Heatleeches,proper_noun
+Heatstroke,proper_noun
+Heinlein,proper_noun
+Heisenberg,proper_noun
+Helena,proper_noun
+Helena's,proper_noun
+Helga,proper_noun
+Helgi's,proper_noun
+Helix,proper_noun
+Heller's,proper_noun
+Helmet,proper_noun
+Hematite,proper_noun
+Hence,proper_noun
+Henderson,proper_noun
+Henrik,proper_noun
+Henry,proper_noun
+Henry's,proper_noun
+Hephaestus,proper_noun
+Herald,proper_noun
+Herath,proper_noun
+Hercules,proper_noun
+Hernia,proper_noun
+Hexapod,proper_noun
+Hexohermit,proper_noun
+Higashi,proper_noun
+High-tensile,proper_noun
+Highlander,proper_noun
+Hip-fire,proper_noun
+Historian,proper_noun
+Hitman,proper_noun
+Holbrooke,proper_noun
+Holder,proper_noun
+Hollifeld,proper_noun
+Holmes,proper_noun
+Homarus,proper_noun
+Homestead,proper_noun
+Homestead's,proper_noun
+Homesteaders,proper_noun
+Hookpest,proper_noun
+Hope's,proper_noun
+Hopetech's,proper_noun
+Hopetown's,proper_noun
+Hoplite,proper_noun
+Hopper,proper_noun
+Horizontal,proper_noun
+Horus,proper_noun
+House,proper_noun
+Huan's,proper_noun
+Huang,proper_noun
+Hughes,proper_noun
+Hulker,proper_noun
+Hunter,proper_noun
+Hunter's,proper_noun
+Huong,proper_noun
+Hurst,proper_noun
+Hurst's,proper_noun
+Husbandry,proper_noun
+Huygens,proper_noun
+Hydroponic,proper_noun
+Hypercatalyst,proper_noun
+Hypothermia,proper_noun
+Ignores,proper_noun
+Ikande,proper_noun
+Ikande's,proper_noun
+Ikuchi,proper_noun
+Imada,proper_noun
+Imada's,proper_noun
+Immature,proper_noun
+Immunostimulant,proper_noun
+Imogene's,proper_noun
+Inaya,proper_noun
+Inbox,proper_noun
+Indicite,proper_noun
+Indigo,proper_noun
+Industrial,proper_noun
+Industries,proper_noun
+Inertial,proper_noun
+Infantry,proper_noun
+Inferno,proper_noun
+Infiltrator,proper_noun
+Infinitum,proper_noun
+Infinity's,proper_noun
+Injector,proper_noun
+Inquire,proper_noun
+Installs,proper_noun
+Intelliwheat,proper_noun
+Inter-system,proper_noun
+Interceptor,proper_noun
+Interface,proper_noun
+Interlock,proper_noun
+Interlocks,proper_noun
+Internal,proper_noun
+Intestinal,proper_noun
+Intraprison,proper_noun
+Invictus,proper_noun
+Ionic,proper_noun
+Isaac,proper_noun
+Isotopic,proper_noun
+Itaru,proper_noun
+Jackie,proper_noun
+Jacob,proper_noun
+Jacquelyn,proper_noun
+Jaden,proper_noun
+Jaeda,proper_noun
+Jaffa,proper_noun
+Jake's,proper_noun
+Jakob,proper_noun
+James,proper_noun
+Jammer,proper_noun
+Jane's,proper_noun
+Janet,proper_noun
+Janet's,proper_noun
+Jansen,proper_noun
+Jansens,proper_noun
+Jarmon,proper_noun
+Jasmine,proper_noun
+Jasper,proper_noun
+Jaylen,proper_noun
+Jeffrex,proper_noun
+Jemison's,proper_noun
+Jenkins,proper_noun
+Jensen,proper_noun
+Jeong,proper_noun
+Jesus,proper_noun
+Jillian,proper_noun
+Jinan,proper_noun
+Jishaku,proper_noun
+Jivanta,proper_noun
+Johann,proper_noun
+Johnny,proper_noun
+Jorgenson,proper_noun
+Josefsson,proper_noun
+Joyce,proper_noun
+Judith,proper_noun
+Julia,proper_noun
+Jumpsuit,proper_noun
+Juno's,proper_noun
+Jupiter,proper_noun
+Justin,proper_noun
+Juvenile,proper_noun
+Ka'dic,proper_noun
+Ka'zaal,proper_noun
+Kaiser's,proper_noun
+Kalinda,proper_noun
+Kallyn,proper_noun
+Kalra,proper_noun
+Kaminski,proper_noun
+Kapteyn,proper_noun
+Kasarov,proper_noun
+Katherine,proper_noun
+Katydid,proper_noun
+Kaufman,proper_noun
+Kay's,proper_noun
+Kaylin,proper_noun
+Kaylin's,proper_noun
+Kazemi,proper_noun
+Keala,proper_noun
+Kebabs,proper_noun
+Keeper,proper_noun
+Keeper's,proper_noun
+Kellner,proper_noun
+Kelton,proper_noun
+Kelton's,proper_noun
+Kendley,proper_noun
+Kendrick,proper_noun
+Keoni,proper_noun
+Keoni's,proper_noun
+Kepler,proper_noun
+Key's,proper_noun
+Khatri,proper_noun
+Kibwe,proper_noun
+Kilman's,proper_noun
+Kinetics,proper_noun
+Kirklin,proper_noun
+Kirov,proper_noun
+Klaudia,proper_noun
+Knifeshadow,proper_noun
+Knockdown,proper_noun
+Kolman,proper_noun
+Komiko's,proper_noun
+Kon-tiki,proper_noun
+Kosmos,proper_noun
+Kraken,proper_noun
+Kryx's,proper_noun
+Kuipers,proper_noun
+Kulkarni,proper_noun
+Kumar,proper_noun
+Kumasi,proper_noun
+Kumiho,proper_noun
+Kumiho's,proper_noun
+Lacerate,proper_noun
+Lacerations,proper_noun
+Laglorial,proper_noun
+Lakota,proper_noun
+Lambda,proper_noun
+Lamps,proper_noun
+Lance,proper_noun
+Lander,proper_noun
+Landmark,proper_noun
+Landmass,proper_noun
+Landry,proper_noun
+Langston,proper_noun
+Lantana,proper_noun
+Lantern,proper_noun
+Laredo,proper_noun
+Larry,proper_noun
+Larva,proper_noun
+Laser,proper_noun
+Laserbrand,proper_noun
+Latika,proper_noun
+Latin,proper_noun
+Laylah,proper_noun
+Lazarus,proper_noun
+Leaderboard,proper_noun
+Leafbug,proper_noun
+League,proper_noun
+Lebedev,proper_noun
+Ledarius,proper_noun
+Legacy,proper_noun
+Legacy's,proper_noun
+Legrande,proper_noun
+Legrande's,proper_noun
+Lemaire,proper_noun
+Lemaire's,proper_noun
+Lemaires,proper_noun
+Leona,proper_noun
+Leonard,proper_noun
+Leonis,proper_noun
+Lestari,proper_noun
+Leviathan,proper_noun
+Levitz,proper_noun
+Lewis,proper_noun
+Lezama,proper_noun
+Liang,proper_noun
+Liang's,proper_noun
+Lieutenant,proper_noun
+Lightscythe,proper_noun
+Lightweight,proper_noun
+Lillian's,proper_noun
+Lin's,proper_noun
+Linda,proper_noun
+Linden,proper_noun
+Liquors,proper_noun
+Liskova,proper_noun
+Lithosphere,proper_noun
+Livvey,proper_noun
+Lizzy,proper_noun
+Lock's,proper_noun
+Lodge,proper_noun
+Logan,proper_noun
+Loiselle,proper_noun
+Londinion,proper_noun
+Londinion's,proper_noun
+London,proper_noun
+Loner,proper_noun
+Longhorn,proper_noun
+Longsword,proper_noun
+Lopez,proper_noun
+Lopez's,proper_noun
+Lorelei,proper_noun
+Lotus,proper_noun
+Louis,proper_noun
+Louisa,proper_noun
+Lounge,proper_noun
+Lovelace,proper_noun
+Lowers,proper_noun
+Ltd's,proper_noun
+Lucas,proper_noun
+Lumin,proper_noun
+Lunar,proper_noun
+Luthor,proper_noun
+Luyten's,proper_noun
+Luzion,proper_noun
+Lynch,proper_noun
+Mabhuti,proper_noun
+Machina,proper_noun
+Machinis,proper_noun
+Macintyre,proper_noun
+Macintyre's,proper_noun
+Mackenna,proper_noun
+Macleavy,proper_noun
+Macmillan,proper_noun
+Madam,proper_noun
+Madame,proper_noun
+Madani,proper_noun
+Madani's,proper_noun
+Maddie,proper_noun
+Maddie's,proper_noun
+Maeve,proper_noun
+Magazine,proper_noun
+Magellan,proper_noun
+Maggot,proper_noun
+Magma,proper_noun
+Magnar,proper_noun
+Maheo,proper_noun
+Mahoney,proper_noun
+Maksimov,proper_noun
+Maksimov's,proper_noun
+Malai's,proper_noun
+Malcolm,proper_noun
+Maldonado,proper_noun
+Maldonado's,proper_noun
+Mamasa,proper_noun
+Manaia,proper_noun
+Mandela,proper_noun
+Manifold,proper_noun
+Mannequin,proper_noun
+Manta,proper_noun
+Mantid,proper_noun
+Mantida,proper_noun
+Mantis's,proper_noun
+Manuel,proper_noun
+Marae,proper_noun
+Marauder,proper_noun
+Marcano,proper_noun
+Marcel,proper_noun
+Marcin,proper_noun
+Marco's,proper_noun
+Marduk,proper_noun
+Maria's,proper_noun
+Marie,proper_noun
+Marika,proper_noun
+Marines,proper_noun
+Markab,proper_noun
+Markkanen,proper_noun
+Marko,proper_noun
+Marksmanship,proper_noun
+Marquez,proper_noun
+Marshal,proper_noun
+Marshal's,proper_noun
+Martian,proper_noun
+Martin,proper_noun
+Marzanna,proper_noun
+Masada,proper_noun
+Masako's,proper_noun
+Mason,proper_noun
+Mast's,proper_noun
+Master's,proper_noun
+Mathis,proper_noun
+Matrix,proper_noun
+Matsura,proper_noun
+Matteo,proper_noun
+Mauler,proper_noun
+Mayday,proper_noun
+Mayfield,proper_noun
+Mcclure,proper_noun
+Mcmillan,proper_noun
+Meatspace,proper_noun
+Mechbase,proper_noun
+Medbay,proper_noun
+Medium-range,proper_noun
+Mei's,proper_noun
+Member's,proper_noun
+Memoriam,proper_noun
+Mensah,proper_noun
+Mercantile,proper_noun
+Merchant's,proper_noun
+Metabolic,proper_noun
+Meteorite,proper_noun
+Metropus,proper_noun
+Miatha,proper_noun
+Michelson,proper_noun
+Mickey,proper_noun
+Micro,proper_noun
+Microbial,proper_noun
+Microcell,proper_noun
+Microgun,proper_noun
+Microvase,proper_noun
+Midtown,proper_noun
+Miggy,proper_noun
+Might's,proper_noun
+Migraine,proper_noun
+Miguel,proper_noun
+Mikaela,proper_noun
+Mikaela's,proper_noun
+Mile's,proper_noun
+Milena,proper_noun
+Milena's,proper_noun
+Militia,proper_noun
+Milky,proper_noun
+Miller,proper_noun
+Mills,proper_noun
+Minerology,proper_noun
+Minibite,proper_noun
+Mining's,proper_noun
+Miranda,proper_noun
+Mister,proper_noun
+Mitch,proper_noun
+Moara,proper_noun
+Moara's,proper_noun
+Moloch,proper_noun
+Monika,proper_noun
+Monohan,proper_noun
+Monroe,proper_noun
+Montara,proper_noun
+Montelvaughn,proper_noun
+Monthly,proper_noun
+Mooch,proper_noun
+Moonform,proper_noun
+Moonshine,proper_noun
+Moonwalker,proper_noun
+Moore,proper_noun
+Morgan,proper_noun
+Morgan's,proper_noun
+Morningstar,proper_noun
+Morph,proper_noun
+Morphs,proper_noun
+Morrison,proper_noun
+Mosquera,proper_noun
+Mount,proper_noun
+Muffaz,proper_noun
+Mullens,proper_noun
+Multi,proper_noun
+Multipack,proper_noun
+Multiplex,proper_noun
+Musgrove,proper_noun
+Mustang,proper_noun
+Mustard,proper_noun
+Muybridge,proper_noun
+Myeong,proper_noun
+Myka's,proper_noun
+Nadia,proper_noun
+Naeva's,proper_noun
+Naginata,proper_noun
+Nakamori,proper_noun
+Nancy,proper_noun
+Narcissus,proper_noun
+Nascent,proper_noun
+Natan,proper_noun
+Natara,proper_noun
+Natara's,proper_noun
+Navigator,proper_noun
+Navy's,proper_noun
+Nebula,proper_noun
+Nemeria,proper_noun
+Neon's,proper_noun
+Neptune,proper_noun
+Neshar,proper_noun
+Neshar's,proper_noun
+Nesoi,proper_noun
+Neurajack,proper_noun
+Neural,proper_noun
+Neuroamp,proper_noun
+Neuroboost,proper_noun
+Neurocom,proper_noun
+Neurotac,proper_noun
+Nevan,proper_noun
+Newill,proper_noun
+Newill's,proper_noun
+Newton,proper_noun
+Ngata,proper_noun
+Ngodup,proper_noun
+Nichols,proper_noun
+Nicolaus,proper_noun
+Niira's,proper_noun
+Nikola,proper_noun
+Nilesh,proper_noun
+Nimitz,proper_noun
+Nina's,proper_noun
+Nirah,proper_noun
+Nirvana,proper_noun
+Nishikawa,proper_noun
+Nishina,proper_noun
+Nitrogen,proper_noun
+Nobody's,proper_noun
+Noel's,proper_noun
+Nonlethal,proper_noun
+Notebook,proper_noun
+Novalight,proper_noun
+Nozzle,proper_noun
+Nuptials,proper_noun
+Nutrient,proper_noun
+Nutrition's,proper_noun
+Nymph,proper_noun
+Nyssa,proper_noun
+Nyssa's,proper_noun
+Nyx's,proper_noun
+O'shea,proper_noun
+Obliterator,proper_noun
+Observer,proper_noun
+Occisio,proper_noun
+Occupations,proper_noun
+Octavio,proper_noun
+Octopede,proper_noun
+Of-a-kind,proper_noun
+Oishii,proper_noun
+Okadigbo,proper_noun
+Okoro,proper_noun
+Okoye,proper_noun
+Oktai,proper_noun
+Oliver,proper_noun
+Omega,proper_noun
+Operator,proper_noun
+Ophion,proper_noun
+Ophiuchi,proper_noun
+Optic,proper_noun
+Orchid,proper_noun
+Orion,proper_noun
+Orlase's,proper_noun
+Orora,proper_noun
+Ortiz,proper_noun
+Orval,proper_noun
+Orwell,proper_noun
+Osaka,proper_noun
+Osian,proper_noun
+Osterholt,proper_noun
+Oswalt,proper_noun
+Otero,proper_noun
+Outfitters,proper_noun
+Outland,proper_noun
+Outsider,proper_noun
+Ovadia,proper_noun
+Overseer,proper_noun
+Oyama,proper_noun
+Pandora's,proper_noun
+Panoptes,proper_noun
+Panopticon,proper_noun
+Parcel,proper_noun
+Parduk,proper_noun
+Parker,proper_noun
+Particulates,proper_noun
+Patel,proper_noun
+Paulson,proper_noun
+Paxton,proper_noun
+Peacemaker,proper_noun
+Pearl,proper_noun
+Pedestal,proper_noun
+Pelican,proper_noun
+Penetrator,proper_noun
+Penitent,proper_noun
+Percival's,proper_noun
+Peter,proper_noun
+Peter's,proper_noun
+Petrosyan,proper_noun
+Petrov,proper_noun
+Petrov's,proper_noun
+Petyarre,proper_noun
+Phalanx,proper_noun
+Phantom,proper_noun
+Pharmaceutical,proper_noun
+Phases,proper_noun
+Philip,proper_noun
+Philippe,proper_noun
+Phobos,proper_noun
+Phoebe,proper_noun
+Piazzi,proper_noun
+Pikup,proper_noun
+Pilgrim,proper_noun
+Pilgrim's,proper_noun
+Pillars,proper_noun
+Pip-boy,proper_noun
+Pipeline,proper_noun
+Pipes,proper_noun
+Pitcher,proper_noun
+Planter,proper_noun
+Plaque,proper_noun
+Plateau,proper_noun
+Platinum,proper_noun
+Plato,proper_noun
+Plushie,proper_noun
+Polis,proper_noun
+Polvo,proper_noun
+Porter,proper_noun
+Porthole,proper_noun
+Poseidon,proper_noun
+Positron,proper_noun
+Powerplant,proper_noun
+Pragmatist,proper_noun
+Pragmatists,proper_noun
+Preeminent,proper_noun
+President,proper_noun
+Pretorius,proper_noun
+Primer,proper_noun
+Prism,proper_noun
+Prisoner's,proper_noun
+Pritchard,proper_noun
+Privateer,proper_noun
+Probes,proper_noun
+Proctor,proper_noun
+Procyon,proper_noun
+Procyon-b,proper_noun
+Protector,proper_noun
+Protectorate,proper_noun
+Protonius,proper_noun
+Provisioner,proper_noun
+Proxima,proper_noun
+Pryce,proper_noun
+Pterosaur,proper_noun
+Pulaski,proper_noun
+Pulse,proper_noun
+Pumice,proper_noun
+Puncture,proper_noun
+Pylons,proper_noun
+Pyraas,proper_noun
+Quantum,proper_noun
+Quartermaster,proper_noun
+Queen,proper_noun
+Quill,proper_noun
+Qwerty,proper_noun
+Radcliff,proper_noun
+Radcliff's,proper_noun
+Radiator,proper_noun
+Radley,proper_noun
+Rafael,proper_noun
+Rafiq,proper_noun
+Ragana,proper_noun
+Raiders,proper_noun
+Railgun,proper_noun
+Rails,proper_noun
+Railstar,proper_noun
+Raises,proper_noun
+Rake's,proper_noun
+Rambler,proper_noun
+Ramsay,proper_noun
+Ranger,proper_noun
+Ranger's,proper_noun
+Rangers,proper_noun
+Raptor,proper_noun
+Rayna,proper_noun
+Reactor,proper_noun
+Reactors,proper_noun
+Realty,proper_noun
+Rebecca,proper_noun
+Receiver,proper_noun
+Reckoner,proper_noun
+Reckoner's,proper_noun
+Reconstim,proper_noun
+Reflex,proper_noun
+Regen,proper_noun
+Reginald,proper_noun
+Regulator,proper_noun
+Reilly,proper_noun
+Reisha,proper_noun
+Reladyne,proper_noun
+Reliant,proper_noun
+Reliant's,proper_noun
+Renee's,proper_noun
+Renegades,proper_noun
+Renick,proper_noun
+Renick's,proper_noun
+Reptans,proper_noun
+Responder,proper_noun
+Retreat,proper_noun
+Retreat's,proper_noun
+Reyez,proper_noun
+Ricardo,proper_noun
+Richardson,proper_noun
+Rikkard,proper_noun
+Riser,proper_noun
+Rivas,proper_noun
+Rivera,proper_noun
+Rivkah,proper_noun
+Rivkah's,proper_noun
+Riyanti,proper_noun
+Rizky,proper_noun
+Roamer,proper_noun
+Roanoke,proper_noun
+Roberts,proper_noun
+Robin,proper_noun
+Rocky,proper_noun
+Rodriguez,proper_noun
+Roger,proper_noun
+Rokov,proper_noun
+Rokov's,proper_noun
+Romack,proper_noun
+Roman,proper_noun
+Roosevelt,proper_noun
+Roosevelt's,proper_noun
+Roost,proper_noun
+Rosie,proper_noun
+Roundshell,proper_noun
+Rover,proper_noun
+Rowland,proper_noun
+Royce,proper_noun
+Runner's,proper_noun
+Ryczek,proper_noun
+Ryujin,proper_noun
+Ryujin's,proper_noun
+Saburo's,proper_noun
+Sadler,proper_noun
+Sagan,proper_noun
+Sahar,proper_noun
+Sahar's,proper_noun
+Saint-george,proper_noun
+Saito,proper_noun
+Sakharov,proper_noun
+Saliha,proper_noun
+Salinas,proper_noun
+Salvato,proper_noun
+Salzo,proper_noun
+Salzo's,proper_noun
+Sam's,proper_noun
+Sammie,proper_noun
+Samson,proper_noun
+Samund,proper_noun
+Sanctum,proper_noun
+Sandin,proper_noun
+Sandy,proper_noun
+Sanon's,proper_noun
+Saoirse,proper_noun
+Sarah,proper_noun
+Sarah's,proper_noun
+Sarkin,proper_noun
+Sarklonn,proper_noun
+Sarrklon,proper_noun
+Sasha,proper_noun
+Saturn,proper_noun
+Saturn's,proper_noun
+Sauvage,proper_noun
+Sauvage's,proper_noun
+Savior,proper_noun
+Scarab,proper_noun
+Scepter,proper_noun
+Schrodinger,proper_noun
+Scissors,proper_noun
+Scorpius,proper_noun
+Scott,proper_noun
+Scripture,proper_noun
+Seahorse,proper_noun
+Sebastian,proper_noun
+Secondus,proper_noun
+Security's,proper_noun
+Semi-automatic,proper_noun
+Sengsavahn,proper_noun
+Sengsavahn's,proper_noun
+Sentinel,proper_noun
+Seokguh,proper_noun
+Seokguh's,proper_noun
+Sergeant,proper_noun
+Serpent,proper_noun
+Serpent's,proper_noun
+Serpentis,proper_noun
+Serrano,proper_noun
+Settler,proper_noun
+Sextant,proper_noun
+Shadid,proper_noun
+Shaker,proper_noun
+Shale,proper_noun
+Shanghai,proper_noun
+Shannon,proper_noun
+Shardhopper,proper_noun
+Shards,proper_noun
+Sheila,proper_noun
+Shell,proper_noun
+Shellephant,proper_noun
+Shepherd,proper_noun
+Shepherd's,proper_noun
+Shibata,proper_noun
+Shinya,proper_noun
+Shinya's,proper_noun
+Shipbuilder,proper_noun
+Shiproach,proper_noun
+Shipwreck,proper_noun
+Shocktroop,proper_noun
+Shoza,proper_noun
+Shrapnel,proper_noun
+Shrub,proper_noun
+Shussalina,proper_noun
+Shutter,proper_noun
+Si'ah,proper_noun
+Sidecap,proper_noun
+Sidestar,proper_noun
+Sieghart,proper_noun
+Sieghart's,proper_noun
+Sigma,proper_noun
+Silverfish,proper_noun
+Simmons,proper_noun
+Simon's,proper_noun
+Simone,proper_noun
+Sinclair's,proper_noun
+Singh,proper_noun
+Siren,proper_noun
+Siren's,proper_noun
+Sirens,proper_noun
+Sirius,proper_noun
+Sisters,proper_noun
+Sivan,proper_noun
+Sixth,proper_noun
+Skyler,proper_noun
+Slayton,proper_noun
+Slayton's,proper_noun
+Sleepcrate,proper_noun
+Slinger,proper_noun
+Slipstream,proper_noun
+Sloan's,proper_noun
+Sloop,proper_noun
+Slushy,proper_noun
+Snead,proper_noun
+Sniper,proper_noun
+Societies,proper_noun
+Sohla,proper_noun
+Solomon,proper_noun
+Solomon's,proper_noun
+Sona's,proper_noun
+Sonic,proper_noun
+Sonny,proper_noun
+Sood's,proper_noun
+Spacefarer's,proper_noun
+Spacer,proper_noun
+Spacetruk,proper_noun
+Spades,proper_noun
+Sparrow,proper_noun
+Sparta,proper_noun
+Speaker,proper_noun
+Spear,proper_noun
+Spear's,proper_noun
+Specter,proper_noun
+Spice,proper_noun
+Spine,proper_noun
+Spitter,proper_noun
+Spore,proper_noun
+Sprain,proper_noun
+Spritz,proper_noun
+Ssnn's,proper_noun
+Stalk,proper_noun
+Stalker,proper_noun
+Stalkers,proper_noun
+Stanley,proper_noun
+Stanza,proper_noun
+Starboard,proper_noun
+Starborn's,proper_noun
+Starfreight,proper_noun
+Starhawk,proper_noun
+Starrett,proper_noun
+Starsap,proper_noun
+Starview,proper_noun
+Staryard,proper_noun
+Staryards,proper_noun
+Stasiuk,proper_noun
+Steel,proper_noun
+Stefanie,proper_noun
+Stellarator,proper_noun
+Stellis,proper_noun
+Stimulant,proper_noun
+Stimulants,proper_noun
+Stinger,proper_noun
+Stingray,proper_noun
+Stocker,proper_noun
+Stoneroot,proper_noun
+Storeroom,proper_noun
+Stormax,proper_noun
+Stormrider,proper_noun
+Stratos,proper_noun
+Strickland,proper_noun
+Striker,proper_noun
+Strikers,proper_noun
+Strix,proper_noun
+Stroud,proper_noun
+Stroud's,proper_noun
+Stroud-eklund's,proper_noun
+Stylus,proper_noun
+Substrate,proper_noun
+Subsurface,proper_noun
+Sugiyama,proper_noun
+Sumeria,proper_noun
+Sunflower,proper_noun
+Sunray,proper_noun
+Sunsail,proper_noun
+Supaku,proper_noun
+Super-admin,proper_noun
+Supernova,proper_noun
+Supervisor's,proper_noun
+Suppressor,proper_noun
+Supra,proper_noun
+Surveyor's,proper_noun
+Suvorov,proper_noun
+Suzanne,proper_noun
+Svalinn,proper_noun
+Swimmer,proper_noun
+Swist,proper_noun
+Sylvie,proper_noun
+Synapse,proper_noun
+Syndicate,proper_noun
+Syndicate's,proper_noun
+Synergies,proper_noun
+Synthameat,proper_noun
+Syracuse,proper_noun
+Syrma,proper_noun
+Sysdef,proper_noun
+Sysdef's,proper_noun
+Szczerbiak,proper_noun
+Tactical,proper_noun
+Tahir,proper_noun
+Taiyo's,proper_noun
+Tal'at,proper_noun
+Talia,proper_noun
+Tallan,proper_noun
+Tanskler,proper_noun
+Tantalum,proper_noun
+Tardigrade,proper_noun
+Target's,proper_noun
+Tasine,proper_noun
+Taskmaster,proper_noun
+Tatienne,proper_noun
+Tavern,proper_noun
+Tawny,proper_noun
+Tectonics,proper_noun
+Tempest,proper_noun
+Temple,proper_noun
+Temples,proper_noun
+Terminus,proper_noun
+Terra,proper_noun
+Terrabrew's,proper_noun
+Terran,proper_noun
+Terrormorph's,proper_noun
+Tesla,proper_noun
+Tetrafluoride,proper_noun
+Tetrafluorides,proper_noun
+Teucer,proper_noun
+Theresa,proper_noun
+Theta,proper_noun
+Thibodeau,proper_noun
+Thicket,proper_noun
+Thomas,proper_noun
+Thomas's,proper_noun
+Thorn,proper_noun
+Thrall,proper_noun
+Thresher,proper_noun
+Thybulle,proper_noun
+Tidacha,proper_noun
+Tiers,proper_noun
+Tikhov,proper_noun
+Tirna,proper_noun
+Tissues,proper_noun
+Titan's,proper_noun
+Titus,proper_noun
+Tmd's,proper_noun
+Tobias,proper_noun
+Tokamak,proper_noun
+Tomisar,proper_noun
+Tommy,proper_noun
+Toroidal,proper_noun
+Torpedo,proper_noun
+Torres,proper_noun
+Tower,proper_noun
+Tower's,proper_noun
+Tracker,proper_noun
+Tracker's,proper_noun
+Trackers,proper_noun
+Tracksuit,proper_noun
+Trajan,proper_noun
+Tranquilitea,proper_noun
+Tranquilitea's,proper_noun
+Transpo,proper_noun
+Travers,proper_noun
+Trawl,proper_noun
+Trench,proper_noun
+Trevor's,proper_noun
+Trident's,proper_noun
+Trilobite,proper_noun
+Triton,proper_noun
+Triumvirate,proper_noun
+Truss,proper_noun
+Tseng,proper_noun
+Tsukisasu,proper_noun
+Tuala,proper_noun
+Tuala's,proper_noun
+Turbopump,proper_noun
+Turret,proper_noun
+Tyrant's,proper_noun
+Ularu's,proper_noun
+Ultra,proper_noun
+Ulysses,proper_noun
+Unbeliever,proper_noun
+Underbelly,proper_noun
+Universal,proper_noun
+Universals,proper_noun
+Universum,proper_noun
+Upgrade,proper_noun
+Upsilon,proper_noun
+Uranus,proper_noun
+Users,proper_noun
+Va'ruun,proper_noun
+Va'ruun's,proper_noun
+Valentina,proper_noun
+Valerie,proper_noun
+Valerie's,proper_noun
+Vanguard,proper_noun
+Vanguard's,proper_noun
+Vanguards,proper_noun
+Vanquisher,proper_noun
+Vapor,proper_noun
+Var'ruun,proper_noun
+Variant,proper_noun
+Variants,proper_noun
+Varuun,proper_noun
+Vasco's,proper_noun
+Veena's,proper_noun
+Venenum,proper_noun
+Venus,proper_noun
+Verne,proper_noun
+Veryl,proper_noun
+Vesta,proper_noun
+Vesta's,proper_noun
+Victis,proper_noun
+Victis's,proper_noun
+Victor,proper_noun
+Vigilance,proper_noun
+Vigilance's,proper_noun
+Vincent,proper_noun
+Vindicator,proper_noun
+Vineyards,proper_noun
+Violet,proper_noun
+Vista,proper_noun
+Vladimir's,proper_noun
+Voclain,proper_noun
+Vogal,proper_noun
+Vogel,proper_noun
+Vogel's,proper_noun
+Volcanic,proper_noun
+Voltaire,proper_noun
+Vortex,proper_noun
+Voyager,proper_noun
+Vulpes,proper_noun
+Vulture,proper_noun
+Vulture's,proper_noun
+Vuvuzelisk,proper_noun
+Vytinium,proper_noun
+Wafer,proper_noun
+Wafers,proper_noun
+Waggoner,proper_noun
+Waggoners,proper_noun
+Wagontrain,proper_noun
+Walker,proper_noun
+Walker's,proper_noun
+Walter,proper_noun
+Walter's,proper_noun
+Wanyan,proper_noun
+Warden,proper_noun
+Warden's,proper_noun
+Warhammer,proper_noun
+Warlock,proper_noun
+Warlock's,proper_noun
+Warlord,proper_noun
+Warner,proper_noun
+Warrior,proper_noun
+Watchdog,proper_noun
+Waylon,proper_noun
+Well's,proper_noun
+Wendigo,proper_noun
+Wendy,proper_noun
+Wesley,proper_noun
+Weston,proper_noun
+Wetlands,proper_noun
+Whaleshark,proper_noun
+Whetstone,proper_noun
+Whitehot,proper_noun
+Wilby,proper_noun
+Wilcox,proper_noun
+William,proper_noun
+Wilson,proper_noun
+Windbag,proper_noun
+Windbreaker,proper_noun
+Woodard,proper_noun
+Woods,proper_noun
+Workbench,proper_noun
+Workbenches,proper_noun
+Workspace,proper_noun
+Wraith,proper_noun
+Wrapper,proper_noun
+Wright,proper_noun
+Wyatt,proper_noun
+Xenobiologist,proper_noun
+Xenoflower,proper_noun
+Xenowarfare,proper_noun
+Xenoweapon,proper_noun
+Xenoweapons,proper_noun
+Yankton,proper_noun
+Yannick,proper_noun
+Yannick's,proper_noun
+Yasin,proper_noun
+You-you,proper_noun
+Ytterbium,proper_noun
+Yuko's,proper_noun
+Z-machine,proper_noun
+Zawadi,proper_noun
+Zealot,proper_noun
+Zealots,proper_noun
+Zeffrex,proper_noun
+Zelazny,proper_noun
+Zinaida,proper_noun
+Zinaida's,proper_noun
+Ziremi,proper_noun
+Zoologist,proper_noun
+Zoologists,proper_noun
+Zumwalt,proper_noun
+
+# === WIKI APPEND MERGE (AUTO) ===
+Abandoned Gravity Farm,location
+Abandoned Mine,location
+Abandoned Muybridge Pharmaceuticals Lab,location
+Abandoned Robotics Facility,location
+Aldin Wright’s Workshop,location
+Apollo Tower,location
+Argos Extractors Mining Outpost,location
+Armistice Archives,location
+Astral Lounge,location
+Athena Tower,location
+Best Defense,location
+Broken Spear,location
+Buried Temple,location
+Cave,location
+Centaurian Arsenal,location
+Chunks – Akila City,location
+Chunks – Neon,location
+Chunks - New Atlantis,location
+Civilian Outpost,location
+CJ’s,location
+Coe Estate,location
+Coe Heritage Museum,location
+Coe Plaza,location
+Constellation Space Station LO-868,location
+Cydonia - Residential,location
+Danra,location
+Dawn’s Roost,location
+Deimos Staryard Corporate Quarters,location
+Deimos Staryard Engineering – Cydonia,location
+EIT Clothiers,location
+ENHANCE - Akila City,location
+ENHANCE – Cydonia,location
+ENHANCE - Neon,location
+ENHANCE – New Atlantis,location
+Filburn Agricultural Systems,location
+Forgotten Mech Graveyard,location
+Freestar Collective Embassy,location
+Freestar Ranger Outpost – Neon,location
+Galbank - Akila City,location
+Galbank – Neon,location
+Galbank – New Atlantis,location
+Generdyne Industries,location
+Honest Earl’s Alien Extravaganza,location
+House of the Enlightened – Akila City,location
+Industrial Outpost,location
+Interstellar Inn,location
+Jemison Mercantile,location
+Kreet Research Lab,location
+Laredo Firearms,location
+Legrande's Liquors,location
+Madame Sauvage’s Place,location
+Maoro’s Ship,location
+Mars Mech Factory,location
+Mercury Tower,location
+Midtown Minerals,location
+Mining Camp,location
+Mining Director’s Office,location
+Mining League,location
+Mining Outpost,location
+NASA Launch Facility,location
+NAT – New Atlantis Transit,location
+Neon Security HQ,location
+Neon ship services,location
+Neon Tactical,location
+Newill’s Goods,location
+Nishina Research Station,location
+Orion Tower,location
+Pilgrim’s Rest,location
+Pioneer Tower,location
+Pit Stop,location
+Reliant Medical - Cydonia,location
+Reliant Medical - Neon,location
+Reliant Medical – New Atlantis,location
+Rowland Arms,location
+Ryujin Apartments,location
+Ryujin Industries HQ,location
+Sanctum Universum – Akila City,location
+Sanctum Universum - New Atlantis,location
+Science Facility,location
+Science Outpost,location
+Shepherd’s General Store,location
+Ship Services – Cydonia,location
+Sieghart's Outfitters,location
+Sinclair’s Books,location
+Sixth Circle,location
+Sky Suite,location
+Spaceport - Akila City,location
+Spaceport - New Atlantis,location
+Spaceport Terminal,location
+SSNN – Settled Systems News Network,location
+Stoneroot Inn,location
+Stroud-Eklund Corp,location
+Stroud-Eklund Showroom – Neon,location
+TerraBrew Coffee – Akila City,location
+TerraBrew Coffee – Neon,location
+TerraBrew Coffee – New Atlantis Commercial District,location
+TerraBrew Coffee – New Atlantis Spaceport,location
+Terran Preservation Society,location
+The Emporium,location
+The Empty Nest,location
+The Hitching Post,location
+The Lock,location
+The Ragana,location
+The Rock,location
+The Siren of the Stars,location
+The Viewport,location
+The Volii Hotel,location
+Trade Authority – Neon,location
+Trade Authority Outpost – Cydonia,location
+Trade Tower,location
+UC Exchange,location
+UC Office of the Governor General,location
+UCSEC – United Colonies Security and Safety,location
+Unexplored Geophysical Feature,location
+Vanguard Exam Center,location
+Waterfall Promenade,location
+Wildtown,location
+Chemistry,skill
+Energy Weapon Dissipation,skill
+Heavy Weapon Certification,skill
+Instigation,skill
+Neurostrikes,skill
+Pistol Certification,skill
+Rifle Certification,skill
+Sniper Certification,skill
+Starship Engineering,skill
+Targeting,skill
+Xenosociology,skill
+Dad,character
+Grandma,character
+Mom,character
+Aion,location
+Al-Battani I,location
+Al-Battani II,location
+Al-Battani III,location
+Al-Battani IV,location
+Al-Battani V,location
+Al-Battani VI,location
+Al-Battani VII,location
+Al-Battani VIII,location
+Alchiba I,location
+Alchiba II,location
+Alchiba III,location
+Alchiba IV,location
+Alchiba IX,location
+Alchiba V,location
+Alchiba VI,location
+Alchiba VII,location
+Alchiba VIII,location
+Alchiba X,location
+Algorab I,location
+Algorab II,location
+Algorab III,location
+Alpha Andraste I,location
+Alpha Andraste II,location
+Alpha Andraste III,location
+Alpha Andraste IV,location
+Alpha Andraste V,location
+Alpha Andraste VI,location
+Alpha Marae I,location
+Alpha Marae II,location
+Alpha Marae III,location
+Alpha Marae IV,location
+Alpha Marae V,location
+Altair I,location
+Altair II,location
+Altair III,location
+Altair IV,location
+Altair V,location
+Ananke,location
+Andromas I,location
+Andromas II,location
+Andromas IV,location
+Andromas V,location
+Andromas VI,location
+Anselon,location
+Arachna,location
+Aranae I,location
+Aranae II,location
+Aranae III,location
+Aranae IV,location
+Aranae V,location
+Archimedes I,location
+Archimedes II,location
+Archimedes III,location
+Archimedes IV,location
+Archimedes V,location
+Archimedes VI,location
+Arcturus I,location
+Arcturus II,location
+Arcturus III,location
+Bannoc I,location
+Bannoc II,location
+Bannoc III,location
+Bannoc Secondus I,location
+Bara I,location
+Bara II,location
+Bara III,location
+Bara IV,location
+Bara V,location
+Bara VI,location
+Bara VII,location
+Bardeen I,location
+Bardeen II,location
+Bardeen III,location
+Bardeen IV,location
+Bardeen V,location
+Bardeen VI,location
+Bardeen VII,location
+Bel I,location
+Bel II,location
+Bel III,location
+Bel IV,location
+Bel V,location
+Bel VI,location
+Bel VII,location
+Bessel I,location
+Bessel II,location
+Bessel III,location
+Beta Andraste I,location
+Beta Marae I,location
+Beta Marae II,location
+Beta Marae III,location
+Beta Marae IV,location
+Beta Marae V,location
+Beta Marae VI,location
+Beta Ternion I,location
+Beta Ternion II,location
+Beta Ternion III,location
+Beta Ternion III-a,location
+Bode,location
+Bohr I,location
+Bohr II,location
+Bohr III,location
+Bohr IV,location
+Bohr V,location
+Bohr VI,location
+Bohr VII,location
+Bohr VIII,location
+Bolivar I,location
+Bondar,location
+Bonner,location
+Bradbury I,location
+Bradbury II,location
+Bradbury III,location
+Bradbury IV,location
+Bradbury V,location
+Burran,location
+Carinae I,location
+Carinae II,location
+Carinae III,location
+Carinae IV,location
+Carinae V,location
+Cassini,location
+Cassiopeia I,location
+Cassiopeia II,location
+Cassiopeia III,location
+Cassiopeia IV,location
+Celebrai I,location
+Celebrai II,location
+Celebrai III,location
+Celebrai IV,location
+Charybdis I,location
+Charybdis II,location
+Charybdis III,location
+Charybdis IV,location
+Charybdis IX,location
+Charybdis V,location
+Charybdis VI,location
+Charybdis VII,location
+Charybdis VIII,location
+Copernicus I,location
+Copernicus II,location
+Copernicus III,location
+Copernicus IV,location
+Copernicus Minor I,location
+Copernicus V,location
+Copernicus VI,location
+Copernicus VII,location
+Copernicus VIII,location
+Cthol,location
+Curie,location
+Decaran I,location
+Decaran II,location
+Decaran III,location
+Decaran IV,location
+Decaran IX,location
+Decaran V,location
+Decaran VI,location
+Decaran VII,location
+Decaran VIII,location
+Delah,location
+Delta Vulpes I,location
+Delta Vulpes II,location
+Delta Vulpes III,location
+Delta Vulpes IV,location
+Delta Vulpes V,location
+Delta Vulpes VI,location
+Delta Vulpes VII,location
+Denebola I,location
+Denebola II,location
+Denebola III,location
+Enlil I,location
+Enlil II,location
+Enlil III,location
+Enlil IV,location
+Enlil V,location
+Enlil VI,location
+Enlil VII,location
+Erebus,location
+Eridani I,location
+Eridani II,location
+Eridani III,location
+Eridani IV,location
+Eridani IX,location
+Eridani V,location
+Eridani VI,location
+Eridani VII,location
+Eridani VIII,location
+Fenn,location
+Fermi I,location
+Fermi II,location
+Fermi III,location
+Fermi IV,location
+Fermi IX,location
+Fermi V,location
+Fermi VI,location
+Fermi VII,location
+Fermi VIII,location
+Fermi X,location
+Feynman I,location
+Feynman II,location
+Feynman III,location
+Feynman IV,location
+Feynman IX,location
+Feynman V,location
+Feynman VI,location
+Feynman VII,location
+Feynman VIII,location
+Foucault I,location
+Foucault II,location
+Foucault III,location
+Foucault IV,location
+Foucault V,location
+Foucault VI,location
+Foucault VII,location
+Foucault VIII,location
+Freya I,location
+Freya II,location
+Freya III,location
+Freya IV,location
+Freya IX,location
+Freya V,location
+Freya VI,location
+Freya VII,location
+Freya VIII,location
+Gaea,location
+Gamma Vulpes I,location
+Gamma Vulpes II,location
+Gamma Vulpes III,location
+Gamma Vulpes IV,location
+Gamow,location
+Groombridge I,location
+Groombridge II,location
+Groombridge III,location
+Groombridge IV,location
+Groombridge V,location
+Groombridge VI,location
+Groombridge VII,location
+Groombridge VIII,location
+Guniibuu I,location
+Guniibuu II,location
+Guniibuu III,location
+Guniibuu IV,location
+Guniibuu V,location
+Guniibuu VI,location
+Guniibuu VII,location
+Hawking I,location
+Hawking II,location
+Hawking III,location
+Hawking IV,location
+Hawking V,location
+Hawking VI,location
+Heinlein I,location
+Heinlein II,location
+Heinlein III,location
+Heinlein IV,location
+Heinlein V,location
+Heinlein VI,location
+Heinlein VII,location
+Heisenberg I,location
+Heisenberg II,location
+Heisenberg III,location
+Heisenberg IV,location
+Heisenberg IX,location
+Heisenberg V,location
+Heisenberg VI,location
+Heisenberg VII,location
+Heisenberg VIII,location
+Heisenberg X,location
+Huygens I,location
+Huygens II,location
+Huygens III,location
+Huygens IV,location
+Huygens V,location
+Huygens VI,location
+Huygens VII,location
+Huygens VIII,location
+Hyla I,location
+Hyla II,location
+Hyla III,location
+Hyla IV,location
+Hyla V,location
+Hyla VI,location
+Hyla VII,location
+Hyla VIII,location
+Indum I,location
+Indum II,location
+Indum III,location
+Indum IV,location
+Indum V,location
+Ixyll I,location
+Ixyll II,location
+Ixyll III,location
+Ixyll IV,location
+Ixyll IX,location
+Ixyll V,location
+Ixyll VI,location
+Ixyll VII,location
+Ixyll VIII,location
+Jaffa I,location
+Jaffa II,location
+Jaffa III,location
+Jaffa IV,location
+Jaffa V,location
+Jaffa VI,location
+Jaffa VII,location
+Jaffa VIII,location
+Kang I,location
+Kang II,location
+Kang III,location
+Kang IV,location
+Kang V,location
+Kang VI,location
+Kang VII,location
+Kang VIII,location
+Kapteyn I,location
+Kapteyn II,location
+Katydid I,location
+Katydid II,location
+Katydid III,location
+Kazarah,location
+Khayyam I,location
+Khayyam II,location
+Khayyam III,location
+Khayyam IV,location
+Khayyam V,location
+Khayyam VI,location
+Kumasi I,location
+Kumasi II,location
+Kumasi III,location
+Kumasi IV,location
+Kumasi IX,location
+Kumasi V,location
+Kumasi VI,location
+Kumasi VII,location
+Kumasi VIII,location
+Lantana I,location
+Lantana II,location
+Lantana III,location
+Lantana IV,location
+Lantana IX,location
+Lantana V,location
+Lantana VI,location
+Lantana VII,location
+Lantana VIII,location
+Leonis I,location
+Leonis II,location
+Leonis III,location
+Leonis IV,location
+Leonis IX,location
+Leonis V,location
+Leonis VI,location
+Leonis VII,location
+Leonis VIII,location
+Leviathan I,location
+Leviathan II,location
+Leviathan III,location
+Leviathan IV,location
+Leviathan V,location
+Leviathan VI,location
+Leviathan VII,location
+Linnaeus I,location
+Linnaeus II,location
+Linnaeus III,location
+Linnaeus IV,location
+Linnaeus V,location
+Linnaeus VI,location
+Linnaeus VII,location
+Lontrah,location
+Maal I,location
+Maal II,location
+Maal III,location
+Maal IV,location
+Maal IX,location
+Maal V,location
+Maal VI,location
+Maal VII,location
+Maal VIII,location
+Maal X,location
+Magreth,location
+Maheo I,location
+Maheo II,location
+Maheo III,location
+Maheo IV,location
+Maheo V,location
+Maheo VI,location
+Maheo VII,location
+Marduk I,location
+Marduk II,location
+Marduk III,location
+Marduk IV,location
+Marduk IX,location
+Marduk V,location
+Marduk VI,location
+Marduk VII,location
+Marduk VIII,location
+Masada I,location
+Masada II,location
+Masada III,location
+Masada IV,location
+Masada IX,location
+Masada V,location
+Masada VI,location
+Masada VII,location
+Masada VIII,location
+McClure I,location
+McClure II,location
+McClure III,location
+Moloch I,location
+Moloch II,location
+Moloch III,location
+Moloch IV,location
+Moloch V,location
+Moloch VI,location
+Moloch VII,location
+Muphrid I,location
+Muphrid II,location
+Muphrid III,location
+Muphrid IV,location
+Muphrid V,location
+Muphrid VI,location
+Muphrid VII,location
+Muphrid VIII,location
+Navaha,location
+Nemeria I,location
+Nemeria II,location
+Nemeria III,location
+Nemeria IV,location
+Nemeria V,location
+Nemeria VI,location
+Nemeria VII,location
+Nesobi,location
+Newton I,location
+Newton II,location
+Newton III,location
+Newton IV,location
+Newton V,location
+Newton VI,location
+Nikola I,location
+Nikola II,location
+Nikola III,location
+Nikola IV,location
+Nikola IX,location
+Nikola V,location
+Nikola VI,location
+Nikola VII,location
+Nikola VIII,location
+Nikola X,location
+Nirah Prime,location
+Nirvana II,location
+Nirvana III,location
+Nirvana IV,location
+Numitor,location
+Oborum I,location
+Oborum II,location
+Oborum IV,location
+Oborum Proxima I,location
+Olivas,location
+Ophion I,location
+Ourea,location
+Petria,location
+Piazzi I,location
+Piazzi II,location
+Piazzi III,location
+Piazzi IV,location
+Piazzi V,location
+Piazzi VI,location
+Piazzi VII,location
+Pluto,location
+Porrima I,location
+Porrima II,location
+Porrima III,location
+Porrima IV,location
+Porrima V,location
+Porrima VI,location
+Porrima VI-a,location
+Procyon I,location
+Procyon II,location
+Procyon III,location
+Procyon IV,location
+Procyon V,location
+Procyon VI,location
+Procyon-B I,location
+Proxima Ternion I,location
+Proxima Ternion II,location
+Proxima Ternion III,location
+Proxima Ternion IV,location
+Pup I,location
+Pyraas I,location
+Pyraas II,location
+Pyraas III,location
+Pyraas IV,location
+Pyraas V,location
+Pyraas VI,location
+Pyraas VII,location
+Pyraas VIII,location
+Rana I,location
+Rana II,location
+Rana III,location
+Rana IV,location
+Rana IX,location
+Rana V,location
+Rana VI,location
+Rana VII,location
+Rana VIII,location
+Rasalhague I,location
+Rasalhague II,location
+Rasalhague III,location
+Rasalhague IV,location
+Reva's World,location
+Rivera I,location
+Rivera II,location
+Rivera III,location
+Rivera IV,location
+Rivera V,location
+Rutherford I,location
+Rutherford II,location
+Rutherford III,location
+Rutherford IV,location
+Rutherford V,location
+Rutherford VI,location
+Sagan 1,location
+Schrodinger I,location
+Schrodinger II,location
+Schrodinger III,location
+Schrodinger IV,location
+Schrodinger V,location
+Schrodinger VI,location
+Schrodinger VII,location
+Schrodinger VIII,location
+Serpentis I,location
+Serpentis II,location
+Serpentis III,location
+Serpentis IV,location
+Serpentis V,location
+Serpentis VI,location
+Shoza I,location
+Shoza III,location
+Shoza IV,location
+Shoza IX,location
+Shoza V,location
+Shoza VI,location
+Shoza VII,location
+Shoza VIII,location
+Sirius I,location
+Sirius II,location
+Sirius III,location
+Skink,location
+Sparta I,location
+Sparta II,location
+Sparta III,location
+Sparta IV,location
+Sparta V,location
+Sparta VI,location
+Sparta VII,location
+Sparta VIII,location
+Strix I,location
+Strix II,location
+Strix III,location
+Strix IV,location
+Strix V,location
+Strix VI,location
+Sumati,location
+Syrma I,location
+Syrma II,location
+Syrma III,location
+Syrma IV,location
+Syrma V,location
+Syrma VI,location
+Syrma VII,location
+Tau Ceti I,location
+Tau Ceti II,location
+Tau Ceti III,location
+Tau Ceti IV,location
+Tau Ceti IX,location
+Tau Ceti V,location
+Tau Ceti VI,location
+Tau Ceti VII,location
+Tau Ceti VIII,location
+Tau Ceti VIII-b,location
+Ternion I,location
+Ternion II,location
+Ternion III,location
+Ternion IV,location
+Ternion IX,location
+Ternion V,location
+Ternion VI,location
+Ternion VII,location
+Ternion VIII,location
+Thanatos,location
+Tidacha I,location
+Tirna B,location
+Tirna I,location
+Tirna II,location
+Tirna III,location
+Tirna IV,location
+Tirna IX,location
+Tirna V,location
+Tirna VI,location
+Tirna VII,location
+Tirna VIII,location
+Tirna X,location
+Toliman I,location
+Toliman II,location
+Umanah,location
+Ursae Major I,location
+Ursae Major II,location
+Ursae Major III,location
+Ursae Minor I,location
+Ursae Minor II,location
+Ursae Minor III,location
+Van Maanen I,location
+Vega I,location
+Vega II,location
+Verne I,location
+Verne II,location
+Verne III,location
+Verne IV,location
+Verne V,location
+Verne VI,location
+Verne VII,location
+Volii Beta,location
+Volii Chi,location
+Volii Epsilon,location
+Volii Omega,location
+Volii Tau,location
+Washakie,location
+Xi Ophiuchi I,location
+Xi Ophiuchi II,location
+Xi Ophiuchi III,location
+Xi Ophiuchi IV,location
+XI Ophiuchi IX,location
+Xi Ophiuchi V,location
+Xi Ophiuchi VI,location
+Xi Ophiuchi VII,location
+Xi Ophiuchi VIII,location
+Zelazny I,location
+Zelazny II,location
+Zelazny III,location
+Zelazny IV,location
+Zelazny V,location
+Zelazny VI,location
+Zelazny VIII,location
+Zeta Ophiuchi I,location
+Zeta Ophiuchi II,location
+Zeta Ophiuchi III,location
+Zeta Ophiuchi IV,location
+Zeta Ophiuchi V,location
+Zeta Ophiuchi VI,location
+Zosma I,location
+Zosma II,location
+Zosma III,location
+Zosma IV,location
+Zosma V,location
+Alpha Andraste,location
+Alpha Tirna,location
+Bannoc Prime,location
+Bannoc Secondus,location
+Barnard's Star,location
+Bel,location
+Beta Andraste,location
+Beta Marae,location
+Beta Ternion,location
+Beta Tirna,location
+Bohr,location
+Cassiopea,location
+Copernicus Minor,location
+Delta Pavonis,location
+Delta Vulpes,location
+Eta Cassiopeia,location
+Hawking,location
+Hyla,location
+Kang,location
+Kapteyn's Star,location
+Lunara,location
+Maal,location
+Procyon A,location
+Procyon B,location
+Proxima Ternion,location
+Rana,location
+Apex Dust Devil Exorunner,creature
+Apex Parrothawk,creature
+Baleen Rotifer,creature
+Beetle Grazer,creature
+Beetle Scavenger,creature
+Carnasnail Scavenger,creature
+Centiskull Filterer,creature
+Centiskull Geophage,creature
+Centiskull Grazer,creature
+Coralheart Filterer,creature
+Coralheart Grazer,creature
+Coralheart Herbivore,creature
+Crocodaunt,creature
+Eggback Herbivore,creature
+Elk Crangon,creature
+Flamethorn herbivore,creature
+Flocking ankylosaurus geophage,creature
+Flocking Beetlecrab Herbivore,creature
+Flocking Cephalopod Scavenger,creature
+Flocking Coralcrawler Geophage,creature
+Flocking Glowhand Grazer,creature
+Flocking Octomaggot Grazer,creature
+Flocking Scorpion Geophage,creature
+Flocking Shardhopper Geophage,creature
+Flocking Shellephant Herbivore,creature
+Flocking Toadface Herbivore,creature
+Flocking Vuvuzelisk Grazer,creature
+Gossamer Scavenger,creature
+Grabber Herbivore,creature
+Grazing Ensifer,creature
+Herding Boneback Scavenger,creature
+Herding Bonemane Grazer,creature
+Herding Clickbeetle Grazer,creature
+Herding Coralbucket Filterer,creature
+Herding Crab Herbivore,creature
+Herding Crabfly Grazer,creature
+Herding Geckon Grazer,creature
+Herding Glider Grazer,creature
+Herding Glowback Scavenger,creature
+Herding Hippodon Scavenger,creature
+Herding Horsamander Herbivore,creature
+Herding Sailgator Herbivore,creature
+Herding Scoopback Geophage,creature
+Herding Sunflower Filterer,creature
+Herding Trihorn Goephage,creature
+Herding Wobbleback Geophage,creature
+Hunting Ankylosaurus,creature
+Hunting Brainsprout,creature
+Hunting Brainsquid,creature
+Hunting Brightcage,creature
+Hunting Cagebrain,creature
+Hunting Cephalopod,creature
+Hunting Coralcrab,creature
+Hunting Crab,creature
+Hunting Kronosaurus,creature
+Hunting Leafstrider,creature
+Hunting Sailgator,creature
+Hunting Sharkwhale,creature
+Hunting shieldshell,creature
+Hunting Toadface Stalker,creature
+Hunting Triantrler,creature
+Hunting Tuskfrog,creature
+Hunting Twistfin,creature
+Hunting Vectorback,creature
+Jacknife Geophage,creature
+Mayfly Herbivore,creature
+Millwhale Grazer,creature
+Mothwing Grazer,creature
+Nautilus Scavanger,creature
+Pack Ankylosaurus,creature
+Pack Bearclaw,creature
+Pack Cockroach,creature
+Pack Coralbug,creature
+Pack Coralbug Stalker,creature
+Pack Coralcrab Stalker,creature
+Pack Coralcrawler,creature
+Pack Crab,creature
+Pack Prong Wing Seabat,creature
+Pack Seahag,creature
+Pack Trapmaw,creature
+Pack Twintail,creature
+Pack Twistfin,creature
+Pearl Filterer,creature
+Schooling Arapaima filterer,creature
+Schooling Exowhale Filterer,creature
+Schooling Featherfin Filterer,creature
+Seahag,creature
+Sloth Grazer,creature
+Sunflower Filterer,creature
+Swarming Dragon,creature
+Toadface Grazer,creature
+Trilobite Scavenger,creature
+Tuskfrog Grazer,creature
+Adaptive frame,resource
+Aldumite Drilling Rig,resource
+Alien Jerky,resource
+Amino Acids,resource
+AMP,resource
+Anchored Immobilizers,resource
+Antibiotic Cocktail,resource
+Austenitic Manifold,resource
+Bandages,resource
+Cosmetic,resource
+Deformable Nozzle,resource
+Drilling Rig,resource
+Dust Devil Exorunner,resource
+Electron Pump,resource
+Gastronomic Delight,resource
+Gold,resource
+Grabber Filterer,resource
+Gravitic Laminate,resource
+HCn (hydrogen cyanide),resource
+HEAL PASTE,resource
+HEART+,resource
+Helical Equalizer,resource
+High-Tensile Spidroin,resource
+Indicite Wafer,resource
+Iron,resource
+Med Pack,resource
+Midnight Delight,resource
+Orange Juice of Transcendence,resource
+Patty Melt,resource
+R-COC (carbides),resource
+Synapse Alpha,resource
+Synthameat Steak,resource
+Ta'Ameya Pita,resource
+Tetrafluorides (xF4),resource
+Toast,resource
+Trilo Bites,resource
+V (vanadium),resource
+Water,resource
+Graviton Loop Array,company
+United Transport,company
+Deep Core,company
+Protectorate Systems,company
+Stroud Eklund,company
+Amun Dunn,company
+Sextant Shield Systems,company
+Shinigami,company
+Ballistic Solutions Inc,company
+Cnthonia,location
+
+# ── Skyrim / TES terms (from XLT glossario) ──────────────────────────────────
+Dragonborn,character
+Dovahkiin,character
+Alduin,character
+Paarthurnax,character
+Odahviing,character
+Durnehviir,character
+Talos,character
+Akatosh,character
+Arkay,character
+Dibella,character
+Julianos,character
+Kynareth,character
+Mara,character
+Stendarr,character
+Zenithar,character
+Azura,character
+Boethiah,character
+Clavicus Vile,character
+Hermaeus Mora,character
+Hircine,character
+Malacath,character
+Mehrunes Dagon,character
+Mephala,character
+Meridia,character
+Molag Bal,character
+Sheogorath,character
+Vaermina,character
+Nocturnal,character
+Peryite,character
+Namira,character
+Jyggalag,character
+Lorkhan,character
+Sithis,character
+Whiterun,location
+Riften,location
+Solitude,location
+Windhelm,location
+Markarth,location
+Winterhold,location
+Dawnstar,location
+Falkreath,location
+Morthal,location
+Riverwood,location
+Helgen,location
+Ivarstead,location
+Rorikstead,location
+Kynesgrove,location
+Dragon Bridge,location
+High Hrothgar,location
+Raven Rock,location
+Stonehills,location
+Tamriel,location
+Oblivion,location
+Mundus,location
+Daedra,lore
+Aedra,lore
+Stormcloaks,faction
+Thalmor,faction
+Dawnguard,faction
+Thu'um,lore
+Fus Ro Dah,lore
+Ven Gaar Nos,lore
+Redguard,lore
+Wabbajack,item
+Volendrung,item
+
+# ── Fallout terms (from XLT glossario) ───────────────────────────────────────
+Stimpak,item
+RadAway,item
+Rad-X,item
+Vault Boy,character
+Deathclaw,creature
+Enclave,faction
+Nuka-World,location
+Diamond City,location
+Goodneighbor,location
+Bunker Hill,location
+Commonwealth,location
+Wasteland,location
+Dogmeat,character
+Codsworth,character
+Vault-Tec,company
+T-45,item
+T-51,item
+T-60,item
+X-01,item
+V.A.T.S.,lore
+SPECIAL,lore
+Mirelurk,creature
+Eyebot,creature
+Robobrain,creature
+FEV,lore
+Vault 111,location
+Vault 87,location
+Vault 88,location
+Bobblehead,item
+Bottlecap,item
+Nuka-Quantum,item
+RadRoach,creature
+RadStag,creature
+Brahmin,creature
+Yao Guai,creature
+Cazador,creature
+Nightstalker,creature
+Behemoth,creature
+Mutt,creature

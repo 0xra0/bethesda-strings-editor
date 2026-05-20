@@ -216,3 +216,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ── Project-specific ──────────────────────────────────────────────────────────
+
+# Application logs
+translator.log
+
+# Backup files
+*.bak
+*.orig
+
+# Claude Code local settings (machine-specific, not for sharing)
+.claude/
+
+# Compiled Qt translations (regenerated from .ts source)
+gui/translations/*.qm
+
+# Large model files
+*.gguf
+*.bin
+*.safetensors
