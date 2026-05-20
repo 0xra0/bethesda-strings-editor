@@ -18,7 +18,7 @@ body = """
 ### {{ group }}
 {% for commit in commits %}\
 - {{ commit.message | trim | upper_first }}\
-  ([`{{ commit.id | truncate(length=7, end="") }}`]({{ remote.github.link }}/commit/{{ commit.id }}))
+  ([`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/0xra0/bethesda-strings-editor/commit/{{ commit.id }}))
 {% endfor %}
 {% endfor %}\
 """
