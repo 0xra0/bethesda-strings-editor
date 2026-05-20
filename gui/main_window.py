@@ -412,7 +412,18 @@ class MainWindow(QMainWindow):
                     logger.info("Migrated translation cache to %s", cache_path)
                 except Exception as _e:
                     logger.warning("Could not migrate translation cache: %s", _e)
-        self.translation_cache = TranslationCache(cache_path=cache_path)
+        self.translation_cache = TranslationCache(
+            cache_path=cache_path,
+            encrypt=self.settings.encrypt_cache,
+        )
+
+        # Audit log
+        from gui.audit_log import get_audit_log
+        self._audit_log = get_audit_log()
+        self._audit_log.configure(
+            path=get_config_dir() / "audit.jsonl",
+            enabled=self.settings.audit_logging,
+        )
 
         self._translation_stopping = False
 
@@ -477,6 +488,8 @@ class MainWindow(QMainWindow):
                 )
         except Exception:
             pass
+
+        self._audit_log.app_start("0.1.0")
 
     # ── Crash recovery ─────────────────────────────────────────────────────────
 
@@ -1675,6 +1688,9 @@ class MainWindow(QMainWindow):
                 self._glossary_manager.load_project_glossary(self.current_path)
             self._start_pre_estimation()
             self._offer_triplet_load(self.current_path)
+            self._audit_log.file_opened(
+                file_path, self.current_path.suffix.lower(), len(self.current_file)
+            )
 
         except Exception as e:
             logger.error(f"Failed to load: {e}", exc_info=True)
@@ -1789,6 +1805,7 @@ class MainWindow(QMainWindow):
             if self._glossary_manager:
                 self._glossary_manager.load_project_glossary(self.current_path)
             self._start_pre_estimation()
+            self._audit_log.file_opened(file_path, p.suffix.lower(), len(esp.strings))
 
         except Exception as e:
             logger.error(f"Failed to load ESP: {e}", exc_info=True)
@@ -1818,6 +1835,14 @@ class MainWindow(QMainWindow):
                 self.table_model.apply_changes_to_file(self.current_file)
                 self.current_file.save(str(self.current_path))
             self.statusBar().showMessage(self.tr("Saved successfully ✓"))
+            _count = (
+                len(self.current_file.strings)
+                if isinstance(self.current_file, EspFile)
+                else len(self.current_file)
+            )
+            self._audit_log.file_saved(
+                str(self.current_path), self.current_path.suffix.lower(), _count
+            )
         except Exception as e:
             logger.error(f"Save failed: {e}", exc_info=True)
             QMessageBox.critical(
@@ -1870,6 +1895,14 @@ class MainWindow(QMainWindow):
                 self.current_file.save(file_path)
             self.statusBar().showMessage(
                 self.tr("Saved to {filename}").format(filename=Path(file_path).name)
+            )
+            _count2 = (
+                len(self.current_file.strings)
+                if isinstance(self.current_file, EspFile)
+                else len(self.current_file)
+            )
+            self._audit_log.file_saved(
+                file_path, Path(file_path).suffix.lower(), _count2
             )
         except Exception as e:
             logger.error(f"Save failed: {e}", exc_info=True)
@@ -2013,6 +2046,12 @@ class MainWindow(QMainWindow):
 
         self._eta_start_time = time.monotonic()
         self._eta_batch_total = len(requests)
+        self._audit_log.translation_start(
+            model=self.settings.ollama_model,
+            count=len(requests),
+            source_lang=source_lang,
+            target_lang=target_lang,
+        )
         # CRITICAL FIX: Emit signal instead of direct method call
         self.translation_requested.emit(requests)
 
@@ -2275,6 +2314,10 @@ class MainWindow(QMainWindow):
 
         if self.settings.enable_cache and successful > 0:
             self.translation_cache.save()
+
+        self._audit_log.translation_complete(
+            total=successful + failed, translated=successful, errors=failed
+        )
 
         msg = self.tr("Complete: {count} successful").format(count=successful)
         if failed > 0:
@@ -3278,6 +3321,15 @@ class MainWindow(QMainWindow):
 
             save_settings(self.settings)
 
+            # Propagate audit log config
+            self._audit_log.configure(
+                path=get_config_dir() / "audit.jsonl",
+                enabled=self.settings.audit_logging,
+            )
+
+            # Log settings change (key names only, no values)
+            self._audit_log.settings_changed(list(vars(self.settings).keys()))
+
             # Apply theme if it changed
             if self.theme_manager:
                 new_theme = self.settings.theme
@@ -3298,6 +3350,18 @@ class MainWindow(QMainWindow):
                 self.translation_cache.load()
             elif not self.settings.enable_cache:
                 self.translation_cache._cache_path = None
+
+            # Propagate encryption flag (takes effect on next save)
+            if self.translation_cache._encrypt != self.settings.encrypt_cache:
+                self.translation_cache._encrypt = self.settings.encrypt_cache
+                try:
+                    from gui.secret_store import get_store
+                    _backend = get_store().backend_name()
+                except Exception:
+                    _backend = "unknown"
+                self._audit_log.cache_encryption_changed(
+                    self.settings.encrypt_cache, _backend
+                )
 
             # Update existing worker config
             enable_protection = self.settings.enable_term_protection
@@ -3371,6 +3435,7 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logger.warning(f"Failed to clear recovery snapshot: {e}")
 
+            self._audit_log.app_close()
             logger.info("Application closed")
         except Exception as e:
             logger.error(f"Error during close: {e}", exc_info=True)

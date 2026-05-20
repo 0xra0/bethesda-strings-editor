@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 18  # Increment when schema changes
+CONFIG_VERSION = 19  # Increment when schema changes
 
 
 @dataclass
@@ -54,6 +54,10 @@ class AppSettings:
     ui_language: str = "en"  # BCP-47 locale code, e.g. "en", "uk_UA", "de_DE"
     font_size: int = 0          # 0 = follow OS default; 8-24 = explicit pt size
     color_blind_mode: bool = False  # replace red/green with blue/orange in status column
+
+    # ── Security ─────────────────────────────────────────────────────
+    encrypt_cache: bool = False     # AES-256-GCM at-rest encryption for translation cache
+    audit_logging: bool = False     # append-only JSON-lines security event log
 
     # ── Behavior ─────────────────────────────────────────────────
     auto_save: bool = False
@@ -261,6 +265,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v18")
 
+    if from_version < 19:
+        data.setdefault("encrypt_cache", False)
+        data.setdefault("audit_logging", False)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v19")
+
     if from_version < CONFIG_VERSION:
         logger.warning(
             f"Config version {from_version} is older than current {CONFIG_VERSION}. "
@@ -426,6 +436,8 @@ def load_settings_qsettings() -> AppSettings:
         ui_language=_s("appearance/ui_language", "en"),
         font_size=_i("appearance/font_size", 0),
         color_blind_mode=_b("appearance/color_blind_mode", False),
+        encrypt_cache=_b("security/encrypt_cache", False),
+        audit_logging=_b("security/audit_logging", False),
         auto_save=_b("behavior/auto_save", False),
         enable_cache=_b("performance/enable_cache", True),
         max_workers=_i("performance/max_workers", 10),
@@ -455,6 +467,8 @@ def save_settings_qsettings(settings: AppSettings) -> None:
     qs.setValue("appearance/ui_language", settings.ui_language)
     qs.setValue("appearance/font_size", settings.font_size)
     qs.setValue("appearance/color_blind_mode", settings.color_blind_mode)
+    qs.setValue("security/encrypt_cache", settings.encrypt_cache)
+    qs.setValue("security/audit_logging", settings.audit_logging)
     qs.setValue("behavior/auto_save", settings.auto_save)
     qs.setValue("performance/enable_cache", settings.enable_cache)
     qs.setValue("performance/max_workers", settings.max_workers)

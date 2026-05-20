@@ -1,8 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.1] — 2026-05-20
 
 ### Added
+- **Security & Encryption**
+  - AES-256-GCM at-rest encryption for the translation cache — opt-in via Settings → Security
+  - `SecretStore` — system keyring (via `keyring` library) with PBKDF2-HMAC-SHA256 machine-key fallback for environments without a keyring daemon
+  - Security audit log — append-only JSON-lines file recording file open/save, translation batches, and settings changes; no translated text is ever written; 5 MB rotation
+  - `cryptography>=43.0` added to requirements; `keyring>=25.0` optional dependency
 - **Accessibility**
   - "High Contrast" theme — WCAG AAA black/white/cyan palette with yellow focus rings (follows Windows High Contrast convention)
   - Visible focus indicators on all interactive widgets (buttons, toolbuttons, checkboxes, tabs, list/table views) via QSS focus mixin applied to every theme
@@ -80,5 +85,5 @@ Initial public release.
 - Sphinx documentation with API reference, format specification, and architecture overview, hosted on GitHub Pages
 - git-cliff structured changelog from free-form commit messages
 
-[Unreleased]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.1.0...HEAD
+[0.1.1]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/0xra0/bethesda-strings-editor/releases/tag/v0.1.0

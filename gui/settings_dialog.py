@@ -404,6 +404,45 @@ class SettingsDialog(QDialog):
         perf_group.setLayout(perf_layout)
         layout.addWidget(perf_group)
 
+        # Security Settings
+        sec_group = QGroupBox(self.tr("Security"))
+        sec_layout = QFormLayout()
+
+        self.chk_encrypt_cache = QCheckBox(self.tr("Encrypt translation cache"))
+        self.chk_encrypt_cache.setChecked(self._settings.encrypt_cache)
+        self.chk_encrypt_cache.setToolTip(
+            self.tr(
+                "Protect the on-disk translation cache with AES-256-GCM encryption.\n"
+                "The key is stored in the system keyring or derived from the machine ID.\n"
+                "Takes effect on the next cache save."
+            )
+        )
+        sec_layout.addRow(self.chk_encrypt_cache)
+
+        self.chk_audit_log = QCheckBox(self.tr("Enable security audit log"))
+        self.chk_audit_log.setChecked(self._settings.audit_logging)
+        self.chk_audit_log.setToolTip(
+            self.tr(
+                "Write a JSON-lines audit log of security-relevant events\n"
+                "(file open/save, translation batches, settings changes).\n"
+                "No translated text is ever recorded."
+            )
+        )
+        sec_layout.addRow(self.chk_audit_log)
+
+        # Show which keyring backend is active (informational)
+        try:
+            from gui.secret_store import get_store
+            _backend = get_store().backend_name()
+        except Exception:
+            _backend = self.tr("unavailable")
+        lbl_keyring = QLabel(self.tr("Key storage: {backend}").format(backend=_backend))
+        lbl_keyring.setStyleSheet("color: palette(mid); font-size: 11px;")
+        sec_layout.addRow(lbl_keyring)
+
+        sec_group.setLayout(sec_layout)
+        layout.addWidget(sec_group)
+
         # Keyboard Shortcuts
         if self._keyboard_manager is not None:
             layout.addWidget(self._build_shortcuts_section())
@@ -548,8 +587,14 @@ class SettingsDialog(QDialog):
             QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
+            removed = len(self._translation_cache)
             self._translation_cache.clear()
             self._translation_cache.save()
+            try:
+                from gui.audit_log import get_audit_log
+                get_audit_log().cache_cleared(removed)
+            except Exception:
+                pass
             QMessageBox.information(self, self.tr("Cache"), self.tr("Translation cache cleared."))
 
     @Slot()
@@ -595,6 +640,8 @@ class SettingsDialog(QDialog):
         settings.enable_cache = self.chk_enable_cache.isChecked()
         settings.max_workers = self.spin_max_workers.value()
         settings.tm_fuzzy_max_score = self._tm_pct_to_score(self.slider_tm_fuzzy.value())
+        settings.encrypt_cache = self.chk_encrypt_cache.isChecked()
+        settings.audit_logging = self.chk_audit_log.isChecked()
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
 

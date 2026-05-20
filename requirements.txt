@@ -1,2 +1,4 @@
 PySide6>=6.6
 requests>=2.31
+cryptography>=43.0
+keyring>=25.0  # optional — falls back to encrypted file store if unavailable
