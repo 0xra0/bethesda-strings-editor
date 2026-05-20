@@ -34,7 +34,6 @@ class AppSettings:
     # ── Ollama ───────────────────────────────────────────────────
     ollama_url: str = "http://localhost:11434"
     ollama_model: str = "translategemma3-st"
-    qa_fix_model: str = ""  # Model used for QA retranslation; empty = same as ollama_model
     ollama_num_predict: int = 4096
     ollama_num_ctx: int = 16384
 
@@ -220,7 +219,7 @@ def _migrate_config(data: dict, from_version: int) -> dict:
 
     if from_version < 13:
         data["config_version"] = CONFIG_VERSION
-        data.setdefault("qa_fix_model", "")
+        data.pop("qa_fix_model", None)
         logger.info("Migrated config to v13")
 
     if from_version < 14:

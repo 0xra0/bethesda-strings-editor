@@ -168,38 +168,6 @@ class OllamaWorker(QObject):
                 "<|model|>",
             ],
         },
-        # MamayLM-Gemma-3-12B-IT — Ukrainian-specialist model (INSAIT Institute).
-        # Purpose-built for Ukrainian via continuous pre-training; outperforms Qwen2.5-72B
-        # and LLaMA-3.1-70B on Ukrainian benchmarks.
-        # Used as the quality-report retranslation model: second-pass for strings that
-        # failed QA (EMPTY_TRANSLATION, UNTRANSLATED, SOURCE_LANGUAGE_LEAK, tag errors).
-        # ~8-9 GB Q4_K_M — fits in 32 GB RAM alongside the OS, allowing 4 parallel workers.
-        "mamaylm-qr": {
-            "temperature": 0.15,
-            "num_predict": 512,
-            "num_ctx": 4096,      # 4096 covers all Bethesda strings; 4× smaller KV cache than 27B
-            "top_k": 40,
-            "top_p": 0.92,
-            "min_p": 0.03,
-            "repeat_penalty": 1.07,
-            "repeat_last_n": 256,
-            "recommended_quality": 8,
-            "timeout": 180,       # 12B is ~2× faster than 27B on CPU
-            "max_concurrent": 4,
-            "stops": [
-                "<end_of_turn>",
-                "<start_of_turn>",
-                "user:",
-                "model:",
-                "<|user|>",
-                "<|model|>",
-                "Translation:",
-                "Переклад:",
-                "Ukrainian:",
-                "Note:",
-                "Примітка:",
-            ],
-        },
         # Google TranslateGemma 27B IT — official Google translation-specialized model.
         # Uses the exact user-turn instruction format extracted from the GGUF's embedded
         # tokenizer.chat_template (no system turn; language pair hardcoded in TEMPLATE).

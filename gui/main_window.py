@@ -2995,7 +2995,7 @@ class MainWindow(QMainWindow):
                     protect_english_text=protect_english,
                     glossary_snippet=glossary_snippet,
                     retry_hint=retry_hint,
-                    model_override=self.settings.qa_fix_model or "",
+                    model_override="",
                 )
             )
 

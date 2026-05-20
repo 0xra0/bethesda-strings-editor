@@ -29,13 +29,6 @@ class SettingsDialog(QDialog):
     SUPPORTED_MODELS = [
         'translategemma3-st',
         'translategemma3-st-2',
-        'mamaylm-qr',
-    ]
-    # Models that support a full system prompt + retry_hint injection.
-    # TranslateGemma variants use a custom "To Ukrainian:" anchor format with
-    # no system turn, so they are excluded from the QA Fix model list.
-    QA_FIX_MODELS = [
-        'mamaylm-qr',
     ]
 
 
@@ -110,26 +103,10 @@ class SettingsDialog(QDialog):
         self.ollama_model.setToolTip(
             self.tr(
                 "translategemma3-st: Fine-tuned for Starfield Ukrainian localization\n"
-                "translategemma3-st-2: Higher quality, typically slower\n"
-                "mamaylm-qr: Ukrainian-specialist 12B model for QA retranslation"
+                "translategemma3-st-2: Higher quality, typically slower"
             )
         )
         ollama_layout.addRow(self.tr("Model:"), self.ollama_model)
-
-        self.qa_fix_model = QComboBox()
-        self.qa_fix_model.addItems([""] + self.QA_FIX_MODELS)
-        self.qa_fix_model.setEditable(False)
-        current_qa = self._settings.qa_fix_model if hasattr(self._settings, "qa_fix_model") else ""
-        self.qa_fix_model.setCurrentText(current_qa)
-        self.qa_fix_model.setToolTip(
-            self.tr(
-                "Model used when retranslating strings from the Quality Check dialog.\n"
-                "Leave empty to use the same model as above.\n"
-                "Recommended: mamaylm-qr — Ukrainian-specialist 12B model,\n"
-                "purpose-built for fixing EMPTY_TRANSLATION and UNTRANSLATED issues."
-            )
-        )
-        ollama_layout.addRow(self.tr("QA Fix Model:"), self.qa_fix_model)
 
         self.spin_num_predict = QSpinBox()
         self.spin_num_predict.setRange(64, 8192)
@@ -536,7 +513,6 @@ class SettingsDialog(QDialog):
         """Apply dialog values to the given AppSettings instance."""
         settings.ollama_url = self.ollama_url.text().rstrip('/')
         settings.ollama_model = self.ollama_model.currentText()
-        settings.qa_fix_model = self.qa_fix_model.currentText()
         settings.ollama_num_predict = self.spin_num_predict.value()
         settings.ollama_num_ctx = self.spin_num_ctx.value()
         settings.ollama_num_thread = self.spin_num_thread.value()
