@@ -263,7 +263,8 @@ class GlossaryEditorDialog(QDialog):
     def _clone_glossary(gloss: Glossary) -> Glossary:
         clone = Glossary(gloss.path, label=gloss.label)
         for e in gloss.entries:
-            clone.add_entry(copy.deepcopy(e))
+            clone.add_entry(copy.deepcopy(e), _rebuild=False)
+        clone._rebuild_search_index()
         return clone
 
     def _current_glossary(self) -> Glossary:

@@ -146,9 +146,10 @@ class Glossary:
 
     # ── CRUD ───────────────────────────────────────────────────────────────────
 
-    def add_entry(self, entry: GlossaryEntry) -> None:
+    def add_entry(self, entry: GlossaryEntry, _rebuild: bool = True) -> None:
         self._entries[entry.id] = entry
-        self._rebuild_search_index()
+        if _rebuild:
+            self._rebuild_search_index()
 
     def update_entry(self, entry: GlossaryEntry) -> None:
         self._entries[entry.id] = entry
