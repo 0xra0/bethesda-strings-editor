@@ -28,9 +28,10 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
+          cache-dependency-path: requirements.txt
 
       - name: Install dependencies
-        run: pip install PySide6 requests pyinstaller
+        run: pip install -r requirements.txt pyinstaller
 
       - name: Compile Qt translations
         shell: bash
