@@ -1,7 +1,7 @@
 """
 Handler for xTranslator SST XML files.
 
-xTranslator XML format (XMLExportbase / XMLImportbase in TESVT_XMLFunc.pas):
+xTranslator XML format (XMLExportbase / XMLImportbase in TESVT_XMLFunc.pas)::
 
     <SSTXMLRessources>
       <Params>
@@ -22,12 +22,13 @@ xTranslator XML format (XMLExportbase / XMLImportbase in TESVT_XMLFunc.pas):
     </SSTXMLRessources>
 
 Key format details (from Pascal source):
-- Root:    SSTXMLRessources
-- Entries: Content/String  (NOT Entry, NOT Rec)
-- List:    0=.strings  1=.dlstrings  2=.ilstrings
-- sID:     hex string, no 0x prefix, minimum 6 digits
-- Partial: absent → translated, "1" → incompleteTrans, "2" → lockedTrans
-- Source:  original text in source language (primary match key in xTranslator)
+
+- Root: ``SSTXMLRessources``
+- Entries: ``Content/String`` (NOT Entry, NOT Rec)
+- List: 0=.strings 1=.dlstrings 2=.ilstrings
+- sID: hex string, no 0x prefix, minimum 6 digits
+- Partial: absent=translated, "1"=incompleteTrans, "2"=lockedTrans
+- Source: original text in source language (primary match key in xTranslator)
 - Dest:    translated text (the value we want)
 
 Matching strategy (mirrors xTranslator behaviour):
