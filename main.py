@@ -13,6 +13,7 @@ except ImportError:
     __version__ = "dev"
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QLocale, Qt, QTranslator
+from PySide6.QtGui import QFont
 from gui.main_window import MainWindow
 from gui.theme_manager import ThemeManager
 from gui.app_settings import load_settings, apply_theme, get_config_path
@@ -97,6 +98,12 @@ def main():
     translator = QTranslator()
     locale_code = settings.ui_language  # BCP-47, e.g. "uk_UA", "de_DE", "en"
     _load_translator(app, translator, locale_code)
+
+    # Apply user font size (0 = OS default; 8-24 = explicit pt size)
+    if settings.font_size > 0:
+        base_font = QFont()
+        base_font.setPointSize(settings.font_size)
+        app.setFont(base_font)
 
     window = MainWindow(settings=settings, theme_manager=theme_manager)
 

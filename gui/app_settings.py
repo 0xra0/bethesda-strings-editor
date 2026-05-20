@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 17  # Increment when schema changes
+CONFIG_VERSION = 18  # Increment when schema changes
 
 
 @dataclass
@@ -52,6 +52,8 @@ class AppSettings:
     # ── Appearance ───────────────────────────────────────────────
     theme: str = "Slate"
     ui_language: str = "en"  # BCP-47 locale code, e.g. "en", "uk_UA", "de_DE"
+    font_size: int = 0          # 0 = follow OS default; 8-24 = explicit pt size
+    color_blind_mode: bool = False  # replace red/green with blue/orange in status column
 
     # ── Behavior ─────────────────────────────────────────────────
     auto_save: bool = False
@@ -253,6 +255,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v17: ui_language=%s", data["ui_language"])
 
+    if from_version < 18:
+        data.setdefault("font_size", 0)
+        data.setdefault("color_blind_mode", False)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v18")
+
     if from_version < CONFIG_VERSION:
         logger.warning(
             f"Config version {from_version} is older than current {CONFIG_VERSION}. "
@@ -416,6 +424,8 @@ def load_settings_qsettings() -> AppSettings:
         protected_terms_file=_s("protection/terms_file", ""),
         theme=_s("appearance/theme", "Slate"),
         ui_language=_s("appearance/ui_language", "en"),
+        font_size=_i("appearance/font_size", 0),
+        color_blind_mode=_b("appearance/color_blind_mode", False),
         auto_save=_b("behavior/auto_save", False),
         enable_cache=_b("performance/enable_cache", True),
         max_workers=_i("performance/max_workers", 10),
@@ -443,6 +453,8 @@ def save_settings_qsettings(settings: AppSettings) -> None:
     qs.setValue("protection/terms_file", settings.protected_terms_file)
     qs.setValue("appearance/theme", settings.theme)
     qs.setValue("appearance/ui_language", settings.ui_language)
+    qs.setValue("appearance/font_size", settings.font_size)
+    qs.setValue("appearance/color_blind_mode", settings.color_blind_mode)
     qs.setValue("behavior/auto_save", settings.auto_save)
     qs.setValue("performance/enable_cache", settings.enable_cache)
     qs.setValue("performance/max_workers", settings.max_workers)

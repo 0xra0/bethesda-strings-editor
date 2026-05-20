@@ -354,6 +354,80 @@ QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; background: no
 QToolTip { background-color: #073642; color: #839496; border: 1px solid #586e75; border-radius: 4px; padding: 4px 8px; }
 """
 
+THEMES["High Contrast"] = """
+/* High Contrast — WCAG AAA, ≥7:1 contrast ratio throughout.
+   Yellow focus ring follows Windows High Contrast accessibility convention. */
+QMainWindow, QDialog, QWidget { background-color: #000000; color: #ffffff; }
+QMenuBar { background-color: #000000; color: #ffffff; border-bottom: 2px solid #ffffff; }
+QMenuBar::item:selected { background-color: #1aebff; color: #000000; }
+QMenu { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; }
+QMenu::item:selected { background-color: #1aebff; color: #000000; }
+QToolBar { background-color: #000000; border-bottom: 2px solid #ffffff; spacing: 4px; }
+QToolBar QToolButton { color: #ffffff; border: 1px solid #ffffff; border-radius: 2px; padding: 2px 6px; }
+QToolBar QToolButton:hover { background-color: #1aebff; color: #000000; border-color: #1aebff; }
+QToolBar QToolButton:focus { border: 3px solid #ffff00; }
+QStatusBar { background-color: #000000; color: #ffffff; border-top: 2px solid #ffffff; }
+QTableView { background-color: #000000; color: #ffffff; gridline-color: #ffffff; selection-background-color: #1aebff; selection-color: #000000; alternate-background-color: #0d0d0d; border: 2px solid #ffffff; }
+QTableView:focus { border: 3px solid #ffff00; }
+QTableView::item { padding: 4px; }
+QTableView::item:focus { border: 2px solid #ffff00; }
+QHeaderView::section { background-color: #000000; color: #ffffff; padding: 4px; border: none; border-right: 2px solid #ffffff; border-bottom: 2px solid #ffffff; font-weight: bold; }
+QPushButton { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; border-radius: 2px; padding: 6px 12px; }
+QPushButton:hover { background-color: #ffffff; color: #000000; }
+QPushButton:focus { border: 3px solid #ffff00; }
+QPushButton:pressed { background-color: #1aebff; color: #000000; }
+QPushButton:disabled { color: #767676; border-color: #767676; }
+QPushButton[primary="true"] { background-color: #1aebff; color: #000000; border-color: #1aebff; font-weight: bold; }
+QPushButton[primary="true"]:focus { border: 3px solid #ffff00; }
+QLineEdit, QComboBox, QSpinBox { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; border-radius: 2px; padding: 4px 8px; }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border: 3px solid #ffff00; }
+QComboBox QAbstractItemView { background-color: #000000; color: #ffffff; selection-background-color: #1aebff; selection-color: #000000; border: 2px solid #ffffff; }
+QProgressBar { border: 2px solid #ffffff; border-radius: 2px; text-align: center; background-color: #000000; color: #ffffff; }
+QProgressBar::chunk { background-color: #1aebff; border-radius: 0; }
+QCheckBox, QRadioButton { color: #ffffff; spacing: 6px; }
+QCheckBox::indicator, QRadioButton::indicator { width: 20px; height: 20px; background-color: #000000; border: 2px solid #ffffff; border-radius: 2px; }
+QCheckBox::indicator:checked { background-color: #1aebff; border-color: #1aebff; }
+QCheckBox::indicator:focus, QRadioButton::indicator:focus { border: 3px solid #ffff00; }
+QRadioButton::indicator { border-radius: 10px; }
+QLabel { color: #ffffff; }
+QGroupBox { background-color: #0d0d0d; border: 2px solid #ffffff; border-radius: 2px; margin-top: 8px; padding-top: 16px; }
+QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 6px; color: #ffffff; font-weight: bold; }
+QTextEdit { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; border-radius: 2px; }
+QTextEdit:focus { border: 3px solid #ffff00; }
+QScrollArea { background-color: #000000; border: none; }
+QSplitter::handle { background-color: #ffffff; width: 2px; height: 2px; }
+QListWidget { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; }
+QListWidget::item { padding: 4px; border-bottom: 1px solid #333333; }
+QListWidget::item:selected { background-color: #1aebff; color: #000000; }
+QListWidget::item:focus { border: 2px solid #ffff00; }
+QScrollBar:vertical { background-color: #000000; width: 14px; margin: 0; border: 1px solid #ffffff; }
+QScrollBar::handle:vertical { background-color: #ffffff; min-height: 24px; }
+QScrollBar::handle:vertical:hover { background-color: #1aebff; }
+QScrollBar:horizontal { background-color: #000000; height: 14px; margin: 0; border: 1px solid #ffffff; }
+QScrollBar::handle:horizontal { background-color: #ffffff; min-width: 24px; }
+QScrollBar::handle:horizontal:hover { background-color: #1aebff; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; background: none; border: none; }
+QTableWidget { background-color: #000000; color: #ffffff; gridline-color: #ffffff; selection-background-color: #1aebff; selection-color: #000000; alternate-background-color: #0d0d0d; }
+QToolTip { background-color: #000000; color: #ffffff; border: 2px solid #ffffff; padding: 4px 8px; }
+"""
+
+# ─── Focus indicator mixin (appended to every theme) ───────────────
+# Qt QSS does not support 'outline'; focus is conveyed via border changes.
+# These rules give ALL interactive widgets a visible focus ring that meets
+# WCAG 2.1 SC 2.4.7 (visible focus indicator).
+_FOCUS_MIXIN = """
+QPushButton:focus { border: 2px solid palette(highlight); }
+QToolButton:focus { border: 2px solid palette(highlight); }
+QAbstractItemView:focus { border: 2px solid palette(highlight); }
+QCheckBox:focus { border: 1px dashed palette(highlight); border-radius: 3px; padding: 1px; }
+QRadioButton:focus { border: 1px dashed palette(highlight); border-radius: 3px; padding: 1px; }
+QTabBar::tab:focus { border-bottom: 3px solid palette(highlight); }
+"""
+
+for __n, __q in list(THEMES.items()):
+    if __n != "High Contrast":   # HC already has explicit focus rules
+        THEMES[__n] = __q.rstrip() + "\n" + _FOCUS_MIXIN
+
 
 # ─── Theme manager ─────────────────────────────────────────────────
 
@@ -442,6 +516,7 @@ class ThemeManager:
             "Catppuccin": QCoreApplication.translate("ThemeManager", "Warm dark theme with blue selection"),
             "Light": QCoreApplication.translate("ThemeManager", "Clean light theme with blue accents"),
             "Solarized Dark": QCoreApplication.translate("ThemeManager", "Low-contrast dark, optimized for readability"),
+            "High Contrast": QCoreApplication.translate("ThemeManager", "WCAG AAA black/white/cyan theme for visually impaired users"),
         }
         desc = descriptions.get(name)
         if desc:

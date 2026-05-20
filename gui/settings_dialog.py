@@ -239,6 +239,31 @@ class SettingsDialog(QDialog):
             theme_layout.addRow(self.tr("Interface Language:"), self.combo_ui_lang)
             theme_layout.addRow(lang_note)
 
+            # Font size
+            self.spin_font_size = QSpinBox()
+            self.spin_font_size.setRange(0, 24)
+            self.spin_font_size.setSpecialValueText(self.tr("OS default"))
+            self.spin_font_size.setSuffix(self.tr(" pt"))
+            self.spin_font_size.setValue(self._settings.font_size)
+            self.spin_font_size.setToolTip(
+                self.tr("Set 0 to follow the OS font size. Changes apply after restart.")
+            )
+            self.spin_font_size.setAccessibleName(self.tr("Interface font size"))
+            theme_layout.addRow(self.tr("Font Size:"), self.spin_font_size)
+
+            # Color-blind mode
+            self.chk_color_blind = QCheckBox(self.tr("Color-blind friendly status colors"))
+            self.chk_color_blind.setChecked(self._settings.color_blind_mode)
+            self.chk_color_blind.setToolTip(
+                self.tr(
+                    "Replace green/red status indicators with blue/orange.\n"
+                    "Improves visibility for deuteranopia (red-green color blindness).\n"
+                    "Status symbols (✓ ⚠ ✗) always convey state regardless of color."
+                )
+            )
+            self.chk_color_blind.setAccessibleName(self.tr("Color-blind mode"))
+            theme_layout.addRow(self.chk_color_blind)
+
             # Theme action buttons
             theme_btn_layout = QHBoxLayout()
             self.btn_manage_themes = QPushButton(self.tr("Manage Themes..."))
@@ -565,6 +590,8 @@ class SettingsDialog(QDialog):
         settings.protected_terms_file = self.terms_file_path.text()
         settings.theme = self.get_selected_theme()
         settings.ui_language = self.combo_ui_lang.currentData()
+        settings.font_size = self.spin_font_size.value()
+        settings.color_blind_mode = self.chk_color_blind.isChecked()
         settings.enable_cache = self.chk_enable_cache.isChecked()
         settings.max_workers = self.spin_max_workers.value()
         settings.tm_fuzzy_max_score = self._tm_pct_to_score(self.slider_tm_fuzzy.value())

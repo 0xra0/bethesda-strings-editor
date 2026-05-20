@@ -53,6 +53,13 @@ class StringTableModel(QAbstractTableModel):
         self._diff_data: Dict[int, str] = {}
         self._quality_data: Dict[int, str] = {}   # row_index → severity string
         self._pre_est_data: Dict[int, Any] = {}   # row_index → ComplexityReport
+        self._color_blind_mode: bool = False
+
+    def set_color_blind_mode(self, enabled: bool) -> None:
+        """Switch between default red/green and color-blind-friendly blue/orange palette."""
+        if self._color_blind_mode != enabled:
+            self._color_blind_mode = enabled
+            self.layoutChanged.emit()
 
     def load_from_esp_file(self, esp: EspFile, encoding: str = "utf-8", locale: Optional[str] = None):
         """Populate model from an EspFile (ESP/ESM plugin)."""
@@ -385,23 +392,27 @@ class StringTableModel(QAbstractTableModel):
                 return base
 
         elif role == Qt.ForegroundRole:
+            # Color-blind mode: replace green→blue, red→orange for deuteranopia safety.
+            # Symbols (✓/⚠/✗) already distinguish states without color.
+            ok_col  = QColor("#2563eb") if self._color_blind_mode else QColor("#22c55e")
+            err_col = QColor("#ea580c") if self._color_blind_mode else QColor("#dc2626")
             if col_name == "Status":
                 if row_data["status"] == "translated":
                     q = self._quality_data.get(row)
                     if q == "error":
-                        return QColor("#dc2626")
+                        return err_col
                     if q == "warning":
                         return QColor("#d97706")
-                    return QColor("#22c55e")
+                    return ok_col
                 elif row_data["status"] == "error":
-                    return QColor("#ef4444")
+                    return err_col
                 elif row_data["status"] == "pending":
                     est = self._pre_est_data.get(row)
                     if est is not None:
                         if est.level == "hard":
-                            return QColor("#ef4444")   # red
+                            return err_col
                         if est.level == "medium":
-                            return QColor("#f59e0b")   # amber
+                            return QColor("#f59e0b")   # amber — same for both modes
             elif col_name == "Translated" and not row_data.get("translated"):
                 return QColor("#9ca3af")
 
@@ -412,8 +423,39 @@ class StringTableModel(QAbstractTableModel):
                     font.setFamily("DejaVu Sans Mono")
                 else:
                     font.setFamily("Segoe UI")
-                font.setPointSize(9)
+                # Inherit app font size so the user-configured size is respected
+                app_pt = QApplication.font().pointSize()
+                font.setPointSize(app_pt if app_pt > 0 else 9)
                 return font
+
+        elif role == Qt.AccessibleTextRole:
+            # Screen readers (AT-SPI2 on Linux, MSAA/UIA on Windows) read this
+            # instead of the raw display text, giving meaningful descriptions.
+            if col_name == "Status":
+                status = row_data["status"]
+                q = self._quality_data.get(row)
+                if status == "translated":
+                    if q == "error":
+                        return self.tr("Translated — quality error")
+                    if q == "warning":
+                        return self.tr("Translated — quality warning")
+                    return self.tr("Translated — OK")
+                if status == "pending":
+                    est = self._pre_est_data.get(row)
+                    if est is not None:
+                        return self.tr("Pending — difficulty: {level}").format(
+                            level=est.level
+                        )
+                    return self.tr("Pending")
+                if status == "error":
+                    return self.tr("Translation error")
+            elif col_name == "ID":
+                return self.tr("String ID: {id}").format(id=row_data["id"])
+            elif col_name == "Original":
+                return self.tr("Original: {text}").format(text=row_data["original"])
+            elif col_name == "Translated":
+                t = row_data.get("translated", "")
+                return self.tr("Translation: {text}").format(text=t) if t else self.tr("Not translated")
 
         elif role == Qt.TextAlignmentRole:
             if col_name in ["ID", "Length", "Offset"]:

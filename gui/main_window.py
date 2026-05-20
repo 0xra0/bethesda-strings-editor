@@ -759,6 +759,7 @@ class MainWindow(QMainWindow):
             """
         )
         self.table_model = StringTableModel()
+        self.table_model.set_color_blind_mode(self.settings.color_blind_mode)
         self.table_view.setModel(self.table_model)
 
         # Live stats: refresh on any data or layout change
@@ -3317,6 +3318,9 @@ class MainWindow(QMainWindow):
                     long_string_action=self.settings.long_string_action,
                 )
                 self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
+            # Propagate color-blind mode to the table model immediately
+            self.table_model.set_color_blind_mode(self.settings.color_blind_mode)
+
             self.statusBar().showMessage("Settings updated")
 
             # Update UI to reflect new settings
