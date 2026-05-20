@@ -1,6 +1,7 @@
 {
     "pythonVersion": "3.11",
     "typeCheckingMode": "standard",
+    "exclude": ["scripts/"],
     "reportAttributeAccessIssue": "none",
     "reportCallIssue": "none",
     "reportIncompatibleMethodOverride": "none"
