@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
-from bethesda_strings import BethesdaStringFile, EncodingConverter, StringDataObject
+from bethesda_strings import BethesdaStringFile, EncodingConverter
 from bethesda_strings.esp_handler import EspFile
 
 logger = logging.getLogger(__name__)

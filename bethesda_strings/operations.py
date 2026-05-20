@@ -24,7 +24,7 @@ def create_length_filter(min_length: int, max_length: Optional[int] = None) -> F
 def create_prefix_filter(prefix: str, encoding: str = 'utf-8') -> FilterFunction:
     """Create a filter function that matches strings starting with a prefix."""
     prefix_bytes = prefix.encode(encoding)
-    
+
     def filter_func(s: StringDataObject) -> bool:
         data = s.string_array
         # Skip length prefix for dlstrings/ilstrings
@@ -54,20 +54,20 @@ def create_case_transform_modification(transform: str = 'upper') -> Modification
         start = 4 if (s and s.has_length_prefix) else 0
         end = -1 if string_array and string_array[-1] == 0 else None
         text_bytes = bytes(string_array[start:end])
-        
+
         # Decode, transform, re-encode
         try:
             text = text_bytes.decode('utf-8')
         except UnicodeDecodeError:
             text = text_bytes.decode('windows-1252', errors='replace')
-        
+
         if transform == 'upper':
             text = text.upper()
         elif transform == 'lower':
             text = text.lower()
         elif transform == 'title':
             text = text.title()
-        
+
         encoded = text.encode('utf-8') + b'\x00'
         if s and s.has_length_prefix:
             length = len(encoded)

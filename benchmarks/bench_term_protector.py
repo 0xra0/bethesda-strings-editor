@@ -236,7 +236,7 @@ def bench_sort_order_correctness() -> None:
         print(f"  WARNING: 'UC' was protected standalone {len(standalone_uc)} time(s) "
               f"— check sort order")
     else:
-        print(f"  'UC' not tokenised standalone — multi-word terms took priority  ✓")
+        print("  'UC' not tokenised standalone — multi-word terms took priority  ✓")
 
 
 # ── Summary ───────────────────────────────────────────────────────────────────

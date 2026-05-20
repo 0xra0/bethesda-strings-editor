@@ -1,0 +1,53 @@
+[project]
+name = "bethesda-strings-editor"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["PySide6>=6.6", "requests>=2.31"]
+
+# ── Ruff ────────────────────────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py310"
+line-length = 110
+exclude = [".git", "__pycache__", "dist", "build", ".venv", "venv", "data"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (unused imports, undefined names, etc.)
+]
+ignore = [
+    # Stylistic choices that are intentional in this codebase:
+    "E741",   # ambiguous variable name (l/O/I) — common single-letter in comprehensions
+    "E731",   # lambda assignment — used for concise predicate callbacks in Qt signal wiring
+    "E501",   # line too long — CSS/QSS theme strings and Qt file-filter strings can't be wrapped
+]
+
+[tool.ruff.lint.per-file-ignores]
+# sys.path manipulation before imports is intentional in CLI scripts
+"scripts/*" = ["E402", "F841"]
+# QApplication must be assigned to a local to stay alive during Qt tests
+"tests/*"      = ["F841"]
+"benchmarks/*" = ["F841"]
+
+# ── mypy ────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true   # PySide6 stubs exist but some APIs vary by version
+check_untyped_defs = true
+warn_unused_configs = true
+no_implicit_optional = true
+strict_optional = true
+# Qt return values are typed Any in many places; warn_return_any is too noisy
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+# PySide6 has its own stubs; let mypy defer entirely to them rather than
+# re-checking every signal/slot override against the base class signature.
+module = ["PySide6.*", "shiboken6.*"]
+ignore_errors = true
+
+# ── pytest ───────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

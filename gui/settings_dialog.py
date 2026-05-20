@@ -5,12 +5,11 @@ from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QLineEdit, QComboBox, QSpinBox, QCheckBox,
     QPushButton, QDialogButtonBox, QGroupBox, QLabel,
-    QMessageBox, QApplication, QFileDialog, QSlider, QTextEdit, QWidget, QScrollArea, QFrame
+    QMessageBox, QApplication, QSlider, QWidget, QScrollArea, QFrame
 )
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QKeySequence, QValidator
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QKeySequenceEdit
-from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 from gui.app_settings import AppSettings
 from gui.file_dialog_helper import get_open_filename
@@ -264,24 +263,24 @@ class SettingsDialog(QDialog):
 
         self.combo_long_action = QComboBox()
         self.combo_long_action.addItems([
-            self.tr("Translate"), 
-            self.tr("Original"), 
+            self.tr("Translate"),
+            self.tr("Original"),
             self.tr("Skip")
         ])
         # Note: We need to match the setting value, not the translated value
         # But wait, self.SUPPORTED_LANGUAGES are not translated.
         # For long_string_action, it's better to use English keys internally.
-        
+
         # Let's fix long_string_action handling
         actions = ["Translate", "Original", "Skip"]
         self.combo_long_action.clear()
         for action in actions:
             self.combo_long_action.addItem(self.tr(action), action)
-        
+
         idx = self.combo_long_action.findData(self._settings.long_string_action)
         if idx >= 0:
             self.combo_long_action.setCurrentIndex(idx)
-            
+
         self.combo_long_action.setToolTip(
             self.tr("Action to take for strings exceeding the threshold:\n"
                     "- Translate: Proceed with translation (may take long)\n"

@@ -15,7 +15,6 @@ import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from gui.diff_viewer import (
-    DiffResult,
     DiffStats,
     _compute_diff,
     _tokenise_char,

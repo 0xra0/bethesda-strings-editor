@@ -7,7 +7,6 @@ import logging
 from typing import Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
     QDialog,
     QHBoxLayout,

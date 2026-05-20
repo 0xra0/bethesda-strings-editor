@@ -26,7 +26,6 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QDockWidget,
-    QFileDialog,
     QFrame,
     QHBoxLayout,
     QLabel,
@@ -471,9 +470,11 @@ class MainWindow(QMainWindow):
 
         # System theme auto-follow (Qt 6.5+)
         try:
-            QApplication.instance().styleHints().colorSchemeChanged.connect(
-                self._on_system_color_scheme_changed
-            )
+            _app = QApplication.instance()
+            if _app is not None:
+                _app.styleHints().colorSchemeChanged.connect(
+                    self._on_system_color_scheme_changed
+                )
         except Exception:
             pass
 
@@ -2832,7 +2833,6 @@ class MainWindow(QMainWindow):
             return
 
         clean_rows = [(i, r) for i, r in translated_rows if i not in quality_errors]
-        has_errors = len(translated_rows) - len(clean_rows)
 
         source_lang = self.combo_source_lang.currentData() or "English"
         target_lang = self.combo_target_lang.currentData() or "Ukrainian"
@@ -3412,24 +3412,18 @@ class MainWindow(QMainWindow):
             target_lang = self.combo_target_lang.currentText().lower()
             encoding, fallback = EncodingConverter.get_encodings_for_locale(target_lang)
 
-            # Count translated/total
             total_count = len(self.table_model._data)
-            translated_count = sum(
-                1
-                for row in self.table_model._data
-                if row.get("translated") and row["status"] == "translated"
-            )
 
             # Export strings in tab-separated format
             exported_count = 0
             with open(file_path, "w", encoding="utf-8") as f:
                 # Write header
-                f.write(f"# Bethesda Strings Export\n")
+                f.write("# Bethesda Strings Export\n")
                 f.write(f"# Source: {self.current_path.name if self.current_path else 'unknown'}\n")
                 f.write(f"# Total strings: {total_count}\n")
                 f.write(f"# Export mode: {export_mode}\n")
-                f.write(f'# Format: 0xID\t"Original"\t"Translated"\n')
-                f.write(f"#" + "=" * 80 + "\n")
+                f.write('# Format: 0xID\t"Original"\t"Translated"\n')
+                f.write("#" + "=" * 80 + "\n")
 
                 if export_mode == "All":
                     # Export all strings with line numbers
@@ -4327,7 +4321,6 @@ class MainWindow(QMainWindow):
             self.statusBar().clearMessage()
             return
 
-        from bethesda_strings.version_diff import compute_version_diff
         entries = compute_version_diff(old_strings, new_strings, old_translation)
 
         old_name = Path(setup.old_path).name

@@ -9,7 +9,6 @@ Usage:
 Source: https://github.com/dwyl/english-words
 """
 
-import sys
 from pathlib import Path
 
 import requests

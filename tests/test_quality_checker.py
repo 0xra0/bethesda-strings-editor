@@ -3,12 +3,10 @@ Tests for QualityChecker — both existing and new checks.
 No Qt dependency; pure Python.
 """
 
-import pytest
 from gui.quality_checker import (
     AUTOFIX_CODES,
     RETRANSLATE_CODES,
     SEVERITY_ERROR,
-    SEVERITY_INFO,
     SEVERITY_WARNING,
     QualityChecker,
     QualityIssue,

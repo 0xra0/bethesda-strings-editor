@@ -14,7 +14,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from gui.term_protector import ProtectedTerm, TermProtector
+from gui.term_protector import TermProtector
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────

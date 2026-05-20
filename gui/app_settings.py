@@ -254,8 +254,6 @@ CONFIG_FILENAME = "config.json"
 
 def get_config_dir() -> Path:
     """Get the directory where the JSON config file is stored."""
-    # Use QSettings path to keep it in the same location as native settings
-    qs = QSettings("BethesdaModTools", "Bethesda Strings AI Translator")
     # QSettings stores in ~/.config/OrgName/AppName.conf (on Linux)
     # We use the same parent directory for our config.json
     qs_path = Path(os.path.expanduser("~/.config/BethesdaModTools"))

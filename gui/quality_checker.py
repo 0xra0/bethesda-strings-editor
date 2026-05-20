@@ -477,7 +477,7 @@ class QualityChecker:
                     QualityIssue(
                         severity=SEVERITY_ERROR,
                         code="MISSING_TAG",
-                        message=f"Game tag missing from translation"
+                        message="Game tag missing from translation"
                         + (f" ({short}× short)" if short > 1 else ""),
                         detail=tag,
                     )
@@ -492,7 +492,7 @@ class QualityChecker:
                     QualityIssue(
                         severity=SEVERITY_ERROR,
                         code="EXTRA_TAG",
-                        message=f"Extra game tag in translation not present in original"
+                        message="Extra game tag in translation not present in original"
                         + (f" ({extra}× extra)" if extra > 1 else ""),
                         detail=tag,
                     )

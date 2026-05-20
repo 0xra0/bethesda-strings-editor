@@ -151,7 +151,7 @@ def main(xml_path: str, report_path: str, output_path: str | None = None) -> Non
                 f"  0x{report.string_id:08X} [{', '.join(applied)}]"
             )
 
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Fixed:             {fixed_count}")
     print(f"  Not fixable:       {skipped_not_fixable}")
     print(f"  Missing in XML:    {skipped_no_elem}")

@@ -11,7 +11,7 @@ from .xml_handler import XMLHandler
 __version__ = "0.1.0"
 __all__ = [
     "BethesdaStringFile",
-    "StringDataObject", 
+    "StringDataObject",
     "FilterFunction",
     "ModificationFunction",
     "EncodingConverter",

@@ -25,7 +25,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
-    QSizePolicy,
     QSplitter,
     QTableWidget,
     QTableWidgetItem,
@@ -190,7 +189,7 @@ def build_html(reports: List[QualityReport]) -> str:
 </head>
 <body>
 """)
-    parts.append(f"<h1>Quality Report — Bethesda Strings AI Translator</h1>")
+    parts.append("<h1>Quality Report — Bethesda Strings AI Translator</h1>")
     parts.append(f'<p class="meta">Generated: {html.escape(now)}</p>')
     parts.append('<div class="summary">')
     parts.append(f'<div class="badge-box be">{errors}<br><small>Error(s)</small></div>')
@@ -202,7 +201,7 @@ def build_html(reports: List[QualityReport]) -> str:
     for idx, report in enumerate(reports, 1):
         sev = report.severity or ""
         bg = _SEV_BG.get(sev, "#f9fafb")
-        parts.append(f'<div class="card">')
+        parts.append('<div class="card">')
         parts.append(
             f'<div class="card-header" style="background:{bg}">'
             f'<span style="color:#6b7280">#{idx}</span>'
@@ -768,7 +767,9 @@ class QualityDialog(QDialog):
 
     @Slot()
     def _auto_fix_selected(self) -> None:
-        if not self._table_model or not self._checker:
+        table_model = self._table_model
+        checker = self._checker
+        if not table_model or not checker:
             return
         selected = self._selected_report_indices()
         fix_log: List[str] = []
@@ -779,20 +780,17 @@ class QualityDialog(QDialog):
             report = self._shown_reports[row]
             # Read the live translation from the table model — report.translated
             # may be stale if the string was edited or partially fixed already.
-            if (
-                self._table_model is not None
-                and 0 <= report.row_index < len(self._table_model._data)
-            ):
-                current_translated = self._table_model._data[report.row_index].get(
+            if 0 <= report.row_index < len(table_model._data):
+                current_translated = table_model._data[report.row_index].get(
                     "translated", report.translated
                 )
             else:
                 current_translated = report.translated
-            fixed, applied = self._checker.auto_fix(
+            fixed, applied = checker.auto_fix(
                 report.original, current_translated, report
             )
             if applied:
-                self._table_model.set_translated_text(report.row_index, fixed)
+                table_model.set_translated_text(report.row_index, fixed)
                 fix_log.append(
                     f"  Row {report.row_index} (0x{report.string_id:08X}): "
                     + "; ".join(applied)

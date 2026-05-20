@@ -8,7 +8,7 @@ import logging
 import re
 from typing import List
 
-from PySide6.QtCore import QItemSelectionModel, Qt, Signal
+from PySide6.QtCore import QItemSelectionModel, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
-    QSpinBox,
     QVBoxLayout,
 )
 

@@ -3,7 +3,6 @@
 Apply Ukrainian translations to uk_UA.ts for all unfinished entries.
 Run once, then compile with: ./scripts/compile_translations.sh
 """
-import re
 import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET

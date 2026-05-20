@@ -19,7 +19,6 @@ Primary use: fuzzy lookup in TranslationMemory when no exact source match exists
 
 import math
 import re
-import unicodedata
 from typing import Iterable, Optional
 
 # ── constants (mirror TESVT_RegexUtils.pas / TESVT_Const.pas) ───────────────

@@ -4,9 +4,9 @@ Dialog for creating, editing, and managing custom themes.
 from pathlib import Path
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QLineEdit, QComboBox, QTextEdit,
+    QLineEdit, QTextEdit,
     QPushButton, QDialogButtonBox, QLabel, QMessageBox,
-    QListWidget, QListWidgetItem, QSplitter, QGroupBox, QInputDialog, QWidget
+    QListWidget, QListWidgetItem, QSplitter, QInputDialog, QWidget
 )
 from PySide6.QtCore import Qt, Slot
 from gui.theme_manager import ThemeManager

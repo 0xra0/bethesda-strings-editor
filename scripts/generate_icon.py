@@ -7,7 +7,6 @@ Requires: Pillow  (pip install Pillow)
 Run from repo root:  python scripts/generate_icon.py
 """
 
-import math
 import random
 from pathlib import Path
 

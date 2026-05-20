@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QLocale, Qt, QTranslator
 from gui.main_window import MainWindow
 from gui.theme_manager import ThemeManager
-from gui.app_settings import load_settings, apply_theme, CONFIG_FILENAME, get_config_path
+from gui.app_settings import load_settings, apply_theme, get_config_path
 
 # Configure logging
 logging.basicConfig(
