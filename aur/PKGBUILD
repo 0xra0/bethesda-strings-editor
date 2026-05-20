@@ -1,0 +1,65 @@
+# Maintainer: <your-email>
+#
+# bethesda-strings-editor-bin
+# Pre-built binary from the GitHub Releases page.
+# Installs to /opt/bethesda-strings-editor with a /usr/bin wrapper.
+#
+# To build and install:
+#   git clone https://aur.archlinux.org/bethesda-strings-editor-bin.git
+#   cd bethesda-strings-editor-bin
+#   makepkg -si
+#
+# To update the sha256sum after a new release:
+#   updpkgsums   (from the pkgbuild-introspection package)
+
+pkgname=bethesda-strings-editor-bin
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="AI-assisted localization editor for Bethesda Starfield (.strings/.dlstrings/.ilstrings/ESP/ESM)"
+arch=('x86_64')
+url="https://github.com/0xra0/bethesda-strings-editor"
+license=('MIT')
+
+# The PyInstaller bundle is self-contained; no Python or Qt runtime needed.
+depends=()
+optdepends=('ollama: local AI inference server required for translation')
+
+_ghbase="https://github.com/0xra0/bethesda-strings-editor/releases/download"
+source=(
+    "${pkgname}-${pkgver}.zip::${_ghbase}/v${pkgver}/bethesda-strings-editor-linux-x64.zip"
+    "bethesda-strings-editor.desktop"
+)
+# Run `updpkgsums` to fill these in after downloading the release.
+sha256sums=(
+    'SKIP'
+    'SKIP'
+)
+
+package() {
+    # Install the PyInstaller bundle
+    install -dm755 "${pkgdir}/opt/bethesda-strings-editor"
+    cp -a bethesda-strings-editor/. "${pkgdir}/opt/bethesda-strings-editor/"
+
+    # Make sure the executable bit is set (zip may strip it)
+    chmod 755 "${pkgdir}/opt/bethesda-strings-editor/bethesda-strings-editor"
+
+    # Wrapper in $PATH
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -s /opt/bethesda-strings-editor/bethesda-strings-editor \
+          "${pkgdir}/usr/bin/bethesda-strings-editor"
+
+    # Desktop entry
+    install -Dm644 bethesda-strings-editor.desktop \
+        "${pkgdir}/usr/share/applications/bethesda-strings-editor.desktop"
+
+    # Icon (from the bundle's resources directory)
+    install -Dm644 \
+        "${pkgdir}/opt/bethesda-strings-editor/_internal/resources/app_icon.png" \
+        "${pkgdir}/usr/share/pixmaps/bethesda-strings-editor.png"
+
+    # License
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE" <<'EOF'
+MIT License — see https://github.com/0xra0/bethesda-strings-editor/blob/main/LICENSE
+EOF
+}

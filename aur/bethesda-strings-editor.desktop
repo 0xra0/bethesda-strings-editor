@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Bethesda Strings Editor
+Comment=AI-assisted localization editor for Bethesda Starfield
+Exec=/usr/bin/bethesda-strings-editor
+Icon=bethesda-strings-editor
+Type=Application
+Categories=Development;Utility;
+Keywords=localization;translation;modding;starfield;bethesda;
+StartupWMClass=bethesda-strings-editor

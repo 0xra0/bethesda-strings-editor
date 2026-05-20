@@ -7,6 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  # ── Changelog ────────────────────────────────────────────────────────────────
+  changelog:
+    name: Generate changelog
+    runs-on: ubuntu-latest
+    outputs:
+      body: ${{ steps.cliff.outputs.content }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history required by git-cliff
+
+      - uses: orhun/git-cliff-action@v4
+        id: cliff
+        with:
+          config: .cliff.toml
+          args: --latest --strip header
+        env:
+          OUTPUT: CHANGES.md
+
+  # ── Build ─────────────────────────────────────────────────────────────────────
   build:
     name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -20,11 +40,9 @@ jobs:
             artifact: bethesda-strings-editor-windows-x64.zip
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
@@ -33,12 +51,40 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt pyinstaller
 
+      - name: Inject version from git tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"   # strip leading 'v'
+          echo "__version__ = '${VERSION}'" > _version.py
+          echo "Building version ${VERSION}"
+
       - name: Compile Qt translations
         shell: bash
         run: pyside6-lrelease gui/translations/uk_UA.ts -qm gui/translations/uk_UA.qm
 
       - name: Build with PyInstaller
         run: pyinstaller bethesda_strings_editor.spec
+
+      # ── Windows code signing (optional) ──────────────────────────────────────
+      # To enable: purchase an EV code signing certificate from DigiCert or
+      # Sectigo (~$300-500/year), export it as a PFX file, and store it in
+      # GitHub Secrets as SIGNING_CERTIFICATE (base64-encoded) and
+      # SIGNING_PASSWORD.  Then uncomment the block below.
+      #
+      # - name: Sign Windows executable
+      #   if: runner.os == 'Windows' && github.event_name == 'push'
+      #   shell: pwsh
+      #   env:
+      #     SIGNING_CERT: ${{ secrets.SIGNING_CERTIFICATE }}
+      #     SIGNING_PASS: ${{ secrets.SIGNING_PASSWORD }}
+      #   run: |
+      #     $bytes = [Convert]::FromBase64String($env:SIGNING_CERT)
+      #     $pfxPath = "$env:TEMP\cert.pfx"
+      #     [IO.File]::WriteAllBytes($pfxPath, $bytes)
+      #     $exe = "dist\bethesda-strings-editor\bethesda-strings-editor.exe"
+      #     & signtool sign /fd sha256 /f $pfxPath /p $env:SIGNING_PASS `
+      #         /tr http://timestamp.digicert.com /td sha256 $exe
+      #     Remove-Item $pfxPath
 
       - name: Package (Linux)
         if: runner.os == 'Linux'
@@ -56,9 +102,10 @@ jobs:
           path: ${{ matrix.artifact }}
           retention-days: 7
 
+  # ── Release ───────────────────────────────────────────────────────────────────
   release:
     name: Create Release
-    needs: build
+    needs: [changelog, build]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
@@ -74,6 +121,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: '*.zip'
-          generate_release_notes: true
+          body: ${{ needs.changelog.outputs.body }}
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}

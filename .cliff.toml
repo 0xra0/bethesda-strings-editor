@@ -1,0 +1,49 @@
+# git-cliff configuration
+# Generates a structured changelog from commit messages without requiring
+# strict conventional-commit format.
+#
+# Usage:
+#   git-cliff --output CHANGELOG.md          # full history
+#   git-cliff v0.1.0..HEAD --output CHANGELOG.md  # since last tag
+
+[changelog]
+header = "# Changelog\n"
+body = """
+{% if version %}\
+## [{{ version }}] — {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}\
+### {{ group }}
+{% for commit in commits %}\
+- {{ commit.message | trim | upper_first }}\
+  ([`{{ commit.id | truncate(length=7, end="") }}`]({{ remote.link }}/commit/{{ commit.id }}))
+{% endfor %}
+{% endfor %}\
+"""
+footer = ""
+trim = true
+
+[git]
+conventional_commits = false
+filter_unconventional = false
+split_commits = false
+protect_breaking_commits = false
+filter_commits = false
+tag_pattern = "v[0-9].*"
+topo_order = false
+
+# Map commit message prefixes to changelog sections.
+# Falls back to "Other" for anything that doesn't match.
+commit_parsers = [
+  { message = "^[Aa]dd",                     group = "Added"   },
+  { message = "^[Ff]ix",                     group = "Fixed"   },
+  { message = "^[Rr]emove|^[Dd]elete",       group = "Removed" },
+  { message = "^[Uu]pdate|^[Ii]mprove|^[Rr]efactor|^[Cc]hange", group = "Changed" },
+  { message = ".*",                           group = "Other"   },
+]
+
+[remote.github]
+owner = "0xra0"
+repo  = "bethesda-strings-editor"
