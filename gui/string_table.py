@@ -27,6 +27,13 @@ from PySide6.QtWidgets import (
 
 from bethesda_strings import BethesdaStringFile, EncodingConverter
 from bethesda_strings.esp_handler import EspFile
+from gui.string_type_detector import (
+    StringType,
+    classify as _classify_string,
+    clear_icon_cache as _clear_icon_cache,
+    get_type_icon as _get_type_icon,
+    label_for_type as _label_for_type,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +41,10 @@ logger = logging.getLogger(__name__)
 class StringTableModel(QAbstractTableModel):
     """Model for Bethesda string data in QTableView."""
 
-    COLUMNS = ["ID", "Original", "Translated", "Length", "Offset", "Status"]
+    COLUMNS = ["ID", "Kind", "Original", "Translated", "Length", "Offset", "Status"]
 
-    # Column header overrides for ESP/ESM mode
-    _ESP_HEADERS = {0: "FormID", 3: "EDID", 4: "Type"}
+    # Column header overrides for ESP/ESM mode (indices shifted +1 after "Kind")
+    _ESP_HEADERS = {0: "FormID", 4: "EDID", 5: "Type"}
 
     # Emitted when the user manually edits a row that was already AI-translated.
     # Carries (row_index, original_source_text) so the estimator can learn.
@@ -50,9 +57,11 @@ class StringTableModel(QAbstractTableModel):
         self._locale = None
         self._mode = "strings"  # "strings" or "esp"
         self._file_ref: Optional[BethesdaStringFile] = None
+        self._file_ext: str = ""              # "strings" / "dlstrings" / "ilstrings" / "esp"
         self._diff_data: Dict[int, str] = {}
         self._quality_data: Dict[int, str] = {}   # row_index → severity string
         self._pre_est_data: Dict[int, Any] = {}   # row_index → ComplexityReport
+        self._type_cache: Dict[int, StringType] = {}  # row_index → StringType (lazy)
         self._color_blind_mode: bool = False
 
     def set_color_blind_mode(self, enabled: bool) -> None:
@@ -61,17 +70,35 @@ class StringTableModel(QAbstractTableModel):
             self._color_blind_mode = enabled
             self.layoutChanged.emit()
 
+    def invalidate_type_cache(self) -> None:
+        """Discard cached string-type icons (call after a theme change)."""
+        self._type_cache.clear()
+        _clear_icon_cache()
+        kind_col = self.COLUMNS.index("Kind")
+        self.dataChanged.emit(
+            self.index(0, kind_col),
+            self.index(len(self._data) - 1, kind_col),
+        )
+
+    def _string_type(self, row: int) -> StringType:
+        if row not in self._type_cache:
+            text = self._data[row]["original"] if row < len(self._data) else ""
+            self._type_cache[row] = _classify_string(text, self._file_ext)
+        return self._type_cache[row]
+
     def load_from_esp_file(self, esp: EspFile, encoding: str = "utf-8", locale: Optional[str] = None):
         """Populate model from an EspFile (ESP/ESM plugin)."""
         self.beginResetModel()
         self._mode = "esp"
         self._file_ref = None
+        self._file_ext = "esp"
         self._encoding = encoding
         self._locale = locale.lower() if locale else None
         self._data.clear()
         self._diff_data.clear()
         self._quality_data.clear()
         self._pre_est_data.clear()
+        self._type_cache.clear()
 
         for entry in esp.strings:
             self._data.append({
@@ -112,6 +139,7 @@ class StringTableModel(QAbstractTableModel):
         self.beginResetModel()
         self._mode = "strings"
         self._file_ref = file
+        self._file_ext = getattr(file, "file_extension", "") or ""
         self._locale = locale.lower() if locale else None
 
         # Prefer the file's own detected/overridden encoding over locale heuristic.
@@ -127,6 +155,7 @@ class StringTableModel(QAbstractTableModel):
         self._diff_data.clear()
         self._quality_data.clear()
         self._pre_est_data.clear()
+        self._type_cache.clear()
 
         for s in file.strings:
             try:
@@ -352,6 +381,26 @@ class StringTableModel(QAbstractTableModel):
 
         row_data = self._data[row]
         col_name = self.COLUMNS[col]
+
+        if col_name == "Kind":
+            if role == Qt.DisplayRole:
+                return ""   # icon only — no text
+            if role == Qt.DecorationRole:
+                st = self._string_type(row)
+                app = QApplication.instance()
+                is_dark = app is None or app.palette().base().color().lightness() < 128
+                return _get_type_icon(st, is_dark)
+            if role == Qt.ToolTipRole:
+                return _label_for_type(self._string_type(row)) or None
+            if role == Qt.AccessibleTextRole:
+                lbl = _label_for_type(self._string_type(row))
+                return f"Type: {lbl}" if lbl else "Type: unknown"
+            if role == Qt.TextAlignmentRole:
+                return Qt.AlignCenter
+            if role == Qt.SizeHintRole:
+                from PySide6.QtCore import QSize
+                return QSize(28, 0)
+            return None
 
         if role in [Qt.DisplayRole, Qt.EditRole]:
             if col_name == "ID":
@@ -663,11 +712,12 @@ class StringTableView(QTableView):
         header.setStretchLastSection(False)
 
         self.setColumnWidth(0, 100)  # ID
-        self.setColumnWidth(1, 400)  # Original
-        self.setColumnWidth(2, 400)  # Translated
-        self.setColumnWidth(3, 60)  # Length
-        self.setColumnWidth(4, 80)  # Offset
-        self.setColumnWidth(5, 50)  # Status
+        self.setColumnWidth(1, 28)   # Kind (icon)
+        self.setColumnWidth(2, 400)  # Original
+        self.setColumnWidth(3, 400)  # Translated
+        self.setColumnWidth(4, 60)   # Length
+        self.setColumnWidth(5, 80)   # Offset
+        self.setColumnWidth(6, 50)   # Status
 
         self.setItemDelegate(StringItemDelegate(self))
 
@@ -822,8 +872,9 @@ class StringTableView(QTableView):
     def resize_columns_to_content(self):
         """Auto-size columns based on content."""
         self.resizeColumnToContents(0)
-        self.setColumnWidth(1, 400)
-        self.setColumnWidth(2, 400)
+        self.setColumnWidth(1, 28)   # Kind (icon) — fixed narrow
+        self.setColumnWidth(2, 400)  # Original
+        self.setColumnWidth(3, 400)  # Translated
 
     @Slot(QModelIndex)
     def _show_context_menu(self, position):

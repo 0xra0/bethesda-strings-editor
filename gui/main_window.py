@@ -3495,6 +3495,7 @@ class MainWindow(QMainWindow):
 
                     apply_theme(QApplication.instance(), new_theme)
                     logger.info(f"Theme changed to: {new_theme}")
+                    self.table_model.invalidate_type_cache()
 
             # Reconfigure cache if enable_cache setting changed
             if (
@@ -4372,6 +4373,7 @@ class MainWindow(QMainWindow):
         from gui.app_settings import apply_theme
         apply_theme(QApplication.instance(), ThemeManager.AUTO_THEME, self.theme_manager)
         logger.info("System color scheme changed — auto theme re-applied")
+        self.table_model.invalidate_type_cache()
 
     # ── Translation auto-complete ─────────────────────────────────────────────
 
