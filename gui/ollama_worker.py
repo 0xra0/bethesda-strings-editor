@@ -171,6 +171,178 @@ def _restore_line_structure(translated: str, original_text: str) -> str:
     return result
 
 
+# ── Per-language prompt data ──────────────────────────────────────────────────
+
+# Full display name used in the "To {Language}:" user-turn prefix that
+# TranslateGemma was fine-tuned on.
+_LANG_DISPLAY: dict[str, str] = {
+    "en":     "English",
+    "de":     "German",
+    "es":     "Spanish",
+    "fr":     "French",
+    "it":     "Italian",
+    "ja":     "Japanese",
+    "pl":     "Polish",
+    "ptbr":   "Portuguese (Brazilian)",
+    "zhhans": "Chinese (Simplified)",
+    "ru":     "Russian",
+    "uk":     "Ukrainian",
+}
+
+# Rule 1 of the system prompt: target-language style / register guidance.
+_TARGET_STYLE: dict[str, str] = {
+    "de": (
+        "Write formal Standard German (Hochdeutsch). Use 'Sie' when the source is "
+        "formal, 'du' for casual dialogue. Preserve Starfield's NASApunk tone — "
+        "technical, precise, modern. Technical readouts use present tense "
+        "('Systeme normal'). Avoid unnecessary Anglicisms."
+    ),
+    "es": (
+        "Write neutral Latin-American Spanish (avoid strong regional markers). "
+        "Use 'tú' for casual address, 'usted' when the source is formal. "
+        "Technical readouts use present tense. Avoid unnecessary Anglicisms."
+    ),
+    "fr": (
+        "Write standard French (fr-FR). Use 'vous' when the source is formal, "
+        "'tu' for casual dialogue. Preserve Starfield's NASApunk tone — precise "
+        "and modern. Technical readouts use present tense ('Systèmes normaux'). "
+        "Avoid unnecessary Anglicisms."
+    ),
+    "it": (
+        "Write standard Italian appropriate to Starfield's NASApunk sci-fi tone. "
+        "Use 'lei' (formal) or 'tu' (informal) matching the source register. "
+        "Technical readouts use present tense. Avoid unnecessary Anglicisms."
+    ),
+    "ja": (
+        "Write Japanese appropriate to Starfield's sci-fi tone. "
+        "Use polite form (です/ます) for UI labels and system messages; "
+        "match the register (丁寧語/普通体) of the source for dialogue. "
+        "Use katakana for sci-fi terms and proper nouns (e.g. ニューアトランティス). "
+        "Technical readouts use present tense (システム正常)."
+    ),
+    "pl": (
+        "Write standard Polish with correct grammatical gender and case agreement. "
+        "Match the source register: formal stays formal, casual stays casual. "
+        "Technical readouts use present tense. Avoid unnecessary Anglicisms."
+    ),
+    "ptbr": (
+        "Write Brazilian Portuguese (pt-BR). Use 'você' for direct address. "
+        "Match the source register. Technical readouts use present tense. "
+        "Prefer established Brazilian Starfield localization vocabulary."
+    ),
+    "zhhans": (
+        "Write Simplified Chinese (简体中文) using modern standard Mandarin. "
+        "UI labels and system messages should be concise; dialogue should match "
+        "the source register. Technical readouts use present tense. "
+        "Use standard game-localization sci-fi terminology."
+    ),
+    "ru": (
+        "Write standard Russian matching the source register (formal stays formal, "
+        "casual stays casual). Technical readouts use present tense ('Системы в норме'). "
+        "Avoid excessive Anglicisms; prefer established Russian game-localization vocabulary."
+    ),
+    "uk": (
+        "Write authentic, distinctly Ukrainian — not a transliteration of Russian. "
+        "Use Ukrainian-specific vocabulary where it diverges from Russian "
+        "(наразі not сейчас, завдяки not благодаря, але not однако). "
+        "Technical readouts use present tense ('Системи в нормі'). "
+        "Avoid magic/fantasy vocabulary and archaic phrasing in a sci-fi context."
+    ),
+}
+
+# Extra notes inserted after the universal rules — for source languages that
+# need special handling instructions.
+_SOURCE_EXTRA: dict[str, str] = {
+    "ru": (
+        "Source text is Russian — produce natural target-language text, "
+        "not a transliteration."
+    ),
+}
+
+# Additional note for specific source→target pairs (appended to _SOURCE_EXTRA).
+_PAIR_EXTRA: dict[tuple[str, str], str] = {
+    # Russian → Ukrainian: provide the explicit Cyrillic letter-mapping rules.
+    ("ru", "uk"): (
+        "Convert Russian-specific letters: ы→и, э→е, ъ→(drop), "
+        "ё→йо at word start/after vowel or ьо after consonant."
+    ),
+}
+
+# One or two representative examples per (source, target) language pair.
+# Examples are appended at the end of the system prompt.
+_LANG_EXAMPLES: dict[tuple[str, str], str] = {
+    ("en", "uk"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Я прямую до Нової Атлантиди на зустріч із Сарою.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [ЗБІЙ] Доступ заборонено. Вхід не дозволено.\n"
+        "Mining Equipment → Гірниче обладнання"
+    ),
+    ("ru", "uk"): (
+        "Склад оружия → Склад зброї\n"
+        "Тюремная база Спейсеров → Тюремна база Спейсерів\n"
+        "[Солгать] Я ничего не знаю. → [Збрехати] Я нічого не знаю.\n"
+        "Добыча ресурсов → Видобування ресурсів"
+    ),
+    ("en", "de"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Ich bin auf dem Weg nach Neu-Atlantis, um Sarah zu treffen.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [FEHLER] Zugriff verweigert. Eintritt nicht autorisiert.\n"
+        "Mining Equipment → Bergbauausrüstung"
+    ),
+    ("en", "es"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Me dirijo a Nueva Atlántida para reunirme con Sarah.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [FALLO] Acceso denegado. Entrada no autorizada.\n"
+        "Mining Equipment → Equipo minero"
+    ),
+    ("en", "fr"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Je me dirige vers la Nouvelle-Atlantide pour rencontrer Sarah.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [ÉCHEC] Accès refusé. Entrée non autorisée.\n"
+        "Mining Equipment → Équipement minier"
+    ),
+    ("en", "it"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Mi sto dirigendo a Nuova Atlantide per incontrare Sarah.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [ERRORE] Accesso negato. Ingresso non autorizzato.\n"
+        "Mining Equipment → Attrezzatura mineraria"
+    ),
+    ("en", "ja"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ サラと会うためにニューアトランティスへ向かっています。\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [失敗] アクセス拒否。入場は許可されていません。\n"
+        "Mining Equipment → 採掘装備"
+    ),
+    ("en", "pl"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Zmierzam do Nowej Atlantydy, aby spotkać się z Sarah.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [BŁĄD] Odmowa dostępu. Wejście nieautoryzowane.\n"
+        "Mining Equipment → Sprzęt górniczy"
+    ),
+    ("en", "ptbr"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ Estou indo para Nova Atlântida encontrar Sarah.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [FALHA] Acesso negado. Entrada não autorizada.\n"
+        "Mining Equipment → Equipamento de mineração"
+    ),
+    ("en", "zhhans"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ 我正前往新亚特兰蒂斯与莎拉会面。\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [失败] 访问被拒绝。进入未经授权。\n"
+        "Mining Equipment → 采矿设备"
+    ),
+}
+
+
 @dataclass
 class TranslationRequest:
     """Represents a single string translation request."""
@@ -192,69 +364,65 @@ class TranslationRequest:
     context_note: str = ""  # NLDT developer context note from ESP (explains variables)
 
     def to_prompt(self, text: Optional[str] = None) -> str:
-        """Generate optimized translation prompt."""
-        # For TranslateGemma models, English Anchor format is used: "To [Language]: [Text]"
+        """Generate the user-turn prompt.
+
+        TranslateGemma was fine-tuned on the English Anchor format:
+        ``"To {Language}:\n{text}"`` — the target language name must be the
+        full display name (e.g. "Ukrainian"), not the locale code ("uk").
+        """
         content = text if text is not None else self.original_text
+        tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
         if self.retry_hint:
-            # Put the quality-feedback hint in the user turn (before the text) so
-            # fine-tuned models that parse the user turn see it — not just the system prompt.
-            return f"To {self.target_lang}:\n{self.retry_hint}\n\nText to translate:\n{content}"
-        return f"To {self.target_lang}:\n{content}"
+            return f"To {tgt_name}:\n{self.retry_hint}\n\nText to translate:\n{content}"
+        return f"To {tgt_name}:\n{content}"
 
     def to_system_prompt(self) -> str:
-        """Generate optimized system prompt for translation rules."""
-        if self.source_lang == "en":
-            base = (
-                "You are a professional Bethesda Starfield game localization translator.\n"
-                "Translate the English text to natural, polished Ukrainian. "
-                "Output ONLY the translated text — no preamble, no notes, no commentary.\n\n"
-                "Rules:\n"
-                "1. Use natural Ukrainian appropriate to Starfield's NASApunk sci-fi setting. "
-                "Match the register: formal stays formal, casual stays casual. "
-                "Technical readouts use present tense ('Системи в нормі'). "
-                "Avoid magic/fantasy vocabulary and archaic phrasing. "
-                "Write distinctly Ukrainian — avoid Russian-influenced calques; "
-                "use Ukrainian-specific words where they differ from Russian.\n"
-                "2. Preserve ALL formatting tokens unchanged: <Alias=…>, <font>, [MALE], [FEMALE], "
-                "[[TK_…]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]], "
-                "\\n, \\t, %s, %d, #IDs. Never alter, split, or translate these.\n"
-                "3. Bracket dialogue choices: translate content, keep brackets: [Lie]→[Збрехати]. "
-                "ALL-CAPS system codes unchanged: [FAILED]→[ЗБІЙ].\n"
-                "4. Do NOT add «» guillemets or any quotes not present in the source.\n"
-                "5. Preserve leading and trailing spaces exactly as in the source.\n"
-                "6. Match source punctuation and capitalization exactly.\n"
-                "7. Translate content inside parentheses () — do not leave it in the source language.\n\n"
-                "Examples:\n"
-                "I'm heading to New Atlantis to meet with Sarah. → Я прямую до Нової Атлантиди на зустріч із Сарою.\n"
-                "[FAILED] Access denied. Entry unauthorized. → [ЗБІЙ] Доступ заборонено. Вхід не дозволено.\n"
-                "Mining Equipment → Гірниче обладнання"
-            )
-        else:
-            base = (
-                "You are a professional Bethesda Starfield game localization translator.\n"
-                "Translate the Russian text to natural, polished Ukrainian. "
-                "Output ONLY the translated text — no preamble, no notes, no commentary.\n\n"
-                "Rules:\n"
-                "1. Write authentic, distinctly Ukrainian — not a transliteration of Russian. "
-                "Convert Russian-specific letters: ы→и, э→е, ъ→(drop), ё→йо at word start/after vowel or ьо after consonant. "
-                "Use Ukrainian-specific vocabulary where it diverges from Russian "
-                "(наразі not сейчас, завдяки not благодаря, але not однако). "
-                "Technical readouts use present tense. Avoid magic/fantasy vocabulary in a sci-fi context.\n"
-                "2. Preserve ALL formatting tokens unchanged: <tags>, [CODES], "
-                "[[TK_…]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]], "
-                "\\n, \\t, %s, %d, #IDs. Never alter, split, or translate these.\n"
-                "3. Bracket dialogue choices: translate content, keep brackets: [Солгать]→[Збрехати]. "
-                "ALL-CAPS system codes unchanged: [FAILED]→[ЗБІЙ].\n"
-                "4. Do NOT add «» guillemets or any quotes not present in the source.\n"
-                "5. Preserve leading and trailing spaces exactly as in the source.\n"
-                "6. Match source punctuation, capitalization, and tone.\n"
-                "7. Translate content inside parentheses () — do not leave it in the source language.\n\n"
-                "Examples:\n"
-                "Склад оружия → Склад зброї\n"
-                "Тюремная база Спейсеров → Тюремна база Спейсерів\n"
-                "[Солгать] Я ничего не знаю. → [Збрехати] Я нічого не знаю.\n"
-                "Добыча ресурсов → Видобування ресурсів"
-            )
+        """Build a language-pair-aware system prompt.
+
+        The prompt has three layers:
+        1. A universal header + rules (token preservation, punctuation, …).
+        2. A target-language style rule (register, script, terminology).
+        3. Optional source-language / pair-specific notes + examples.
+        """
+        src_name = _LANG_DISPLAY.get(self.source_lang, self.source_lang)
+        tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
+
+        style_rule = _TARGET_STYLE.get(
+            self.target_lang,
+            f"Write natural, polished {tgt_name} appropriate to Starfield's "
+            f"NASApunk sci-fi setting. Match the register: formal stays formal, "
+            f"casual stays casual.",
+        )
+
+        base = (
+            f"You are a professional Bethesda Starfield game localization translator.\n"
+            f"Translate the {src_name} text to natural, polished {tgt_name}. "
+            f"Output ONLY the translated text — no preamble, no notes, no commentary.\n\n"
+            f"Rules:\n"
+            f"1. {style_rule}\n"
+            "2. Preserve ALL formatting tokens unchanged: <Alias=…>, <font>, [MALE], [FEMALE], "
+            "[[TK_…]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]], "
+            "\\n, \\t, %s, %d, #IDs. Never alter, split, or translate these.\n"
+            "3. Bracket dialogue choices: translate the content, keep the brackets. "
+            "ALL-CAPS system codes: translate them to the target-language equivalent "
+            "(e.g. [FAILED]→translated equivalent).\n"
+            "4. Do NOT add quotes not present in the source.\n"
+            "5. Preserve leading and trailing spaces exactly as in the source.\n"
+            "6. Match source punctuation and capitalization exactly.\n"
+            "7. Translate content inside parentheses () — do not leave it in the source language.\n"
+        )
+
+        # Source-language note (e.g. Russian needs a "don't transliterate" reminder).
+        src_extra = _SOURCE_EXTRA.get(self.source_lang, "")
+        pair_extra = _PAIR_EXTRA.get((self.source_lang, self.target_lang), "")
+        note = " ".join(filter(None, [src_extra, pair_extra]))
+        if note:
+            base += f"\nNote: {note}\n"
+
+        # Translation examples (if we have a specific pair or a generic one).
+        examples = _LANG_EXAMPLES.get((self.source_lang, self.target_lang), "")
+        if examples:
+            base += f"\nExamples:\n{examples}"
 
         result = base
         if self.context_note:
