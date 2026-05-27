@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 20  # Increment when schema changes
+CONFIG_VERSION = 21  # Increment when schema changes
 
 
 @dataclass
@@ -80,6 +80,10 @@ class AppSettings:
     # max_score for fuzzy TM lookup (xTranslator distance — lower = stricter).
     # 0 = exact only, 3 = loose (default), 5 = very loose.
     tm_fuzzy_max_score: float = 3.0
+
+    # ── NexusMods ────────────────────────────────────────────────────────
+    nexusmods_api_key: str = ""
+    nexusmods_file_group_id: str = ""
 
     # ── Help ─────────────────────────────────────────────────────────────
     tips_shown: bool = False
@@ -286,6 +290,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
                 data[key] = _lang_name_to_code[old_val]
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v20: language codes → locale codes")
+
+    if from_version < 21:
+        data.setdefault("nexusmods_api_key", "")
+        data.setdefault("nexusmods_file_group_id", "")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v21: added NexusMods upload settings")
 
     if from_version < CONFIG_VERSION:
         logger.warning(
