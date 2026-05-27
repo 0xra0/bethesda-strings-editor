@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0] — 2026-05-27
+
+### Added
+- **BA2 archive support** — read and write Starfield v2 and Fallout 4 v1 BA2 archives (GNRL type, zlib-compressed); picker dialog for multi-entry archives; integrated into file open/save
+- **All 9 official Starfield languages** — English, German, Spanish, French, Italian, Japanese, Polish, Portuguese (Brazilian), and Chinese (Simplified) added to source/target selectors alongside Russian and Ukrainian; combo boxes now store locale codes (`en`, `de`, `es`, `fr`, `it`, `ja`, `pl`, `ptbr`, `zhhans`, `ru`, `uk`)
+- **Language-specific Ollama prompts** — dedicated system prompt for every source→target pair with register rules, script conventions (Japanese polite forms, Chinese simplified terminology, Ukrainian-not-Russian vocabulary), and native translation examples; fully data-driven via module-level tables
+- **Newline and whitespace structure restoration** — when the model drops `[[STRUCT_BREAK_*]]` tokens, output is re-split proportionally by character-count ratio and per-line leading whitespace is restored from the original; handles single `\n`, double `\n\n`, mixed patterns, and trailing newlines
+
+### Changed
+- Source and target language settings now store locale codes instead of display names (config version 19 → 20; existing configs migrated automatically)
+- `EncodingConverter.ENCODING_PAIRS` and `get_encodings_for_locale()` accept Starfield locale codes (`de`, `ptbr`, `zhhans`, …) in addition to full display names and BCP-47 tags
+
+### Fixed
+- English→Ukrainian translation was silently skipped when source and target locale codes compared unequal due to mismatched format (display name vs. code)
+- Stray placeholder tokens leaked into translated output when the model reproduced them verbatim; excess tokens are now stripped before restoration
+- Mixed-script repair (`_fix_mixed_script`) incorrectly triggered on non-Cyrillic target languages; now gated on Cyrillic-script targets only
+- Quality checker tag-detection patterns now correctly identify `<Alias=…>`, `[PLYR]`, and `%s` variants regardless of surrounding whitespace
+- App icon updated to reflect multi-language scope (was "Ru → Ук" only)
+
+---
+
 ## [0.1.1] — 2026-05-20
 
 ### Added
@@ -85,5 +106,6 @@ Initial public release.
 - Sphinx documentation with API reference, format specification, and architecture overview, hosted on GitHub Pages
 - git-cliff structured changelog from free-form commit messages
 
+[0.2.0]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/0xra0/bethesda-strings-editor/releases/tag/v0.1.0
