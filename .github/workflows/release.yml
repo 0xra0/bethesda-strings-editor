@@ -138,10 +138,9 @@ jobs:
     name: Upload to NexusMods
     needs: release
     runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref, 'refs/tags/') &&
-      !contains(github.ref_name, '-') &&
-      secrets.NEXUSMODS_API_KEY != ''
+    if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
+    env:
+      NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
 
     steps:
       - name: Download artifacts
@@ -154,6 +153,7 @@ jobs:
         run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Upload Linux build
+        if: env.NEXUSMODS_API_KEY != ''
         uses: Nexus-Mods/upload-action@v1.0.0-beta.6
         with:
           api_key: ${{ secrets.NEXUSMODS_API_KEY }}
@@ -165,6 +165,7 @@ jobs:
           archive_existing_file: true
 
       - name: Upload Windows build
+        if: env.NEXUSMODS_API_KEY != ''
         uses: Nexus-Mods/upload-action@v1.0.0-beta.6
         with:
           api_key: ${{ secrets.NEXUSMODS_API_KEY }}
