@@ -125,9 +125,12 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r"<font[^>]*>",                     "font_open"),
     (r"<image[^>]*>",                    "image"),
     (r"</font>",                         "font_close"),
-    (r"</[A-Za-z][A-Za-z0-9]*>",        "xml_close"),
-    # Bethesda bracket tags  [MALE] [FEMALE] [MASC] [FEMI] [FAILED] etc.
-    (r"\[[A-Z][A-Za-z0-9_/]+\]",        "bracket_tag"),
+    # xml_close excludes </font> (already counted by font_close above)
+    (r"</(?!font>)[A-Za-z][A-Za-z0-9]*>", "xml_close"),
+    # Bethesda bracket tags: [MALE] [FEMALE] [M] [F] [N] etc. (* not + so single-char matches)
+    (r"\[[A-Z][A-Za-z0-9_/]*\]",        "bracket_tag"),
+    # xTranslator / toolkit tokens: [tk_Something]
+    (r"\[tk_[A-Za-z0-9_]*\]",           "tk_tag"),
     # Printf format specifiers
     (r"%[sdfoxXceEgGpn%]",              "printf_var"),
     # Brace variables  {variable}
@@ -144,11 +147,19 @@ _COMPILED_PATTERNS = [
 
 
 def _extract_tags(text: str) -> Counter:
-    """Return a Counter of all game tags found in *text*, case-normalised."""
+    """Return a Counter of all game tags found in *text*, case-normalised.
+
+    Deduplicates by (start, end) span so a tag matched by multiple overlapping
+    patterns (e.g. </font> by both font_close and xml_close) is counted once.
+    """
+    seen_spans: set[tuple[int, int]] = set()
     found = []
     for pat, _ in _COMPILED_PATTERNS:
         for m in pat.finditer(text):
-            found.append(m.group(0).lower())
+            span = (m.start(), m.end())
+            if span not in seen_spans:
+                seen_spans.add(span)
+                found.append(m.group(0).lower())
     return Counter(found)
 
 

@@ -814,9 +814,12 @@ class TermProtector:
         if not original_content:
             return original
 
-        # If translation is empty but original had content, LLM likely omitted it
-        if not translated_content and original_content:
-            return original
+        # If translation is empty, preserve only surrounding whitespace.
+        # Do NOT fall back to the source-language original — that injects English
+        # text into Ukrainian output when the model drops a protected token and
+        # the template's text slot has no translated content to fill it.
+        if not translated_content:
+            return pre_ws + post_ws
 
         return pre_ws + translated_content + post_ws
 
@@ -900,6 +903,27 @@ class TermProtector:
                 translated_markers[marker_key] = []
             translated_markers[marker_key].append({"start": m.start(), "end": m.end()})
 
+        # If model dropped ALL tokens (none found in translation), skip the template
+        # approach entirely.  The template would inject source-language text from
+        # empty content slots via _merge_whitespace; simple replacement is cleaner:
+        # tags come up missing → QC flags MISSING_TAG → user can retranslate.
+        token_markers_found = any(
+            mk in translated_markers
+            for mk in translated_markers
+            if not mk.startswith("\n")
+        )
+        if all_token_ids and not token_markers_found:
+            result = normalized_translated
+            for _ in range(10):
+                changed = False
+                for token in all_token_ids:
+                    if token in result:
+                        result = result.replace(token, token_map[token])
+                        changed = True
+                if not changed:
+                    break
+            return result
+
         # 4. Content Extraction and Layout Restoration
         final_parts = []
         used_indices = (
@@ -967,6 +991,22 @@ class TermProtector:
 
         return result
 
+    # Cyrillic homoglyphs that translation models substitute for the ASCII "TK" prefix.
+    # Т (U+0422) looks like T; К (U+041A) looks like K; lower-case variants included.
+    _TK_HOMOGLYPHS = str.maketrans("ТКтк", "TKtk")
+
+    @staticmethod
+    def _norm_inner(raw: str) -> tuple[str, str]:
+        """Return (strip-spaces key, space-as-underscore key) for lookup, both lowercase.
+
+        Also transliterates Cyrillic Т/К homoglyphs to ASCII T/K so tokens mangled
+        by the model (e.g. ``[[ТК_67cbbf_0]]``) still resolve correctly.
+        """
+        ascii_raw = raw.translate(TermProtector._TK_HOMOGLYPHS)
+        strip_key = re.sub(r"\s+", "",  ascii_raw).lower()
+        under_key = re.sub(r"\s+", "_", ascii_raw).lower()
+        return strip_key, under_key
+
     def _normalize_tokens(self, text: str, token_map: Dict[str, str]) -> str:
         """Repair LLM-mangled tokens back to their canonical form.
 
@@ -974,56 +1014,72 @@ class TermProtector:
         - New: ``[[TK_a3f9b2_0]]`` — double-bracket deterministic hash tokens
         - Legacy: ``[TK:000001]`` — single-bracket sequential tokens (backwards compat)
 
-        Also fixes tokens truncated at the end of the model output.
+        Also fixes:
+        - Uppercase hex hash (``[[TK_A3F9B2_0]]``)
+        - Space substituted for underscore before index (``[[TK_a3f9b2 0]]``)
+        - Cyrillic Т/К homoglyphs in the prefix (``[[ТК_a3f9b2_0]]``)
+        - Tokens truncated at end of model output
         """
         if not token_map:
             return text
 
-        # 1. Fix truncated tokens at the end of the text (model cut off mid-token)
-        text = re.sub(r"\[\[TK_[0-9a-f]{6}_\d+$", lambda m: m.group(0) + "]]", text)
+        # 1. Fix truncated tokens at end of output — allow both lowercase and uppercase hex.
+        text = re.sub(r"\[\[TK_[0-9a-fA-F]{6}_\d+$", lambda m: m.group(0) + "]]", text)
         text = re.sub(r"\[TK:\d+$", lambda m: m.group(0) + "]", text)
 
-        # 2. Build a lookup: stripped inner content → canonical token
-        #    Covers both [[...]] and [...] formats so a single pass handles both.
+        # 2. Build lookup: multiple normalised keys → canonical token.
+        #    Each token gets two entries: strip-whitespace and space→underscore variants,
+        #    both lowercased with Cyrillic homoglyphs mapped to ASCII.
         lookup: Dict[str, str] = {}
         for token in token_map:
             m_dbl = re.match(r"^\[\[(.+)\]\]$", token)
             if m_dbl:
-                # New double-bracket format
-                lookup[re.sub(r"\s+", "", m_dbl.group(1))] = token
+                strip_k, under_k = self._norm_inner(m_dbl.group(1))
+                lookup.setdefault(strip_k, token)
+                lookup.setdefault(under_k, token)
+                # Hash+index fallback: matches even if the TK prefix is completely garbled.
+                # Token format: TK_{6hex}_{int} — extract the numeric parts only.
+                m_hash = re.search(r"([0-9a-fA-F]{6})[_\s]+(\d+)$", m_dbl.group(1))
+                if m_hash:
+                    lookup.setdefault(
+                        f"tk_{m_hash.group(1).lower()}_{m_hash.group(2)}", token
+                    )
             else:
                 m_sgl = re.match(r"^\[(.+)\]$", token)
                 if m_sgl:
-                    # Legacy single-bracket format
-                    lookup[re.sub(r"\s+", "", m_sgl.group(1))] = token
+                    strip_k, _ = self._norm_inner(m_sgl.group(1))
+                    lookup.setdefault(strip_k, token)
 
         if not lookup:
             return text
 
         def _fix_dbl(m: re.Match) -> str:
-            inner = re.sub(r"\s+", "", m.group(1))
-            found = lookup.get(inner)
+            raw = m.group(1)
+            strip_k, under_k = self._norm_inner(raw)
+            found = lookup.get(strip_k) or lookup.get(under_k)
+            if found is None:
+                # Last resort: match only the 6-hex hash + index digits
+                m_hash = re.search(r"([0-9a-fA-F]{6})[_\s]+(\d+)", raw)
+                if m_hash:
+                    found = lookup.get(f"tk_{m_hash.group(1).lower()}_{m_hash.group(2)}")
             return found if found is not None else m.group(0)
 
         def _fix_sgl(m: re.Match) -> str:
-            inner = re.sub(r"\s+", "", m.group(1))
-            # Only substitute when the inner content is a known token prefix
-            # (prevents game tags like [PLYR] from being mis-identified).
-            if inner in lookup:
-                return lookup[inner]
-            return m.group(0)
+            strip_k, _ = self._norm_inner(m.group(1))
+            # Only substitute when the normalised content matches a known token
+            # (prevents game bracket-tags like [MALE] from being mis-identified).
+            found = lookup.get(strip_k)
+            return found if found is not None else m.group(0)
 
         # Strip backticks that LLMs sometimes wrap around tokens (e.g. `[[TK_a3f9b2_0]]`).
-        # Must run before the bracket-repair steps so the brackets are exposed.
-        text = re.sub(r"`(\[\[TK_[0-9a-f]{6}_\d+\]\])`", r"\1", text)
+        text = re.sub(r"`(\[\[TK_[0-9a-fA-F]{6}_\d+\]\])`", r"\1", text, flags=re.IGNORECASE)
         text = re.sub(r"`(\[TK:\d+\])`", r"\1", text)
 
-        # Fix mangled double-bracket tokens first (e.g. [[ TK_a3f9b2_0 ]])
+        # Fix double-bracket tokens — also catches Cyrillic-prefix variants like [[ТК_...]].
         text = re.sub(r"\[\[\s*([^\]]*?)\s*\]\]", _fix_dbl, text)
-        # Fix mangled legacy single-bracket tokens (e.g. [ TK : 000001 ]).
-        # The negative lookbehind (?<!\[) prevents matching the inner bracket
-        # of a double-bracket token like [[TK_hash_0]].
-        text = re.sub(r"(?<!\[)\[\s*(TK[^\]]*?)\s*\]", _fix_sgl, text)
+        # Fix single-bracket tokens (negative lookbehind prevents matching inner [[ bracket).
+        # Pattern accepts both ASCII TK and Cyrillic ТК as prefix.
+        text = re.sub(r"(?<!\[)\[\s*([ТTтt][КKкk][^\]]*?)\s*\]", _fix_sgl, text)
 
         return text
 

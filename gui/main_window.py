@@ -920,6 +920,17 @@ class MainWindow(QMainWindow):
         self.search_action.setEnabled(False)
         edit_menu.addAction(self.search_action)
 
+        edit_menu.addSeparator()
+
+        self.fill_from_original_action = QAction(
+            self.tr("Copy &Original → Translated"), self, shortcut=QKeySequence("Ctrl+Shift+V")
+        )
+        self.fill_from_original_action.triggered.connect(
+            lambda: self.table_view._fill_translated_from_source()
+        )
+        self.fill_from_original_action.setEnabled(False)
+        edit_menu.addAction(self.fill_from_original_action)
+
         # Translation menu
         trans_menu = menubar.addMenu(self.tr("&Translation"))
         self.translate_selected_action = QAction(
@@ -1332,6 +1343,7 @@ class MainWindow(QMainWindow):
         self.import_xml_action.setEnabled(has_file)
         self.export_xml_action.setEnabled(has_file)
         self.search_action.setEnabled(has_file)
+        self.fill_from_original_action.setEnabled(has_file and has_selection)
         self.compare_action.setEnabled(has_file)
         if hasattr(self, "diff_viewer_action"):
             self.diff_viewer_action.setEnabled(has_file)

@@ -24,6 +24,39 @@ logger = logging.getLogger(__name__)
 # Signal for long strings that should be skipped
 SKIP_SIGNAL = "__SKIP_TRANSLATION__"
 
+# ── Mixed-script repair ────────────────────────────────────────────────────────
+# Maps Latin letters to their Ukrainian Cyrillic equivalents.
+# Visual homoglyphs first (a→а, e→е, o→о, …), then phonetic approximations
+# (d→д, f→ф, h→г, …) for letters the model substitutes in Cyrillic words.
+_LATIN_TO_UKR = str.maketrans(
+    "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ",
+    "аАвВсСдДеЕфФґҐгГіІйЙкКлЛмМнНоОрРкКрРсСтТуУвВвВхХуУзЗ",
+)
+_LATIN_ALPHA_RE    = re.compile(r"[A-Za-z]")
+_CYRILLIC_ALPHA_RE = re.compile(r"[А-ЯЁа-яёЄєІіЇїҐґ]")
+# Word = run of letters from either script, possibly joined by an apostrophe.
+_MIXED_WORD_RE = re.compile(r"[A-Za-zА-ЯЁа-яёЄєІіЇїҐґ][A-Za-zА-ЯЁа-яёЄєІіЇїҐґʼ'’]*")
+
+
+def _fix_mixed_script(text: str) -> str:
+    """Convert stray Latin letters inside predominantly-Cyrillic words.
+
+    Example: ``"dослідницький"`` → ``"дослідницький"``
+
+    Only triggers when a word mixes both scripts AND Cyrillic characters
+    outnumber Latin ones (≥ 2 Cyrillic, Cyrillic count > Latin count).
+    Pure-Latin words (proper nouns, acronyms, tags) are left untouched.
+    """
+    def _fix(m: re.Match) -> str:
+        word = m.group(0)
+        lat = len(_LATIN_ALPHA_RE.findall(word))
+        cyr = len(_CYRILLIC_ALPHA_RE.findall(word))
+        if lat > 0 and cyr >= 2 and cyr > lat:
+            return word.translate(_LATIN_TO_UKR)
+        return word
+
+    return _MIXED_WORD_RE.sub(_fix, text)
+
 
 @dataclass
 class TranslationRequest:
@@ -1319,6 +1352,12 @@ class OllamaWorker(QObject):
         text = self._fix_known_errors(text, original_text)
         text = self._fix_truncated_tags(text)
         text = self._restore_paragraph_structure(text, original_text)
+
+        # Fix stray Latin letters inside Cyrillic words (e.g. "dослідницький" → "дослідницький").
+        # Only applied for Cyrillic-script target languages.
+        if target_lang in ("Ukrainian", "Russian", "Belarusian", "Bulgarian", "Serbian"):
+            text = _fix_mixed_script(text)
+
         result = text.strip()
         # Restore the original's leading/trailing whitespace frame.
         # Game UI strings often start or end with spaces for alignment; stripping
