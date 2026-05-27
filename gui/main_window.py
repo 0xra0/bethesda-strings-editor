@@ -348,10 +348,21 @@ class MainWindow(QMainWindow):
     translation_complete = Signal(int, int)
     translation_requested = Signal(list)  # NEW: For thread-safe translation
 
+    # Languages that ship with Starfield (Localization.ba2) + Russian/Ukrainian
+    # for xTranslator-style workflows.  Order: English source first, then
+    # alphabetical by display name.  Locale codes match Starfield's file suffixes.
     SUPPORTED_LANGUAGES = [
-        "English",
-        "Russian",
-        "Ukrainian",
+        ("English",              "en"),
+        ("German",               "de"),
+        ("Spanish",              "es"),
+        ("French",               "fr"),
+        ("Italian",              "it"),
+        ("Japanese",             "ja"),
+        ("Polish",               "pl"),
+        ("Portuguese (Brazil)",  "ptbr"),
+        ("Chinese (Simplified)", "zhhans"),
+        ("Russian",              "ru"),
+        ("Ukrainian",            "uk"),
     ]
 
     def __init__(self, settings: Optional[AppSettings] = None, parent=None, theme_manager=None):
@@ -707,9 +718,9 @@ class MainWindow(QMainWindow):
 
         lang_layout.addWidget(_lbl(self.tr("Source:")))
         self.combo_source_lang = QComboBox()
-        self.combo_source_lang.setMinimumWidth(115)
-        for lang in self.SUPPORTED_LANGUAGES:
-            self.combo_source_lang.addItem(self.tr(lang), lang)
+        self.combo_source_lang.setMinimumWidth(145)
+        for display_name, lang_code in self.SUPPORTED_LANGUAGES:
+            self.combo_source_lang.addItem(self.tr(display_name), lang_code)
         self.combo_source_lang.setCurrentIndex(
             self.combo_source_lang.findData(self.settings.default_source_lang)
         )
@@ -721,9 +732,9 @@ class MainWindow(QMainWindow):
 
         lang_layout.addWidget(_lbl(self.tr("Target:")))
         self.combo_target_lang = QComboBox()
-        self.combo_target_lang.setMinimumWidth(115)
-        for lang in self.SUPPORTED_LANGUAGES:
-            self.combo_target_lang.addItem(self.tr(lang), lang)
+        self.combo_target_lang.setMinimumWidth(145)
+        for display_name, lang_code in self.SUPPORTED_LANGUAGES:
+            self.combo_target_lang.addItem(self.tr(display_name), lang_code)
         self.combo_target_lang.setCurrentIndex(
             self.combo_target_lang.findData(self.settings.default_target_lang)
         )
@@ -1682,7 +1693,7 @@ class MainWindow(QMainWindow):
             self.current_file = BethesdaStringFile(file_path)
             self.current_path = Path(file_path)
 
-            target_lang = self.combo_target_lang.currentText().lower()
+            target_lang = self.combo_target_lang.currentData()
 
             self.lbl_file_info.setText(f"📄 {self.current_path.name}")
             self.lbl_string_count.setText(
@@ -1772,7 +1783,7 @@ class MainWindow(QMainWindow):
             if total_added:
                 self.table_model.load_from_bethesda_file(
                     self.current_file,
-                    locale=self.combo_target_lang.currentText().lower(),
+                    locale=self.combo_target_lang.currentData(),
                 )
                 self.lbl_string_count.setText(
                     self.tr("Strings: {count}").format(count=len(self.current_file))
@@ -1787,7 +1798,7 @@ class MainWindow(QMainWindow):
                 self.tr("Loading {filename}...").format(filename=p.name)
             )
             esp = EspFile()
-            target_lang = self.combo_target_lang.currentText().lower()
+            target_lang = self.combo_target_lang.currentData()
             encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
             esp.load(p, encoding)
 
@@ -1919,7 +1930,7 @@ class MainWindow(QMainWindow):
             self.tr("Strings: {count}").format(count=len(string_file))
         )
 
-        target_lang = self.combo_target_lang.currentText().lower()
+        target_lang = self.combo_target_lang.currentData()
         self.table_model.load_from_bethesda_file(string_file, locale=target_lang)
 
         self.file_loaded.emit(file_path)
@@ -1945,7 +1956,7 @@ class MainWindow(QMainWindow):
 
         try:
             if isinstance(self.current_file, EspFile):
-                target_lang = self.combo_target_lang.currentText().lower()
+                target_lang = self.combo_target_lang.currentData()
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 self.table_model.apply_changes_to_esp_file(self.current_file, encoding)
                 self.current_file.save(self.current_path, encoding)
@@ -2019,7 +2030,7 @@ class MainWindow(QMainWindow):
         try:
             if is_esp:
                 assert isinstance(self.current_file, EspFile)
-                target_lang = self.combo_target_lang.currentText().lower()
+                target_lang = self.combo_target_lang.currentData()
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 self.table_model.apply_changes_to_esp_file(self.current_file, encoding)
                 self.current_file.save(Path(file_path), encoding)
@@ -2142,7 +2153,7 @@ class MainWindow(QMainWindow):
 
             # Disable English protection if source is English
             protect_english = self.settings.protect_english_text
-            if source_lang == "English":
+            if source_lang == "en":
                 protect_english = False
 
             requests.append(
@@ -2212,11 +2223,11 @@ class MainWindow(QMainWindow):
         # Auto-detect source language from filename
         filename = Path(file_path).name.lower()
         if "translate_ru" in filename:
-            idx = self.combo_source_lang.findData("Russian")
+            idx = self.combo_source_lang.findData("ru")
             if idx >= 0:
                 self.combo_source_lang.setCurrentIndex(idx)
         elif "translate_en" in filename:
-            idx = self.combo_source_lang.findData("English")
+            idx = self.combo_source_lang.findData("en")
             if idx >= 0:
                 self.combo_source_lang.setCurrentIndex(idx)
 
@@ -2265,7 +2276,7 @@ class MainWindow(QMainWindow):
                     if clean_text:
                         # Disable English protection if source is English
                         protect_english = self.settings.protect_english_text
-                        if source_lang == "English":
+                        if source_lang == "en":
                             protect_english = False
 
                         req_index = len(requests)
@@ -2370,14 +2381,13 @@ class MainWindow(QMainWindow):
                 self.tr("Failed to save translated TXT:\n{error}").format(error=e),
             )
 
-    def _get_locale_code(self, language_name: str) -> str:
-        """Convert language name to locale code."""
-        locale_map = {
-            "English": "en",
-            "Russian": "ru",
-            "Ukrainian": "uk",
-        }
-        return locale_map.get(language_name, "en")
+    def _get_locale_code(self, lang_code: str) -> str:
+        """Return the locale code for a language.
+
+        The combo boxes now store the locale code directly as item data,
+        so this is a pass-through kept for call-site compatibility.
+        """
+        return lang_code or "en"
 
     @Slot(int, int)
     def _on_ollama_progress(self, completed: int, total: int):
@@ -2841,7 +2851,7 @@ class MainWindow(QMainWindow):
             return  # No change
 
         self.current_file.set_encoding(new_enc)
-        target_lang = self.combo_target_lang.currentText().lower()
+        target_lang = self.combo_target_lang.currentData()
         self.table_model.load_from_bethesda_file(
             self.current_file, encoding=new_enc, locale=target_lang
         )
@@ -3020,8 +3030,8 @@ class MainWindow(QMainWindow):
 
         clean_rows = [(i, r) for i, r in translated_rows if i not in quality_errors]
 
-        source_lang = self.combo_source_lang.currentData() or "English"
-        target_lang = self.combo_target_lang.currentData() or "Ukrainian"
+        source_lang = self.combo_source_lang.currentData() or "en"
+        target_lang = self.combo_target_lang.currentData() or "uk"
         system_prompt = TranslationRequest(
             index=0,
             original_text="",
@@ -3153,7 +3163,7 @@ class MainWindow(QMainWindow):
         quality = self.spin_quality.value()
 
         protect_english = self.settings.protect_english_text
-        if source_lang == "English":
+        if source_lang == "en":
             protect_english = False
 
         requests = []
@@ -3623,7 +3633,7 @@ class MainWindow(QMainWindow):
             )
 
             # Get target encoding
-            target_lang = self.combo_target_lang.currentText().lower()
+            target_lang = self.combo_target_lang.currentData()
             encoding, fallback = EncodingConverter.get_encodings_for_locale(target_lang)
 
             total_count = len(self.table_model._data)
@@ -4061,7 +4071,7 @@ class MainWindow(QMainWindow):
             ext = Path(file_path).suffix.lower()
             if ext in (".strings", ".dlstrings", ".ilstrings"):
                 comp_file = BethesdaStringFile(file_path)
-                target_lang = self.combo_target_lang.currentText().lower()
+                target_lang = self.combo_target_lang.currentData()
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 for s in comp_file.strings:
                     try:
@@ -4405,7 +4415,7 @@ class MainWindow(QMainWindow):
             return
 
         existing = set(self.term_protector.protected_terms.keys()) if self.term_protector else set()
-        source_lang = self.combo_source_lang.currentData() or "Russian"
+        source_lang = self.combo_source_lang.currentData() or "ru"
 
         candidates = discover_terms(rows, existing_terms=existing, source_lang=source_lang)
         if not candidates:

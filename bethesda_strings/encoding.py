@@ -15,24 +15,41 @@ class EncodingConverter:
     Skyrim uses primary (UTF-8) and secondary (e.g., Windows-1252) encodings.
     """
 
-    # Known encoding pairs by language/locale
-    # Added Ukrainian with Windows-1251 (Cyrillic) as secondary encoding
+    # Known encoding pairs by language/locale.
+    # Keys are lowercased display names AND Starfield locale codes so both
+    # look-up styles work ("ukrainian" from old code, "uk" from new).
     ENCODING_PAIRS = {
-        'english': ('utf-8', 'windows-1252'),
-        'french': ('utf-8', 'windows-1252'),
-        'german': ('utf-8', 'windows-1252'),
-        'italian': ('utf-8', 'windows-1252'),
-        'spanish': ('utf-8', 'windows-1252'),
-        'polish': ('utf-8', 'windows-1250'),
-        'czech': ('utf-8', 'windows-1250'),
-        'russian': ('utf-8', 'windows-1251'),
-        'ukrainian': ('utf-8', 'windows-1251'),  # ← Added Ukrainian
-        'belarusian': ('utf-8', 'windows-1251'),  # Also Cyrillic
-        'bulgarian': ('utf-8', 'windows-1251'),
-        'serbian': ('utf-8', 'windows-1251'),
-        'japanese': ('utf-8', None),
-        'chinese': ('utf-8', 'gbk'),
-        'korean': ('utf-8', 'euc-kr'),
+        # ── Western / Latin-1 ──────────────────────────────────────────────
+        'english':  ('utf-8', 'windows-1252'),
+        'en':       ('utf-8', 'windows-1252'),
+        'french':   ('utf-8', 'windows-1252'),
+        'fr':       ('utf-8', 'windows-1252'),
+        'german':   ('utf-8', 'windows-1252'),
+        'de':       ('utf-8', 'windows-1252'),
+        'italian':  ('utf-8', 'windows-1252'),
+        'it':       ('utf-8', 'windows-1252'),
+        'spanish':  ('utf-8', 'windows-1252'),
+        'es':       ('utf-8', 'windows-1252'),
+        'portuguese (brazil)': ('utf-8', 'windows-1252'),
+        'ptbr':     ('utf-8', 'windows-1252'),
+        # ── Central European ───────────────────────────────────────────────
+        'polish':   ('utf-8', 'windows-1250'),
+        'pl':       ('utf-8', 'windows-1250'),
+        'czech':    ('utf-8', 'windows-1250'),
+        # ── Cyrillic ──────────────────────────────────────────────────────
+        'russian':    ('utf-8', 'windows-1251'),
+        'ru':         ('utf-8', 'windows-1251'),
+        'ukrainian':  ('utf-8', 'windows-1251'),
+        'uk':         ('utf-8', 'windows-1251'),
+        'belarusian': ('utf-8', 'windows-1251'),
+        'bulgarian':  ('utf-8', 'windows-1251'),
+        'serbian':    ('utf-8', 'windows-1251'),
+        # ── CJK ────────────────────────────────────────────────────────────
+        'japanese':           ('utf-8', None),
+        'ja':                 ('utf-8', None),
+        'chinese (simplified)': ('utf-8', 'gbk'),
+        'zhhans':             ('utf-8', 'gbk'),
+        'korean':             ('utf-8', 'euc-kr'),
     }
 
     # Note: Ukrainian-specific characters (Є, є, І, і, Ї, ї, Ґ, ґ) are
@@ -182,14 +199,29 @@ class EncodingConverter:
 
     @classmethod
     def get_encodings_for_locale(cls, locale: str) -> Tuple[str, Optional[str]]:
-        """Get primary and secondary encodings for a locale."""
-        locale_lower = locale.lower().strip()
+        """Get primary and secondary encodings for a locale.
 
-        # Handle locale variants like "uk_UA", "uk-UA", "ukrainian"
-        if locale_lower.startswith('uk') or 'ukrain' in locale_lower:
-            return cls.ENCODING_PAIRS.get('ukrainian', ('utf-8', 'windows-1251'))
+        Accepts both Starfield locale codes (``"de"``, ``"ptbr"``, ``"zhhans"``)
+        and full display names (``"German"``, ``"Ukrainian"``).
+        BCP-47 variants like ``"uk_UA"`` / ``"uk-UA"`` are also handled.
+        """
+        key = locale.lower().strip()
 
-        return cls.ENCODING_PAIRS.get(locale_lower, ('utf-8', 'windows-1252'))
+        # Exact match (handles codes and full names)
+        if key in cls.ENCODING_PAIRS:
+            return cls.ENCODING_PAIRS[key]
+
+        # BCP-47 separator normalisation: "uk_UA" → "uk", "zh-Hans" → "zhhans"
+        base = key.replace("-", "").replace("_", "").split()[0]
+        if base in cls.ENCODING_PAIRS:
+            return cls.ENCODING_PAIRS[base]
+
+        # Fall through for sub-tags: "uk_ua" → try "uk"
+        short = key.split("_")[0].split("-")[0]
+        if short in cls.ENCODING_PAIRS:
+            return cls.ENCODING_PAIRS[short]
+
+        return ('utf-8', 'windows-1252')
 
     @classmethod
     def validate_ukrainian_text(cls, text: str) -> Tuple[bool, list]:

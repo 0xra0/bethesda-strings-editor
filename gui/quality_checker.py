@@ -634,7 +634,7 @@ class QualityChecker:
             )
 
     def _check_source_leak(self, translated: str, report: QualityReport) -> None:
-        if self.target_language.lower() != "ukrainian":
+        if self.target_language.lower() not in ("ukrainian", "uk"):
             return
 
         # Pass 1: Russian-exclusive characters (ы э ё ъ).
@@ -695,7 +695,7 @@ class QualityChecker:
         tokens, and words containing Russian-exclusive chars (already caught by
         _check_source_leak). Only fires when the dictionary is available.
         """
-        if self.target_language.lower() != "ukrainian":
+        if self.target_language.lower() not in ("ukrainian", "uk"):
             return
 
         try:
@@ -751,9 +751,9 @@ class QualityChecker:
         untranslatable brand names, etc.).
         Fires only when the English dictionary is loaded and source is English.
         """
-        if self.source_language.lower() != "english":
+        if self.source_language.lower() not in ("english", "en"):
             return
-        if self.target_language.lower() != "ukrainian":
+        if self.target_language.lower() not in ("ukrainian", "uk"):
             return
 
         try:

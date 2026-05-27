@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 19  # Increment when schema changes
+CONFIG_VERSION = 20  # Increment when schema changes
 
 
 @dataclass
@@ -38,8 +38,8 @@ class AppSettings:
     ollama_num_ctx: int = 16384
 
     # ── Translation defaults ─────────────────────────────────────
-    default_source_lang: str = "Russian"
-    default_target_lang: str = "Ukrainian"
+    default_source_lang: str = "ru"   # Starfield locale code (en/de/es/fr/it/ja/pl/ptbr/zhhans/ru/uk)
+    default_target_lang: str = "uk"
     quality_level: int = 7
     long_string_threshold: int = 1000
     long_string_action: str = "Translate"  # Options: Translate, Original, Skip
@@ -271,6 +271,22 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v19")
 
+    if from_version < 20:
+        # Language fields changed from display names ("Russian", "Ukrainian", "English")
+        # to Starfield locale codes ("ru", "uk", "en") to support all official languages.
+        _lang_name_to_code = {
+            "English": "en", "German": "de", "Spanish": "es", "French": "fr",
+            "Italian": "it", "Japanese": "ja", "Polish": "pl",
+            "Portuguese (Brazil)": "ptbr", "Chinese (Simplified)": "zhhans",
+            "Russian": "ru", "Ukrainian": "uk",
+        }
+        for key in ("default_source_lang", "default_target_lang"):
+            old_val = data.get(key, "")
+            if old_val in _lang_name_to_code:
+                data[key] = _lang_name_to_code[old_val]
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v20: language codes → locale codes")
+
     if from_version < CONFIG_VERSION:
         logger.warning(
             f"Config version {from_version} is older than current {CONFIG_VERSION}. "
@@ -424,8 +440,8 @@ def load_settings_qsettings() -> AppSettings:
         ollama_model=_s("ollama/model", "translategemma3-st"),
         ollama_num_predict=_i("ollama/num_predict", 4096),
         ollama_num_ctx=_i("ollama/num_ctx", 16384),
-        default_source_lang=_s("translation/source_lang", "Russian"),
-        default_target_lang=_s("translation/target_lang", "Ukrainian"),
+        default_source_lang=_s("translation/source_lang", "ru"),
+        default_target_lang=_s("translation/target_lang", "uk"),
         quality_level=_i("translation/quality", 7),
         long_string_threshold=_i("translation/long_string_threshold", 1000),
         long_string_action=_s("translation/long_string_action", "Translate"),

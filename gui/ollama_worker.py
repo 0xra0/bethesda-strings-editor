@@ -203,7 +203,7 @@ class TranslationRequest:
 
     def to_system_prompt(self) -> str:
         """Generate optimized system prompt for translation rules."""
-        if self.source_lang == "English":
+        if self.source_lang == "en":
             base = (
                 "You are a professional Bethesda Starfield game localization translator.\n"
                 "Translate the English text to natural, polished Ukrainian. "
@@ -518,7 +518,7 @@ class OllamaWorker(QObject):
                 not stripped
                 or self._INPUT_NOTRANS_RE.fullmatch(stripped)
                 or (
-                    req.source_lang != "English"
+                    req.source_lang != "en"
                     and self._INPUT_NOTRANS_NOCYRILLIC_RE.fullmatch(stripped)
                 )
             )
@@ -848,7 +848,7 @@ class OllamaWorker(QObject):
         # pure punctuation/numbers, file paths, or a single bare tag.
         stripped = req.original_text.strip()
         if self._INPUT_NOTRANS_RE.fullmatch(stripped) or (
-            req.source_lang != "English"
+            req.source_lang != "en"
             and self._INPUT_NOTRANS_NOCYRILLIC_RE.fullmatch(stripped)
         ):
             logger.debug(f"String {req.string_id}: matches NoTrans pattern, returning original")
@@ -928,7 +928,7 @@ class OllamaWorker(QObject):
 
         # Disable English protection if source is English
         should_protect_english = (
-            req.protect_english_text and req.source_lang != "English"
+            req.protect_english_text and req.source_lang != "en"
         )
 
         if should_protect_english:
@@ -950,7 +950,7 @@ class OllamaWorker(QObject):
         ):
             # If source is English, exclude game terms and other English-heavy categories
             exclude = []
-            if req.source_lang == "English":
+            if req.source_lang == "en":
                 exclude = [
                     "game_term",
                     "custom",
@@ -1169,8 +1169,8 @@ class OllamaWorker(QObject):
                     translated, req.target_lang, req.original_text, req.string_id
                 )
                 if (
-                    req.source_lang == "Russian"
-                    and req.target_lang == "Ukrainian"
+                    req.source_lang == "ru"
+                    and req.target_lang == "uk"
                     and self._needs_ru_to_uk_retry(req.original_text, translated)
                 ):
                     logger.info(
@@ -1192,8 +1192,8 @@ class OllamaWorker(QObject):
                                 f"(model echoed prompt), keeping original with leakage"
                             )
                 elif (
-                    req.source_lang == "English"
-                    and req.target_lang == "Ukrainian"
+                    req.source_lang == "en"
+                    and req.target_lang == "uk"
                     and self._needs_en_to_uk_retry(req.original_text, translated)
                 ):
                     logger.info(
@@ -1478,7 +1478,7 @@ class OllamaWorker(QObject):
 
         # Fix stray Latin letters inside Cyrillic words (e.g. "dослідницький" → "дослідницький").
         # Only applied for Cyrillic-script target languages.
-        if target_lang in ("Ukrainian", "Russian", "Belarusian", "Bulgarian", "Serbian"):
+        if target_lang in ("uk", "ru", "Ukrainian", "Russian", "Belarusian", "Bulgarian", "Serbian"):
             text = _fix_mixed_script(text)
 
         result = text.strip()
