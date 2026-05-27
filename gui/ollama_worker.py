@@ -58,6 +58,119 @@ def _fix_mixed_script(text: str) -> str:
     return _MIXED_WORD_RE.sub(_fix, text)
 
 
+# ── Newline / spacing structure restoration ───────────────────────────────────
+# Regex that splits a string into alternating [text, delimiter, text, …] lists
+# where delimiters are one or more consecutive newlines.
+_NL_SPLIT_RE = re.compile(r"(\n\n+|\n)")
+
+
+def _restore_line_structure(translated: str, original_text: str) -> str:
+    """Restore the newline pattern and per-line leading whitespace from *original_text*.
+
+    Called when the model drops ``[[STRUCT_BREAK_*]]`` tokens, collapsing a
+    multi-line source string into a single flat paragraph.
+
+    Algorithm:
+    1.  Parse *original_text* into segments + their trailing delimiters
+        (``\\n`` or ``\\n\\n``) using a single regex split.
+    2.  Flatten *translated* by replacing existing newlines with spaces.
+    3.  Proportionally split the flat text into N segments, snapping each
+        cut-point to the nearest word boundary.
+    4.  Copy leading ``<space>/<tab>`` from the corresponding original segment.
+    5.  Rejoin with the original delimiters.
+
+    Empty segments in the original (e.g. a trailing ``\\n``) stay empty in
+    the result so the trailing newline is preserved exactly.
+    """
+    if not translated or not original_text:
+        return translated
+
+    orig = original_text.replace("\r\n", "\n")
+    trans = translated.replace("\r\n", "\n")
+
+    expected_nl = orig.count("\n")
+    if expected_nl == 0 or trans.count("\n") >= expected_nl:
+        return translated  # nothing missing
+
+    # Split original into [seg0, delim0, seg1, delim1, …, segN]
+    raw = _NL_SPLIT_RE.split(orig)
+    orig_segs = raw[0::2]   # text segments
+    delimiters = raw[1::2]  # delimiter strings (\n / \n\n / …)
+    n_segs = len(orig_segs)
+    if n_segs <= 1:
+        return translated
+
+    # Flatten translated: collapse any existing newlines to a single space.
+    flat = re.sub(r"\s*\n\s*", " ", trans).strip()
+    if not flat:
+        return translated
+
+    # Proportional lengths — only non-empty (content-bearing) orig segments
+    # contribute to the split ratio; empty ones (e.g. trailing \n) stay empty.
+    seg_lens = [len(s.strip()) for s in orig_segs]
+    total_orig = sum(seg_lens)
+    if total_orig == 0:
+        return translated
+
+    content_indices = [i for i, ln in enumerate(seg_lens) if ln > 0]
+    n_content = len(content_indices)
+    if n_content <= 1:
+        return translated
+
+    total_trans = len(flat)
+
+    # Find cut positions in `flat` for each content-segment boundary.
+    cumulative = 0
+    cuts: list[int] = []
+    for ci in content_indices[:-1]:
+        cumulative += seg_lens[ci]
+        target = max(1, min(int(total_trans * cumulative / total_orig), len(flat) - 1))
+
+        # Search outward from `target` for the nearest space, within ±40 % of
+        # the expected segment width.
+        snap = max(4, int(total_trans * seg_lens[ci] / total_orig * 0.4))
+        lo = max(0, target - snap)
+        hi = min(len(flat), target + snap)
+
+        best = target
+        for off in range(max(hi - target, target - lo) + 1):
+            found = False
+            for sign in (1, -1):
+                pos = target + sign * off
+                if lo <= pos < hi and flat[pos] == " ":
+                    best = pos
+                    found = True
+                    break
+            if found:
+                break
+        cuts.append(best)
+
+    # Slice flat into parts for content segments.
+    content_parts: list[str] = []
+    prev = 0
+    for cut in cuts:
+        content_parts.append(flat[prev:cut].strip())
+        prev = cut + 1  # skip the space at the cut point
+    content_parts.append(flat[prev:].strip())
+
+    # Build per-segment results, assigning content parts to non-empty slots.
+    result_segs: list[str] = [""] * n_segs
+    for part_i, ci in enumerate(content_indices):
+        part = content_parts[part_i] if part_i < len(content_parts) else ""
+        # Copy leading whitespace from the corresponding original line.
+        orig_line = orig_segs[ci]
+        leading = orig_line[: len(orig_line) - len(orig_line.lstrip(" \t"))]
+        result_segs[ci] = leading + part
+
+    # Reassemble with original delimiters.
+    result = ""
+    for i, seg in enumerate(result_segs):
+        result += seg
+        if i < len(delimiters):
+            result += delimiters[i]
+    return result
+
+
 @dataclass
 class TranslationRequest:
     """Represents a single string translation request."""
@@ -1039,6 +1152,16 @@ class OllamaWorker(QObject):
                 translated = self.term_protector.restore_text(
                     translated, token_map, protected_text
                 )
+
+            # Restore structural newlines + per-line leading spaces that the model
+            # dropped (translategemma3-st routinely ignores [[STRUCT_BREAK_*]] tokens).
+            # Only runs when those tokens were injected AND the output is short on \n.
+            if translated and (
+                token_map.get("[[STRUCT_BREAK_SGL_N]]")
+                or token_map.get("[[STRUCT_BREAK_DBL_N]]")
+            ):
+                if translated.count("\n") < req.original_text.count("\n"):
+                    translated = _restore_line_structure(translated, req.original_text)
 
             # Clean up only if we have text
             if translated:
