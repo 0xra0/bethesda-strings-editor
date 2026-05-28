@@ -1,5 +1,5 @@
 # Starfield Protected Terms - High Quality Subset
-# Total terms: 3233
+# Total terms: 3075
 # Format: Term,Category
 # Curated for use in TermProtector (lower noise than comprehensive).
 
@@ -28,7 +28,6 @@ Trade Authority,company
 Trident Luxury Lines,company
 UC Defense,company
 Xenofresh,company
-Xenofresh Corporation,company
 
 # === FACTIONS & ORGANIZATIONS (27) ===
 CeltCorp,faction
@@ -46,8 +45,6 @@ House Va'ruun,faction
 Light Scythe,faction
 Lunar Robotics,faction
 Nautilus,faction
-Nexum Local,faction
-Reladine,faction
 Sanctum Universum,faction
 Spacers,faction
 Trackers Alliance,faction
@@ -86,7 +83,6 @@ Europa,location
 Gagarin,location
 Gagarin Landing,location
 Gamma Vulpes,location
-Gryphon,location
 Hillex,location
 HopeTown,location
 Ikuchi Market,location
@@ -223,7 +219,6 @@ Malai,character
 Marco,character
 Maria,character
 Marika Boros,character
-Markieff Sunderland,character
 Martha,character
 Masako,character
 Mathis Castillo,character
@@ -277,9 +272,7 @@ The Astraea,ship
 The Datura,ship
 The Scow,ship
 UC Vigilance,ship
-Vanguard Claymore,ship
 Wanderwell,ship
-Whisperwind,ship
 
 # === CREATURES & ALIENS (35) ===
 Aceles,creature
@@ -288,22 +281,16 @@ Ashta,creature
 Brainsprout,creature
 Cephalopod,creature
 Coralbug,creature
-Coralbug Stalker,creature
 Coralcrab,creature
-Coralcrab Stalker,creature
-Floatgel,creature
 Geophage,creature
-Glowbug,creature
 Hunterwulf,creature
 Kreet,creature
 Kreet Stalker,creature
 Kronosaurus,creature
 Leafstrider,creature
 Maggotmaw,creature
-Millwhale,creature
 Mossgnath,creature
 Mothwing,creature
-Nautiloid,creature
 Sailgator,creature
 Sharkwhale,creature
 Shieldshell,creature
@@ -311,12 +298,9 @@ Spaceroach,creature
 Terrormorph,creature
 Terrormorphs,creature
 Toadface,creature
-Toadface Stalker,creature
-Triantrler,creature
 Tuskfrog,creature
 Twistfin,creature
 Vectorback,creature
-Vortex Jellyfish,creature
 
 # === SKILLS & PERKS (86) ===
 Aneutronic Fusion,skill
@@ -342,7 +326,6 @@ Decontamination,skill
 Demolitions,skill
 Diplomacy,skill
 Dueling,skill
-EM Weapons Systems,skill
 Energy Weapon Systems,skill
 Engine Systems,skill
 Environmental Conditioning,skill
@@ -424,7 +407,6 @@ Cobalt,resource
 Comm Relay,resource
 Control Rod,resource
 Copper,resource
-Drilling Machine,resource
 Dysprosium,resource
 Europium,resource
 Fiber,resource
@@ -435,7 +417,6 @@ Ionic Liquids,resource
 Iridium,resource
 Isocentered Magnet,resource
 Isotopic Coolant,resource
-Krypton,resource
 Lead,resource
 Lithium,resource
 Lubricant,resource
@@ -459,8 +440,6 @@ Paramagnon Conductor,resource
 Plutonium,resource
 Polymer,resource
 Reactive Gauge,resource
-Rhodium,resource
-Ruthenium,resource
 Sealant,resource
 Solvent,resource
 Tau Grade Rheostat,resource
@@ -469,9 +448,7 @@ Tungsten,resource
 Uranium,resource
 Vanadium,resource
 Xenon,resource
-Yttrium,resource
 Zero Wire,resource
-Zirconium,resource
 
 # === ITEMS & WEAPONS (20) ===
 Beowulf,item
@@ -633,7 +610,6 @@ Armin,proper_noun
 Armistead,proper_noun
 Armistice,proper_noun
 Armstrong,proper_noun
-Arnie,proper_noun
 Arseny,proper_noun
 Arthur,proper_noun
 Asphalt,proper_noun
@@ -1440,7 +1416,6 @@ Larry,proper_noun
 Larva,proper_noun
 Laser,proper_noun
 Laserbrand,proper_noun
-Latika,proper_noun
 Latin,proper_noun
 Laylah,proper_noun
 Lazarus,proper_noun
@@ -2319,11 +2294,9 @@ Zoologists,proper_noun
 Zumwalt,proper_noun
 
 # === WIKI APPEND MERGE (AUTO) ===
-Abandoned Gravity Farm,location
 Abandoned Mine,location
 Abandoned Muybridge Pharmaceuticals Lab,location
 Abandoned Robotics Facility,location
-Aldin Wright’s Workshop,location
 Apollo Tower,location
 Argos Extractors Mining Outpost,location
 Armistice Archives,location
@@ -2334,88 +2307,45 @@ Broken Spear,location
 Buried Temple,location
 Cave,location
 Centaurian Arsenal,location
-Chunks – Akila City,location
-Chunks – Neon,location
-Chunks - New Atlantis,location
 Civilian Outpost,location
-CJ’s,location
 Coe Estate,location
 Coe Heritage Museum,location
 Coe Plaza,location
-Constellation Space Station LO-868,location
 Cydonia - Residential,location
 Danra,location
-Dawn’s Roost,location
-Deimos Staryard Corporate Quarters,location
-Deimos Staryard Engineering – Cydonia,location
 EIT Clothiers,location
-ENHANCE - Akila City,location
-ENHANCE – Cydonia,location
-ENHANCE - Neon,location
-ENHANCE – New Atlantis,location
 Filburn Agricultural Systems,location
 Forgotten Mech Graveyard,location
 Freestar Collective Embassy,location
-Freestar Ranger Outpost – Neon,location
-Galbank - Akila City,location
-Galbank – Neon,location
-Galbank – New Atlantis,location
 Generdyne Industries,location
-Honest Earl’s Alien Extravaganza,location
-House of the Enlightened – Akila City,location
 Industrial Outpost,location
-Interstellar Inn,location
 Jemison Mercantile,location
 Kreet Research Lab,location
 Laredo Firearms,location
 Legrande's Liquors,location
-Madame Sauvage’s Place,location
-Maoro’s Ship,location
 Mars Mech Factory,location
 Mercury Tower,location
 Midtown Minerals,location
 Mining Camp,location
-Mining Director’s Office,location
 Mining League,location
 Mining Outpost,location
 NASA Launch Facility,location
-NAT – New Atlantis Transit,location
-Neon Security HQ,location
-Neon ship services,location
 Neon Tactical,location
-Newill’s Goods,location
 Nishina Research Station,location
 Orion Tower,location
-Pilgrim’s Rest,location
 Pioneer Tower,location
 Pit Stop,location
-Reliant Medical - Cydonia,location
-Reliant Medical - Neon,location
-Reliant Medical – New Atlantis,location
 Rowland Arms,location
 Ryujin Apartments,location
 Ryujin Industries HQ,location
-Sanctum Universum – Akila City,location
-Sanctum Universum - New Atlantis,location
 Science Facility,location
 Science Outpost,location
-Shepherd’s General Store,location
-Ship Services – Cydonia,location
 Sieghart's Outfitters,location
-Sinclair’s Books,location
 Sixth Circle,location
 Sky Suite,location
-Spaceport - Akila City,location
-Spaceport - New Atlantis,location
 Spaceport Terminal,location
-SSNN – Settled Systems News Network,location
 Stoneroot Inn,location
 Stroud-Eklund Corp,location
-Stroud-Eklund Showroom – Neon,location
-TerraBrew Coffee – Akila City,location
-TerraBrew Coffee – Neon,location
-TerraBrew Coffee – New Atlantis Commercial District,location
-TerraBrew Coffee – New Atlantis Spaceport,location
 Terran Preservation Society,location
 The Emporium,location
 The Empty Nest,location
@@ -2426,16 +2356,11 @@ The Rock,location
 The Siren of the Stars,location
 The Viewport,location
 The Volii Hotel,location
-Trade Authority – Neon,location
-Trade Authority Outpost – Cydonia,location
 Trade Tower,location
 UC Exchange,location
-UC Office of the Governor General,location
-UCSEC – United Colonies Security and Safety,location
 Unexplored Geophysical Feature,location
 Vanguard Exam Center,location
 Waterfall Promenade,location
-Wildtown,location
 Chemistry,skill
 Energy Weapon Dissipation,skill
 Heavy Weapon Certification,skill
@@ -2881,7 +2806,6 @@ Nemeria IV,location
 Nemeria V,location
 Nemeria VI,location
 Nemeria VII,location
-Nesobi,location
 Newton I,location
 Newton II,location
 Newton III,location
@@ -2971,7 +2895,6 @@ Rutherford III,location
 Rutherford IV,location
 Rutherford V,location
 Rutherford VI,location
-Sagan 1,location
 Schrodinger I,location
 Schrodinger II,location
 Schrodinger III,location
@@ -3055,12 +2978,6 @@ Tirna X,location
 Toliman I,location
 Toliman II,location
 Umanah,location
-Ursae Major I,location
-Ursae Major II,location
-Ursae Major III,location
-Ursae Minor I,location
-Ursae Minor II,location
-Ursae Minor III,location
 Van Maanen I,location
 Vega I,location
 Vega II,location
@@ -3106,7 +3023,6 @@ Zosma IV,location
 Zosma V,location
 Alpha Andraste,location
 Alpha Tirna,location
-Bannoc Prime,location
 Bannoc Secondus,location
 Barnard's Star,location
 Bel,location
@@ -3115,7 +3031,6 @@ Beta Marae,location
 Beta Ternion,location
 Beta Tirna,location
 Bohr,location
-Cassiopea,location
 Copernicus Minor,location
 Delta Pavonis,location
 Delta Vulpes,location
@@ -3130,99 +3045,11 @@ Procyon A,location
 Procyon B,location
 Proxima Ternion,location
 Rana,location
-Apex Dust Devil Exorunner,creature
-Apex Parrothawk,creature
 Baleen Rotifer,creature
-Beetle Grazer,creature
-Beetle Scavenger,creature
-Carnasnail Scavenger,creature
-Centiskull Filterer,creature
-Centiskull Geophage,creature
-Centiskull Grazer,creature
-Coralheart Filterer,creature
-Coralheart Grazer,creature
-Coralheart Herbivore,creature
 Crocodaunt,creature
-Eggback Herbivore,creature
 Elk Crangon,creature
-Flamethorn herbivore,creature
-Flocking ankylosaurus geophage,creature
-Flocking Beetlecrab Herbivore,creature
-Flocking Cephalopod Scavenger,creature
-Flocking Coralcrawler Geophage,creature
-Flocking Glowhand Grazer,creature
-Flocking Octomaggot Grazer,creature
-Flocking Scorpion Geophage,creature
-Flocking Shardhopper Geophage,creature
-Flocking Shellephant Herbivore,creature
-Flocking Toadface Herbivore,creature
-Flocking Vuvuzelisk Grazer,creature
-Gossamer Scavenger,creature
-Grabber Herbivore,creature
 Grazing Ensifer,creature
-Herding Boneback Scavenger,creature
-Herding Bonemane Grazer,creature
-Herding Clickbeetle Grazer,creature
-Herding Coralbucket Filterer,creature
-Herding Crab Herbivore,creature
-Herding Crabfly Grazer,creature
-Herding Geckon Grazer,creature
-Herding Glider Grazer,creature
-Herding Glowback Scavenger,creature
-Herding Hippodon Scavenger,creature
-Herding Horsamander Herbivore,creature
-Herding Sailgator Herbivore,creature
-Herding Scoopback Geophage,creature
-Herding Sunflower Filterer,creature
-Herding Trihorn Goephage,creature
-Herding Wobbleback Geophage,creature
-Hunting Ankylosaurus,creature
-Hunting Brainsprout,creature
-Hunting Brainsquid,creature
-Hunting Brightcage,creature
-Hunting Cagebrain,creature
-Hunting Cephalopod,creature
-Hunting Coralcrab,creature
-Hunting Crab,creature
-Hunting Kronosaurus,creature
-Hunting Leafstrider,creature
-Hunting Sailgator,creature
-Hunting Sharkwhale,creature
-Hunting shieldshell,creature
-Hunting Toadface Stalker,creature
-Hunting Triantrler,creature
-Hunting Tuskfrog,creature
-Hunting Twistfin,creature
-Hunting Vectorback,creature
-Jacknife Geophage,creature
-Mayfly Herbivore,creature
-Millwhale Grazer,creature
-Mothwing Grazer,creature
-Nautilus Scavanger,creature
-Pack Ankylosaurus,creature
-Pack Bearclaw,creature
-Pack Cockroach,creature
-Pack Coralbug,creature
-Pack Coralbug Stalker,creature
-Pack Coralcrab Stalker,creature
-Pack Coralcrawler,creature
-Pack Crab,creature
-Pack Prong Wing Seabat,creature
-Pack Seahag,creature
-Pack Trapmaw,creature
-Pack Twintail,creature
-Pack Twistfin,creature
-Pearl Filterer,creature
-Schooling Arapaima filterer,creature
-Schooling Exowhale Filterer,creature
-Schooling Featherfin Filterer,creature
 Seahag,creature
-Sloth Grazer,creature
-Sunflower Filterer,creature
-Swarming Dragon,creature
-Toadface Grazer,creature
-Trilobite Scavenger,creature
-Tuskfrog Grazer,creature
 Adaptive frame,resource
 Aldumite Drilling Rig,resource
 Alien Jerky,resource
@@ -3235,13 +3062,10 @@ Bandages,resource
 Cosmetic,resource
 Deformable Nozzle,resource
 Drilling Rig,resource
-Dust Devil Exorunner,resource
 Electron Pump,resource
 Gastronomic Delight,resource
 Gold,resource
-Grabber Filterer,resource
 Gravitic Laminate,resource
-HCn (hydrogen cyanide),resource
 HEAL PASTE,resource
 HEART+,resource
 Helical Equalizer,resource
@@ -3252,130 +3076,34 @@ Med Pack,resource
 Midnight Delight,resource
 Orange Juice of Transcendence,resource
 Patty Melt,resource
-R-COC (carbides),resource
 Synapse Alpha,resource
 Synthameat Steak,resource
 Ta'Ameya Pita,resource
 Tetrafluorides (xF4),resource
 Toast,resource
 Trilo Bites,resource
-V (vanadium),resource
 Water,resource
 Graviton Loop Array,company
 United Transport,company
 Deep Core,company
-Protectorate Systems,company
 Stroud Eklund,company
 Amun Dunn,company
-Sextant Shield Systems,company
 Shinigami,company
-Ballistic Solutions Inc,company
-Cnthonia,location
 
 # ── Skyrim / TES terms (from XLT glossario) ──────────────────────────────────
-Dragonborn,character
-Dovahkiin,character
-Alduin,character
-Paarthurnax,character
-Odahviing,character
-Durnehviir,character
 Talos,character
-Akatosh,character
-Arkay,character
-Dibella,character
-Julianos,character
-Kynareth,character
-Mara,character
-Stendarr,character
-Zenithar,character
-Azura,character
-Boethiah,character
-Clavicus Vile,character
-Hermaeus Mora,character
-Hircine,character
-Malacath,character
-Mehrunes Dagon,character
-Mephala,character
-Meridia,character
-Molag Bal,character
-Sheogorath,character
-Vaermina,character
 Nocturnal,character
-Peryite,character
-Namira,character
-Jyggalag,character
-Lorkhan,character
-Sithis,character
-Whiterun,location
-Riften,location
 Solitude,location
-Windhelm,location
-Markarth,location
-Winterhold,location
-Dawnstar,location
-Falkreath,location
-Morthal,location
-Riverwood,location
-Helgen,location
-Ivarstead,location
-Rorikstead,location
-Kynesgrove,location
-Dragon Bridge,location
-High Hrothgar,location
-Raven Rock,location
-Stonehills,location
-Tamriel,location
 Oblivion,location
-Mundus,location
-Daedra,lore
-Aedra,lore
-Stormcloaks,faction
-Thalmor,faction
-Dawnguard,faction
-Thu'um,lore
-Fus Ro Dah,lore
-Ven Gaar Nos,lore
-Redguard,lore
-Wabbajack,item
-Volendrung,item
 
 # ── Fallout terms (from XLT glossario) ───────────────────────────────────────
-Stimpak,item
-RadAway,item
-Rad-X,item
 Vault Boy,character
-Deathclaw,creature
-Enclave,faction
-Nuka-World,location
-Diamond City,location
-Goodneighbor,location
-Bunker Hill,location
 Commonwealth,location
 Wasteland,location
 Dogmeat,character
-Codsworth,character
 Vault-Tec,company
-T-45,item
-T-51,item
-T-60,item
-X-01,item
 V.A.T.S.,lore
 SPECIAL,lore
-Mirelurk,creature
-Eyebot,creature
-Robobrain,creature
-FEV,lore
-Vault 111,location
-Vault 87,location
-Vault 88,location
-Bobblehead,item
-Bottlecap,item
-Nuka-Quantum,item
-RadRoach,creature
-RadStag,creature
-Brahmin,creature
-Yao Guai,creature
-Cazador,creature
 Nightstalker,creature
 Behemoth,creature
 Mutt,creature
