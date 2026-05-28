@@ -1078,6 +1078,14 @@ class MainWindow(QMainWindow):
         self.prev_untranslated_action.setEnabled(False)
         trans_menu.addAction(self.prev_untranslated_action)
 
+        self.batch_translate_action = QAction(self.tr("&Batch Translate Folder…"), self)
+        self.batch_translate_action.setToolTip(self.tr(
+            "Scan a folder of binary string files (.strings/.dlstrings/.ilstrings),\n"
+            "auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings."
+        ))
+        self.batch_translate_action.triggered.connect(self._open_batch_translate_dialog)
+        trans_menu.addAction(self.batch_translate_action)
+
         trans_menu.addSeparator()
         self.quality_check_action = QAction(self.tr("&Quality Check…"), self)
         self.quality_check_action.setShortcut("Ctrl+F7")
@@ -2900,6 +2908,13 @@ class MainWindow(QMainWindow):
                 ).format(errors=errors, warnings=warnings),
                 15000,
             )
+
+    @Slot()
+    def _open_batch_translate_dialog(self) -> None:
+        """Open the Batch Translate Folder dialog."""
+        from gui.batch_translate_dialog import BatchTranslateDialog
+        dlg = BatchTranslateDialog(parent=self, settings=self.settings)
+        dlg.exec()
 
     @Slot()
     def _run_quality_check(self) -> None:
