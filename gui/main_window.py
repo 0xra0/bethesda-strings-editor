@@ -68,6 +68,7 @@ from gui.crash_recovery import CrashRecoveryDialog, CrashRecoveryManager
 from gui.desktop_notify import send_notification
 from gui.file_dialog_helper import get_open_filename, get_save_filename
 from gui.keyboard_manager import ActionEntry, KeyboardManager
+from gui.claude_client import is_claude_model
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
 from gui.translation_memory import TranslationMemory
@@ -602,32 +603,48 @@ class MainWindow(QMainWindow):
             self._restore_window()
 
     def _init_translation_worker(self):
-        """Initialize the Ollama translation worker."""
-        # Clean up existing workers
+        """Initialize the translation worker (Ollama or Claude depending on model)."""
         self._cleanup_workers()
-
         enable_protection = self.settings.enable_term_protection
+        model = self.settings.ollama_model
+
         self.ollama_thread = QThread()
-        self.ollama_worker = OllamaWorker(
-            base_url=self.settings.ollama_url,
-            model=self.settings.ollama_model,
-            enable_term_protection=enable_protection,
-            term_protector=self.term_protector if enable_protection else None,
-            translation_cache=self.translation_cache
-            if self.settings.enable_cache
-            else None,
-            max_workers=self.settings.max_workers,
-            ollama_num_thread=self.settings.ollama_num_thread,
-            ollama_num_predict=self.settings.ollama_num_predict,
-            ollama_num_ctx=self.settings.ollama_num_ctx,
-            long_string_threshold=self.settings.long_string_threshold,
-            long_string_action=self.settings.long_string_action,
-        )
-        self.ollama_worker.glossary_manager = self._glossary_manager
-        self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
+
+        if is_claude_model(model):
+            from gui.claude_client import get_api_key
+            from gui.claude_translation_worker import ClaudeTranslationWorker
+            api_key = get_api_key() or ""
+            self.ollama_worker = ClaudeTranslationWorker(
+                api_key=api_key,
+                model=model,
+                source_lang=self.settings.default_source_lang,
+                target_lang=self.settings.default_target_lang,
+                max_workers=min(self.settings.max_workers, 5),
+                term_protector=self.term_protector if enable_protection else None,
+                translation_cache=self.translation_cache if self.settings.enable_cache else None,
+            )
+            self.ollama_worker.glossary_manager = self._glossary_manager
+            logger.info("Translation worker initialized (Claude: %s)", model)
+        else:
+            self.ollama_worker = OllamaWorker(
+                base_url=self.settings.ollama_url,
+                model=model,
+                enable_term_protection=enable_protection,
+                term_protector=self.term_protector if enable_protection else None,
+                translation_cache=self.translation_cache if self.settings.enable_cache else None,
+                max_workers=self.settings.max_workers,
+                ollama_num_thread=self.settings.ollama_num_thread,
+                ollama_num_predict=self.settings.ollama_num_predict,
+                ollama_num_ctx=self.settings.ollama_num_ctx,
+                long_string_threshold=self.settings.long_string_threshold,
+                long_string_action=self.settings.long_string_action,
+            )
+            self.ollama_worker.glossary_manager = self._glossary_manager
+            self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
+            logger.info("Translation worker initialized (Ollama: %s)", model)
+
         self.ollama_worker.moveToThread(self.ollama_thread)
         self.ollama_thread.start()
-        logger.info("Translation worker initialized (Ollama)")
 
     def _cleanup_workers(self):
         """Clean up existing translation workers."""
@@ -891,6 +908,13 @@ class MainWindow(QMainWindow):
         self._glossary_dock.setWidget(dock_inner)
         self.addDockWidget(Qt.BottomDockWidgetArea, self._glossary_dock)
         self._glossary_dock.hide()
+
+        # ── Claude AI Assistant dock ──────────────────────────────────────────
+        from gui.claude_chat_panel import ClaudeChatPanel
+        self._claude_panel = ClaudeChatPanel(self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self._claude_panel)
+        self._claude_panel.hide()
+        self._claude_panel.apply_translation.connect(self._apply_claude_translation)
 
     def _create_menus(self):
         """Create menu bar."""
@@ -1195,6 +1219,45 @@ class MainWindow(QMainWindow):
         self.glossary_quality_action.triggered.connect(self._run_glossary_check)
         glossary_menu.addAction(self.glossary_quality_action)
 
+        # Claude AI menu
+        claude_menu = menubar.addMenu(self.tr("&Claude AI"))
+
+        self.claude_panel_action = QAction(self.tr("Show &AI Assistant"), self)
+        self.claude_panel_action.setShortcut("Ctrl+Shift+A")
+        self.claude_panel_action.setCheckable(True)
+        self.claude_panel_action.setChecked(False)
+        self.claude_panel_action.setToolTip(
+            self.tr("Show/hide the Claude AI chat assistant panel (Ctrl+Shift+A)")
+        )
+        self.claude_panel_action.triggered.connect(self._toggle_claude_panel)
+        claude_menu.addAction(self.claude_panel_action)
+
+        claude_menu.addSeparator()
+
+        self.claude_review_action = QAction(self.tr("&Review Current Translation"), self)
+        self.claude_review_action.setShortcut("Ctrl+Shift+R")
+        self.claude_review_action.setToolTip(
+            self.tr(
+                "Ask Claude to review the selected string's translation "
+                "for quality issues (Ctrl+Shift+R)"
+            )
+        )
+        self.claude_review_action.triggered.connect(self._claude_review_current)
+        self.claude_review_action.setEnabled(False)
+        claude_menu.addAction(self.claude_review_action)
+
+        self.claude_suggest_action = QAction(self.tr("&Suggest Translation"), self)
+        self.claude_suggest_action.setShortcut("Ctrl+Shift+T")
+        self.claude_suggest_action.setToolTip(
+            self.tr(
+                "Ask Claude to translate the current string "
+                "(result shown in AI Assistant panel) (Ctrl+Shift+T)"
+            )
+        )
+        self.claude_suggest_action.triggered.connect(self._claude_suggest_current)
+        self.claude_suggest_action.setEnabled(False)
+        claude_menu.addAction(self.claude_suggest_action)
+
         # Settings menu
         settings_menu = menubar.addMenu(self.tr("&Settings"))
         self.command_palette_action = QAction(self.tr("&Command Palette…"), self)
@@ -1401,6 +1464,10 @@ class MainWindow(QMainWindow):
             self.next_untranslated_action.setEnabled(has_file)
         if hasattr(self, "prev_untranslated_action"):
             self.prev_untranslated_action.setEnabled(has_file)
+        if hasattr(self, "claude_review_action"):
+            self.claude_review_action.setEnabled(has_file and has_selection)
+        if hasattr(self, "claude_suggest_action"):
+            self.claude_suggest_action.setEnabled(has_file and has_selection)
 
     @Slot()
     def open_advanced_search(self):
@@ -2551,6 +2618,9 @@ class MainWindow(QMainWindow):
         # Debounced: fires _refresh_glossary_dock 200ms after the last selection
         # change so rapid arrow-key scrolling doesn't block the main thread.
         self._glossary_refresh_timer.start()
+        # Update Claude panel context (only when visible — free if hidden)
+        if hasattr(self, "_claude_panel") and self._claude_panel.isVisible():
+            self._push_string_to_claude_panel()
 
     # ── Pre-translation estimation ─────────────────────────────────────────────
 
@@ -2915,6 +2985,66 @@ class MainWindow(QMainWindow):
         from gui.batch_translate_dialog import BatchTranslateDialog
         dlg = BatchTranslateDialog(parent=self, settings=self.settings)
         dlg.exec()
+
+    # ── Claude AI panel ────────────────────────────────────────────────────────
+
+    @Slot()
+    def _toggle_claude_panel(self) -> None:
+        if self._claude_panel.isVisible():
+            self._claude_panel.hide()
+            self.claude_panel_action.setChecked(False)
+        else:
+            self._claude_panel.show()
+            self.claude_panel_action.setChecked(True)
+            self._push_string_to_claude_panel()
+
+    def _push_string_to_claude_panel(self) -> None:
+        """Send the currently selected string to the Claude chat panel."""
+        if not self.current_file:
+            return
+        rows = self.table_view.selectionModel().selectedRows()
+        if not rows:
+            return
+        idx = rows[0].row()
+        row = self.table_model.get_row_data(idx)
+        self._claude_panel.set_current_string(
+            string_id=row.get("id", 0),
+            original=row.get("original", ""),
+            translation=row.get("translated", ""),
+            source_lang=self.combo_source_lang.currentData(),
+            target_lang=self.combo_target_lang.currentData(),
+        )
+
+    @Slot()
+    def _claude_review_current(self) -> None:
+        """Open AI panel (if hidden) and trigger a review of the current string."""
+        if not self._claude_panel.isVisible():
+            self._claude_panel.show()
+            self.claude_panel_action.setChecked(True)
+        self._push_string_to_claude_panel()
+        self._claude_panel._do_review()  # noqa: SLF001
+
+    @Slot()
+    def _claude_suggest_current(self) -> None:
+        """Open AI panel (if hidden) and ask Claude to suggest a translation."""
+        if not self._claude_panel.isVisible():
+            self._claude_panel.show()
+            self.claude_panel_action.setChecked(True)
+        self._push_string_to_claude_panel()
+        self._claude_panel._do_suggest()  # noqa: SLF001
+
+    @Slot(str)
+    def _apply_claude_translation(self, text: str) -> None:
+        """Write a Claude-suggested translation into the selected table row."""
+        rows = self.table_view.selectionModel().selectedRows()
+        if not rows or not text:
+            return
+        idx = rows[0].row()
+        self.table_model.set_translated_text(idx, text)
+        self.statusBar().showMessage(
+            self.tr("Claude translation applied to row {row}.").format(row=idx + 1),
+            5000,
+        )
 
     @Slot()
     def _run_quality_check(self) -> None:
