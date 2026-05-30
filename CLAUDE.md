@@ -8,10 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 python main.py
 ```
 
-Requires PySide6 and `requests`. No `requirements.txt` exists — install manually:
+Dependencies are in `requirements.txt`:
 
 ```bash
-pip install PySide6 requests
+pip install -r requirements.txt
+# Core: PySide6>=6.6, requests>=2.31, cryptography>=43.0
+# Optional: keyring>=25.0  (falls back to encrypted file store if absent)
 ```
 
 Logging goes to both stdout and `translator.log` in the project root.
@@ -24,11 +26,11 @@ The app uses a custom Ollama model named `translategemma3-st`. To create or recr
 ollama create translategemma3-st -f Modelfile
 ```
 
-The `Modelfile` points to a local GGUF path (`/mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf`). All generation parameters in `Modelfile` are overridden at runtime by the app — the file is only used for direct `ollama run` invocations.
+The `Modelfile` points to a local GGUF path (`/mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf`). All generation parameters in `Modelfile` are overridden at runtime — the file is only used for direct `ollama run` invocations.
 
 ## Compiling UI Translations
 
-The Ukrainian UI translation lives in `gui/translations/uk_UA.ts` (source) and `uk_UA.qm` (compiled binary). After editing the `.ts` file, recompile:
+UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compiled binary). Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`. After editing any `.ts` file:
 
 ```bash
 ./scripts/compile_translations.sh
@@ -39,27 +41,94 @@ The Ukrainian UI translation lives in `gui/translations/uk_UA.ts` (source) and `
 ### Two-layer structure
 
 **`bethesda_strings/`** — pure Python parsing library, no Qt dependency:
-- `core.py` — `BethesdaStringFile` / `StringDataObject`: binary parser and writer for `.strings`, `.dlstrings`, `.ilstrings`. Header is 8 bytes; each directory entry is 8 bytes (ID + relative offset). `.dlstrings`/`.ilstrings` have a 4-byte length prefix per string; `.strings` use null termination.
-- `esp_handler.py` — `EspFile`: parses ESP/ESM plugin files. Only handles *non-localized* plugins where text is stored directly in field buffers. Localized plugins (bit 0x80 in flags) use companion `.strings` files instead. Field/record combinations that contain translatable text are defined in `_FIELD_DEFS`.
-- `xml_handler.py` — `XMLHandler`: imports/exports xTranslator SST XML format (matching xTranslator's own Pascal logic: match by `sID` hex first, fall back to `Source` text).
-- `encoding.py` — `EncodingConverter`: encoding detection/conversion utilities.
+
+- `core.py` — `BethesdaStringFile` / `StringDataObject`: binary parser/writer for `.strings`, `.dlstrings`, `.ilstrings`. Header is 8 bytes; each directory entry is 8 bytes (ID + relative offset). `.dlstrings`/`.ilstrings` have a 4-byte length prefix per string; `.strings` use null termination.
+- `esp_handler.py` — `EspFile`: parses ESP/ESM/ESL plugin files. Only handles *non-localized* plugins (text stored directly in field buffers). Localized plugins (bit 0x80 in flags) use companion `.strings` files instead. Translatable field/record combinations are in `_FIELD_DEFS`.
+- `ba2_handler.py` — `BA2File`: reads BA2 archives (GNRL type only, zlib-compressed). Supports Fallout 4 v1 and Starfield v2 formats. Used to open `.strings` files bundled inside BA2 archives.
+- `xml_handler.py` — `XMLHandler`: imports/exports xTranslator SST XML format (match by `sID` hex first, fall back to `Source` text — mirrors xTranslator's Pascal logic).
+- `encoding.py` — `EncodingConverter`: encoding detection and conversion (UTF-8/CP1251/CP1252/BOM).
 - `operations.py` — factory functions for `BethesdaStringFile.filter_and_modify()`.
+- `version_diff.py` — `VersionDiff`: computes per-string diff between two versions of the same file (added/removed/changed). Used by the version comparison dialog and batch folder comparison.
 
 **`gui/`** — PySide6 application layer:
-- `main_window.py` — `MainWindow`: top-level window. Owns the `OllamaWorker` thread, file-open/save logic, and coordinates all other components.
-- `string_table.py` — `StringTableModel` / `StringTableView`: `QAbstractTableModel` with two display modes — `"strings"` (for `.strings`/`.dlstrings`/`.ilstrings`) and `"esp"` (for ESP/ESM). Column layout differs between modes.
+
+#### Core window & table
+- `main_window.py` — `MainWindow`: top-level window. Owns the worker thread, file-open/save logic, audit log, crash recovery, and coordinates all other components.
+- `string_table.py` — `StringTableModel` / `StringTableView`: `QAbstractTableModel` with two display modes — `"strings"` (for `.strings`/`.dlstrings`/`.ilstrings`) and `"esp"` (for ESP/ESM). Column layout differs between modes. Emits `Ctrl+C/V/Shift+C/Shift+V` clipboard shortcuts and a status-bar `Total/Done/Left %` + ETA label during batches.
+- `app_settings.py` — `AppSettings` dataclass (`CONFIG_VERSION = 21`). Persisted as JSON (primary) + `QSettings` (secondary). Entry points: `load_settings()` / `save_settings()`.
+- `settings_dialog.py` — full settings UI (backend selector, model, keys, QC options, etc.).
+- `theme_manager.py` — built-in QSS themes (`Slate`, etc.) + custom theme support. Applied as application-wide stylesheets.
+- `theme_dialog.py` — theme picker/editor dialog.
+
+#### Translation backends
 - `ollama_worker.py` — `OllamaWorker`: runs in a dedicated `QThread`. Uses a `ThreadPoolExecutor` (default 10 workers) to call the Ollama HTTP API in parallel. Emits `translation_ready(index, text, string_id)`, `progress`, `error`, `finished`.
-- `term_protector.py` — `TermProtector`: replaces protected terms (game names, proper nouns) with unique placeholder tokens before sending text to the AI model, then restores them after. Uses combined regex for performance with 8000+ terms.
+- `claude_client.py` — shared Claude API client (translation, chat, quality review). Manages API key via `SecretStore`. Model registry: Haiku 4.5 (default), Sonnet 4.6, Opus 4.7.
+- `claude_translation_worker.py` — `ClaudeTranslationWorker`: drop-in replacement for `OllamaWorker` that calls the Claude API instead of Ollama. Selected via `AppSettings.translation_backend`.
+- `claude_chat_panel.py` — dockable `QDockWidget` for chatting with Claude about the current string and applying its suggested translation.
+
+#### Translation pipeline helpers
+- `term_protector.py` — `TermProtector`: replaces protected terms with unique placeholder tokens before AI calls, restores them after. Uses a combined regex over 8000+ terms for performance.
 - `translation_cache.py` — `TranslationCache`: thread-safe JSON-backed cache keyed on `sha256(text + model + source_lang + target_lang)`. Capped at 50,000 entries.
-- `translation_memory.py` — `TranslationMemory`: pre-loaded map of string ID → correct translation from a prior human/assisted translation file. `OllamaWorker` consults this before calling the model, so known strings are never retranslated.
-- `quality_checker.py` — post-translation QA: checks for missing game tags (`<Alias=…>`, `[PLYR]`, `%s`), encoding failures, suspicious length ratios, Russian character leakage into Ukrainian output, and AI repetition artifacts.
-- `app_settings.py` — `AppSettings` dataclass (currently `CONFIG_VERSION = 9`). Settings are persisted as JSON (primary) and `QSettings` (secondary). `load_settings()` / `save_settings()` are the entry points.
-- `theme_manager.py` — built-in QSS themes (`Slate`, etc.) plus custom theme support. Themes are applied as application-wide stylesheets.
+- `translation_memory.py` — `TranslationMemory`: pre-loaded map of string ID → correct translation from a prior file. Consulted before any model call so known strings are never retranslated.
+- `glossary.py` — `GlossaryManager`: CSV/TBX/JSON I/O, suggest dock, AI prompt injection, GLOSSARY_MISMATCH QC check.
+- `glossary_editor.py` — full-screen glossary editing dialog.
+- `quick_add_term_dialog.py` — lightweight dialog to add a single term to the glossary from the main table.
+- `protected_terms_dialog.py` — dialog for managing the protected terms list.
+- `term_discoverer.py` — `discover_terms()`: heuristic scan of string pairs to suggest candidate protected terms (proper nouns, identifiers).
+- `batch_translate_dialog.py` — "Batch Translate Folder" dialog for bulk AI retranslation of a whole directory of string files.
+
+#### Quality assurance
+- `quality_checker.py` — post-translation QA. Checks: missing/extra game tags (`<Alias=…>`, `[PLYR]`, `%s`), encoding failures, suspicious length ratios, Russian character leakage into Ukrainian output, English text leakage, untranslated strings, AI repetition artifacts, newline count mismatches, and more. Exports `AUTOFIX_CODES` and `RETRANSLATE_CODES` sets used by the dialog.
+- `quality_dialog.py` — QC results dialog. Shows issues with retry-hint messages, per-row auto-fix and retranslation queue, and an "Auto-Retranslate Issues" batch action.
+- `pre_translation_estimator.py` — `PreTranslationEstimator`: scores 0–100 difficulty before any AI call. Weights learned from manual corrections (persisted as JSON).
+- `consistency_checker.py` — `ConsistencyChecker`: finds same-source strings with different translations across the file.
+- `consistency_dialog.py` — canonical-form picker with auto-replace (`Ctrl+Alt+K`).
+- `string_type_detector.py` — `StringType` enum + `classify()`: categorizes strings (UI, dialogue, description, etc.) for display icons and filtering.
+- `plugin_validator_dialog.py` — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies.
+
+#### File handling & dialogs
+- `ba2_picker_dialog.py` — `BA2PickerDialog`: lets the user pick which `.strings` file to open when a BA2 archive contains multiple entries.
+- `version_compare_dialog.py` — game-version diff UI; migrates unchanged translations; exports CSV/HTML reports; supports batch folder comparison.
+- `diff_viewer.py` — side-by-side diff viewer (source-vs-translation or comparison-vs-current). Word-level or character-level granularity. Editable right pane with live diff update. HTML export.
+- `translation_dialog.py` — inline translation editor dialog.
+- `advanced_search_dialog.py` — regex/fuzzy search across source and translation columns.
+- `file_dialog_helper.py` — helpers for file-open/save dialogs (extension filtering, last-used directory tracking).
+- `nexusmods_upload_dialog.py` — UI for the NexusMods upload flow.
+- `nexusmods_uploader.py` — NexusMods v3 multipart upload client (6-step: presigned URLs → S3 → finalise → poll → attach metadata).
+
+#### Infrastructure
+- `keyboard_manager.py` — `KeyboardManager`: app-wide shortcut registration. `CommandPalette` (Ctrl+K): fuzzy-searchable command list. Vim-style navigation. `F7` → next untranslated, `Ctrl+Enter` → approve, `Ctrl+R` → reject.
+- `command_palette.py` — `CommandPalette` widget (also accessible from `keyboard_manager`).
+- `audit_log.py` — `AuditLog`: append-only JSON-lines security log. Records file operations, translation batches, settings changes, encryption events — never logs actual string content. Rotates at 5 MB.
+- `crash_recovery.py` — `CrashRecoveryManager`: periodic auto-save of translation progress (JSON snapshot in config dir). `CrashRecoveryDialog`: offered at startup if the previous session ended unexpectedly.
+- `secret_store.py` — `SecretStore`: API key storage. Primary: system keyring (`keyring` library). Fallback: AES-256-GCM encrypted file, key derived from machine ID via PBKDF2-HMAC-SHA256.
+- `desktop_notify.py` — `send_notification()`: desktop notification helper (used for batch-complete events).
+- `fuzzy_match.py` — Levenshtein distance, longest common substring/prefix, word-level distance, unicode control char utilities. Used by advanced search and consistency checker.
+- `en_word_checker.py`, `ru_word_checker.py`, `uk_word_checker.py` — word-list-based detectors for untranslated source-language text in output. Preloaded in the background when the worker initializes. Word lists are in `data/`.
 
 ### Key design notes
 
 - **Native file dialogs are disabled** via `Qt.ApplicationAttribute.AA_DontUseNativeDialogs` (set before `QApplication` is created). This is intentional — GTK/KDE portal dialogs deadlock the Qt event loop on Linux tiling WMs.
-- **Translation pipeline per string**: `TermProtector.protect()` → Ollama API call → `TermProtector.restore()` → `QualityChecker` → emit `translation_ready`.
+- **Translation backend selection**: `AppSettings.translation_backend` controls whether `OllamaWorker` or `ClaudeTranslationWorker` is instantiated. Both implement the same signal interface.
+- **Translation pipeline per string**: `TermProtector.protect()` → model API call → `TermProtector.restore()` → `QualityChecker` → emit `translation_ready`.
 - **Config location**: JSON config file is written to a platform-appropriate config directory (see `get_config_path()` in `app_settings.py`), not the project root.
-- **Word checkers** (`en_word_checker.py`, `ru_word_checker.py`, `uk_word_checker.py`) use word lists from `data/` for detecting untranslated source-language text in output. They are preloaded in the background when `OllamaWorker` initializes.
 - **Protected terms file**: `protected_terms_starfield_hq.txt` in the project root is the default terms list for Starfield localization.
+- **Drag and drop**: `_DropOverlay` + `_WelcomeWidget` on the main window; green/red feedback; extension validation; `dragMoveEvent` required to prevent forbidden cursor.
+
+## Scripts
+
+- `scripts/compile_translations.sh` — compiles all `.ts` → `.qm` UI translation files.
+- `scripts/extract_sharegpt_dataset.py` — extracts EN→UK Starfield string pairs as ShareGPT JSONL for fine-tuning a translation model. Output: `scripts/starfield_en_uk_sharegpt.jsonl`.
+- `scripts/create_qc_dataset.py` — generates a QC training dataset (ShareGPT JSONL) by running `QualityChecker` on real EN→UK pairs and injecting synthetic bad examples for all 16 issue codes. Output: `scripts/qc_dataset_sharegpt.jsonl` (14,928 examples).
+- `scripts/train_qc_model.py` — standalone ROCm-compatible QLoRA fine-tuning script for a Gemma 3 1B QC model (bypasses Unsloth Studio). Sets `HSA_ENABLE_SDMA=0`, `PYTORCH_HIP_ALLOC_CONF`, uses `attn_implementation="eager"`. Output: `models/qc_gemma3_1b/`.
+- `scripts/apply_quality_fixes.py`, `scripts/apply_uk_translations.py` — batch fix/apply scripts for offline use.
+- `scripts/extract_starfield_glossary.py` — builds `starfield_glossary.json` from string files.
+- `scripts/build_uk_dict.py`, `scripts/download_en_dict.py` — word list builders for `data/`.
+
+## Tests
+
+```bash
+pytest tests/
+```
+
+Test files: `test_encoding_detection.py` (28 tests), `test_glossary.py`, `test_pre_translation_estimator.py`, `test_quality_checker.py`, `test_term_protector_threading.py`, `test_diff_viewer.py`.
