@@ -2,13 +2,13 @@
 # Fine-tuned Gemma 3 model for game localization translation.
 #
 # IMPORTANT — parameter precedence:
-#   The bethesda-strings-editor application overrides ALL parameters
-#   (temperature, num_ctx, num_predict, top_k, top_p, min_p,
-#   repeat_penalty, repeat_last_n, stop, and system) on every API call.
-#   The values here are therefore the defaults used ONLY when the model
-#   is run directly, e.g.:
-#     ollama run translategemma3-st
-#     curl http://localhost:11434/api/generate -d '{"model":"translategemma3-st",...}'
+#   The bethesda-strings-editor application overrides these options on every
+#   API call (values here apply only to direct `ollama run` invocations):
+#     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
+#
+#   These options are NOT overridden by the app — Modelfile values are always
+#   active, including during API calls:
+#     min_p, repeat_last_n
 #
 # To rebuild from this file:
 #   ollama create translategemma3-st -f Modelfile
@@ -39,7 +39,7 @@ PARAMETER temperature 0.1
 PARAMETER num_ctx 16384
 
 # Maximum output tokens per request.  The application uses an adaptive value
-# (min(4096, max(100, input_length * 4))); 4 096 is a safe direct-use default.
+# (min(4096, max(200, input_length / 2))); 4 096 is a safe direct-use default.
 PARAMETER num_predict 4096
 
 # Sampling parameters.
@@ -50,19 +50,21 @@ PARAMETER top_p 0.9
 # probability.  At temperature 0.1 the distribution is already very peaked;
 # min_p acts as a fine-grained quality filter without restricting fluency.
 # Complements top_p rather than replacing it (both thresholds must pass).
+# NOTE: the app does NOT send min_p — this Modelfile value is always active.
 PARAMETER min_p 0.02
 
-# Repeat penalty: lowered from 1.1 to 1.05.
-# Ukrainian is a highly inflected language; grammatically required repetition
-# of roots and endings is common.  1.1 nudges the model toward incorrect
-# synonyms.  1.05 provides light repetition control without distortion.
-PARAMETER repeat_penalty 1.05
+# Repeat penalty: matches the value the app sends at runtime (OllamaWorker
+# MODEL_CONFIGS["translategemma3-st"]["repeat_penalty"] = 1.1).
+# 1.1 provides light repetition control; lower values risk stuck loops on
+# highly inflected Ukrainian while higher values distort grammar.
+PARAMETER repeat_penalty 1.1
 
 # Repeat window: increased from the default 64 to 256 tokens.
 # Long Bethesda strings (books, terminal logs, extended dialogue) easily
 # exceed 64 tokens; a 64-token window lets the model repeat phrases it
 # generated just a few sentences earlier.  256 tokens covers most strings
 # without adding meaningful overhead.
+# NOTE: the app does NOT send repeat_last_n — this Modelfile value is always active.
 PARAMETER repeat_last_n 256
 
 # ── Stop tokens ──────────────────────────────────────────────────────────────
