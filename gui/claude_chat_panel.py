@@ -40,9 +40,10 @@ logger = logging.getLogger(__name__)
 # ── Background chat worker ────────────────────────────────────────────────────
 
 class _ChatWorker(QThread):
-    """Calls Claude in a background thread and emits the reply."""
+    """Calls Claude in a background thread, streaming tokens to the UI."""
 
-    reply_ready  = Signal(str)
+    token_ready  = Signal(str)   # incremental text delta
+    reply_ready  = Signal(str)   # full reply (for history storage)
     error_signal = Signal(str)
 
     def __init__(
@@ -63,8 +64,11 @@ class _ChatWorker(QThread):
         try:
             from gui.claude_client import ClaudeClient
             client = ClaudeClient(self.api_key, self.model)
-            reply  = client.chat(self.messages, system=self.system)
-            self.reply_ready.emit(reply)
+            parts: List[str] = []
+            for chunk in client.chat_stream(self.messages, system=self.system):
+                parts.append(chunk)
+                self.token_ready.emit(chunk)
+            self.reply_ready.emit("".join(parts))
         except Exception as exc:
             self.error_signal.emit(str(exc))
 
@@ -132,7 +136,7 @@ class ClaudeChatPanel(QDockWidget):
 
         # State
         self._api_key:   str       = ""
-        self._model:     str       = "claude-haiku-4-5-20251001"
+        self._model:     str       = "claude-haiku-4-5"
         self._source_lang: str     = "ru"
         self._target_lang: str     = "uk"
         self._history:  List[Dict] = []   # [{"role": …, "content": …}]
@@ -478,6 +482,9 @@ class ClaudeChatPanel(QDockWidget):
             system=self._system_prompt(),
             parent=self,
         )
+        # Prepare the streaming block before the worker starts
+        self._begin_claude_stream()
+        self._worker.token_ready.connect(self._on_token)
         self._worker.reply_ready.connect(self._on_reply)
         self._worker.error_signal.connect(self._on_error)
         self._worker.finished.connect(lambda: self._set_busy(False))
@@ -485,12 +492,54 @@ class ClaudeChatPanel(QDockWidget):
 
     # ── Worker result slots ───────────────────────────────────────────────────
 
+    def _begin_claude_stream(self) -> None:
+        """Insert the 'Claude:' header and record the cursor position for token insertion."""
+        from PySide6.QtGui import QTextCursor
+        cursor = self._chat_view.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+        self._chat_view.setTextCursor(cursor)
+        self._chat_view.insertHtml('<p class="claude"><b>Claude:</b><br>')
+        self._stream_start = self._chat_view.textCursor().position()
+        self._stream_parts: list = []
+
+    @Slot(str)
+    def _on_token(self, chunk: str) -> None:
+        """Append a streaming token at the tracked cursor position."""
+        from PySide6.QtGui import QTextCursor
+        self._stream_parts.append(chunk)
+        cursor = self._chat_view.textCursor()
+        cursor.setPosition(self._stream_start)
+        cursor.movePosition(QTextCursor.MoveOperation.End, QTextCursor.MoveMode.KeepAnchor)
+        cursor.removeSelectedText()
+        cursor.insertText("".join(self._stream_parts))
+        self._scroll_bottom()
+
     @Slot(str)
     def _on_reply(self, text: str) -> None:
-        self._history.append({"role": "assistant", "content": text})
-        self._append_claude(text)
-        # Enable "Use as Translation" if the reply contains a code block
+        """Replace raw streamed text with nicely formatted HTML."""
+        from PySide6.QtGui import QTextCursor
         import re
+        self._history.append({"role": "assistant", "content": text})
+
+        # Build the formatted content (same logic as _append_claude)
+        formatted = re.sub(
+            r"```\n?(.*?)\n?```",
+            r'<pre style="background:rgba(30,41,59,0.8);border-radius:4px;padding:6px;'
+            r'margin:4px 0;color:#a7f3d0;">\1</pre>',
+            self._esc(text),
+            flags=re.DOTALL,
+        )
+        formatted = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", formatted)
+        formatted = formatted.replace("\n", "<br>")
+
+        # Overwrite the plain-text stream with formatted HTML
+        cursor = self._chat_view.textCursor()
+        cursor.setPosition(self._stream_start)
+        cursor.movePosition(QTextCursor.MoveOperation.End, QTextCursor.MoveMode.KeepAnchor)
+        cursor.removeSelectedText()
+        cursor.insertHtml(formatted + "</p>")
+
+        self._scroll_bottom()
         self._btn_apply.setEnabled(bool(re.search(r"```", text)))
 
     @Slot(str)

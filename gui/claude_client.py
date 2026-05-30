@@ -3,24 +3,28 @@ Shared Claude API client for translation, chat, and quality review.
 
 All Claude-powered features (translation backend, chat assistant, quality
 review) use this module so API key management and model selection is centralised.
+
+Prompt caching is enabled on every call: system prompts are marked with
+cache_control so repeated requests in a session pay ~10 % of normal input cost
+for the stable system-prompt portion.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, Generator, List, Optional
 
 logger = logging.getLogger(__name__)
 
 # ── Model registry ─────────────────────────────────────────────────────────────
 
 CLAUDE_MODELS: Dict[str, str] = {
-    "claude-haiku-4-5-20251001": "Claude Haiku 4.5 — fast, great for batch translation",
-    "claude-sonnet-4-6":         "Claude Sonnet 4.6 — balanced quality & speed",
-    "claude-opus-4-7":           "Claude Opus 4.7 — highest quality, slower",
+    "claude-haiku-4-5":  "Claude Haiku 4.5 — fast, great for batch translation",
+    "claude-sonnet-4-6": "Claude Sonnet 4.6 — balanced quality & speed",
+    "claude-opus-4-8":   "Claude Opus 4.8 — highest quality, slower",
 }
 
-DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+DEFAULT_MODEL = "claude-haiku-4-5"
 
 # Key used in the app's SecretStore
 _SECRET_KEY = "anthropic-api-key"
@@ -113,7 +117,8 @@ class ClaudeClient:
         response = self._client.messages.create(
             model=self.model,
             max_tokens=min(4096, max(256, len(text) * 3)),
-            system=system,
+            system=[{"type": "text", "text": system,
+                     "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": prompt}],
         )
         return response.content[0].text.strip()
@@ -133,16 +138,39 @@ class ClaudeClient:
         dicts (standard Anthropic Messages API format).
         Returns the assistant's reply text.
         """
-        kwargs = {
+        kwargs: dict = {
             "model": self.model,
             "max_tokens": max_tokens,
             "messages": messages,
         }
         if system:
-            kwargs["system"] = system
+            kwargs["system"] = [{"type": "text", "text": system,
+                                  "cache_control": {"type": "ephemeral"}}]
 
         response = self._client.messages.create(**kwargs)
         return response.content[0].text
+
+    def chat_stream(
+        self,
+        messages: List[Dict],
+        system: str = "",
+        max_tokens: int = 2048,
+    ) -> Generator[str, None, None]:
+        """
+        Streaming variant of :meth:`chat`.  Yields text delta chunks so the
+        caller can display tokens as they arrive.
+        """
+        kwargs: dict = {
+            "model": self.model,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        if system:
+            kwargs["system"] = [{"type": "text", "text": system,
+                                  "cache_control": {"type": "ephemeral"}}]
+
+        with self._client.messages.stream(**kwargs) as stream:
+            yield from stream.text_stream
 
     # ── Quality review ─────────────────────────────────────────────────────────
 
@@ -182,7 +210,8 @@ class ClaudeClient:
         response = self._client.messages.create(
             model=self.model,
             max_tokens=1024,
-            system=system,
+            system=[{"type": "text", "text": system,
+                     "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user}],
         )
         return response.content[0].text

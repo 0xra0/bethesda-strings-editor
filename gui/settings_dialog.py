@@ -29,9 +29,9 @@ class SettingsDialog(QDialog):
         'translategemma3-st',
         'translategemma3-st-2',
         # ── Claude API (requires Anthropic API key in Claude AI panel) ──────────
-        'claude-haiku-4-5-20251001',
+        'claude-haiku-4-5',
         'claude-sonnet-4-6',
-        'claude-opus-4-7',
+        'claude-opus-4-8',
     ]
 
 

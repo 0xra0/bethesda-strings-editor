@@ -60,6 +60,12 @@ class ClaudeTranslationWorker(QObject):
         self._stop_flag = False
         self._mutex = QMutex()
 
+        # Shared client — one connection pool reused across all worker threads.
+        # Creating a new ClaudeClient per request was wasteful and broke prompt
+        # caching (each new client has a fresh cache-write on the first call).
+        from gui.claude_client import ClaudeClient
+        self._claude = ClaudeClient(api_key, model)
+
     def stop(self) -> None:
         """Signal the worker to stop after the current request."""
         with QMutexLocker(self._mutex):
@@ -130,9 +136,7 @@ class ClaudeTranslationWorker(QObject):
                     glossary_snippet = ""
 
             try:
-                from gui.claude_client import ClaudeClient
-                client = ClaudeClient(self.api_key, self.model)
-                result = client.translate(
+                result = self._claude.translate(
                     text=protected,
                     source_lang=self.source_lang,
                     target_lang=self.target_lang,
