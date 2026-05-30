@@ -923,13 +923,16 @@ class MainWindow(QMainWindow):
         # File menu
         file_menu = menubar.addMenu(self.tr("&File"))
         open_action = QAction(self.tr("&Open..."), self, shortcut=QKeySequence("Ctrl+O"))
+        open_action.setIcon(QIcon.fromTheme("document-open"))
         open_action.triggered.connect(self.open_file)
         file_menu.addAction(open_action)
 
         self._recent_menu = file_menu.addMenu(self.tr("Open &Recent"))
+        self._recent_menu.setIcon(QIcon.fromTheme("document-open-recent"))
         self._rebuild_recent_menu()
 
         self.save_action = QAction(self.tr("&Save"), self, shortcut=QKeySequence("Ctrl+S"))
+        self.save_action.setIcon(QIcon.fromTheme("document-save"))
         self.save_action.triggered.connect(self.save_file)
         self.save_action.setEnabled(False)
         file_menu.addAction(self.save_action)
@@ -937,17 +940,20 @@ class MainWindow(QMainWindow):
         self.save_as_action = QAction(
             self.tr("Save &As..."), self, shortcut=QKeySequence("Ctrl+Shift+S")
         )
+        self.save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
         self.save_as_action.triggered.connect(self.save_file_as)
         self.save_as_action.setEnabled(False)
         file_menu.addAction(self.save_as_action)
 
         file_menu.addSeparator()
         nexusmods_action = QAction(self.tr("Upload to &NexusMods…"), self)
+        nexusmods_action.setIcon(QIcon.fromTheme("network-transmit"))
         nexusmods_action.triggered.connect(self._open_nexusmods_upload)
         file_menu.addAction(nexusmods_action)
 
         file_menu.addSeparator()
         exit_action = QAction(self.tr("E&xit"), self, shortcut=QKeySequence("Ctrl+Q"))
+        exit_action.setIcon(QIcon.fromTheme("application-exit"))
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
@@ -956,6 +962,7 @@ class MainWindow(QMainWindow):
         self.search_action = QAction(
             self.tr("&Advanced Search..."), self, shortcut=QKeySequence("Ctrl+F")
         )
+        self.search_action.setIcon(QIcon.fromTheme("edit-find"))
         self.search_action.triggered.connect(self.open_advanced_search)
         self.search_action.setEnabled(False)
         edit_menu.addAction(self.search_action)
@@ -965,6 +972,7 @@ class MainWindow(QMainWindow):
         self.fill_from_original_action = QAction(
             self.tr("Copy &Original → Translated"), self, shortcut=QKeySequence("Ctrl+Shift+V")
         )
+        self.fill_from_original_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.fill_from_original_action.triggered.connect(
             lambda: self.table_view._fill_translated_from_source()
         )
@@ -976,6 +984,7 @@ class MainWindow(QMainWindow):
         self.translate_selected_action = QAction(
             self.tr("Translate &Selected"), self, shortcut=QKeySequence("Ctrl+T")
         )
+        self.translate_selected_action.setIcon(QIcon.fromTheme("edit-translate"))
         self.translate_selected_action.triggered.connect(self.translate_selected)
         self.translate_selected_action.setEnabled(False)
         trans_menu.addAction(self.translate_selected_action)
@@ -983,6 +992,7 @@ class MainWindow(QMainWindow):
         self.translate_all_action = QAction(
             self.tr("Translate &All"), self, shortcut=QKeySequence("Ctrl+Shift+A")
         )
+        self.translate_all_action.setIcon(QIcon.fromTheme("media-playback-start"))
         self.translate_all_action.triggered.connect(self.translate_all)
         self.translate_all_action.setEnabled(False)
         trans_menu.addAction(self.translate_all_action)
@@ -991,6 +1001,7 @@ class MainWindow(QMainWindow):
         self.stop_translation_action = QAction(
             self.tr("Stop Translation"), self, shortcut=QKeySequence("Escape")
         )
+        self.stop_translation_action.setIcon(QIcon.fromTheme("process-stop"))
         self.stop_translation_action.triggered.connect(self._stop_translation)
         self.stop_translation_action.setEnabled(False)
         trans_menu.addAction(self.stop_translation_action)
@@ -999,6 +1010,7 @@ class MainWindow(QMainWindow):
         self.import_txt_action = QAction(
             self.tr("Import from &TXT..."), self, shortcut=QKeySequence("Ctrl+I")
         )
+        self.import_txt_action.setIcon(QIcon.fromTheme("document-import"))
         self.import_txt_action.triggered.connect(self.import_from_txt)
         self.import_txt_action.setEnabled(False)
         trans_menu.addAction(self.import_txt_action)
@@ -1006,17 +1018,20 @@ class MainWindow(QMainWindow):
         self.export_txt_action = QAction(
             self.tr("Export to &TXT..."), self, shortcut=QKeySequence("Ctrl+E")
         )
+        self.export_txt_action.setIcon(QIcon.fromTheme("document-export"))
         self.export_txt_action.triggered.connect(self.export_to_txt)
         self.export_txt_action.setEnabled(False)
         trans_menu.addAction(self.export_txt_action)
 
         trans_menu.addSeparator()
         self.import_xml_action = QAction(self.tr("Import from &XML (SST)..."), self)
+        self.import_xml_action.setIcon(QIcon.fromTheme("document-import"))
         self.import_xml_action.triggered.connect(self.import_from_xml)
         self.import_xml_action.setEnabled(False)
         trans_menu.addAction(self.import_xml_action)
 
         self.export_xml_action = QAction(self.tr("Export to &XML (SST)..."), self)
+        self.export_xml_action.setIcon(QIcon.fromTheme("document-export"))
         self.export_xml_action.triggered.connect(self.export_to_xml)
         self.export_xml_action.setEnabled(False)
         trans_menu.addAction(self.export_xml_action)
@@ -1025,6 +1040,7 @@ class MainWindow(QMainWindow):
         self.compare_action = QAction(
             self.tr("Compare with &File..."), self, shortcut=QKeySequence("Ctrl+D")
         )
+        self.compare_action.setIcon(QIcon.fromTheme("view-split-top-bottom"))
         self.compare_action.triggered.connect(self.compare_with_file)
         self.compare_action.setEnabled(False)
         trans_menu.addAction(self.compare_action)
@@ -1032,6 +1048,7 @@ class MainWindow(QMainWindow):
         self.diff_viewer_action = QAction(
             self.tr("String &Diff Viewer..."), self, shortcut=QKeySequence("Ctrl+Shift+D")
         )
+        self.diff_viewer_action.setIcon(QIcon.fromTheme("view-split-left-right"))
         self.diff_viewer_action.triggered.connect(self._open_diff_viewer)
         self.diff_viewer_action.setEnabled(False)
         trans_menu.addAction(self.diff_viewer_action)
@@ -1039,6 +1056,7 @@ class MainWindow(QMainWindow):
         self.version_compare_action = QAction(
             self.tr("Compare Game &Versions…"), self
         )
+        self.version_compare_action.setIcon(QIcon.fromTheme("view-history"))
         self.version_compare_action.setShortcut(QKeySequence("Ctrl+Alt+V"))
         self.version_compare_action.setToolTip(self.tr(
             "Compare two game-version source files to see what strings were\n"
@@ -1050,6 +1068,7 @@ class MainWindow(QMainWindow):
         self.batch_compare_action = QAction(
             self.tr("Batch Compare Game &Folders…"), self
         )
+        self.batch_compare_action.setIcon(QIcon.fromTheme("folder-sync"))
         self.batch_compare_action.setToolTip(self.tr(
             "Compare all .strings files across two game-version folders\n"
             "and generate a combined migration report."
@@ -1061,11 +1080,13 @@ class MainWindow(QMainWindow):
         self.translate_interface_action = QAction(
             self.tr("Translate Starfield Interface TXT..."), self
         )
+        self.translate_interface_action.setIcon(QIcon.fromTheme("edit-translate"))
         self.translate_interface_action.triggered.connect(self.translate_starfield_txt)
         trans_menu.addAction(self.translate_interface_action)
 
         trans_menu.addSeparator()
         self.approve_action = QAction(self.tr("&Approve Selected"), self)
+        self.approve_action.setIcon(QIcon.fromTheme("dialog-ok-apply"))
         self.approve_action.setShortcut("Ctrl+Return")
         self.approve_action.setToolTip(
             self.tr("Accept the current AI translation and advance to the next row (Ctrl+Enter)")
@@ -1075,6 +1096,7 @@ class MainWindow(QMainWindow):
         trans_menu.addAction(self.approve_action)
 
         self.reject_action = QAction(self.tr("&Reject Selected"), self)
+        self.reject_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.reject_action.setShortcut("Ctrl+R")
         self.reject_action.setToolTip(
             self.tr("Clear the translation for selected rows and mark them as pending (Ctrl+R)")
@@ -1085,6 +1107,7 @@ class MainWindow(QMainWindow):
 
         trans_menu.addSeparator()
         self.next_untranslated_action = QAction(self.tr("&Next Untranslated"), self)
+        self.next_untranslated_action.setIcon(QIcon.fromTheme("go-next"))
         self.next_untranslated_action.setShortcut("F7")
         self.next_untranslated_action.setToolTip(
             self.tr("Jump to the next untranslated string (F7)")
@@ -1094,6 +1117,7 @@ class MainWindow(QMainWindow):
         trans_menu.addAction(self.next_untranslated_action)
 
         self.prev_untranslated_action = QAction(self.tr("&Previous Untranslated"), self)
+        self.prev_untranslated_action.setIcon(QIcon.fromTheme("go-previous"))
         self.prev_untranslated_action.setShortcut("Shift+F7")
         self.prev_untranslated_action.setToolTip(
             self.tr("Jump to the previous untranslated string (Shift+F7)")
@@ -1103,6 +1127,7 @@ class MainWindow(QMainWindow):
         trans_menu.addAction(self.prev_untranslated_action)
 
         self.batch_translate_action = QAction(self.tr("&Batch Translate Folder…"), self)
+        self.batch_translate_action.setIcon(QIcon.fromTheme("folder-sync"))
         self.batch_translate_action.setToolTip(self.tr(
             "Scan a folder of binary string files (.strings/.dlstrings/.ilstrings),\n"
             "auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings."
@@ -1112,6 +1137,7 @@ class MainWindow(QMainWindow):
 
         trans_menu.addSeparator()
         self.quality_check_action = QAction(self.tr("&Quality Check…"), self)
+        self.quality_check_action.setIcon(QIcon.fromTheme("dialog-warning"))
         self.quality_check_action.setShortcut("Ctrl+F7")
         self.quality_check_action.setToolTip(self.tr("Run post-translation quality checks (Ctrl+F7)"))
         self.quality_check_action.triggered.connect(self._run_quality_check)
@@ -1119,6 +1145,7 @@ class MainWindow(QMainWindow):
         trans_menu.addAction(self.quality_check_action)
 
         self.auto_retranslate_action = QAction(self.tr("Auto-Retranslate &Issues…"), self)
+        self.auto_retranslate_action.setIcon(QIcon.fromTheme("view-refresh"))
         self.auto_retranslate_action.setShortcut("Ctrl+Shift+F7")
         self.auto_retranslate_action.setToolTip(
             self.tr(
@@ -1133,6 +1160,7 @@ class MainWindow(QMainWindow):
         self.import_quality_action = QAction(
             self.tr("&Import Quality Report…"), self
         )
+        self.import_quality_action.setIcon(QIcon.fromTheme("document-import"))
         self.import_quality_action.setToolTip(
             self.tr(
                 "Load a previously exported JSON quality report.\n"
@@ -1148,6 +1176,7 @@ class MainWindow(QMainWindow):
         self.export_training_data_action = QAction(
             self.tr("Export &Training Data (JSONL)…"), self
         )
+        self.export_training_data_action.setIcon(QIcon.fromTheme("document-export"))
         self.export_training_data_action.setToolTip(self.tr(
             "Export approved translations as a JSONL fine-tuning dataset.\n"
             "Compatible with Unsloth, Axolotl, and LLaMA-Factory.\n"
@@ -1161,12 +1190,14 @@ class MainWindow(QMainWindow):
         self.load_memory_action = QAction(
             self.tr("Load Translation &Memory..."), self
         )
+        self.load_memory_action.setIcon(QIcon.fromTheme("document-open"))
         self.load_memory_action.triggered.connect(self._load_translation_memory)
         trans_menu.addAction(self.load_memory_action)
 
         self.export_memory_action = QAction(
             self.tr("Export Translation Memory as TMX..."), self
         )
+        self.export_memory_action.setIcon(QIcon.fromTheme("document-export"))
         self.export_memory_action.setToolTip(self.tr(
             "Export the active translation memory (or current file's translations)\n"
             "as a TMX file compatible with OmegaT, SDL Trados, and Memsource."
@@ -1178,6 +1209,7 @@ class MainWindow(QMainWindow):
         self.discover_terms_action = QAction(
             self.tr("&Discover New Terms…"), self
         )
+        self.discover_terms_action.setIcon(QIcon.fromTheme("system-search"))
         self.discover_terms_action.setToolTip(self.tr(
             "Scan the loaded strings for candidate protected terms not yet in the\n"
             "protection list, then review and approve them before adding."
@@ -1189,6 +1221,7 @@ class MainWindow(QMainWindow):
         self.check_consistency_action = QAction(
             self.tr("&Check Consistency…"), self
         )
+        self.check_consistency_action.setIcon(QIcon.fromTheme("emblem-important"))
         self.check_consistency_action.setShortcut("Ctrl+Alt+K")
         self.check_consistency_action.setToolTip(self.tr(
             "Scan all translated strings for the same source text rendered\n"
@@ -1201,11 +1234,13 @@ class MainWindow(QMainWindow):
         # Glossary menu
         glossary_menu = menubar.addMenu(self.tr("&Glossary"))
         self.glossary_editor_action = QAction(self.tr("&Edit Glossary…"), self)
+        self.glossary_editor_action.setIcon(QIcon.fromTheme("accessories-dictionary"))
         self.glossary_editor_action.setShortcut("Ctrl+G")
         self.glossary_editor_action.triggered.connect(self._open_glossary_editor)
         glossary_menu.addAction(self.glossary_editor_action)
 
         self.glossary_suggest_action = QAction(self.tr("&Show Suggestions Panel"), self)
+        self.glossary_suggest_action.setIcon(QIcon.fromTheme("view-list-text"))
         self.glossary_suggest_action.setCheckable(True)
         self.glossary_suggest_action.setChecked(False)
         self.glossary_suggest_action.triggered.connect(self._toggle_glossary_dock)
@@ -1215,6 +1250,7 @@ class MainWindow(QMainWindow):
         self.glossary_quality_action = QAction(
             self.tr("Check &Glossary Compliance…"), self
         )
+        self.glossary_quality_action.setIcon(QIcon.fromTheme("emblem-default"))
         self.glossary_quality_action.setEnabled(False)
         self.glossary_quality_action.triggered.connect(self._run_glossary_check)
         glossary_menu.addAction(self.glossary_quality_action)
@@ -1223,6 +1259,7 @@ class MainWindow(QMainWindow):
         claude_menu = menubar.addMenu(self.tr("&Claude AI"))
 
         self.claude_panel_action = QAction(self.tr("Show &AI Assistant"), self)
+        self.claude_panel_action.setIcon(QIcon.fromTheme("help-contextual"))
         self.claude_panel_action.setShortcut("Ctrl+Shift+A")
         self.claude_panel_action.setCheckable(True)
         self.claude_panel_action.setChecked(False)
@@ -1235,6 +1272,7 @@ class MainWindow(QMainWindow):
         claude_menu.addSeparator()
 
         self.claude_review_action = QAction(self.tr("&Review Current Translation"), self)
+        self.claude_review_action.setIcon(QIcon.fromTheme("document-properties"))
         self.claude_review_action.setShortcut("Ctrl+Shift+R")
         self.claude_review_action.setToolTip(
             self.tr(
@@ -1247,6 +1285,7 @@ class MainWindow(QMainWindow):
         claude_menu.addAction(self.claude_review_action)
 
         self.claude_suggest_action = QAction(self.tr("&Suggest Translation"), self)
+        self.claude_suggest_action.setIcon(QIcon.fromTheme("help-hint"))
         self.claude_suggest_action.setShortcut("Ctrl+Shift+T")
         self.claude_suggest_action.setToolTip(
             self.tr(
@@ -1261,6 +1300,7 @@ class MainWindow(QMainWindow):
         # Settings menu
         settings_menu = menubar.addMenu(self.tr("&Settings"))
         self.command_palette_action = QAction(self.tr("&Command Palette…"), self)
+        self.command_palette_action.setIcon(QIcon.fromTheme("system-run"))
         self.command_palette_action.setShortcut("Ctrl+K")
         self.command_palette_action.setToolTip(
             self.tr("Open the searchable command palette (Ctrl+K)")
@@ -1270,13 +1310,23 @@ class MainWindow(QMainWindow):
 
         settings_menu.addSeparator()
         settings_action = QAction(self.tr("&Preferences..."), self, shortcut=QKeySequence("Ctrl+,"))
+        settings_action.setIcon(QIcon.fromTheme("preferences-system"))
         settings_action.triggered.connect(self.open_settings)
         settings_menu.addAction(settings_action)
 
         settings_menu.addSeparator()
-        settings_menu.addAction(self.tr("Open &Config File..."), self._open_config_file)
-        settings_menu.addAction(self.tr("Export Sett&ings..."), self._export_settings)
-        settings_menu.addAction(self.tr("Import Sett&ings..."), self._import_settings)
+        config_file_action = QAction(self.tr("Open &Config File..."), self)
+        config_file_action.setIcon(QIcon.fromTheme("text-editor"))
+        config_file_action.triggered.connect(self._open_config_file)
+        settings_menu.addAction(config_file_action)
+        export_settings_action = QAction(self.tr("Export Sett&ings..."), self)
+        export_settings_action.setIcon(QIcon.fromTheme("document-export"))
+        export_settings_action.triggered.connect(self._export_settings)
+        settings_menu.addAction(export_settings_action)
+        import_settings_action = QAction(self.tr("Import Sett&ings..."), self)
+        import_settings_action.setIcon(QIcon.fromTheme("document-import"))
+        import_settings_action.triggered.connect(self._import_settings)
+        settings_menu.addAction(import_settings_action)
 
         # Help menu
         help_menu = menubar.addMenu(self.tr("&Help"))
@@ -1289,6 +1339,7 @@ class MainWindow(QMainWindow):
         help_menu.addSeparator()
 
         shortcuts_action = QAction(self.tr("&Keyboard Shortcuts…"), self)
+        shortcuts_action.setIcon(QIcon.fromTheme("input-keyboard"))
         shortcuts_action.setShortcut(QKeySequence("F1"))
         shortcuts_action.triggered.connect(self._show_shortcuts_dialog)
         help_menu.addAction(shortcuts_action)
@@ -1296,6 +1347,7 @@ class MainWindow(QMainWindow):
         help_menu.addSeparator()
 
         about_action = QAction(self.tr("&About…"), self)
+        about_action.setIcon(QIcon.fromTheme("help-about"))
         about_action.triggered.connect(self._show_about_dialog)
         help_menu.addAction(about_action)
 
@@ -1336,6 +1388,14 @@ class MainWindow(QMainWindow):
             self.tr("Settings"),
             self.open_settings,
         )
+        toolbar.addSeparator()
+        toolbar.addAction(self.approve_action)
+        toolbar.addAction(self.reject_action)
+        toolbar.addSeparator()
+        toolbar.addAction(self.next_untranslated_action)
+        toolbar.addSeparator()
+        toolbar.addAction(self.glossary_editor_action)
+        toolbar.addAction(self.claude_panel_action)
 
     def _connect_signals(self):
         """Connect Qt signals."""
