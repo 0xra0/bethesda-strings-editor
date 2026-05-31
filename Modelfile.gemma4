@@ -1,0 +1,83 @@
+# Modelfile for translategemma4-st
+# Gemma 4 4B instruction-tuned model for game localization translation.
+# Exported from Unsloth Studio as Q4_K_M GGUF.
+#
+# IMPORTANT — parameter precedence:
+#   The bethesda-strings-editor application overrides these options on every
+#   API call (values here apply only to direct `ollama run` invocations):
+#     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
+#
+#   These options are NOT overridden by the app — Modelfile values are always
+#   active, including during API calls:
+#     min_p, repeat_last_n
+#
+# To register this model with Ollama:
+#   ollama create translategemma4-st -f Modelfile.gemma4
+#
+# Then add "translategemma4-st" to OllamaWorker.MODEL_CONFIGS in gui/ollama_worker.py
+# if you want the app to use it with custom parameters.
+
+FROM /home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf
+
+# ── Chat template (Gemma 3/4 format) ────────────────────────────────────────
+# Gemma 4 uses the same turn-marker format as Gemma 3.
+TEMPLATE "{{ if .System }}<start_of_turn>system
+{{ .System }}<end_of_turn>
+{{ end }}{{ if .Prompt }}<start_of_turn>user
+{{ .Prompt }}<end_of_turn>
+{{ end }}<start_of_turn>model
+{{ .Response }}<end_of_turn>"
+
+# ── Fallback system prompt ───────────────────────────────────────────────────
+# Used ONLY when no system is provided in the API call (direct use).
+# The application always supplies its own detailed system prompt at runtime,
+# which fully replaces this.  Keep it short and correct.
+SYSTEM "You are a professional Bethesda Starfield game localization translator. Translate the given text into Ukrainian only. Output ONLY the translated text — no explanations, notes, or commentary. Preserve all formatting tokens exactly as written: <Alias=...>, <Token...>, <Global...>, [MALE], [FEMALE], [Firstname], [Secondname], %s, %d, {variable}, <br>, <font ...>, <mag>, <dur>, <relat=...>, <basename=...>, <repetitions>, [[TK_...]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]]. Never modify or translate these tokens. Write distinctly Ukrainian — not a Russian transliteration. Use Ukrainian-specific vocabulary where it diverges from Russian (наразі not сейчас, завдяки not благодаря). Translate content inside parentheses () unless it is a technical tag."
+
+# ── Generation parameters ────────────────────────────────────────────────────
+
+# Deterministic, high-quality output for translation tasks.
+PARAMETER temperature 0.1
+
+# Context window: Gemma 4 supports up to 128 K tokens, but 16 384 matches
+# the application default and covers all Bethesda string sizes in practice.
+PARAMETER num_ctx 16384
+
+# Maximum output tokens per request.  The application uses an adaptive value
+# (min(4096, max(200, input_length / 2))); 4 096 is a safe direct-use default.
+PARAMETER num_predict 4096
+
+# Sampling parameters.
+PARAMETER top_k 40
+PARAMETER top_p 0.9
+
+# min_p: discard tokens below 2% of the top token's probability.
+# At temperature 0.1 the distribution is already very peaked; min_p acts
+# as a fine-grained quality filter. Both top_p and min_p thresholds must pass.
+# NOTE: the app does NOT send min_p — this Modelfile value is always active.
+PARAMETER min_p 0.02
+
+# Repeat penalty: 1.1 provides light repetition control without distorting
+# grammar.  Add this to MODEL_CONFIGS in ollama_worker.py to keep the app
+# and Modelfile values in sync.
+PARAMETER repeat_penalty 1.1
+
+# Repeat window: 256 tokens covers most Bethesda strings, including books
+# and terminal logs, without adding meaningful overhead.
+# NOTE: the app does NOT send repeat_last_n — this Modelfile value is always active.
+PARAMETER repeat_last_n 256
+
+# ── Stop tokens ──────────────────────────────────────────────────────────────
+# Gemma turn-boundary markers
+PARAMETER stop <end_of_turn>
+PARAMETER stop <start_of_turn>
+# Role-bleeding guards: prevent the model from generating a fake next turn
+PARAMETER stop user:
+PARAMETER stop model:
+PARAMETER stop <|user|>
+PARAMETER stop <|model|>
+#
+# REMOVED: "stop \n\n"
+# A double-newline stop token would silently truncate any Bethesda string
+# that contains paragraph breaks — extremely common in books, notes, and
+# long dialogue entries.  The application intentionally omits this stop.
