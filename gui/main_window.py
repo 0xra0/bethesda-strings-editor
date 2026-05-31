@@ -1260,11 +1260,11 @@ class MainWindow(QMainWindow):
 
         self.claude_panel_action = QAction(self.tr("Show &AI Assistant"), self)
         self.claude_panel_action.setIcon(QIcon.fromTheme("help-contextual"))
-        self.claude_panel_action.setShortcut("Ctrl+Shift+A")
+        self.claude_panel_action.setShortcut("Ctrl+Shift+C")
         self.claude_panel_action.setCheckable(True)
         self.claude_panel_action.setChecked(False)
         self.claude_panel_action.setToolTip(
-            self.tr("Show/hide the Claude AI chat assistant panel (Ctrl+Shift+A)")
+            self.tr("Show/hide the Claude AI chat assistant panel (Ctrl+Shift+C)")
         )
         self.claude_panel_action.triggered.connect(self._toggle_claude_panel)
         claude_menu.addAction(self.claude_panel_action)
