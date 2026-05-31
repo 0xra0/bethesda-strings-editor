@@ -1,26 +1,21 @@
-# Modelfile for translategemma4-st
-# Gemma 4 4B instruction-tuned model for game localization translation.
-# Exported from Unsloth Studio as Q4_K_M GGUF.
+# Modelfile for qcgemma4-st
+# Gemma 4 4B fine-tuned quality checker for Bethesda Starfield Ukrainian localization.
+# Trained on scripts/qc_dataset_sharegpt.jsonl (14 928 examples, 16 issue codes).
+#
+# To register with Ollama:
+#   ollama create qcgemma4-st -f Modelfile.gemma4
 #
 # IMPORTANT — parameter precedence:
-#   The bethesda-strings-editor application overrides these options on every
-#   API call (values here apply only to direct `ollama run` invocations):
-#     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
-#
-#   These options are NOT overridden by the app — Modelfile values are always
-#   active, including during API calls:
+#   These options are NOT overridden by any app call — Modelfile values are
+#   always active:
 #     min_p, repeat_last_n
 #
-# To register this model with Ollama:
-#   ollama create translategemma4-st -f Modelfile.gemma4
-#
-# Then add "translategemma4-st" to OllamaWorker.MODEL_CONFIGS in gui/ollama_worker.py
-# if you want the app to use it with custom parameters.
+# The app always supplies the system prompt at inference time; the SYSTEM
+# directive below is the fallback for direct `ollama run` use only.
 
 FROM /home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf
 
-# ── Chat template (Gemma 3/4 format) ────────────────────────────────────────
-# Gemma 4 uses the same turn-marker format as Gemma 3.
+# ── Chat template (Gemma 4 format) ──────────────────────────────────────────
 TEMPLATE "{{ if .System }}<start_of_turn>system
 {{ .System }}<end_of_turn>
 {{ end }}{{ if .Prompt }}<start_of_turn>user
@@ -28,56 +23,70 @@ TEMPLATE "{{ if .System }}<start_of_turn>system
 {{ end }}<start_of_turn>model
 {{ .Response }}<end_of_turn>"
 
-# ── Fallback system prompt ───────────────────────────────────────────────────
-# Used ONLY when no system is provided in the API call (direct use).
-# The application always supplies its own detailed system prompt at runtime,
-# which fully replaces this.  Keep it short and correct.
-SYSTEM "You are a professional Bethesda Starfield game localization translator. Translate the given text into Ukrainian only. Output ONLY the translated text — no explanations, notes, or commentary. Preserve all formatting tokens exactly as written: <Alias=...>, <Token...>, <Global...>, [MALE], [FEMALE], [Firstname], [Secondname], %s, %d, {variable}, <br>, <font ...>, <mag>, <dur>, <relat=...>, <basename=...>, <repetitions>, [[TK_...]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]]. Never modify or translate these tokens. Write distinctly Ukrainian — not a Russian transliteration. Use Ukrainian-specific vocabulary where it diverges from Russian (наразі not сейчас, завдяки not благодаря). Translate content inside parentheses () unless it is a technical tag."
+# ── System prompt ────────────────────────────────────────────────────────────
+# Matches the system turn used in qc_dataset_sharegpt.jsonl training data exactly.
+SYSTEM "You are a quality checker for Bethesda Starfield Ukrainian game localization. Given a source string and its Ukrainian translation, detect quality issues.
+
+Issue codes to detect:
+  MISSING_TAG        — game format tag present in source but absent in translation
+  EXTRA_TAG          — tag in translation not present in source
+  SOURCE_LANGUAGE_LEAK — Russian characters (ы/э/ё/ъ) or Russian words in Ukrainian output
+  ENGLISH_LEAK       — untranslated English words remaining in Ukrainian output
+  UNTRANSLATED       — translation is identical to the source
+  EMPTY_TRANSLATION  — translation is empty or whitespace-only
+  SUSPICIOUSLY_SHORT — translation is <20% the length of the source
+  SUSPICIOUSLY_LONG  — translation is >500% the length of the source
+  AI_ARTIFACT        — AI commentary prefix (Note:, Translation:, Переклад:, etc.)
+  REPETITIVE_CONTENT — same phrase repeated 3+ times (hallucination)
+  MISSING_NEWLINES   — source has \\n but translation has none
+  NEWLINE_COUNT_MISMATCH — newline count differs between source and translation
+  MISSING_NUMBER     — standalone number in source absent from translation
+  LOW_UKRAINIAN_COVERAGE — too few recognized Ukrainian words (<25%)
+  CASE_MISMATCH      — source starts uppercase, translation starts lowercase
+  TRANSLATION_TRUNCATED — translation is a cut-off prefix of the source
+
+Output for clean translation:
+VERDICT: GOOD
+
+Output for problematic translation:
+VERDICT: ISSUES_FOUND
+CODES: CODE1, CODE2
+SEVERITY: error|warning|info
+DETAILS:
+- [CODE] description
+ACTION: AUTOFIX|RETRANSLATE"
 
 # ── Generation parameters ────────────────────────────────────────────────────
 
-# Deterministic, high-quality output for translation tasks.
-PARAMETER temperature 0.1
+# Near-deterministic for consistent, reproducible classification.
+PARAMETER temperature 0.0
 
-# Context window: Gemma 4 supports up to 128 K tokens, but 16 384 matches
-# the application default and covers all Bethesda string sizes in practice.
-PARAMETER num_ctx 16384
+# QC responses are short structured text (VERDICT + CODES + DETAILS + ACTION).
+# 300 tokens covers the longest plausible multi-issue response.
+PARAMETER num_predict 300
 
-# Maximum output tokens per request.  The application uses an adaptive value
-# (min(4096, max(200, input_length / 2))); 4 096 is a safe direct-use default.
-PARAMETER num_predict 4096
+# Context window: enough for the longest Bethesda strings (books, terminal notes)
+# plus the system prompt.  8 192 is sufficient for QC use; raise to 16 384 if
+# you run into context-length errors on very long strings.
+PARAMETER num_ctx 8192
 
-# Sampling parameters.
-PARAMETER top_k 40
+# Standard sampling parameters.
+PARAMETER top_k 10
 PARAMETER top_p 0.9
 
-# min_p: discard tokens below 2% of the top token's probability.
-# At temperature 0.1 the distribution is already very peaked; min_p acts
-# as a fine-grained quality filter. Both top_p and min_p thresholds must pass.
-# NOTE: the app does NOT send min_p — this Modelfile value is always active.
+# min_p: complement to top_p — discard tokens below 2% of the top token's
+# probability.  At temperature 0 this is mostly inactive but acts as a
+# safety guard against degenerate outputs.
 PARAMETER min_p 0.02
 
-# Repeat penalty: 1.1 provides light repetition control without distorting
-# grammar.  Add this to MODEL_CONFIGS in ollama_worker.py to keep the app
-# and Modelfile values in sync.
-PARAMETER repeat_penalty 1.1
-
-# Repeat window: 256 tokens covers most Bethesda strings, including books
-# and terminal logs, without adding meaningful overhead.
-# NOTE: the app does NOT send repeat_last_n — this Modelfile value is always active.
-PARAMETER repeat_last_n 256
+# No repeat penalty — the structured output format requires repeating fixed
+# keyword patterns (VERDICT, CODES, SEVERITY, DETAILS, ACTION) on every call.
+PARAMETER repeat_penalty 1.0
 
 # ── Stop tokens ──────────────────────────────────────────────────────────────
-# Gemma turn-boundary markers
 PARAMETER stop <end_of_turn>
 PARAMETER stop <start_of_turn>
-# Role-bleeding guards: prevent the model from generating a fake next turn
 PARAMETER stop user:
 PARAMETER stop model:
 PARAMETER stop <|user|>
 PARAMETER stop <|model|>
-#
-# REMOVED: "stop \n\n"
-# A double-newline stop token would silently truncate any Bethesda string
-# that contains paragraph breaks — extremely common in books, notes, and
-# long dialogue entries.  The application intentionally omits this stop.

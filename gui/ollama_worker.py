@@ -482,23 +482,6 @@ class OllamaWorker(QObject):
                 "<|model|>",
             ],
         },
-        "translategemma4-st": {
-            "temperature": 0.1,
-            "num_predict": 4096,
-            "num_ctx": 16384,
-            "top_k": 40,
-            "top_p": 0.9,
-            "repeat_penalty": 1.1,
-            "recommended_quality": 7,
-            "stops": [
-                "<end_of_turn>",
-                "<start_of_turn>",
-                "user:",
-                "model:",
-                "<|user|>",
-                "<|model|>",
-            ],
-        },
         # Google TranslateGemma 27B IT — official Google translation-specialized model.
         # Uses the exact user-turn instruction format extracted from the GGUF's embedded
         # tokenizer.chat_template (no system turn; language pair hardcoded in TEMPLATE).
