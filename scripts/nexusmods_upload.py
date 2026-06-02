@@ -26,8 +26,13 @@ def _progress(done: int, total: int, msg: str) -> None:
 def main() -> None:
     api_key = os.environ.get("NEXUSMODS_API_KEY", "").strip()
     if not api_key:
-        print("ERROR: NEXUSMODS_API_KEY is not set or empty.", file=sys.stderr)
-        sys.exit(1)
+        print(
+            "WARNING: NEXUSMODS_API_KEY secret is not configured — skipping NexusMods upload.\n"
+            "To enable uploads, add NEXUSMODS_API_KEY as a repository secret:\n"
+            "  GitHub repo → Settings → Secrets and variables → Actions → New repository secret",
+            file=sys.stderr,
+        )
+        sys.exit(0)
 
     version = os.environ.get("RELEASE_VERSION", "").lstrip("v").strip()
     if not version:

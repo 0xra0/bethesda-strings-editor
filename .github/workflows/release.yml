@@ -148,6 +148,12 @@ jobs:
         with:
           merge-multiple: true
 
+      - name: Check secrets are configured
+        run: |
+          echo "NEXUSMODS_API_KEY set:               ${{ secrets.NEXUSMODS_API_KEY != '' }}"
+          echo "NEXUSMODS_FILE_GROUP_ID_LINUX set:   ${{ secrets.NEXUSMODS_FILE_GROUP_ID_LINUX != '' }}"
+          echo "NEXUSMODS_FILE_GROUP_ID_WINDOWS set: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_WINDOWS != '' }}"
+
       - name: Install upload dependencies
         run: pip install requests
 
