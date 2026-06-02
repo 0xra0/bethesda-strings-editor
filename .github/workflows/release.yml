@@ -141,33 +141,20 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
 
-      - name: Extract version (strip leading v)
-        id: ver
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Install upload dependencies
+        run: pip install requests
 
-      - name: Upload Linux build
-        uses: Nexus-Mods/upload-action@v1.0.0-beta.6
-        with:
-          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
-          file_group_id: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_LINUX }}
-          filename: bethesda-strings-editor-linux-x64.zip
-          version: ${{ steps.ver.outputs.version }}
-          display_name: Bethesda Strings Editor ${{ steps.ver.outputs.version }} (Linux x64)
-          file_category: main
-          archive_existing_file: true
-
-      - name: Upload Windows build
-        uses: Nexus-Mods/upload-action@v1.0.0-beta.6
-        with:
-          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
-          file_group_id: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_WINDOWS }}
-          filename: bethesda-strings-editor-windows-x64.zip
-          version: ${{ steps.ver.outputs.version }}
-          display_name: Bethesda Strings Editor ${{ steps.ver.outputs.version }} (Windows x64)
-          file_category: main
-          archive_existing_file: true
+      - name: Upload to NexusMods
+        env:
+          NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
+          NEXUSMODS_FILE_GROUP_ID_LINUX: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_LINUX }}
+          NEXUSMODS_FILE_GROUP_ID_WINDOWS: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_WINDOWS }}
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: python scripts/nexusmods_upload.py
