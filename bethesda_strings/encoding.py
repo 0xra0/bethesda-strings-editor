@@ -101,12 +101,12 @@ class EncodingConverter:
         Bethesda string file.
 
         Detection order:
+
         1. Byte-order marks (BOM) — 100 % confidence.
         2. Strict UTF-8 decode — very high confidence when successful.
         3. UTF-8 lead-byte pattern analysis vs CP1251 standalone-byte analysis.
         4. CP1251 validation (decode + count resulting Cyrillic codepoints).
-        5. Mostly-ASCII UTF-8 check — if < 1 % of chars are replacement chars,
-           treat as UTF-8 rather than mislabelling as CP1252.
+        5. Mostly-ASCII check — fewer than 1 % replacement chars → UTF-8.
         6. CP1252 as final fallback for non-Cyrillic Western files.
 
         Returns:
