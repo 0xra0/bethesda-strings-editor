@@ -105,7 +105,9 @@ class EncodingConverter:
         2. Strict UTF-8 decode — very high confidence when successful.
         3. UTF-8 lead-byte pattern analysis vs CP1251 standalone-byte analysis.
         4. CP1251 validation (decode + count resulting Cyrillic codepoints).
-        5. CP1252 as final fallback for non-Cyrillic Western files.
+        5. Mostly-ASCII UTF-8 check — if < 1 % of chars are replacement chars,
+           treat as UTF-8 rather than mislabelling as CP1252.
+        6. CP1252 as final fallback for non-Cyrillic Western files.
 
         Returns:
             (encoding_name, confidence_0_to_1, human_readable_method)
@@ -138,14 +140,25 @@ class EncodingConverter:
                 if text_bytes[i] in (0xD0, 0xD1, 0xD2, 0xD3)
                 and 0x80 <= text_bytes[i + 1] <= 0xBF
             )
-            # Generic 2-byte sequence count for any multi-byte content
+            # Count 2-byte sequences (lead 0xC2–0xDF) and 3/4-byte sequences
+            # (lead 0xE0–0xEF for 3-byte, 0xF0–0xF7 for 4-byte).  Common English
+            # punctuation like smart quotes (U+201C = 0xE2 0x80 0x9C) and em-dashes
+            # (U+2014 = 0xE2 0x80 0x94) are 3-byte sequences and would otherwise
+            # be missed, producing a spuriously low confidence score.
             utf8_pairs = sum(
                 1
                 for i in range(total - 1)
                 if 0xC2 <= text_bytes[i] <= 0xDF
                 and 0x80 <= text_bytes[i + 1] <= 0xBF
             )
-            confirmed_pairs = utf8_cyrillic_pairs + utf8_pairs
+            utf8_3byte = sum(
+                1
+                for i in range(total - 2)
+                if 0xE0 <= text_bytes[i] <= 0xEF
+                and 0x80 <= text_bytes[i + 1] <= 0xBF
+                and 0x80 <= text_bytes[i + 2] <= 0xBF
+            )
+            confirmed_pairs = utf8_cyrillic_pairs + utf8_pairs + utf8_3byte
             if confirmed_pairs > 0:
                 conf = min(0.97, 0.85 + (confirmed_pairs / max(high_bytes, 1)) * 0.15)
                 return "utf-8", conf, f"strict UTF-8 (Cyrillic pairs: {utf8_cyrillic_pairs})"
@@ -183,7 +196,19 @@ class EncodingConverter:
             except UnicodeDecodeError:
                 pass
 
-        # ── 5. CP1252 fallback (Western European) ────────────────────────────
+        # ── 5. Mostly-ASCII UTF-8 check ─────────────────────────────────────
+        # When UTF-8 decode fails but the damage is tiny (< 1 % of decoded
+        # characters are replacement chars) the file is overwhelmingly ASCII
+        # with a handful of stray CP1252 bytes.  Treat it as UTF-8 rather than
+        # mislabelling the whole file as windows-1252.
+        if replacement_ratio < 0.01:
+            return (
+                "utf-8",
+                0.65,
+                f"UTF-8 (ASCII-dominant; {replacement_ratio:.2%} undecodable bytes ignored)",
+            )
+
+        # ── 6. CP1252 fallback (Western European) ────────────────────────────
         try:
             text_bytes.decode("windows-1252")
             return "windows-1252", 0.45, "CP1252 fallback (non-Cyrillic high bytes)"

@@ -94,6 +94,17 @@ def test_cp1252_western_fallback():
     assert enc in ("windows-1252", "utf-8")
 
 
+def test_mostly_ascii_english_with_few_cp1252_bytes_returns_utf8():
+    # A large English strings file that is essentially ASCII/UTF-8 but has a
+    # handful of stray CP1252 bytes (e.g. smart quotes 0x91/0x92).  These are
+    # < 1 % of the sample so the file should be detected as UTF-8, not CP1252.
+    base = b"Hello world! This is a typical English game string. " * 500
+    stray = b"It\x92s a \x91great\x92 day"  # 3 CP1252 bytes in ~26 KB of ASCII
+    data = base + stray
+    enc, conf, method = EncodingConverter.detect_encoding(data)
+    assert enc == "utf-8"
+
+
 def test_utf8_mixed_latin_accents():
     # UTF-8 text with accented characters (not Cyrillic)
     text = "Über die Straße gehen — Schönes Wetter"
