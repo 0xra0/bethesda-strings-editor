@@ -148,19 +148,13 @@ jobs:
         with:
           merge-multiple: true
 
-      - name: Check secrets are configured
-        run: |
-          echo "NEXUSMODS_API_KEY set:               ${{ secrets.NEXUSMODS_API_KEY != '' }}"
-          echo "NEXUSMODS_FILE_GROUP_ID_LINUX set:   ${{ secrets.NEXUSMODS_FILE_GROUP_ID_LINUX != '' }}"
-          echo "NEXUSMODS_FILE_GROUP_ID_WINDOWS set: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_WINDOWS != '' }}"
-
       - name: Install upload dependencies
         run: pip install requests
 
       - name: Upload to NexusMods
         env:
-          NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
-          NEXUSMODS_FILE_GROUP_ID_LINUX: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_LINUX }}
-          NEXUSMODS_FILE_GROUP_ID_WINDOWS: ${{ secrets.NEXUSMODS_FILE_GROUP_ID_WINDOWS }}
+          NEXUSMODS_API_KEY: ${{ vars.NEXUSMODS_API_KEY }}
+          NEXUSMODS_FILE_GROUP_ID_LINUX: ${{ vars.NEXUSMODS_FILE_GROUP_ID_LINUX }}
+          NEXUSMODS_FILE_GROUP_ID_WINDOWS: ${{ vars.NEXUSMODS_FILE_GROUP_ID_WINDOWS }}
           RELEASE_VERSION: ${{ github.ref_name }}
         run: python scripts/nexusmods_upload.py
