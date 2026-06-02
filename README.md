@@ -12,14 +12,19 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 
 All 9 official Starfield languages plus Russian and Ukrainian for xTranslator-style workflows:
 
-| Code | Language | Code | Language |
-|------|----------|------|----------|
-| `en` | English | `ja` | Japanese |
-| `de` | German | `pl` | Polish |
-| `es` | Spanish | `ptbr` | Portuguese (Brazil) |
-| `fr` | French | `zhhans` | Chinese (Simplified) |
-| `it` | Italian | `ru` | Russian |
-| `uk` | Ukrainian | | |
+| Code | Language |
+|------|----------|
+| `en` | English |
+| `de` | German |
+| `es` | Spanish |
+| `fr` | French |
+| `it` | Italian |
+| `ja` | Japanese |
+| `pl` | Polish |
+| `ptbr` | Portuguese (Brazil) |
+| `zhhans` | Chinese (Simplified) |
+| `ru` | Russian |
+| `uk` | Ukrainian |
 
 Each language pair gets its own system prompt with language-specific style rules, register guidance, and translation examples.
 
