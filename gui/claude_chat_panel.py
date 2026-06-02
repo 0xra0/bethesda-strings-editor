@@ -18,7 +18,6 @@ from typing import Dict, List, Optional
 from PySide6.QtCore import Qt, QThread, Signal, Slot
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import (
-    QApplication,
     QComboBox,
     QDockWidget,
     QFrame,
@@ -494,7 +493,6 @@ class ClaudeChatPanel(QDockWidget):
 
     def _begin_claude_stream(self) -> None:
         """Insert the 'Claude:' header and record the cursor position for token insertion."""
-        from PySide6.QtGui import QTextCursor
         cursor = self._chat_view.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         self._chat_view.setTextCursor(cursor)
@@ -505,7 +503,6 @@ class ClaudeChatPanel(QDockWidget):
     @Slot(str)
     def _on_token(self, chunk: str) -> None:
         """Append a streaming token at the tracked cursor position."""
-        from PySide6.QtGui import QTextCursor
         self._stream_parts.append(chunk)
         cursor = self._chat_view.textCursor()
         cursor.setPosition(self._stream_start)
@@ -517,7 +514,6 @@ class ClaudeChatPanel(QDockWidget):
     @Slot(str)
     def _on_reply(self, text: str) -> None:
         """Replace raw streamed text with nicely formatted HTML."""
-        from PySide6.QtGui import QTextCursor
         import re
         self._history.append({"role": "assistant", "content": text})
 

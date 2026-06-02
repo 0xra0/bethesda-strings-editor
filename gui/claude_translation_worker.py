@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 import logging
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
-from typing import List, Optional
+from typing import List
 
 from PySide6.QtCore import QMutex, QMutexLocker, QObject, Signal, Slot
 
