@@ -56,7 +56,7 @@ class TermProtector:
         (r"\[(?!(?:Firstname|Secondname|Thirdname|Fourthname)\])[^\]Ѐ-ӿ]+\]", "bracket_id"),
         (r"\b[0-9A-Fa-f]{8}\b", "form_id"),
         (r"\{[^}]*\}", "brace_var"),
-        (r"%[sdfoxXc%]", "printf_var"),
+        (r"%[-+0 #]*\d*(?:\.\d+)?[sdfoxXciuFeEgGp%]", "printf_var"),
         (r"</?[a-zA-Z][^>]*/?>", "xml_tag"),
         (r"</?alias[^>]*>", "alias_tag"),
         (

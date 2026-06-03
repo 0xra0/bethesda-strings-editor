@@ -958,12 +958,14 @@ class QualityChecker:
     @staticmethod
     def _fix_newlines(original: str, translated: str) -> Tuple[str, str]:
         """
-        Restore newlines missing from the translation.
+        Fix newline count in the translation to match the original.
 
-        Handles two cases:
+        Handles three cases:
         - MISSING_NEWLINES: translation has zero newlines → insert all proportionally.
-        - NEWLINE_COUNT_MISMATCH: translation has some but fewer than original →
+        - NEWLINE_COUNT_MISMATCH (too few): translation has fewer than original →
           insert the missing ones proportionally, skipping positions already covered.
+        - NEWLINE_COUNT_MISMATCH (too many): translation has more than original →
+          collapse consecutive newlines until the count matches.
         """
         nl_pat = re.compile(r"\\n|\n")
         markers = [(m.start(), m.group()) for m in nl_pat.finditer(original)]
@@ -972,8 +974,20 @@ class QualityChecker:
 
         trans_nl_count = len(nl_pat.findall(translated))
         orig_nl_count = len(markers)
+
+        # Too many newlines: collapse \n\n → \n until we reach the target count.
+        if trans_nl_count > orig_nl_count:
+            result = translated
+            excess = trans_nl_count - orig_nl_count
+            result = re.sub(r"\n\n", "\n", result, count=excess)
+            new_count = len(nl_pat.findall(result))
+            if new_count != orig_nl_count:
+                # Edge case: had no \n\n pairs but excess from \\n combos — leave as-is.
+                return translated, ""
+            return result, f"collapsed {excess} excess newline(s)"
+
         if trans_nl_count >= orig_nl_count:
-            return translated, ""  # already has enough
+            return translated, ""  # already correct
 
         orig_len = len(original)
         trans_len = len(translated)

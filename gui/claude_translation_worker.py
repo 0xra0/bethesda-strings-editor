@@ -99,7 +99,8 @@ class ClaudeTranslationWorker(QObject):
                 if self._stop_flag:
                     return req.index, None, req.string_id
 
-            source_text = req.original_text
+            # Normalize CRLF/CR → LF (same as OllamaWorker) before tokenization.
+            source_text = req.original_text.replace("\r\n", "\n").replace("\r", "\n")
 
             # Check translation cache (keyed the same way as OllamaWorker's cache)
             cache_key = None

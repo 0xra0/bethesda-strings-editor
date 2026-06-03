@@ -1103,8 +1103,10 @@ class OllamaWorker(QObject):
             from dataclasses import replace as _dc_replace_sep
             req = _dc_replace_sep(req, original_text=inner_text)
 
-        # Protect English text segments if enabled (Russian -> Ukrainian translation)
-        protected_text = req.original_text
+        # Normalize CRLF/CR → LF before any tokenization.  Leaving \r in the text
+        # causes the structural newline tokenizer to produce \r[[STRUCT_BREAK_SGL_N]],
+        # which the model echoes as \r or drops, producing mismatched newline counts.
+        protected_text = req.original_text.replace("\r\n", "\n").replace("\r", "\n")
         english_token_map = {}
 
         # Disable English protection if source is English
