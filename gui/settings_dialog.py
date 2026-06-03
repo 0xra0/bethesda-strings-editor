@@ -167,6 +167,21 @@ class SettingsDialog(QDialog):
         )
         protection_layout.addWidget(self.chk_protect_english_text)
 
+        self.chk_protect_named_entities = QCheckBox(
+            self.tr("Protect proper nouns and lore terms (faction/company/ship/character names, resources, UI terms, loaded term file)")
+        )
+        self.chk_protect_named_entities.setChecked(
+            getattr(self._settings, "protect_named_entities", False)
+        )
+        self.chk_protect_named_entities.setToolTip(
+            self.tr("When enabled, faction names (Freestar Collective, UC…), company names, ship names, character names,\n"
+                    "creature/resource names, UI abbreviations (HUD, GPS…), and terms loaded from the custom terms file\n"
+                    "are replaced with placeholder tokens so the AI cannot modify them.\n\n"
+                    "When disabled (default), the AI is free to translate these names — useful when you want\n"
+                    "localised faction/location names (e.g. «Об'єднані колонії» instead of «United Colonies»).")
+        )
+        protection_layout.addWidget(self.chk_protect_named_entities)
+
         # Protected terms file
         terms_file_layout = QHBoxLayout()
         self.lbl_terms_file = QLabel(self.tr("Custom terms file:"))
@@ -187,8 +202,8 @@ class SettingsDialog(QDialog):
         self.btn_view_terms.clicked.connect(self._view_protected_terms)
         protection_layout.addWidget(self.btn_view_terms)
 
-        # Statistics
-        stats_label = QLabel(self.tr("ℹ️ Default protection includes: Location IDs, Form IDs, Faction names, Character names, Resources, Skills, etc."))
+        # Info
+        stats_label = QLabel(self.tr("ℹ️ Format tags, game IDs, XML/alias tokens, and user-added custom terms are always protected regardless of the setting above."))
         stats_label.setWordWrap(True)
         stats_label.setStyleSheet("color: palette(mid); font-style: italic;")
         protection_layout.addWidget(stats_label)
@@ -658,6 +673,7 @@ class SettingsDialog(QDialog):
         settings.auto_save = self.chk_auto_save.isChecked()
         settings.enable_term_protection = self.chk_enable_protection.isChecked()
         settings.protect_english_text = self.chk_protect_english_text.isChecked()
+        settings.protect_named_entities = self.chk_protect_named_entities.isChecked()
         settings.protected_terms_file = self.terms_file_path.text()
         settings.theme = self.get_selected_theme()
         settings.ui_language = self.combo_ui_lang.currentData()

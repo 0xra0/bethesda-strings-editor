@@ -622,6 +622,7 @@ class MainWindow(QMainWindow):
                 max_workers=min(self.settings.max_workers, 5),
                 term_protector=self.term_protector if enable_protection else None,
                 translation_cache=self.translation_cache if self.settings.enable_cache else None,
+                protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
             logger.info("Translation worker initialized (Claude: %s)", model)
@@ -638,6 +639,7 @@ class MainWindow(QMainWindow):
                 ollama_num_ctx=self.settings.ollama_num_ctx,
                 long_string_threshold=self.settings.long_string_threshold,
                 long_string_action=self.settings.long_string_action,
+                protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
             self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
@@ -3804,6 +3806,7 @@ class MainWindow(QMainWindow):
                     base_url=self.settings.ollama_url,
                     model=self.settings.ollama_model,
                     enable_term_protection=enable_protection,
+                    protect_named_entities=self.settings.protect_named_entities,
                     term_protector=self.term_protector if enable_protection else None,
                     translation_cache=self.translation_cache
                     if self.settings.enable_cache

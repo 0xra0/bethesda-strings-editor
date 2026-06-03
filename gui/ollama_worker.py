@@ -557,6 +557,7 @@ class OllamaWorker(QObject):
         ollama_num_ctx: int = 16384,
         long_string_threshold: int = 1000,
         long_string_action: str = "Translate",
+        protect_named_entities: bool = False,
     ):
         super().__init__()
         self.base_url = base_url.rstrip("/")
@@ -579,6 +580,7 @@ class OllamaWorker(QObject):
         self._session = self._make_session()
 
         self.enable_term_protection = enable_term_protection
+        self.protect_named_entities = protect_named_entities
         self.term_protector = term_protector
         self.translation_cache = translation_cache
         self.translation_memory: Optional[TranslationMemory] = None
@@ -1131,26 +1133,8 @@ class OllamaWorker(QObject):
             and self.term_protector
             and req.protected_terms_enabled
         ):
-            # If source is English, exclude game terms and other English-heavy categories
-            exclude = []
-            if req.source_lang == "en":
-                exclude = [
-                    "game_term",
-                    "custom",
-                    "protected",
-                    "faction",
-                    "company",
-                    "location",
-                    "character",
-                    "ship",
-                    "creature",
-                    "resource",
-                    "system",
-                    "ui",
-                    "company_prefix",
-                    "company_full",
-                    "location_suffix",
-                ]
+            from gui.term_protector import SOFT_CATEGORIES
+            exclude = [] if self.protect_named_entities else list(SOFT_CATEGORIES)
 
             protected_text, token_map = self.term_protector.protect_text(
                 protected_text, exclude_categories=exclude
@@ -2515,6 +2499,7 @@ class OllamaWorker(QObject):
         base_url: Optional[str] = None,
         model: Optional[str] = None,
         enable_term_protection: Optional[bool] = None,
+        protect_named_entities: Optional[bool] = None,
         term_protector: Optional[TermProtector] = None,
         translation_cache: Optional[TranslationCache] = None,
         glossary_manager: Optional[GlossaryManager] = None,
@@ -2540,6 +2525,8 @@ class OllamaWorker(QObject):
             self.long_string_action = long_string_action
         if enable_term_protection is not None:
             self.enable_term_protection = enable_term_protection
+        if protect_named_entities is not None:
+            self.protect_named_entities = protect_named_entities
         if term_protector is not None:
             self.term_protector = term_protector
         if translation_cache is not None:

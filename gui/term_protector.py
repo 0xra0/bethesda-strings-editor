@@ -15,6 +15,16 @@ from typing import Dict, Generator, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+# Categories that represent game-world proper nouns and lore terms.
+# By default these are NOT protected — the AI is expected to translate or
+# handle faction/company/ship/character names appropriately.  Users can
+# opt in via Settings → "Protect proper nouns and lore terms".
+SOFT_CATEGORIES: frozenset = frozenset({
+    "faction", "company", "ship", "character", "location",
+    "creature", "resource", "system", "ui", "game_term",
+    "company_prefix", "company_full", "location_suffix",
+})
+
 
 @dataclass
 class ProtectedTerm:

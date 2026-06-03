@@ -46,6 +46,7 @@ class ClaudeTranslationWorker(QObject):
         max_workers: int = 5,
         term_protector=None,
         translation_cache=None,
+        protect_named_entities: bool = False,
     ) -> None:
         super().__init__()
         self.api_key = api_key
@@ -55,6 +56,7 @@ class ClaudeTranslationWorker(QObject):
         self.max_workers = max(1, max_workers)
         self.term_protector = term_protector
         self.translation_cache = translation_cache
+        self.protect_named_entities = protect_named_entities
         self.glossary_manager = None
 
         self._stop_flag = False
@@ -124,7 +126,11 @@ class ClaudeTranslationWorker(QObject):
             token_map: dict = {}
             if self.term_protector and req.protected_terms_enabled:
                 try:
-                    protected, token_map = self.term_protector.protect(source_text)
+                    from gui.term_protector import SOFT_CATEGORIES
+                    exclude = [] if self.protect_named_entities else list(SOFT_CATEGORIES)
+                    protected, token_map = self.term_protector.protect_text(
+                        source_text, exclude_categories=exclude
+                    )
                 except Exception as exc:
                     logger.warning("Term protection failed: %s", exc)
 

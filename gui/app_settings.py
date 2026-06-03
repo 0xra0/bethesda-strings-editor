@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 22  # Increment when schema changes
+CONFIG_VERSION = 23  # Increment when schema changes
 
 
 @dataclass
@@ -47,6 +47,7 @@ class AppSettings:
     # ── Term protection ──────────────────────────────────────────
     enable_term_protection: bool = True
     protect_english_text: bool = False
+    protect_named_entities: bool = False  # faction/company/ship/character/lore terms
     protected_terms_file: str = ""
 
     # ── Appearance ───────────────────────────────────────────────
@@ -306,6 +307,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("ai_qc_model", "qcgemma4-st")
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v22: added AI QC settings")
+
+    if from_version < 23:
+        data.setdefault("protect_named_entities", False)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v23: added protect_named_entities setting")
 
     if from_version < CONFIG_VERSION:
         logger.warning(
