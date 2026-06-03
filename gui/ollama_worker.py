@@ -899,24 +899,28 @@ class OllamaWorker(QObject):
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
         effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
-        # Output can't be longer than input (translation, not expansion)
-        adaptive_num_predict = min(self.ollama_num_predict, max(200, input_len // 2))
-
-        # Inject a brief context hint so the model knows it is inside a larger text
-        if total_chunks > 1:
-            context_hint = f"[Part {chunk_num}/{total_chunks} of a longer text]\n"
-        else:
-            context_hint = ""
-        prompt_text = context_hint + chunk_text
+        # Output can't be longer than input (translation, not expansion).
+        # Ukrainian tends to be ~20% wordier than English, so cap at input_len rather
+        # than input_len // 2 to avoid truncating the last chunk.
+        adaptive_num_predict = min(self.ollama_num_predict, max(200, input_len))
 
         # TranslateGemma models embed the language-pair instruction in the TEMPLATE;
         # the payload must carry raw source text only (no "To Ukrainian:" prefix).
+        # Never inject the chunk hint into prompt_text — the model would translate it.
         if model_config.get("raw_prompt"):
-            effective_prompt = prompt_text
+            effective_prompt = chunk_text
             effective_system = ""
         else:
-            effective_prompt = req.to_prompt(prompt_text)
+            effective_prompt = req.to_prompt(chunk_text)
             effective_system = req.to_system_prompt()
+            # For instruction-following models, put the chunk hint in the system prompt
+            # so it is treated as a meta-instruction, not as text to translate.
+            if total_chunks > 1:
+                effective_system += (
+                    f"\n\nNote: You are translating part {chunk_num} of {total_chunks} "
+                    "of a longer text. Translate only the text in the user message; "
+                    "do not include this note in your output."
+                )
 
         payload = {
             "model":  effective_model,
@@ -952,7 +956,16 @@ class OllamaWorker(QObject):
                 f"Install it with:\n  ollama create {self.model} -f Modelfile.{self.model}"
             )
         response.raise_for_status()
-        return response.json().get("response", "").strip() or None
+        result = response.json().get("response", "").strip()
+        # Strip any leaked chunk-marker the model might have echoed at the start
+        # (e.g. "[Part 2/3 of a longer text]" or its Ukrainian equivalent).
+        if total_chunks > 1 and result:
+            result = re.sub(
+                r"^\[(?:Part\s+\d+/\d+[^\]]*|\S+\s+\d+/\d+[^\]]*)\]\s*",
+                "",
+                result,
+            )
+        return result or None
 
     def _translate_chunked(
         self,
