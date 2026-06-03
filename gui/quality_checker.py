@@ -61,6 +61,7 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "SENTENCE_COUNT_MISMATCH",
     "GLOSSARY_MISMATCH",
     "LOW_UKRAINIAN_COVERAGE",
+    "LOW_SCRIPT_COVERAGE",
     # Truncated Russian originals need AI retranslation
     "TRANSLATION_TRUNCATED",
 })
@@ -169,6 +170,23 @@ _RUSSIAN_ONLY = re.compile(r"[ёЁэЭъЪыЫ]")
 
 # ── Ukrainian-specific characters (absent from Russian) ────────────────────────
 _UKRAINIAN_SPECIFIC = re.compile(r"[іїєґІЇЄҐ]")
+
+# ── Language-group helpers ─────────────────────────────────────────────────────
+# Target language codes whose script is Latin (Cyrillic source would be a leak).
+_LATIN_SCRIPT_TARGETS: frozenset = frozenset({
+    "de", "german",
+    "fr", "french",
+    "es", "spanish",
+    "it", "italian",
+    "pl", "polish",
+    "ptbr", "portuguese",
+    "cs", "czech",
+    "en", "english",
+})
+# Source language codes that use Cyrillic script.
+_CYRILLIC_SOURCES: frozenset = frozenset({"ru", "russian", "uk", "ukrainian"})
+# Target language codes that use CJK / kana script.
+_CJK_TARGETS: frozenset = frozenset({"ja", "japanese", "zhhans", "chinese", "zh"})
 
 # ── Standalone numbers (2+ digits, not embedded in IDs/paths/tags) ─────────────
 _STANDALONE_NUM_RE = re.compile(r"(?<![/#:\w])\d{2,}(?![/:\w])")
@@ -284,6 +302,7 @@ class QualityChecker:
         self._check_encoding(translated, report)
         self._check_source_leak(translated, report)
         self._check_ukrainian_coverage(translated, report)
+        self._check_script_coverage(translated, report)
         self._check_english_leak(original, translated, report)
         self._check_repetition(translated, report)
         self._check_ai_artifacts(original, translated, report)
@@ -634,51 +653,69 @@ class QualityChecker:
             )
 
     def _check_source_leak(self, translated: str, report: QualityReport) -> None:
-        if self.target_language.lower() not in ("ukrainian", "uk"):
+        tgt = self.target_language.lower()
+        src = self.source_language.lower()
+
+        # ── Ukrainian target: full Russian-char + vocabulary check ──────────────
+        if tgt in ("ukrainian", "uk"):
+            # Pass 1: Russian-exclusive characters (ы э ё ъ).
+            found = _RUSSIAN_ONLY.findall(translated)
+            if found:
+                count = len(found)
+                ratio = count / max(len(translated), 1)
+                if count >= 8 or (count >= 3 and ratio > 0.05):
+                    chars = "".join(sorted(set(found)))
+                    report.issues.append(
+                        QualityIssue(
+                            severity=SEVERITY_WARNING,
+                            code="SOURCE_LANGUAGE_LEAK",
+                            message=(
+                                f"Translation may contain untranslated Russian text "
+                                f"(found Russian-only chars: {chars})"
+                            ),
+                        )
+                    )
+                    return
+
+            # Pass 2: Russian vocabulary
+            try:
+                from gui.ru_word_checker import text_has_russian_words
+                if text_has_russian_words(translated, threshold=5):
+                    report.issues.append(
+                        QualityIssue(
+                            severity=SEVERITY_WARNING,
+                            code="SOURCE_LANGUAGE_LEAK",
+                            message=(
+                                "Translation appears to contain Russian vocabulary "
+                                "(possibly incompletely translated)"
+                            ),
+                        )
+                    )
+            except ImportError:
+                pass
             return
 
-        # Pass 1: Russian-exclusive characters (ы э ё ъ).
-        found = _RUSSIAN_ONLY.findall(translated)
-        if found:
-            count = len(found)
-            # Avoid false positives from proper nouns or occasional model slippage.
-            # Flag only if: unambiguously many chars (>=8), OR a notable fraction of the
-            # text (>5%) combined with a minimum absolute count (>=3) to prevent short-string
-            # noise (a single ё in a 20-char name = 5% but is not real leakage).
-            ratio = count / max(len(translated), 1)
-            if count >= 8 or (count >= 3 and ratio > 0.05):
-                chars = "".join(sorted(set(found)))
+        # ── Latin-script targets from a Cyrillic source ─────────────────────────
+        # If the source was Russian or Ukrainian and the target is a Latin-script
+        # language (DE/FR/ES/IT/PL/PTBR/CS), Cyrillic characters in the output
+        # indicate the model returned untranslated source text.
+        if tgt in _LATIN_SCRIPT_TARGETS and src in _CYRILLIC_SOURCES:
+            cyrillic_count = sum(1 for c in translated if "Ѐ" <= c <= "ӿ")
+            if cyrillic_count >= 3:
                 report.issues.append(
                     QualityIssue(
                         severity=SEVERITY_WARNING,
                         code="SOURCE_LANGUAGE_LEAK",
                         message=(
-                            f"Translation may contain untranslated Russian text "
-                            f"(found Russian-only chars: {chars})"
+                            f"Translation contains {cyrillic_count} Cyrillic character(s) "
+                            f"— source language ({self.source_language}) may not have been translated"
                         ),
                     )
                 )
-                return  # char-level detection is definitive; skip dict check
+            return
 
-        # Pass 2: Russian vocabulary — catches "cleaned" Russian where exclusive chars
-        # were substituted (ы→и) but the words themselves are still Russian.
-        # text_has_russian_words internally returns False when Ukrainian-specific chars
-        # (і/ї/є/ґ) are present, so real Ukrainian translations never trigger this.
-        try:
-            from gui.ru_word_checker import text_has_russian_words
-            if text_has_russian_words(translated, threshold=5):
-                report.issues.append(
-                    QualityIssue(
-                        severity=SEVERITY_WARNING,
-                        code="SOURCE_LANGUAGE_LEAK",
-                        message=(
-                            "Translation appears to contain Russian vocabulary "
-                            "(possibly incompletely translated)"
-                        ),
-                    )
-                )
-        except ImportError:
-            pass
+        # ── CJK targets: any Latin/Cyrillic-heavy output is suspicious ───────────
+        # Handled separately by _check_script_coverage.
 
     def _check_ukrainian_coverage(
         self, translated: str, report: QualityReport
@@ -761,8 +798,8 @@ class QualityChecker:
         """
         if self.source_language.lower() not in ("english", "en"):
             return
-        if self.target_language.lower() not in ("ukrainian", "uk"):
-            return
+        if self.target_language.lower() in ("english", "en"):
+            return  # no point checking English→English
 
         try:
             from gui.en_word_checker import word_is_english, dict_loaded, EN_FUNCTION_WORDS
@@ -801,6 +838,51 @@ class QualityChecker:
                     code="ENGLISH_LEAK",
                     message="Translation may contain untranslated English words",
                     detail=", ".join(dict.fromkeys(hits[:6])),
+                )
+            )
+
+    def _check_script_coverage(self, translated: str, report: QualityReport) -> None:
+        """
+        For CJK target languages (Japanese, Chinese Simplified), warn when the
+        translation contains no characters from the expected script family.
+
+        A long string with zero CJK / kana characters almost certainly means the
+        model returned untranslated Latin or Cyrillic text.
+
+        Minimum length: 6 non-whitespace characters to avoid false positives on
+        short strings that might legitimately be all-ASCII (numbers, game codes).
+        """
+        tgt = self.target_language.lower()
+        if tgt not in _CJK_TARGETS:
+            return
+
+        # Need at least some meaningful non-whitespace content to check.
+        content = translated.strip()
+        if len(re.sub(r"\s", "", content)) < 6:
+            return
+
+        if tgt in ("ja", "japanese"):
+            # Hiragana U+3040-U+309F, Katakana U+30A0-U+30FF, CJK U+4E00-U+9FFF
+            has_script = any(
+                "぀" <= c <= "ゟ"
+                or "゠" <= c <= "ヿ"
+                or "一" <= c <= "鿿"
+                for c in translated
+            )
+            script_name = "Japanese (kana/kanji)"
+        else:  # zh, zhhans, chinese
+            has_script = any("一" <= c <= "鿿" for c in translated)
+            script_name = "Chinese (CJK)"
+
+        if not has_script:
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_ERROR,
+                    code="LOW_SCRIPT_COVERAGE",
+                    message=(
+                        f"Translation contains no {script_name} characters "
+                        f"— text may be untranslated or in wrong language"
+                    ),
                 )
             )
 
@@ -1100,16 +1182,33 @@ class QualityChecker:
         clean = re.sub(r"[^\w]", "", orig_s)
         if len(clean) < 4 or not any(c.isalpha() for c in clean):
             return
-        # English game terms (no Cyrillic in source) are correctly left unchanged.
-        if not any("Ѐ" <= c <= "ӿ" for c in orig_s):
-            return
-        report.issues.append(
-            QualityIssue(
-                severity=SEVERITY_ERROR,
-                code="UNTRANSLATED",
-                message="Translation is identical to the original — text was not translated",
+
+        src = self.source_language.lower()
+        tgt = self.target_language.lower()
+
+        # Case 1: Cyrillic-source text returned unchanged (RU→UK etc.)
+        if any("Ѐ" <= c <= "ӿ" for c in orig_s):
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_ERROR,
+                    code="UNTRANSLATED",
+                    message="Translation is identical to the original — text was not translated",
+                )
             )
-        )
+            return
+
+        # Case 2: English source → non-English target: flag when there are enough
+        # words to rule out single proper-noun strings that legitimately stay in EN.
+        if src in ("en", "english") and tgt not in ("en", "english"):
+            alpha_words = [w for w in orig_s.split() if w.strip(".,!?-:;\"'()[]{}").isalpha()]
+            if len(alpha_words) >= 3:
+                report.issues.append(
+                    QualityIssue(
+                        severity=SEVERITY_ERROR,
+                        code="UNTRANSLATED",
+                        message="Translation is identical to the original — text was not translated",
+                    )
+                )
 
     def _check_numbers(
         self, original: str, translated: str, report: QualityReport
@@ -1236,8 +1335,8 @@ class QualityChecker:
                 )
             elif code == "SOURCE_LANGUAGE_LEAK":
                 hints.append(
-                    "Your previous translation contained Russian-only characters "
-                    "(ы, э, ё, ъ). Use ONLY Ukrainian characters."
+                    "Your previous translation contained source-language characters or words. "
+                    "Translate the text FULLY into the target language — do not leave any source language text."
                 )
             elif code == "SUSPICIOUSLY_SHORT":
                 hints.append(
@@ -1290,6 +1389,11 @@ class QualityChecker:
                 hints.append(
                     "Your previous translation changed the number of sentences significantly. "
                     "Match the sentence structure of the original."
+                )
+            elif code == "LOW_SCRIPT_COVERAGE":
+                hints.append(
+                    "Your previous translation appears to be in the wrong language or script. "
+                    "You MUST translate into the correct target language and script."
                 )
 
         if not hints:
