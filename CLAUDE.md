@@ -36,7 +36,7 @@ Fine-tuned Gemma 4 E4B IT on `scripts/qc_dataset_sharegpt.jsonl` (14,928 example
 ollama create qcgemma4-st -f Modelfile.qc
 ```
 
-`Modelfile.qc` points to `/home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf`. Uses `temperature 0.0` and `num_ctx 8192` for deterministic structured output. Input format matches the training data: `Check this Ukrainian translation:\n\nSource (English):\n{src}\n\nTranslation (Ukrainian):\n{tgt}`. Output is `VERDICT: GOOD` or `VERDICT: ISSUES_FOUND\nCODES: …\nSEVERITY: …\nDETAILS:\n- …\nACTION: AUTOFIX|RETRANSLATE`.
+`Modelfile.qc` points to `/home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf`. Uses `temperature 0.0` and `num_ctx 8192` for deterministic structured output. `num_predict 1024` to give the model's chain-of-thought reasoning enough budget before the structured VERDICT block. Input format matches the training data: `Check this Ukrainian translation:\n\nSource (English):\n{src}\n\nTranslation (Ukrainian):\n{tgt}`. Output is `VERDICT: GOOD` or `VERDICT: ISSUES_FOUND\nCODES: …\nSEVERITY: …\nDETAILS:\n- …\nACTION: AUTOFIX|RETRANSLATE`.
 
 ## Compiling UI Translations
 

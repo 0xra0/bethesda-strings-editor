@@ -40,6 +40,6 @@ ACTION: AUTOFIX|RETRANSLATE"
 
 PARAMETER temperature 0.0
 PARAMETER num_ctx 8192
-PARAMETER num_predict 256
+PARAMETER num_predict 1024
 PARAMETER stop <turn|>
 PARAMETER stop <|turn>
