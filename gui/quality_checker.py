@@ -684,16 +684,18 @@ class QualityChecker:
         self, translated: str, report: QualityReport
     ) -> None:
         """
-        Warn when the Ukrainian translation has low Ukrainian dictionary coverage.
+        Warn when the Ukrainian translation has low Ukrainian vocabulary coverage.
 
-        Uses the Ukrainian word list to count how many meaningful Cyrillic words
-        are recognized as Ukrainian. Coverage below 25% with ≥8 sample words
-        suggests the text is not properly translated (echoed source, wrong language,
-        or heavily corrupted output).
+        A word counts as "Ukrainian" if it is in the Ukrainian word list OR it
+        contains any Ukrainian-exclusive Cyrillic character (і / ї / є and their
+        uppercase variants). These characters are absent from Russian, so their
+        presence is a definitive Ukrainian signal even for inflected forms that the
+        lemmatised dictionary does not contain.
 
-        Skips proper nouns (capitalised), words shorter than 4 chars, non-Cyrillic
-        tokens, and words containing Russian-exclusive chars (already caught by
-        _check_source_leak). Only fires when the dictionary is available.
+        Skips ALL-CAPS tokens (game codes / English acronyms), words shorter than
+        4 chars, non-Cyrillic tokens, and words with Russian-exclusive chars
+        (ы/э/ё/ъ — already caught by _check_source_leak). Only fires when the
+        Ukrainian dictionary is available and the sample is ≥8 words.
         """
         if self.target_language.lower() not in ("ukrainian", "uk"):
             return
@@ -706,6 +708,9 @@ class QualityChecker:
             return
 
         _ru_only_chars = frozenset("ыэёъЫЭЁЪ")
+        # Ukrainian-exclusive characters absent from Russian
+        _uk_chars = frozenset("іїєІЇЄ")
+
         cyrillic_words: list = []
         for token in translated.split():
             raw = token.strip(".,!?-:;«»\"'()[]{}…—–")
@@ -713,8 +718,8 @@ class QualityChecker:
                 continue
             if not any("Ѐ" <= c <= "ӿ" for c in raw):
                 continue  # not Cyrillic
-            if raw[0].isupper():
-                continue  # proper noun — skip
+            if raw.isupper():
+                continue  # ALL-CAPS: game code / English acronym
             if any(c in _ru_only_chars for c in raw):
                 continue  # already flagged by _check_source_leak
             cyrillic_words.append(raw)
@@ -722,7 +727,10 @@ class QualityChecker:
         if len(cyrillic_words) < 8:
             return  # sample too small for reliable coverage estimate
 
-        uk_count = sum(1 for w in cyrillic_words if word_is_ukrainian(w) is True)
+        uk_count = sum(
+            1 for w in cyrillic_words
+            if word_is_ukrainian(w) is True or any(c in _uk_chars for c in w)
+        )
         coverage = uk_count / len(cyrillic_words)
 
         if coverage < 0.25:
