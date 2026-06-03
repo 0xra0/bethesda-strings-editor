@@ -18,15 +18,25 @@ pip install -r requirements.txt
 
 Logging goes to both stdout and `translator.log` in the project root.
 
-## Ollama Model
+## Ollama Models
 
-The app uses a custom Ollama model named `translategemma3-st`. To create or recreate it:
+### Translation model (`translategemma3-st`)
 
 ```bash
 ollama create translategemma3-st -f Modelfile
 ```
 
 The `Modelfile` points to a local GGUF path (`/mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf`). All generation parameters in `Modelfile` are overridden at runtime — the file is only used for direct `ollama run` invocations.
+
+### Quality-check model (`qcgemma4-st`)
+
+Fine-tuned Gemma 4 E4B IT on `scripts/qc_dataset_sharegpt.jsonl` (14,928 examples, 16 issue codes). Creates or recreates the model:
+
+```bash
+ollama create qcgemma4-st -f Modelfile.qc
+```
+
+`Modelfile.qc` points to `/home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf`. Uses `temperature 0.0` and `num_ctx 8192` for deterministic structured output. Input format matches the training data: `Check this Ukrainian translation:\n\nSource (English):\n{src}\n\nTranslation (Ukrainian):\n{tgt}`. Output is `VERDICT: GOOD` or `VERDICT: ISSUES_FOUND\nCODES: …\nSEVERITY: …\nDETAILS:\n- …\nACTION: AUTOFIX|RETRANSLATE`.
 
 ## Compiling UI Translations
 
