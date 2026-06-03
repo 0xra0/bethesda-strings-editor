@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 21  # Increment when schema changes
+CONFIG_VERSION = 22  # Increment when schema changes
 
 
 @dataclass
@@ -90,6 +90,10 @@ class AppSettings:
 
     # ── Recent files ──────────────────────────────────────────────────────
     recent_files: list = field(default_factory=list)
+
+    # ── AI Quality Check ──────────────────────────────────────────────────────
+    enable_ai_qc: bool = False
+    ai_qc_model: str = "qcgemma4-st"
 
     # ── Validation rules ─────────────────────────────────────────
     _URL_MIN_LENGTH = 5
@@ -296,6 +300,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("nexusmods_file_group_id", "")
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v21: added NexusMods upload settings")
+
+    if from_version < 22:
+        data.setdefault("enable_ai_qc", False)
+        data.setdefault("ai_qc_model", "qcgemma4-st")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v22: added AI QC settings")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

@@ -447,6 +447,28 @@ class SettingsDialog(QDialog):
         sec_group.setLayout(sec_layout)
         layout.addWidget(sec_group)
 
+        # AI Quality Check
+        ai_qc_group = QGroupBox(self.tr("AI Quality Check"))
+        ai_qc_layout = QFormLayout()
+
+        self.chk_enable_ai_qc = QCheckBox(self.tr("Enable AI quality check after rule-based QC"))
+        self.chk_enable_ai_qc.setChecked(getattr(self._settings, "enable_ai_qc", False))
+        self.chk_enable_ai_qc.setToolTip(
+            self.tr(
+                "Run the fine-tuned qcgemma4-st Ollama model on each translated string\n"
+                "after the rule-based quality check. Slower but catches issues the rules miss.\n"
+                "Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc"
+            )
+        )
+        ai_qc_layout.addRow(self.chk_enable_ai_qc)
+
+        self.ai_qc_model_edit = QLineEdit(getattr(self._settings, "ai_qc_model", "qcgemma4-st"))
+        self.ai_qc_model_edit.setToolTip(self.tr("Ollama model name for AI quality checks"))
+        ai_qc_layout.addRow(self.tr("AI QC model:"), self.ai_qc_model_edit)
+
+        ai_qc_group.setLayout(ai_qc_layout)
+        layout.addWidget(ai_qc_group)
+
         # Keyboard Shortcuts
         if self._keyboard_manager is not None:
             layout.addWidget(self._build_shortcuts_section())
@@ -646,6 +668,8 @@ class SettingsDialog(QDialog):
         settings.tm_fuzzy_max_score = self._tm_pct_to_score(self.slider_tm_fuzzy.value())
         settings.encrypt_cache = self.chk_encrypt_cache.isChecked()
         settings.audit_logging = self.chk_audit_log.isChecked()
+        settings.enable_ai_qc = self.chk_enable_ai_qc.isChecked()
+        settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
 

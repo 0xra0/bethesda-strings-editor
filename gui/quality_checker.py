@@ -1277,6 +1277,63 @@ class QualityChecker:
             + "\n".join(f"• {h}" for h in hints)
         )
 
+    @staticmethod
+    def parse_ai_verdict(response: str) -> List[QualityIssue]:
+        """Parse a qcgemma4-st VERDICT block into QualityIssue objects.
+
+        The model may emit chain-of-thought before the VERDICT; we use the last
+        occurrence so reasoning text doesn't interfere with parsing.
+        """
+        if not response:
+            return []
+
+        verdict_pos = response.rfind("VERDICT:")
+        if verdict_pos == -1:
+            return []
+
+        block = response[verdict_pos:]
+
+        if "VERDICT: GOOD" in block:
+            return []
+        if "VERDICT: ISSUES_FOUND" not in block:
+            return []
+
+        sev_str = "warning"
+        sev_match = re.search(r"SEVERITY:\s*(\w+)", block)
+        if sev_match:
+            sev_str = sev_match.group(1).lower()
+        severity = {
+            "error": SEVERITY_ERROR,
+            "warning": SEVERITY_WARNING,
+            "info": SEVERITY_INFO,
+        }.get(sev_str, SEVERITY_WARNING)
+
+        codes: List[str] = []
+        codes_match = re.search(r"CODES:\s*(.+)", block)
+        if codes_match:
+            codes = [c.strip() for c in codes_match.group(1).split(",") if c.strip()]
+
+        details: List[str] = []
+        detail_match = re.search(r"DETAILS:\n(.*?)(?:\nACTION:|$)", block, re.DOTALL)
+        if detail_match:
+            for line in detail_match.group(1).splitlines():
+                line = line.strip()
+                if line.startswith("- "):
+                    details.append(re.sub(r"^\[[\w_]+\]\s*", "", line[2:]))
+
+        issues: List[QualityIssue] = []
+        for i, code in enumerate(codes):
+            detail = details[i] if i < len(details) else ""
+            issues.append(
+                QualityIssue(
+                    severity=severity,
+                    code=code,
+                    message=f"[AI] {detail}" if detail else f"[AI] {code}",
+                    detail=detail,
+                )
+            )
+        return issues
+
     def check_glossary_compliance(
         self,
         source: str,

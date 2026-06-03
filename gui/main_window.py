@@ -3113,6 +3113,11 @@ class MainWindow(QMainWindow):
             return
         from gui.quality_dialog import QualityDialog
         reports, quality_map, checker = self._build_quality_map()
+
+        if getattr(self.settings, "enable_ai_qc", False):
+            reports = self._run_ai_qc(reports)
+            quality_map = {r.row_index: r.severity for r in reports if r.severity}
+
         self.table_model.set_quality_data(quality_map)
         dialog = QualityDialog(
             reports,
@@ -3125,6 +3130,72 @@ class MainWindow(QMainWindow):
 
         if dialog.pending_retranslations:
             self._retranslate_with_hints(dialog.pending_retranslations)
+
+    def _run_ai_qc(self, reports):
+        """Run the AI QC model on all translated rows and merge results into reports."""
+        from gui.ai_qc_worker import AiQcWorker
+        from gui.quality_checker import QualityReport
+        from PySide6.QtCore import QEventLoop
+        from PySide6.QtWidgets import QProgressDialog
+
+        rows = self.table_model._data
+        items = [
+            (i, row.get("id", 0), row.get("original", ""), row.get("translated", ""))
+            for i, row in enumerate(rows)
+            if row.get("translated", "").strip()
+        ]
+        if not items:
+            return reports
+
+        report_map = {r.row_index: r for r in reports}
+
+        progress_dlg = QProgressDialog(
+            self.tr("Running AI quality check ({n} strings)…").format(n=len(items)),
+            self.tr("Cancel"),
+            0,
+            len(items),
+            self,
+        )
+        progress_dlg.setWindowTitle(self.tr("AI Quality Check"))
+        progress_dlg.setMinimumDuration(0)
+        progress_dlg.setValue(0)
+
+        worker = AiQcWorker(
+            items,
+            ollama_url=self.settings.ollama_url,
+            model=getattr(self.settings, "ai_qc_model", "qcgemma4-st"),
+            max_workers=4,
+        )
+        loop = QEventLoop()
+
+        def _on_result(row_index, issues):
+            if row_index in report_map:
+                report_map[row_index].issues.extend(issues)
+            else:
+                row = rows[row_index] if row_index < len(rows) else {}
+                new_report = QualityReport(
+                    row_index=row_index,
+                    string_id=row.get("id", 0),
+                    original=row.get("original", ""),
+                    translated=row.get("translated", ""),
+                    issues=list(issues),
+                )
+                report_map[row_index] = new_report
+
+        def _on_progress(done, total):
+            progress_dlg.setValue(done)
+            if progress_dlg.wasCanceled():
+                worker.cancel()
+
+        worker.result.connect(_on_result)
+        worker.progress.connect(_on_progress)
+        worker.finished.connect(loop.quit)
+        worker.start()
+        loop.exec()
+        progress_dlg.close()
+
+        merged = sorted(report_map.values(), key=lambda r: r.row_index)
+        return [r for r in merged if r.has_issues]
 
     def _import_quality_report(self) -> None:
         """Load a saved JSON or CSV quality report and reopen the quality dialog."""
