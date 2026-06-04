@@ -62,6 +62,7 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "GLOSSARY_MISMATCH",
     "LOW_UKRAINIAN_COVERAGE",
     "LOW_SCRIPT_COVERAGE",
+    "SPELL_ERROR",
     # Truncated Russian originals need AI retranslation
     "TRANSLATION_TRUNCATED",
 })
@@ -308,6 +309,7 @@ class QualityChecker:
         self._check_ai_artifacts(original, translated, report)
         self._check_whitespace_frame(original, translated, report)
         self._check_spurious_quotes(original, translated, report)
+        self._check_spelling(original, translated, report)
 
         return report
 
@@ -886,6 +888,51 @@ class QualityChecker:
                 )
             )
 
+    def _check_spelling(
+        self, original: str, translated: str, report: QualityReport
+    ) -> None:
+        """
+        Flag probable spelling errors in the translated text using Hunspell.
+
+        Requires a hunspell dictionary for the target language to be installed
+        (pacman -S hunspell-uk / apt install hunspell-uk / etc.).  Silently
+        skips when no dictionary is available so it never blocks the QC run.
+
+        Severity: WARNING (typos look bad but do not crash the game).
+        Fires when at least one word fails the dictionary check after filtering
+        out ALL-CAPS tokens, proper nouns, digit-containing tokens, and any
+        word already present verbatim in the source text.
+        """
+        try:
+            from gui.spell_checker import check_spelling, is_available
+        except ImportError:
+            return
+
+        lang = self.target_language.lower()
+        if not is_available(lang):
+            return
+
+        errors = check_spelling(translated, lang, source_text=original)
+        if not errors:
+            return
+
+        words_str = ", ".join(w for w, _ in errors[:6])
+        first_word, first_suggs = errors[0]
+        sugg_hint = (
+            f" (e.g. {first_word!r} → {first_suggs[0]!r})" if first_suggs else ""
+        )
+        report.issues.append(
+            QualityIssue(
+                severity=SEVERITY_WARNING,
+                code="SPELL_ERROR",
+                message=(
+                    f"Possible spelling error(s){sugg_hint}: {words_str}"
+                    + ("…" if len(errors) > 6 else "")
+                ),
+                detail=words_str,
+            )
+        )
+
     def _check_repetition(self, translated: str, report: QualityReport) -> None:
         gram = _find_repeated_ngram(translated)
         if gram:
@@ -1394,6 +1441,12 @@ class QualityChecker:
                 hints.append(
                     "Your previous translation appears to be in the wrong language or script. "
                     "You MUST translate into the correct target language and script."
+                )
+            elif code == "SPELL_ERROR":
+                detail = f" ({issue.detail})" if issue.detail else ""
+                hints.append(
+                    f"Your previous translation contained spelling error(s){detail}. "
+                    "Check your spelling carefully and use correct target-language orthography."
                 )
 
         if not hints:

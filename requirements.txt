@@ -3,3 +3,6 @@ requests>=2.31
 cryptography>=43.0
 anthropic>=0.25
 keyring>=25.0  # optional — falls back to encrypted file store if unavailable
+# Spell-check (either works; CLI hunspell is used as fallback if neither is installed):
+hunspell>=0.5.5  # optional — needs libhunspell-dev: pip install hunspell
+# spylls>=0.1.7  # optional pure-Python alternative: pip install spylls
