@@ -13,7 +13,7 @@
 # To rebuild from this file:
 #   ollama create translategemma3-st -f Modelfile
 
-FROM /mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf
+FROM /mnt/ssd/models/blobs/sha256-c8c3c4cef65c8d229c16cb257e3ee88d6a1ceb1aa52f70129cf310c4790b48c2
 
 # ── Chat template (Gemma 3 format) ──────────────────────────────────────────
 TEMPLATE "{{ if .System }}<start_of_turn>system

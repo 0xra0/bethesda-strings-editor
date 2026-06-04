@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+  <!-- Bethesda localization string files (.strings / .dlstrings / .ilstrings).
+       All three share the same binary layout (8-byte header, directory entries,
+       data block); dlstrings/ilstrings have a 4-byte length prefix per entry. -->
+  <mime-type type="application/x-bethesda-strings">
+    <comment>Bethesda Localization Strings</comment>
+    <comment xml:lang="uk">Файл локалізованих рядків Bethesda</comment>
+    <icon name="bethesda-strings-editor"/>
+    <glob pattern="*.strings" weight="70"/>
+    <glob pattern="*.dlstrings" weight="70"/>
+    <glob pattern="*.ilstrings" weight="70"/>
+    <glob pattern="*.STRINGS" weight="70"/>
+    <glob pattern="*.DLSTRINGS" weight="70"/>
+    <glob pattern="*.ILSTRINGS" weight="70"/>
+  </mime-type>
+
+  <!-- Elder Scrolls Plugin / Master / Light plugin files.
+       All start with the ASCII magic "TES4" (0x54455334). -->
+  <mime-type type="application/x-bethesda-plugin">
+    <comment>Bethesda Plugin</comment>
+    <comment xml:lang="uk">Плагін Bethesda</comment>
+    <icon name="bethesda-strings-editor"/>
+    <magic priority="60">
+      <match type="string" value="TES4" offset="0"/>
+    </magic>
+    <glob pattern="*.esp" weight="80"/>
+    <glob pattern="*.esm" weight="80"/>
+    <glob pattern="*.esl" weight="80"/>
+    <glob pattern="*.ESP" weight="80"/>
+    <glob pattern="*.ESM" weight="80"/>
+    <glob pattern="*.ESL" weight="80"/>
+  </mime-type>
+
+  <!-- Bethesda Archive 2 files (GNRL type, zlib-compressed).
+       Magic bytes: ASCII "BTDX" (0x42544458) at offset 0. -->
+  <mime-type type="application/x-bethesda-archive">
+    <comment>Bethesda Archive 2</comment>
+    <comment xml:lang="uk">Архів Bethesda 2</comment>
+    <icon name="bethesda-strings-editor"/>
+    <magic priority="80">
+      <match type="string" value="BTDX" offset="0"/>
+    </magic>
+    <glob pattern="*.ba2" weight="80"/>
+    <glob pattern="*.BA2" weight="80"/>
+  </mime-type>
+
+</mime-info>

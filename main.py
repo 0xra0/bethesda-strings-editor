@@ -120,6 +120,15 @@ def main():
 
     window.show()
 
+    # Open file passed as a command-line argument (file-association / double-click).
+    # Use singleShot(0) so the event loop is running before the file-open path
+    # tries to show error dialogs or interact with the welcome widget.
+    if len(sys.argv) > 1:
+        file_arg = Path(sys.argv[1])
+        if file_arg.is_file():
+            from PySide6.QtCore import QTimer
+            QTimer.singleShot(0, lambda: window._open_file_path(str(file_arg)))
+
     # Process events once to ensure thread starts properly
     app.processEvents()
 

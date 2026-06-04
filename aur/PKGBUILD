@@ -28,9 +28,11 @@ _ghbase="https://github.com/0xra0/bethesda-strings-editor/releases/download"
 source=(
     "${pkgname}-${pkgver}.zip::${_ghbase}/v${pkgver}/bethesda-strings-editor-linux-x64.zip"
     "bethesda-strings-editor.desktop"
+    "bethesda-strings-editor-mime.xml"
 )
 # Run `updpkgsums` to fill these in after downloading the release.
 sha256sums=(
+    'SKIP'
     'SKIP'
     'SKIP'
 )
@@ -51,6 +53,10 @@ package() {
     # Desktop entry
     install -Dm644 bethesda-strings-editor.desktop \
         "${pkgdir}/usr/share/applications/bethesda-strings-editor.desktop"
+
+    # MIME type definitions (shared-mime-info hook runs update-mime-database)
+    install -Dm644 bethesda-strings-editor-mime.xml \
+        "${pkgdir}/usr/share/mime/packages/bethesda-strings-editor.xml"
 
     # Icon (from the bundle's resources directory)
     install -Dm644 \
