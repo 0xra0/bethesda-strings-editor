@@ -1020,6 +1020,11 @@ class OllamaWorker(QObject):
         # Restore protected terms across the whole reassembled text
         if token_map and self.term_protector is not None:
             result = self.term_protector.restore_text(result, token_map, protected_text)
+        elif token_map:
+            if "[[STRUCT_BREAK_DBL_N]]" in result:
+                result = result.replace("[[STRUCT_BREAK_DBL_N]]", "\n\n")
+            if "[[STRUCT_BREAK_SGL_N]]" in result:
+                result = result.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
         if result:
             result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
@@ -1341,6 +1346,12 @@ class OllamaWorker(QObject):
                 translated = self.term_protector.restore_text(
                     translated, token_map, protected_text
                 )
+            elif token_map:
+                # term_protector disabled — restore STRUCT_BREAK tokens manually.
+                if "[[STRUCT_BREAK_DBL_N]]" in translated:
+                    translated = translated.replace("[[STRUCT_BREAK_DBL_N]]", "\n\n")
+                if "[[STRUCT_BREAK_SGL_N]]" in translated:
+                    translated = translated.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
             # Restore structural newlines + per-line leading spaces that the model
             # dropped (translategemma3-st routinely ignores [[STRUCT_BREAK_*]] tokens).
@@ -1428,6 +1439,13 @@ class OllamaWorker(QObject):
         """Remove common AI artifacts from translation output."""
         if not text:
             return ""
+
+        # Safety net: restore any structural newline tokens that survived restore_text()
+        # (happens when term_protector is disabled or the anchor algorithm missed a token).
+        if "[[STRUCT_BREAK_DBL_N]]" in text:
+            text = text.replace("[[STRUCT_BREAK_DBL_N]]", "\n\n")
+        if "[[STRUCT_BREAK_SGL_N]]" in text:
+            text = text.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
         # Strip prompt-echo preambles (case-insensitive, handles with/without trailing newline).
         # The model sometimes echoes the "To Ukrainian:" instruction from to_prompt() back
