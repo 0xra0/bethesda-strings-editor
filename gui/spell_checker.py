@@ -124,7 +124,7 @@ class _HunspellLibBackend:
     """Uses the `hunspell` pip package (C bindings — fastest)."""
 
     def __init__(self, dic: str, aff: str) -> None:
-        import hunspell as _hl
+        import hunspell as _hl  # type: ignore[import-untyped]
         self._h = _hl.HunSpell(dic, aff)
 
     def check(self, word: str) -> bool:
@@ -138,7 +138,7 @@ class _SpyllsBackend:
     """Uses the `spylls` pip package (pure Python Hunspell)."""
 
     def __init__(self, dic: str, _aff: str) -> None:
-        from spylls.hunspell import Dictionary
+        from spylls.hunspell import Dictionary  # type: ignore[import-untyped]
         self._d = Dictionary.from_files(dic.removesuffix(".dic"))
 
     def check(self, word: str) -> bool:
