@@ -1,17 +1,19 @@
 """
 Settings/Preferences dialog with term protection settings
 """
+from pathlib import Path
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QLineEdit, QComboBox, QSpinBox, QCheckBox,
     QPushButton, QDialogButtonBox, QGroupBox, QLabel,
-    QMessageBox, QApplication, QSlider, QWidget, QScrollArea, QFrame
+    QMessageBox, QApplication, QSlider, QWidget, QScrollArea, QFrame,
+    QFileDialog,
 )
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QKeySequenceEdit
 from typing import TYPE_CHECKING, Optional
-from gui.app_settings import AppSettings
+from gui.app_settings import AppSettings, get_config_dir, get_config_dir_override, set_config_dir_override
 from gui.file_dialog_helper import get_open_filename
 
 if TYPE_CHECKING:
@@ -423,6 +425,52 @@ class SettingsDialog(QDialog):
         perf_group.setLayout(perf_layout)
         layout.addWidget(perf_group)
 
+        # Storage Settings
+        storage_group = QGroupBox(self.tr("Storage"))
+        storage_layout = QFormLayout()
+
+        active_dir = get_config_dir()
+        self._lbl_active_config_dir = QLabel(str(active_dir))
+        self._lbl_active_config_dir.setStyleSheet("color: palette(mid); font-size: 11px;")
+        self._lbl_active_config_dir.setWordWrap(True)
+        storage_layout.addRow(self.tr("Active config dir:"), self._lbl_active_config_dir)
+
+        override = get_config_dir_override()
+        self._config_dir_edit = QLineEdit(str(override) if override else "")
+        self._config_dir_edit.setPlaceholderText(self.tr("(default: ~/.config/BethesdaModTools)"))
+        self._config_dir_edit.setToolTip(
+            self.tr("Override the directory where config.json and other app data are stored.\n"
+                    "Leave blank to use the default location.\n"
+                    "Takes effect after restarting the application.")
+        )
+        self._config_dir_edit.textChanged.connect(self._on_config_dir_changed)
+
+        btn_browse_config_dir = QPushButton(self.tr("Browse…"))
+        btn_browse_config_dir.clicked.connect(self._browse_config_dir)
+        btn_reset_config_dir = QPushButton(self.tr("Reset"))
+        btn_reset_config_dir.setToolTip(self.tr("Clear override and use the default config directory"))
+        btn_reset_config_dir.clicked.connect(lambda: self._config_dir_edit.clear())
+
+        config_dir_row = QHBoxLayout()
+        config_dir_row.addWidget(self._config_dir_edit, 1)
+        config_dir_row.addWidget(btn_browse_config_dir)
+        config_dir_row.addWidget(btn_reset_config_dir)
+        storage_layout.addRow(self.tr("Config directory:"), config_dir_row)
+
+        self._lbl_config_dir_restart = QLabel(
+            self.tr("⚠  Restart the application to use the new config directory.")
+        )
+        self._lbl_config_dir_restart.setStyleSheet(
+            "color: #e8a020; font-style: italic; font-size: 11px;"
+        )
+        self._lbl_config_dir_restart.setVisible(False)
+        storage_layout.addRow(self._lbl_config_dir_restart)
+
+        self._orig_config_dir_override = str(override) if override else ""
+
+        storage_group.setLayout(storage_layout)
+        layout.addWidget(storage_group)
+
         # Security Settings
         sec_group = QGroupBox(self.tr("Security"))
         sec_layout = QFormLayout()
@@ -554,6 +602,21 @@ class SettingsDialog(QDialog):
             self.lbl_connection.setText(self.tr("● Error"))
             self.lbl_connection.setStyleSheet("color: red;")
             QMessageBox.critical(self, self.tr("Error"), self.tr("Unexpected error: {error}").format(error=e))
+
+    @Slot()
+    def _browse_config_dir(self):
+        """Browse for a custom config directory."""
+        current = self._config_dir_edit.text().strip() or str(Path.home())
+        chosen = QFileDialog.getExistingDirectory(
+            self, self.tr("Select Config Directory"), current
+        )
+        if chosen:
+            self._config_dir_edit.setText(chosen)
+
+    @Slot(str)
+    def _on_config_dir_changed(self, text: str) -> None:
+        changed = text.strip() != self._orig_config_dir_override
+        self._lbl_config_dir_restart.setVisible(changed)
 
     @Slot()
     def _browse_terms_file(self):
@@ -688,6 +751,9 @@ class SettingsDialog(QDialog):
         settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
+        # Config dir override is stored in a bootstrap file, not in AppSettings
+        raw = self._config_dir_edit.text().strip()
+        set_config_dir_override(Path(raw) if raw else None)
 
     def _build_shortcuts_section(self) -> QGroupBox:
         """Build the Keyboard Shortcuts group box with QKeySequenceEdit per action."""

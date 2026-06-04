@@ -327,14 +327,56 @@ def _migrate_config(data: dict, from_version: int) -> dict:
 # Default config file path (in user config dir alongside QSettings)
 CONFIG_FILENAME = "config.json"
 
+# Bootstrap file at the fixed default location — stores a single-line override path.
+# Must always live at the hardcoded default dir so it's findable before we know the override.
+_OVERRIDE_BOOTSTRAP = Path(os.path.expanduser("~/.config/BethesdaModTools/.config_dir_override"))
+_DEFAULT_CONFIG_DIR = Path(os.path.expanduser("~/.config/BethesdaModTools"))
+
+
+def get_config_dir_override() -> Optional[Path]:
+    """Return the user-configured config dir, or None when using the default.
+
+    Priority: BSE_CONFIG_DIR env var → bootstrap file → None (use default).
+    """
+    env = os.environ.get("BSE_CONFIG_DIR", "").strip()
+    if env:
+        return Path(env)
+    try:
+        if _OVERRIDE_BOOTSTRAP.exists():
+            text = _OVERRIDE_BOOTSTRAP.read_text(encoding="utf-8").strip()
+            if text:
+                return Path(text)
+    except OSError:
+        pass
+    return None
+
+
+def set_config_dir_override(path: Optional[Path]) -> None:
+    """Write or clear the config-dir override bootstrap file.
+
+    Pass None to restore the default directory.
+    """
+    _OVERRIDE_BOOTSTRAP.parent.mkdir(parents=True, exist_ok=True)
+    if path is None:
+        try:
+            _OVERRIDE_BOOTSTRAP.unlink()
+        except FileNotFoundError:
+            pass
+    else:
+        _OVERRIDE_BOOTSTRAP.write_text(str(path), encoding="utf-8")
+
 
 def get_config_dir() -> Path:
     """Get the directory where the JSON config file is stored."""
-    # QSettings stores in ~/.config/OrgName/AppName.conf (on Linux)
-    # We use the same parent directory for our config.json
-    qs_path = Path(os.path.expanduser("~/.config/BethesdaModTools"))
-    qs_path.mkdir(parents=True, exist_ok=True)
-    return qs_path
+    override = get_config_dir_override()
+    if override:
+        try:
+            override.mkdir(parents=True, exist_ok=True)
+            return override
+        except OSError as e:
+            logger.warning("Cannot use config dir override %s: %s — using default", override, e)
+    _DEFAULT_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    return _DEFAULT_CONFIG_DIR
 
 
 _SSD_CACHE_DIR = Path("/mnt/ssd/bethesda-strings-editor")
