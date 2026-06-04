@@ -913,10 +913,10 @@ class OllamaWorker(QObject):
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
         effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
-        # Output can't be longer than input (translation, not expansion).
-        # Ukrainian tends to be ~20% wordier than English, so cap at input_len rather
-        # than input_len // 2 to avoid truncating the last chunk.
-        adaptive_num_predict = min(self.ollama_num_predict, max(200, input_len))
+        # Allow 2× the chunk length: target languages are typically 20-50% wordier
+        # than the source and Cyrillic/inflected languages produce more tokens per
+        # word, so capping at input_len causes hard truncation of the last chunk.
+        adaptive_num_predict = min(self.ollama_num_predict, max(200, input_len * 2))
 
         # TranslateGemma models embed the language-pair instruction in the TEMPLATE;
         # the payload must carry raw source text only (no "To Ukrainian:" prefix).
@@ -1187,7 +1187,17 @@ class OllamaWorker(QObject):
         # Very long strings (above chunk threshold) are split into chunks so each
         # Ollama call stays well within the per-request timeout.
         if len(protected_text) > self._CHUNK_TRANSLATE_THRESHOLD:
-            return self._translate_chunked(req, protected_text, token_map, cache_key)
+            translated = self._translate_chunked(req, protected_text, token_map, cache_key)
+            if translated:
+                # Restore structural newlines dropped by the model — same fallback
+                # used in the non-chunked path but applied to the reassembled result.
+                if token_map.get("[[STRUCT_BREAK_SGL_N]]") or token_map.get("[[STRUCT_BREAK_DBL_N]]"):
+                    if translated.count("\n") < req.original_text.count("\n"):
+                        translated = _restore_line_structure(translated, req.original_text)
+                # Restore separator lines stripped before chunking.
+                if leading_seps or trailing_seps:
+                    translated = leading_seps + translated + trailing_seps
+            return translated
 
         # OPTIMIZATION: If the entire text was protected (nothing left to translate),
         # skip the API entirely and return the original text.
