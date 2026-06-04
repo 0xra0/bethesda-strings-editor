@@ -1,176 +1,92 @@
-Bethesda Strings Editor
-Desktop tool for translating Starfield localization files across all 11 supported languages using a locally-running AI model.
-
-  Reads the binary string formats used by the Creation Engine (.strings, .dlstrings, .ilstrings), BA2 archives, and non-localized ESP/ESM plugins, sends text to Ollama, and writes the translated
-  files back in the original format — ready to drop into your mod or game data folder.
-
-  Designed around the real localization workflow: integrates with xTranslator XML files, protects thousands of Starfield-specific proper nouns from mistranslation, remembers every string you've already
-  approved, and flags quality issues automatically so you can review or re-translate them one by one.
-
-  Every source→target language pair has a dedicated AI prompt with register rules, script conventions, and native translation examples baked in.
-
-
-
-Installation
-
-
-
-    Download the zip for your platform from the Files tab
-
-    Extract anywhere — no Python or Qt install needed, fully self-contained
-
-    Install Ollama and start it:
-
-    ollama serve
-
-
-    Create the translation model (only needed once):
-
-    ollama create translategemma3-st -f Modelfile
-
-
-    Run
-
-    bethesda-strings-editor
-
-    (Linux) or
-
-    bethesda-strings-editor.exe
-
-    (Windows)
-
-
-
-Arch Linux (AUR):
-
-yay -S bethesda-strings-editor-bin
-
-
-
-
-Supported Languages
-
-
-All 9 official Starfield languages plus Russian and Ukrainian for xTranslator-style workflows:
-
-English · German · Spanish · French · Italian · Japanese · Polish · Portuguese (Brazil) · Chinese (Simplified) · Russian · Ukrainian
-
-
-
-Features
-
-Translation
-
-
-
-    Parallel AI translation — configurable concurrency, 10 simultaneous requests by default
-
-    Language-pair prompts — dedicated system prompt for every source→target combination with register rules, script conventions (Japanese polite forms, Chinese simplified terminology), and native examples
-
-    Translation memory — approved strings are never sent to the model again
-
-    Persistent cache — SHA-256 keyed, survives sessions, up to 50,000 entries
-
-    Term protector — 8,000+ Starfield names, places, and UI labels swapped to placeholders before AI sees the text and restored afterward; proper nouns are never mistranslated
-
-    Newline and whitespace restoration — when the model collapses a multi-line string into a single paragraph, the output is re-split proportionally and per-line indentation is restored from the original
-
-    Mixed-script repair — stray Latin characters inside Cyrillic words are corrected automatically
-
-    Glossary system — CSV/TBX/JSON import-export, in-app editor, automatic injection into AI prompts
-
-
-
-File Support
-
-
-
-    .strings — null-terminated binary format
-
-    .dlstrings / .ilstrings — length-prefixed binary format
-
-    BA2 archives — reads and writes Starfield v2 and Fallout 4 v1 BA2 archives (GNRL type, zlib-compressed); picker dialog for multi-entry archives
-
-    ESP/ESM plugins — extracts and writes back translatable fields from non-localized plugins directly
-
-    xTranslator SST XML — import/export compatible with existing xTranslator projects
-
-    Auto-detects encoding — UTF-8 BOM, UTF-8, CP1251, CP1252, CP1250 (Polish), GBK; per-file override
-
-    Drag-and-drop file loading with format validation
-
-
-
-Review Workflow
-
-
-
-    Quality checker — 20+ automated checks: missing/extra game tags (<Alias=…>, [PLYR], %s), truncated AI output, suspicious length ratios, newline count mismatches, source-language leakage in Cyrillic output, AI artifact prefixes, encoding failures, and glossary mismatches
-
-    One-click auto-fix for common issues (whitespace, capitalisation, character substitution, missing newlines); one-click re-translate with a per-string hint for AI issues
-
-    Consistency checker — finds identical source strings translated differently; pick a canonical form and batch-replace
-
-    Version diff — compare two game versions and migrate unchanged translations automatically; export CSV/HTML reports
-
-    Vim-style keyboard navigation, command palette (Ctrl+K), customizable shortcuts
-
-
-
-UI
-
-
-
-    Dark / Light / High-Contrast / Catppuccin themes plus custom QSS file support
-
-    Ukrainian interface localization
-
-    Drag-and-drop file open
-
-    Status bar with live progress, translated count, and ETA during AI batches
-
-    NexusMods upload — upload release archives directly to your mod page from inside the app (File → Upload to NexusMods…)
-
-
-
-
-
-Requirements
-
-Ollama must be running locally when you use AI translation features. The editor calls it over HTTP on
-
-
-localhost:11434
-
-.
-
-  A GGUF model compatible with Ollama. The included
-
-Modelfile
-
-points to
-
-translategemma-27b-it.Q4_K_M.gguf
-
-— edit the path to match your local model file before creating the model.
-
-
-
-    Minimum hardware: 16 GB RAM recommended for the 27B Q4 model. Smaller GGUF models work too — just edit the Modelfile to point to a different one.
-
-
-  The standalone builds include everything else (Python runtime, Qt libraries). No separate install needed.
-
-
-
-Shout Outs
-
-
-
-    xTranslator by Diranar — the original and essential tool for Bethesda localization. The SST XML format and field definitions in this editor are based on xTranslator's logic.
-
-    Ollama — for making local AI inference as simple as a single command.
-
-    The Starfield localization community — for the feedback, term lists, and real-world testing that shaped this tool.
-
-
+Desktop tool for translating Starfield localization files across 11 languages using a locally-running AI model or the Claude API.
+
+Reads the binary string formats used by the Creation Engine ([b].strings[/b], [b].dlstrings[/b], [b].ilstrings[/b], [b]BA2 archives[/b]) and non-localized ESP/ESM plugins, sends text to Ollama or Claude, and writes the translated files back in the original format — ready to drop into your mod or game data folder.
+
+Designed around the real localization workflow: integrates with xTranslator XML files, protects thousands of Starfield-specific proper nouns from mistranslation, remembers every string you've already approved, and flags quality issues automatically so you can review or re-translate them one by one.
+
+[heading]Installation[/heading]
+
+[list=1]
+[*]Download the zip for your platform from the [b]Files[/b] tab
+[*]Extract anywhere — no Python or Qt install needed, fully self-contained
+[*]Install [url=https://ollama.com]Ollama[/url] and start it:[code]ollama serve[/code]
+[*]Pull the translation model (only needed once):[code]ollama pull 0xra/bethesda-translate
+ollama cp 0xra/bethesda-translate translategemma3-st[/code]
+[*]Run [b]bethesda-strings-editor[/b] (Linux) or [b]bethesda-strings-editor.exe[/b] (Windows)
+[/list]
+
+[b]Arch Linux (AUR):[/b]
+[code]yay -S bethesda-strings-editor-bin[/code]
+
+[b]Optional — AI quality checker model:[/b]
+[code]ollama pull 0xra/bethesda-qc
+ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
+
+[b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU required.
+
+[heading]Ollama Models[/heading]
+
+Both models are published on the Ollama hub and can be pulled directly — no local GGUF file needed.
+
+[list]
+[*][url=https://ollama.com/0xra/bethesda-translate][b]0xra/bethesda-translate[/b][/url] — Gemma 3 12B fine-tuned for Bethesda/Starfield game string translation. Preserves all game format tokens ([b]<Alias=...>[/b], [b][MALE][/b], [b]%s[/b], [b]{var}[/b]) and writes distinctly Ukrainian output.
+[*][url=https://ollama.com/0xra/bethesda-qc][b]0xra/bethesda-qc[/b][/url] — Gemma 4 E4B fine-tuned for quality checking. Detects 16 issue codes and returns structured VERDICT blocks with AUTOFIX/RETRANSLATE recommendations.
+[/list]
+
+[heading]Features[/heading]
+
+[b]Translation[/b]
+[list]
+[*][b]Parallel AI translation[/b] — configurable concurrency, 10 simultaneous requests by default
+[*][b]Claude API backend[/b] — use Haiku 4.5, Sonnet 4.6, or Opus 4.8 as a drop-in alternative to Ollama; no local GPU needed
+[*][b]Language-pair prompts[/b] — dedicated system prompt for every source→target combination with register rules, script conventions, and native examples
+[*][b]Translation memory[/b] — approved strings are never sent to the model again
+[*][b]Persistent cache[/b] — SHA-256 keyed, survives sessions, up to 50,000 entries
+[*][b]Term protector[/b] — 8,000+ Starfield names, places, and UI labels swapped to placeholders before the AI sees the text; proper nouns are never mistranslated
+[*][b]Glossary system[/b] — CSV/TBX/JSON import-export, in-app editor, automatic injection into AI prompts
+[/list]
+
+[b]File Support[/b]
+[list]
+[*][b].strings[/b] — null-terminated binary format
+[*][b].dlstrings / .ilstrings[/b] — length-prefixed binary format
+[*][b]BA2 archives[/b] — read and write Starfield v2 and Fallout 4 v1 BA2 archives (GNRL/zlib); picker dialog for multi-entry archives
+[*][b]ESP/ESM plugins[/b] — extracts and writes back translatable fields from non-localized plugins directly
+[*][b]xTranslator SST XML[/b] — import/export compatible with existing xTranslator projects
+[*][b]Encoding detection[/b] — auto-detects UTF-8 BOM, UTF-8, CP1251, CP1252, CP1250 (Polish), GBK; per-file override
+[*][b]Drag-and-drop[/b] file loading with format validation
+[/list]
+
+[b]Quality Assurance[/b]
+[list]
+[*][b]Quality checker[/b] — 20+ automated checks across all 11 languages: missing/extra game tags ([b]<Alias=…>[/b], [b][PLYR][/b], [b]%s[/b]), truncated AI output, suspicious length ratios, source-language leakage, English leak, newline mismatches, AI artifact prefixes, encoding failures, CJK script coverage, and glossary mismatches
+[*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations
+[*][b]Hunspell spell-check[/b] — optional per-language spell checking using system dictionaries; install with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
+[*][b]One-click auto-fix[/b] for mechanically correctable issues; one-click re-translate with a per-string hint for AI issues
+[*][b]Consistency checker[/b] — finds identical source strings translated differently; pick a canonical form and batch-replace
+[*][b]Version diff[/b] — compare two game versions and migrate unchanged translations automatically; export CSV/HTML reports
+[/list]
+
+[b]UI / Workflow[/b]
+[list]
+[*]Vim-style keyboard navigation, command palette ([b]Ctrl+K[/b]), customizable shortcuts
+[*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
+[*]Dark / Light / Slate / custom QSS themes
+[*]Interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech (community WIP)
+[*]Status bar with live progress, translated count, and ETA during AI batches
+[*][b]NexusMods upload[/b] — upload release archives directly from inside the app (File → Upload to NexusMods…)
+[/list]
+
+[heading]Requirements[/heading]
+
+[url=https://ollama.com]Ollama[/url] must be running locally when you use AI translation features ([b]localhost:11434[/b]). Alternatively, use the [b]Claude API[/b] backend — no local GPU required, just enter your Anthropic API key in Settings.
+
+[b]Minimum hardware:[/b] 8 GB VRAM recommended for the Gemma 3 12B Q4 translation model. The standalone builds include everything else (Python runtime, Qt libraries) — no separate install needed.
+
+[heading]Shout Outs[/heading]
+
+[list]
+[*][b]xTranslator by Diranar[/b] — the original and essential tool for Bethesda localization. The SST XML format and field definitions in this editor are based on xTranslator's logic.
+[*][b]Ollama[/b] — for making local AI inference as simple as a single command.
+[*][b]The Starfield Ukrainian localization community[/b] — for the feedback, term lists, and real-world testing that shaped this tool.
+[/list]
