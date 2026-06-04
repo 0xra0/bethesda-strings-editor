@@ -28,7 +28,9 @@ jobs:
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y libegl1
+        run: |
+          sudo apt-get install -y libegl1 libhunspell-dev
+          pip install hunspell
 
       - name: Run tests (Linux)
         if: runner.os == 'Linux'
