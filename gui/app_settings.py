@@ -381,13 +381,57 @@ def get_config_dir() -> Path:
 
 _SSD_CACHE_DIR = Path("/mnt/ssd/bethesda-strings-editor")
 
+# Bootstrap file for cache dir override — always at the fixed default location.
+_CACHE_OVERRIDE_BOOTSTRAP = Path(os.path.expanduser("~/.config/BethesdaModTools/.cache_dir_override"))
+
+
+def get_cache_dir_override() -> Optional[Path]:
+    """Return the user-configured cache dir, or None when using the default.
+
+    Priority: BSE_CACHE_DIR env var → bootstrap file → None (use default).
+    """
+    env = os.environ.get("BSE_CACHE_DIR", "").strip()
+    if env:
+        return Path(env)
+    try:
+        if _CACHE_OVERRIDE_BOOTSTRAP.exists():
+            text = _CACHE_OVERRIDE_BOOTSTRAP.read_text(encoding="utf-8").strip()
+            if text:
+                return Path(text)
+    except OSError:
+        pass
+    return None
+
+
+def set_cache_dir_override(path: Optional[Path]) -> None:
+    """Write or clear the cache-dir override bootstrap file.
+
+    Pass None to restore the default selection logic (SSD → config dir).
+    """
+    _CACHE_OVERRIDE_BOOTSTRAP.parent.mkdir(parents=True, exist_ok=True)
+    if path is None:
+        try:
+            _CACHE_OVERRIDE_BOOTSTRAP.unlink()
+        except FileNotFoundError:
+            pass
+    else:
+        _CACHE_OVERRIDE_BOOTSTRAP.write_text(str(path), encoding="utf-8")
+
 
 def get_cache_dir() -> Path:
     """Return the directory for large cache files (e.g. translation cache).
 
-    Uses /mnt/ssd/bethesda-strings-editor when the SSD is mounted, falling
-    back to get_config_dir() so the app works without the drive.
+    Priority: user override (BSE_CACHE_DIR / bootstrap file) → /mnt/ssd when
+    mounted → config dir fallback.
     """
+    override = get_cache_dir_override()
+    if override:
+        try:
+            override.mkdir(parents=True, exist_ok=True)
+            return override
+        except OSError as e:
+            logger.warning("Cannot use cache dir override %s: %s — using default", override, e)
+
     ssd_mount = Path("/mnt/ssd")
     if ssd_mount.is_mount():
         try:
