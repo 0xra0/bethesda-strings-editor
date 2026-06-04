@@ -14,6 +14,12 @@ from PySide6.QtCore import QMutex, QMutexLocker, QObject, Signal, Slot
 from gui.en_word_checker import preload as _preload_en_dict
 from gui.ru_word_checker import preload as _preload_ru_dict, text_has_russian_words
 from gui.uk_word_checker import preload as _preload_uk_dict
+from gui.de_word_checker import preload as _preload_de_dict
+from gui.es_word_checker import preload as _preload_es_dict
+from gui.fr_word_checker import preload as _preload_fr_dict
+from gui.it_word_checker import preload as _preload_it_dict
+from gui.pl_word_checker import preload as _preload_pl_dict
+from gui.ptbr_word_checker import preload as _preload_ptbr_dict
 from gui.glossary import GlossaryManager
 from gui.term_protector import TermProtector
 from gui.translation_cache import TranslationCache
@@ -597,6 +603,12 @@ class OllamaWorker(QObject):
         _preload_ru_dict()
         _preload_en_dict()
         _preload_uk_dict()
+        _preload_de_dict()
+        _preload_es_dict()
+        _preload_fr_dict()
+        _preload_it_dict()
+        _preload_pl_dict()
+        _preload_ptbr_dict()
 
     def _get_model_config(self, model_name: Optional[str] = None) -> Dict[str, Any]:
         """Return the best-matching config for *model_name* (or the worker's model).

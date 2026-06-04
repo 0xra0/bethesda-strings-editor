@@ -61,6 +61,7 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "SENTENCE_COUNT_MISMATCH",
     "GLOSSARY_MISMATCH",
     "LOW_UKRAINIAN_COVERAGE",
+    "LOW_TARGET_COVERAGE",
     "LOW_SCRIPT_COVERAGE",
     "SPELL_ERROR",
     # Truncated Russian originals need AI retranslation
@@ -303,6 +304,7 @@ class QualityChecker:
         self._check_encoding(translated, report)
         self._check_source_leak(translated, report)
         self._check_ukrainian_coverage(translated, report)
+        self._check_latin_coverage(translated, report)
         self._check_script_coverage(translated, report)
         self._check_english_leak(original, translated, report)
         self._check_repetition(translated, report)
@@ -780,6 +782,76 @@ class QualityChecker:
                     message=(
                         f"Low Ukrainian vocabulary coverage "
                         f"({uk_count}/{len(cyrillic_words)} words recognized, "
+                        f"{coverage:.0%}) — may be untranslated or wrong language"
+                    ),
+                )
+            )
+
+    def _check_latin_coverage(self, translated: str, report: QualityReport) -> None:
+        """
+        Warn when a Latin-script translation has low target-language vocabulary
+        coverage, indicating the model returned untranslated or wrong-language
+        output.  Mirrors _check_ukrainian_coverage for the six new language word
+        lists (de / es / fr / it / pl / ptbr).
+
+        Only fires when the word list is loaded and the sample is ≥ 8 tokens.
+        """
+        tgt = self.target_language.lower()
+
+        # Map target language codes to (checker_module, word_is_X_func_name, display_name)
+        _LATIN_CHECKER_MAP = {
+            "de": ("gui.de_word_checker", "word_is_german", "German"),
+            "german": ("gui.de_word_checker", "word_is_german", "German"),
+            "es": ("gui.es_word_checker", "word_is_spanish", "Spanish"),
+            "spanish": ("gui.es_word_checker", "word_is_spanish", "Spanish"),
+            "fr": ("gui.fr_word_checker", "word_is_french", "French"),
+            "french": ("gui.fr_word_checker", "word_is_french", "French"),
+            "it": ("gui.it_word_checker", "word_is_italian", "Italian"),
+            "italian": ("gui.it_word_checker", "word_is_italian", "Italian"),
+            "pl": ("gui.pl_word_checker", "word_is_polish", "Polish"),
+            "polish": ("gui.pl_word_checker", "word_is_polish", "Polish"),
+            "ptbr": ("gui.ptbr_word_checker", "word_is_portuguese", "Portuguese"),
+            "portuguese": ("gui.ptbr_word_checker", "word_is_portuguese", "Portuguese"),
+        }
+        entry = _LATIN_CHECKER_MAP.get(tgt)
+        if not entry:
+            return
+
+        mod_name, func_name, display = entry
+        try:
+            import importlib
+            mod = importlib.import_module(mod_name)
+            word_is_X = getattr(mod, func_name)
+            if not mod.dict_loaded():
+                return
+        except (ImportError, AttributeError):
+            return
+
+        latin_words: list = []
+        for token in translated.split():
+            raw = token.strip(".,!?-:;«»\"'()[]{}…—–")
+            if not raw or len(raw) < 4:
+                continue
+            if not raw.isalpha():
+                continue
+            if raw.isupper():
+                continue  # ALL-CAPS: game code / acronym
+            latin_words.append(raw)
+
+        if len(latin_words) < 8:
+            return
+
+        recognized = sum(1 for w in latin_words if word_is_X(w) is True)
+        coverage = recognized / len(latin_words)
+
+        if coverage < 0.20:
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_WARNING,
+                    code="LOW_TARGET_COVERAGE",
+                    message=(
+                        f"Low {display} vocabulary coverage "
+                        f"({recognized}/{len(latin_words)} words recognized, "
                         f"{coverage:.0%}) — may be untranslated or wrong language"
                     ),
                 )
@@ -1437,7 +1509,7 @@ class QualityChecker:
                     "Your previous translation changed the number of sentences significantly. "
                     "Match the sentence structure of the original."
                 )
-            elif code == "LOW_SCRIPT_COVERAGE":
+            elif code in ("LOW_SCRIPT_COVERAGE", "LOW_TARGET_COVERAGE"):
                 hints.append(
                     "Your previous translation appears to be in the wrong language or script. "
                     "You MUST translate into the correct target language and script."
