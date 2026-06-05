@@ -981,7 +981,8 @@ class OllamaWorker(QObject):
         # Add ~1 200-token budget for the system prompt so the ctx calculation
         # does not undercount and cause mid-word generation cutoffs.
         estimated_tokens = input_len // 3 + 400 + 1200
-        required_ctx = estimated_tokens * 2 + 512
+        think_ctx_extra = max(2000, input_len // 2) if model_config.get("think_disabled") else 0
+        required_ctx = estimated_tokens * 2 + think_ctx_extra + 512
         for _ctx in (8192, 16384, 32768):
             if required_ctx <= _ctx:
                 adaptive_num_ctx = _ctx
@@ -992,9 +993,14 @@ class OllamaWorker(QObject):
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
         effective_num_ctx = max(8192, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
-        # Use ×4 (matching the non-chunked path) so Cyrillic/inflected output
-        # never hits the token budget before the sentence is complete.
-        adaptive_num_predict = min(self.ollama_num_predict, max(512, input_len * 4))
+        # Use ×4 (matching the non-chunked path); add thinking overhead for
+        # models that may generate chain-of-thought tokens before the translation.
+        model_min_predict = int(model_config.get("num_predict") or 0)
+        think_extra = max(2000, input_len // 2) if model_config.get("think_disabled") else 0
+        adaptive_num_predict = max(
+            model_min_predict + think_extra,
+            min(self.ollama_num_predict, max(512, input_len * 4)) + think_extra,
+        )
 
         # TranslateGemma models embed the language-pair instruction in the TEMPLATE;
         # the payload must carry raw source text only (no "To Ukrainian:" prefix).
@@ -1333,9 +1339,14 @@ class OllamaWorker(QObject):
             # model config's num_predict (thinking models need extra budget for the
             # reasoning block that precedes the actual translation output).
             model_min_predict = int(model_config.get("num_predict") or 0)
+            # Thinking-capable models (think_disabled=True means the model supports
+            # chain-of-thought but we request think=false) may still generate internal
+            # reasoning tokens before the translation — consuming num_predict budget.
+            # Add an overhead so the full translation is never truncated mid-sentence.
+            think_extra = max(2000, input_len // 2) if model_config.get("think_disabled") else 0
             adaptive_num_predict = max(
-                model_min_predict,
-                min(self.ollama_num_predict, max(100, input_len * 4)),
+                model_min_predict + think_extra,
+                min(self.ollama_num_predict, max(100, input_len * 4)) + think_extra,
             )
 
             # Per-model timeout: slow models (e.g. supergemma4-26b) need more than 300s
@@ -1347,7 +1358,10 @@ class OllamaWorker(QObject):
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
             # prompt (instructions + glossary) so we never undercount and truncate.
             estimated_tokens = len(protected_text) // 3 + 400 + 1200
-            required_ctx = estimated_tokens * 2 + 512  # ×2 for output + buffer
+            # For thinking models, the context must also hold chain-of-thought tokens
+            # generated before the translation. Add an explicit budget for this.
+            think_ctx_extra = max(2000, len(protected_text) // 2) if model_config.get("think_disabled") else 0
+            required_ctx = estimated_tokens * 2 + think_ctx_extra + 512  # ×2 for output + buffer
             for _ctx in (4096, 8192, 16384, 32768):
                 if required_ctx <= _ctx:
                     adaptive_num_ctx = _ctx
