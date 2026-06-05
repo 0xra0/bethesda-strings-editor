@@ -878,8 +878,12 @@ class OllamaWorker(QObject):
 
     # ── Chunked translation for very long strings ─────────────────────────────
 
-    _CHUNK_TRANSLATE_THRESHOLD = 4000   # chars — above this, split automatically
-    _MAX_CHUNK_CHARS           = 2000   # max chars per chunk
+    # Texts below this threshold are sent to the model in a single call.
+    # Fine-tuned models (translategemma3-st) produce garbage when given fragments
+    # with the "Part X of Y" hint — they were trained on complete strings.
+    # 12 000 chars comfortably fits in one 16 384-token ctx call (the app default).
+    _CHUNK_TRANSLATE_THRESHOLD = 12000  # chars — above this, split automatically
+    _MAX_CHUNK_CHARS           = 4000   # max chars per chunk (for truly large texts)
     _CHUNK_TIMEOUT             = 180    # seconds per-chunk (vs 300 global)
 
     @staticmethod
@@ -1288,9 +1292,9 @@ class OllamaWorker(QObject):
             model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
 
             # Adaptive num_ctx: allocate only what this string needs.
-            # Cyrillic/Latin text ≈ 3 chars/token; system prompt adds ~400 tokens;
-            # output is roughly same length as input.
-            estimated_tokens = len(protected_text) // 3 + 400
+            # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
+            # prompt (instructions + glossary) so we never undercount and truncate.
+            estimated_tokens = len(protected_text) // 3 + 400 + 1200
             required_ctx = estimated_tokens * 2 + 512  # ×2 for output + buffer
             for _ctx in (4096, 8192, 16384, 32768):
                 if required_ctx <= _ctx:
