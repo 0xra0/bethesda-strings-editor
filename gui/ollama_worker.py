@@ -1274,6 +1274,29 @@ class OllamaWorker(QObject):
         # Merge token maps
         token_map.update(english_token_map)
 
+        # Protect multi-word bracket content so the AI translates it as plain text.
+        # All game bracket tokens are single words (no spaces): [Attack], [Lie], [CANCELED].
+        # Any [content that contains spaces or newlines] is editorial/narrative text that
+        # must be translated.  We protect the bracket delimiters as tokens so restore_text()
+        # puts them back after translation, and the AI never sees ambiguous [...] wrappers.
+        # Must run BEFORE STRUCT_BREAK tokenization so the regex can still see raw \n chars.
+        _edit_re = re.compile(r'\[([^\[\]]+)\]', re.DOTALL)
+        _edit_ctr: list[int] = [0]
+
+        def _protect_editorial_brackets(m: re.Match) -> str:
+            content = m.group(1)
+            if ' ' in content or '\n' in content:
+                n = _edit_ctr[0]
+                open_tok  = f"[[EDITORIAL_OPEN_{n}]]"
+                close_tok = f"[[EDITORIAL_CLOSE_{n}]]"
+                token_map[open_tok]  = "["
+                token_map[close_tok] = "]"
+                _edit_ctr[0] += 1
+                return f"{open_tok}{content}{close_tok}"
+            return m.group(0)
+
+        protected_text = _edit_re.sub(_protect_editorial_brackets, protected_text)
+
         # Tokenize structural newlines so the AI cannot collapse paragraph breaks.
         # Must happen after term protection so \\n escape sequences (already protected
         # as "newline" tokens) are not confused with actual newline characters.
