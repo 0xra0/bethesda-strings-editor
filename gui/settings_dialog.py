@@ -30,14 +30,10 @@ class SettingsDialog(QDialog):
         'English', 'Russian', 'Ukrainian',
     ]
 
-    # Supported Ollama models (Ollama-local) + Claude API models
-    SUPPORTED_MODELS = [
+    # Default Ollama model suggestions shown before the user refreshes from the server
+    _DEFAULT_OLLAMA_MODELS = [
         'translategemma3-st',
         'translategemma3-st-2',
-        # ── Claude API (requires Anthropic API key in Claude AI panel) ──────────
-        'claude-haiku-4-5',
-        'claude-sonnet-4-6',
-        'claude-opus-4-8',
     ]
 
 
@@ -106,16 +102,27 @@ class SettingsDialog(QDialog):
         ollama_layout.addRow(self.tr("API URL:"), self.ollama_url)
 
         self.ollama_model = QComboBox()
-        self.ollama_model.addItems(self.SUPPORTED_MODELS)
-        self.ollama_model.setEditable(False)
-        self.ollama_model.setCurrentText(self._settings.ollama_model)
+        self.ollama_model.setEditable(True)
+        self.ollama_model.addItems(self._default_ollama_model_list())
+        current_model = self._settings.ollama_model
+        idx = self.ollama_model.findText(current_model)
+        if idx >= 0:
+            self.ollama_model.setCurrentIndex(idx)
+        else:
+            self.ollama_model.setCurrentText(current_model)
         self.ollama_model.setToolTip(
             self.tr(
-                "translategemma3-st: Fine-tuned for Starfield Ukrainian localization\n"
-                "translategemma3-st-2: Higher quality, typically slower"
+                "Type any Ollama model name or pick from the list.\n"
+                "Click 'Refresh' to load all installed models from the server."
             )
         )
-        ollama_layout.addRow(self.tr("Model:"), self.ollama_model)
+        model_row = QHBoxLayout()
+        model_row.addWidget(self.ollama_model, stretch=1)
+        self.btn_refresh_models = QPushButton(self.tr("Refresh"))
+        self.btn_refresh_models.setToolTip(self.tr("Fetch installed models from the Ollama server"))
+        self.btn_refresh_models.clicked.connect(self._refresh_ollama_models)
+        model_row.addWidget(self.btn_refresh_models)
+        ollama_layout.addRow(self.tr("Model:"), model_row)
 
         self.spin_num_predict = QSpinBox()
         self.spin_num_predict.setRange(64, 8192)
@@ -597,6 +604,52 @@ class SettingsDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         root_layout.addWidget(buttons)
+
+    def _default_ollama_model_list(self) -> list:
+        """Return models to pre-populate the combo on dialog open."""
+        models = list(self._DEFAULT_OLLAMA_MODELS)
+        current = self._settings.ollama_model
+        if current and current not in models:
+            models.insert(0, current)
+        return models
+
+    @Slot()
+    def _refresh_ollama_models(self):
+        """Fetch installed models from Ollama and populate the model combo."""
+        import requests
+        url = self.ollama_url.text().rstrip('/')
+        current = self.ollama_model.currentText().strip()
+        self.btn_refresh_models.setEnabled(False)
+        self.btn_refresh_models.setText(self.tr("…"))
+        QApplication.processEvents()
+        try:
+            resp = requests.get(f"{url}/api/tags", timeout=5)
+            resp.raise_for_status()
+            model_names = [m['name'] for m in resp.json().get('models', [])]
+            model_names.sort()
+            self.ollama_model.blockSignals(True)
+            self.ollama_model.clear()
+            self.ollama_model.addItems(model_names)
+            self.ollama_model.blockSignals(False)
+            idx = self.ollama_model.findText(current)
+            if idx >= 0:
+                self.ollama_model.setCurrentIndex(idx)
+            else:
+                self.ollama_model.setCurrentText(current)
+            self.lbl_connection.setText(
+                self.tr("● {n} model(s) loaded").format(n=len(model_names))
+            )
+            self.lbl_connection.setStyleSheet("color: green;")
+        except Exception as exc:
+            self.lbl_connection.setText(self.tr("● Refresh failed"))
+            self.lbl_connection.setStyleSheet("color: red;")
+            QMessageBox.warning(
+                self, self.tr("Refresh Failed"),
+                self.tr("Could not load models from {url}:\n{error}").format(url=url, error=exc),
+            )
+        finally:
+            self.btn_refresh_models.setEnabled(True)
+            self.btn_refresh_models.setText(self.tr("Refresh"))
 
     @Slot()
     def _test_connection(self):
