@@ -22,13 +22,18 @@
 
 FROM /mnt/ssd/models/gguf/gemma4-opus48-Q4_K_M.gguf
 
-# ── Chat template (Gemma 4 / Gemma 3 format) ─────────────────────────────────
+# ── Chat template (Gemma 4 with thinking-mode support) ───────────────────────
+# The {{ if .Think }}<|think|>{{ end }} guard is the key difference from Gemma 3.
+# When the app sends think=false (always, for translation), .Think is false and
+# <|think|> is never injected — the model does not enter thinking mode.
+# For direct `ollama run` use, thinking is ON by default (no think=false sent).
 TEMPLATE "{{ if .System }}<start_of_turn>system
 {{ .System }}<end_of_turn>
 {{ end }}{{ if .Prompt }}<start_of_turn>user
 {{ .Prompt }}<end_of_turn>
 {{ end }}<start_of_turn>model
-{{ .Response }}<end_of_turn>"
+{{ if .Think }}<|think|>
+{{ end }}{{ .Response }}<end_of_turn>"
 
 # ── Fallback system prompt ────────────────────────────────────────────────────
 # Used ONLY when no system is provided in the API call (direct use).

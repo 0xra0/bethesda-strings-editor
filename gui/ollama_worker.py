@@ -493,10 +493,12 @@ class OllamaWorker(QObject):
         # tokenizer.chat_template (no system turn; language pair hardcoded in TEMPLATE).
 
         # Gemma 4 IT family — full instruction-following, supports system prompts.
-        # Thinking mode must be disabled so <think>…</think> blocks don't leak into output.
+        # Thinking mode is disabled so <think>…</think> blocks don't leak into output.
+        # num_predict 8192: thinking models may generate ~2000-3000 reasoning tokens
+        # before the translation; 4096 is not enough for the full output.
         "gemma4": {
             "temperature": 0.1,
-            "num_predict": 4096,
+            "num_predict": 8192,
             "num_ctx": 16384,
             "top_p": 0.9,
             "repeat_penalty": 1.1,
@@ -509,7 +511,7 @@ class OllamaWorker(QObject):
         # is lowered from the author's 1.0 to 0.1 for deterministic translation output.
         "gemma4-opus48-st": {
             "temperature": 0.1,
-            "num_predict": 4096,
+            "num_predict": 8192,
             "num_ctx": 16384,
             "top_k": 64,
             "top_p": 0.95,
@@ -1279,12 +1281,18 @@ class OllamaWorker(QObject):
 
         # Call AI API
         try:
-            # OPTIMIZATION: Adaptive num_predict based on input length
             input_len = len(protected_text)
-            adaptive_num_predict = min(self.ollama_num_predict, max(100, input_len * 4))
-
             url = f"{self.base_url}/api/generate"
             model_config = self._get_model_config(effective_model)
+
+            # Adaptive num_predict: use input length as base, but never go below the
+            # model config's num_predict (thinking models need extra budget for the
+            # reasoning block that precedes the actual translation output).
+            model_min_predict = int(model_config.get("num_predict") or 0)
+            adaptive_num_predict = max(
+                model_min_predict,
+                min(self.ollama_num_predict, max(100, input_len * 4)),
+            )
 
             # Per-model timeout: slow models (e.g. supergemma4-26b) need more than 300s
             # because the AMD GPU serialises requests — a queued string may wait several
@@ -1506,9 +1514,18 @@ class OllamaWorker(QObject):
             text = text.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
-        # Covers <think>…</think>, <|think|>…<|/think|>, and the bare token variants.
+        # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).
         text = re.sub(
             r"<\|?think\|?>.*?<\|?/think\|?>",
+            "",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        ).strip()
+        # Pass 2: remove an unclosed block whose closing tag was never generated
+        # (happens when the reasoning chain hits num_predict and generation stops).
+        # Greedy — removes from the opening tag to the end of the string.
+        text = re.sub(
+            r"<\|?think\|?>.*",
             "",
             text,
             flags=re.DOTALL | re.IGNORECASE,
