@@ -491,6 +491,19 @@ class OllamaWorker(QObject):
         # Google TranslateGemma 27B IT — official Google translation-specialized model.
         # Uses the exact user-turn instruction format extracted from the GGUF's embedded
         # tokenizer.chat_template (no system turn; language pair hardcoded in TEMPLATE).
+
+        # Gemma 4 IT family — full instruction-following, supports system prompts.
+        # Thinking mode must be disabled so <think>…</think> blocks don't leak into output.
+        "gemma4": {
+            "temperature": 0.1,
+            "num_predict": 4096,
+            "num_ctx": 16384,
+            "top_p": 0.9,
+            "repeat_penalty": 1.1,
+            "think_disabled": True,
+            "recommended_quality": 7,
+            "stops": ["<end_of_turn>", "<start_of_turn>"],
+        },
     }
 
     # Safe fallback for models not in MODEL_CONFIGS — no model-specific stop tokens
@@ -1446,6 +1459,15 @@ class OllamaWorker(QObject):
             text = text.replace("[[STRUCT_BREAK_DBL_N]]", "\n\n")
         if "[[STRUCT_BREAK_SGL_N]]" in text:
             text = text.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
+
+        # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
+        # Covers <think>…</think>, <|think|>…<|/think|>, and the bare token variants.
+        text = re.sub(
+            r"<\|?think\|?>.*?<\|?/think\|?>",
+            "",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        ).strip()
 
         # Strip prompt-echo preambles (case-insensitive, handles with/without trailing newline).
         # The model sometimes echoes the "To Ukrainian:" instruction from to_prompt() back
