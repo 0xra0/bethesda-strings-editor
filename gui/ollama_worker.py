@@ -1457,6 +1457,14 @@ class OllamaWorker(QObject):
                 if "[[STRUCT_BREAK_SGL_N]]" in translated:
                     translated = translated.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
+            # Fix AI-garbled STRUCT_BREAK token names before counting newlines.
+            # Models sometimes double the STRUCT_ prefix, e.g. [[STRUCT_STRUCT_BREAK_DBL_N]].
+            # Must run here so _restore_line_structure sees the correct \n count.
+            if translated and token_map.get("[[STRUCT_BREAK_DBL_N]]"):
+                translated = re.sub(r"\[\[(?:STRUCT_)+BREAK_DBL_N\]\]", "\n\n", translated)
+            if translated and token_map.get("[[STRUCT_BREAK_SGL_N]]"):
+                translated = re.sub(r"\[\[(?:STRUCT_)+BREAK_SGL_N\]\]", "\n", translated)
+
             # Restore structural newlines + per-line leading spaces that the model
             # dropped (translategemma3-st routinely ignores [[STRUCT_BREAK_*]] tokens).
             # Only runs when those tokens were injected AND the output is short on \n.
@@ -1544,12 +1552,12 @@ class OllamaWorker(QObject):
         if not text:
             return ""
 
-        # Safety net: restore any structural newline tokens that survived restore_text()
-        # (happens when term_protector is disabled or the anchor algorithm missed a token).
-        if "[[STRUCT_BREAK_DBL_N]]" in text:
-            text = text.replace("[[STRUCT_BREAK_DBL_N]]", "\n\n")
-        if "[[STRUCT_BREAK_SGL_N]]" in text:
-            text = text.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
+        # Safety net: restore structural newline tokens (exact or AI-garbled variants).
+        # e.g. [[STRUCT_BREAK_DBL_N]] or [[STRUCT_STRUCT_BREAK_DBL_N]] (doubled prefix).
+        if "BREAK_DBL_N]]" in text:
+            text = re.sub(r"\[\[(?:STRUCT_)+BREAK_DBL_N\]\]", "\n\n", text)
+        if "BREAK_SGL_N]]" in text:
+            text = re.sub(r"\[\[(?:STRUCT_)+BREAK_SGL_N\]\]", "\n", text)
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
         # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).
@@ -2198,6 +2206,19 @@ class OllamaWorker(QObject):
         if orig_lines:
             unchanged = sum(1 for ln in orig_lines if ln in t or ln.lower() in t.lower())
             if unchanged >= max(1, len(orig_lines) // 3):
+                return True
+
+        # 4. Mixed-script words: Latin character embedded inside a Cyrillic word.
+        # e.g. "будь-dе" (Latin 'd' inside Ukrainian "де") — the ratio test misses
+        # single-char leaks in long Cyrillic texts, but this is a clear translation error.
+        # All-Latin words (proper nouns, game tags) are never flagged here.
+        for word in re.findall(r"\S+", t):
+            alpha = re.sub(r"[^a-zA-ZА-ЯҐЄІЇа-яґєії]", "", word)
+            if not alpha:
+                continue
+            has_cyr = any("Ѐ" <= c <= "ӿ" for c in alpha)
+            has_lat = any(c.isalpha() and c.isascii() for c in alpha)
+            if has_cyr and has_lat:
                 return True
 
         return False
