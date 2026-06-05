@@ -23,6 +23,7 @@ SOFT_CATEGORIES: frozenset = frozenset({
     "faction", "company", "ship", "character", "location",
     "creature", "resource", "system", "ui", "game_term",
     "company_prefix", "company_full", "location_suffix",
+    "lore",  # lore terms are proper nouns — translate unless user opts in to protect them
 })
 
 
