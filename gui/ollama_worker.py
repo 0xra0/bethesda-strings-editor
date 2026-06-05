@@ -504,6 +504,20 @@ class OllamaWorker(QObject):
             "recommended_quality": 7,
             "stops": ["<end_of_turn>", "<start_of_turn>"],
         },
+        # Gemma 4 12B IT fine-tuned on Claude Opus 4.6/4.7/4.8 reasoning distillation.
+        # Higher top_k/top_p match the author's training distribution; temperature
+        # is lowered from the author's 1.0 to 0.1 for deterministic translation output.
+        "gemma4-opus48-st": {
+            "temperature": 0.1,
+            "num_predict": 4096,
+            "num_ctx": 16384,
+            "top_k": 64,
+            "top_p": 0.95,
+            "repeat_penalty": 1.1,
+            "think_disabled": True,
+            "recommended_quality": 7,
+            "stops": ["<end_of_turn>", "<start_of_turn>"],
+        },
     }
 
     # Safe fallback for models not in MODEL_CONFIGS — no model-specific stop tokens

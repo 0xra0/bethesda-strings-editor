@@ -34,6 +34,7 @@ class SettingsDialog(QDialog):
     _DEFAULT_OLLAMA_MODELS = [
         'translategemma3-st',
         'translategemma3-st-2',
+        'gemma4-opus48-st',
     ]
 
 

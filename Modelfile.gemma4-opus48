@@ -1,0 +1,77 @@
+# Modelfile for gemma4-opus48-st
+# Gemma 4 12B IT fine-tuned on Claude Opus 4.6/4.7/4.8 reasoning data.
+# Source: https://huggingface.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF
+#
+# IMPORTANT — parameter precedence:
+#   The bethesda-strings-editor application overrides these options on every
+#   API call (values here apply only to direct `ollama run` invocations):
+#     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
+#
+#   These options are NOT overridden by the app — Modelfile values are always
+#   active, including during API calls:
+#     min_p, repeat_last_n
+#
+# Thinking mode:
+#   This model has a built-in reasoning (think) channel.  The application
+#   suppresses it automatically by sending think=false on every API call AND
+#   stripping any <think>…</think> blocks in post-processing.
+#   For direct `ollama run` use you may see thinking output — this is normal.
+#
+# To create the Ollama model:
+#   ollama create gemma4-opus48-st -f Modelfile.gemma4-opus48
+
+FROM /mnt/ssd/models/gguf/gemma4-opus48-Q4_K_M.gguf
+
+# ── Chat template (Gemma 4 / Gemma 3 format) ─────────────────────────────────
+TEMPLATE "{{ if .System }}<start_of_turn>system
+{{ .System }}<end_of_turn>
+{{ end }}{{ if .Prompt }}<start_of_turn>user
+{{ .Prompt }}<end_of_turn>
+{{ end }}<start_of_turn>model
+{{ .Response }}<end_of_turn>"
+
+# ── Fallback system prompt ────────────────────────────────────────────────────
+# Used ONLY when no system is provided in the API call (direct use).
+# The application always supplies its own detailed system prompt at runtime,
+# which fully replaces this.  Keep it short and correct.
+SYSTEM "You are a professional Bethesda Starfield game localization translator. Translate the given text into Ukrainian only. Output ONLY the translated text — no explanations, notes, or commentary. Preserve all formatting tokens exactly as written: <Alias=...>, <Token...>, <Global...>, [MALE], [FEMALE], [Firstname], [Secondname], %s, %d, {variable}, <br>, <font ...>, <mag>, <dur>, <relat=...>, <basename=...>, <repetitions>, [[TK_...]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]]. Never modify or translate these tokens. Write distinctly Ukrainian — not a Russian transliteration. Use Ukrainian-specific vocabulary where it diverges from Russian (наразі not сейчас, завдяки not благодаря). Translate content inside parentheses () unless it is a technical tag."
+
+# ── Generation parameters ─────────────────────────────────────────────────────
+
+# Temperature: model author recommends 1.0 (fine-tuned at this value).
+# The application overrides this to 0.1 at runtime for deterministic output.
+PARAMETER temperature 1.0
+
+# Context window: 16 384 tokens covers all Bethesda string types, including
+# books and terminal logs.  The model supports up to 131 072 tokens; raise
+# this only if you regularly translate extremely large batches in one call.
+PARAMETER num_ctx 16384
+
+# Maximum output tokens per request.
+PARAMETER num_predict 4096
+
+# Sampling — model author recommendations.
+PARAMETER top_k 64
+PARAMETER top_p 0.95
+
+# min_p: drops tokens whose probability is below 2% of the top token's.
+# Complements top_p as a secondary quality filter.
+# NOTE: the app does NOT send min_p — this Modelfile value is always active.
+PARAMETER min_p 0.02
+
+# Repeat penalty: light repetition control, safe for highly inflected Ukrainian.
+PARAMETER repeat_penalty 1.1
+
+# Repeat window: 256 tokens covers most Bethesda strings without overhead.
+# NOTE: the app does NOT send repeat_last_n — this Modelfile value is always active.
+PARAMETER repeat_last_n 256
+
+# ── Stop tokens ───────────────────────────────────────────────────────────────
+# Gemma turn-boundary markers
+PARAMETER stop <end_of_turn>
+PARAMETER stop <start_of_turn>
+# Role-bleeding guards: prevent the model from faking a next user turn
+PARAMETER stop user:
+PARAMETER stop model:
+PARAMETER stop <|user|>
+PARAMETER stop <|model|>
