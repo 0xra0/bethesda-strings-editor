@@ -928,9 +928,11 @@ class OllamaWorker(QObject):
         model_config = self._get_model_config(effective_model)
 
         input_len = len(chunk_text)
-        estimated_tokens = input_len // 3 + 400
+        # Add ~1 200-token budget for the system prompt so the ctx calculation
+        # does not undercount and cause mid-word generation cutoffs.
+        estimated_tokens = input_len // 3 + 400 + 1200
         required_ctx = estimated_tokens * 2 + 512
-        for _ctx in (4096, 8192, 16384, 32768):
+        for _ctx in (8192, 16384, 32768):
             if required_ctx <= _ctx:
                 adaptive_num_ctx = _ctx
                 break
@@ -938,12 +940,11 @@ class OllamaWorker(QObject):
             adaptive_num_ctx = 32768
         model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
-        effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
+        effective_num_ctx = max(8192, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
-        # Allow 2× the chunk length: target languages are typically 20-50% wordier
-        # than the source and Cyrillic/inflected languages produce more tokens per
-        # word, so capping at input_len causes hard truncation of the last chunk.
-        adaptive_num_predict = min(self.ollama_num_predict, max(200, input_len * 2))
+        # Use ×4 (matching the non-chunked path) so Cyrillic/inflected output
+        # never hits the token budget before the sentence is complete.
+        adaptive_num_predict = min(self.ollama_num_predict, max(512, input_len * 4))
 
         # TranslateGemma models embed the language-pair instruction in the TEMPLATE;
         # the payload must carry raw source text only (no "To Ukrainian:" prefix).
@@ -1023,8 +1024,32 @@ class OllamaWorker(QObject):
             f"split into {total} chunk(s)"
         )
 
+        # The splitter puts the paragraph delimiter at the START of the next chunk
+        # (e.g. remaining[pos:] starts with "\n\n" or "[[STRUCT_BREAK_DBL_N]]").
+        # _clean_translation strips leading whitespace, so "".join() would silently
+        # collapse every paragraph boundary.  Peel each leading delimiter, translate
+        # the bare content, then reattach the delimiter when joining.
+        _SEP_TOKENS = (
+            "[[STRUCT_BREAK_DBL_N]]",
+            "[[STRUCT_BREAK_SGL_N]]",
+            "\n\n",
+            "\n",
+        )
+        chunk_prefixes: list = []
+        chunk_contents: list = []
+        for chunk in chunks:
+            prefix = ""
+            content = chunk
+            for sep in _SEP_TOKENS:
+                if content.startswith(sep):
+                    prefix = sep
+                    content = content[len(sep):]
+                    break
+            chunk_prefixes.append(prefix)
+            chunk_contents.append(content)
+
         translated_chunks: list = []
-        for i, chunk in enumerate(chunks, 1):
+        for i, (chunk, prefix) in enumerate(zip(chunk_contents, chunk_prefixes), 1):
             with QMutexLocker(self._mutex):
                 if self._stop_flag:
                     return None
@@ -1040,7 +1065,9 @@ class OllamaWorker(QObject):
                     f"String {req.string_id}: empty chunk {i}/{total}, using original chunk"
                 )
                 t = chunk  # fall back to original for this chunk
-            translated_chunks.append(t)
+            # Reattach the prefix that was stripped before translation so paragraph
+            # boundaries survive the _clean_translation .strip() call.
+            translated_chunks.append(prefix + t)
 
         result = "".join(translated_chunks)
 
