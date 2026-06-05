@@ -453,13 +453,9 @@ class TranslationRequest:
             "   e) TRANSLATE any bracket content that is multiple words or full sentences "
             "(publisher notes, editorial remarks, book summaries, narrative asides). "
             "Keep the opening [ and closing ] exactly as in the source; translate ALL "
-            "text between them — including any [[STRUCT_BREAK_DBL_N]] or [[STRUCT_BREAK_SGL_N]] "
-            "tokens inside (leave those tokens unchanged, but translate the text around them). "
-            "Examples: "
-            "[The second part is over 700 pages long.]→"
-            "[Друга частина має понад 700 сторінок.] "
-            "[First paragraph text.[[STRUCT_BREAK_DBL_N]]Second paragraph text.]→"
-            "[Текст першого абзацу.[[STRUCT_BREAK_DBL_N]]Текст другого абзацу.]\n"
+            "text between them, preserving any paragraph breaks inside. "
+            "Example: [The second part is over 700 pages long.]→"
+            "[Друга частина має понад 700 сторінок.]\n"
             "4. Do NOT add quotes not present in the source.\n"
             "5. Preserve leading and trailing spaces exactly as in the source.\n"
             "6. Match source punctuation and capitalization exactly.\n"
@@ -1283,10 +1279,35 @@ class OllamaWorker(QObject):
         # as "newline" tokens) are not confused with actual newline characters.
         # The tokens are added to token_map so restore_text() restores them
         # automatically via the same anchor-based mechanism used for all other tokens.
+        #
+        # IMPORTANT: bracket spans ([...]) that contain spaces or newlines are
+        # editorial/narrative text that the model must translate (rule 3e).  If we
+        # tokenise newlines inside them the model sees [[STRUCT_BREAK_DBL_N]] inside
+        # a bracket and treats the whole block as a formatting token — the content
+        # stays in English.  Fix: apply STRUCT_BREAK only to text *between* bracket
+        # spans, leaving raw \n inside them so the model reads plain translatable prose.
         _DBL_NL = "[[STRUCT_BREAK_DBL_N]]"
         _SGL_NL = "[[STRUCT_BREAK_SGL_N]]"
         if "\n" in protected_text:
-            protected_text = protected_text.replace("\n\n", _DBL_NL).replace("\n", _SGL_NL)
+            # Regex matches [[double-bracket-token]] or [bracket-span (may contain [[TK_]] inside)]
+            _sb_re = re.compile(
+                r'\[\[[^\[\]]*\]\]'                       # [[double-bracket-token]]
+                r'|\[(?:[^\[\]]|\[\[[^\[\]]*\]\])*\]',   # [bracket span, may have [[TK_]] inside]
+            )
+            _sb_parts: list[str] = []
+            _sb_last = 0
+            for _m in _sb_re.finditer(protected_text):
+                # Text before this span → apply STRUCT_BREAK tokenisation
+                _before = protected_text[_sb_last:_m.start()]
+                _sb_parts.append(_before.replace("\n\n", _DBL_NL).replace("\n", _SGL_NL))
+                # The bracket span itself → keep raw (preserve newlines inside)
+                _sb_parts.append(_m.group(0))
+                _sb_last = _m.end()
+            # Tail after last bracket span
+            _sb_parts.append(
+                protected_text[_sb_last:].replace("\n\n", _DBL_NL).replace("\n", _SGL_NL)
+            )
+            protected_text = "".join(_sb_parts)
             token_map[_DBL_NL] = "\n\n"
             token_map[_SGL_NL] = "\n"
 
