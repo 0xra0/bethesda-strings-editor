@@ -551,6 +551,26 @@ class OllamaWorker(QObject):
             "timeout": 600,  # thinking chains add ~2000-4000 tokens before the translation
             "stops": ["<end_of_turn>", "<start_of_turn>"],
         },
+        # MamayLM Gemma 3 12B IT v2.0 — INSAIT Institute Ukrainian fine-tune.
+        # top_k 64 / top_p 0.95 match the author's training distribution.
+        # No think_disabled: Gemma 3 has no thinking mode.
+        "mamaylm": {
+            "temperature": 0.1,
+            "num_predict": 4096,
+            "num_ctx": 16384,
+            "top_k": 64,
+            "top_p": 0.95,
+            "repeat_penalty": 1.1,
+            "recommended_quality": 7,
+            "stops": [
+                "<end_of_turn>",
+                "<start_of_turn>",
+                "user:",
+                "model:",
+                "<|user|>",
+                "<|model|>",
+            ],
+        },
         # Gemma 4 12B IT fine-tuned on Claude Opus 4.6/4.7/4.8 reasoning distillation.
         # Higher top_k/top_p match the author's training distribution; temperature
         # is lowered from the author's 1.0 to 0.1 for deterministic translation output.
