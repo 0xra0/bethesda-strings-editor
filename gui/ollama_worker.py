@@ -1241,6 +1241,29 @@ class OllamaWorker(QObject):
         # causes the structural newline tokenizer to produce \r[[STRUCT_BREAK_SGL_N]],
         # which the model echoes as \r or drops, producing mismatched newline counts.
         protected_text = req.original_text.replace("\r\n", "\n").replace("\r", "\n")
+
+        # Paragraph-by-paragraph translation: split on \n\n and translate each
+        # paragraph independently so the app—not the model—controls paragraph
+        # structure.  Eliminates reliance on the model preserving
+        # [[STRUCT_BREAK_DBL_N]] tokens, which it routinely ignores.
+        if "\n\n" in protected_text:
+            _pp_segs = protected_text.split("\n\n")
+            if sum(1 for _s in _pp_segs if _s.strip()) >= 2:
+                from dataclasses import replace as _dc_pp
+                _pp_results: list = []
+                for _seg in _pp_segs:
+                    if not _seg.strip():
+                        _pp_results.append(_seg)
+                        continue
+                    _pp_req = _dc_pp(req, original_text=_seg, string_id=-1)
+                    _pp_trans = self._translate_single(_pp_req)
+                    _pp_results.append(_pp_trans if _pp_trans else _seg)
+                _pp_result = "\n\n".join(_pp_results)
+                _pp_result = leading_seps + _pp_result + trailing_seps
+                if cache_key and self.translation_cache is not None:
+                    self.translation_cache.set(cache_key, _pp_result)
+                return _pp_result
+
         english_token_map = {}
 
         # Disable English protection if source is English
