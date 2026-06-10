@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 24  # Increment when schema changes
+CONFIG_VERSION = 25  # Increment when schema changes
 
 
 @dataclass
@@ -100,6 +100,12 @@ class AppSettings:
     # List of StringType names (e.g. ["BOOK", "NOTE"]) to skip during AI
     # translation batch.  Strings of skipped types are left untranslated.
     skip_string_types: list = field(default_factory=list)
+
+    # ── Weblate sync ──────────────────────────────────────────────────────────
+    weblate_url:       str = ""   # e.g. https://hosted.weblate.org
+    weblate_api_token: str = ""   # User API key from Weblate profile
+    weblate_project:   str = ""   # project slug
+    weblate_component: str = ""   # component slug
 
     # ── Validation rules ─────────────────────────────────────────
     _URL_MIN_LENGTH = 5

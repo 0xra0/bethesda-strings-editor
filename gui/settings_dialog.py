@@ -615,6 +615,36 @@ class SettingsDialog(QDialog):
         ai_qc_group.setLayout(ai_qc_layout)
         layout.addWidget(ai_qc_group)
 
+        # Weblate Sync
+        weblate_group = QGroupBox(self.tr("Weblate Community Translation Sync"))
+        weblate_layout = QFormLayout()
+
+        self.weblate_url_edit = QLineEdit(getattr(self._settings, "weblate_url", ""))
+        self.weblate_url_edit.setPlaceholderText("https://hosted.weblate.org")
+        self.weblate_url_edit.setToolTip(self.tr("Base URL of your Weblate instance"))
+        weblate_layout.addRow(self.tr("Weblate URL:"), self.weblate_url_edit)
+
+        self.weblate_token_edit = QLineEdit(getattr(self._settings, "weblate_api_token", ""))
+        self.weblate_token_edit.setPlaceholderText(self.tr("Paste your API token here"))
+        self.weblate_token_edit.setEchoMode(QLineEdit.Password)
+        self.weblate_token_edit.setToolTip(
+            self.tr("API token from your Weblate profile (Settings → API access).")
+        )
+        weblate_layout.addRow(self.tr("API Token:"), self.weblate_token_edit)
+
+        self.weblate_project_edit = QLineEdit(getattr(self._settings, "weblate_project", ""))
+        self.weblate_project_edit.setPlaceholderText("starfield-uk")
+        self.weblate_project_edit.setToolTip(self.tr("Weblate project slug (from the project URL)"))
+        weblate_layout.addRow(self.tr("Project slug:"), self.weblate_project_edit)
+
+        self.weblate_component_edit = QLineEdit(getattr(self._settings, "weblate_component", ""))
+        self.weblate_component_edit.setPlaceholderText("main-strings")
+        self.weblate_component_edit.setToolTip(self.tr("Weblate component slug (from the component URL)"))
+        weblate_layout.addRow(self.tr("Component slug:"), self.weblate_component_edit)
+
+        weblate_group.setLayout(weblate_layout)
+        layout.addWidget(weblate_group)
+
         # Keyboard Shortcuts
         if self._keyboard_manager is not None:
             layout.addWidget(self._build_shortcuts_section())
@@ -929,6 +959,10 @@ class SettingsDialog(QDialog):
         settings.audit_logging = self.chk_audit_log.isChecked()
         settings.enable_ai_qc = self.chk_enable_ai_qc.isChecked()
         settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
+        settings.weblate_url       = self.weblate_url_edit.text().strip().rstrip('/')
+        settings.weblate_api_token = self.weblate_token_edit.text().strip()
+        settings.weblate_project   = self.weblate_project_edit.text().strip()
+        settings.weblate_component = self.weblate_component_edit.text().strip()
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
         # Config/cache dir overrides are stored in bootstrap files, not in AppSettings

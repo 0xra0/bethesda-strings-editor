@@ -955,6 +955,11 @@ class MainWindow(QMainWindow):
         nexusmods_action.triggered.connect(self._open_nexusmods_upload)
         file_menu.addAction(nexusmods_action)
 
+        weblate_action = QAction(self.tr("&Weblate Community Sync…"), self)
+        weblate_action.setIcon(QIcon.fromTheme("network-server"))
+        weblate_action.triggered.connect(self._open_weblate_sync)
+        file_menu.addAction(weblate_action)
+
         file_menu.addSeparator()
         exit_action = QAction(self.tr("E&xit"), self, shortcut=QKeySequence("Ctrl+Q"))
         exit_action.setIcon(QIcon.fromTheme("application-exit"))
@@ -4614,6 +4619,15 @@ class MainWindow(QMainWindow):
             self,
             settings=self.settings,
             initial_file=self.current_path,
+        )
+        dlg.exec()
+
+    def _open_weblate_sync(self):
+        from gui.weblate_sync_dialog import WelateSyncDialog
+        dlg = WelateSyncDialog(
+            table_model=self.table_model,
+            settings=self.settings,
+            parent=self,
         )
         dlg.exec()
 
