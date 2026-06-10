@@ -5,7 +5,7 @@ Background worker for Ollama translation calls with term protection
 import logging
 import re
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, replace as _dc_replace
+from dataclasses import dataclass
 from typing import Any, Dict, Optional, Tuple
 
 import requests
@@ -1274,26 +1274,6 @@ class OllamaWorker(QObject):
         # Merge token maps
         token_map.update(english_token_map)
 
-        # Two-pass approach for multi-paragraph bracket spans ([content\n\ncontent]):
-        # Extract them as [[BRACKET_N]] placeholders before STRUCT_BREAK so the main
-        # model call sees a simple token it preserves (rule 2), then sub-translate the
-        # inner content in a separate call after restoration.  NOT added to token_map
-        # so restore_text() leaves the placeholder intact for the sub-translation step.
-        _extracted_brackets: list[tuple[str, str]] = []  # [(placeholder, full "[content]")]
-        if "\n" in protected_text:
-            _eb_re = re.compile(r'\[((?:[^\[\]]|\[\[[^\[\]]*\]\])+)\]', re.DOTALL)
-
-            def _extract_bracket(m: re.Match) -> str:  # type: ignore[type-arg]
-                inner = m.group(1)
-                if "\n" in inner and " " in inner:
-                    n = len(_extracted_brackets)
-                    ph = f"[[BRACKET_{n}]]"
-                    _extracted_brackets.append((ph, m.group(0)))
-                    return ph
-                return m.group(0)
-
-            protected_text = _eb_re.sub(_extract_bracket, protected_text)
-
         # Tokenize structural newlines so the AI cannot collapse paragraph breaks.
         # Must happen after term protection so \\n escape sequences (already protected
         # as "newline" tokens) are not confused with actual newline characters.
@@ -1505,6 +1485,34 @@ class OllamaWorker(QObject):
             if translated and token_map.get("[[STRUCT_BREAK_SGL_N]]"):
                 translated = re.sub(r"\[\[(?:STRUCT_)+BREAK_SGL_N\]\]", "\n", translated)
 
+            # Post-translation: sub-translate any bracket spans still in English.
+            # The model often preserves [multi-paragraph publisher/author notes] verbatim
+            # because STRUCT_BREAK tokens inside them look like formatting tokens (rule 2).
+            # After restore_text() the bracket inner content has actual terms (not [[TK_*]])
+            # so the sub-call's term protection and STRUCT_BREAK work correctly.
+            # Scoped to EN→UK; inner must have a newline (multi-paragraph) and no Cyrillic.
+            if translated and req.source_lang == "en" and req.target_lang.lower() in ("uk", "ukrainian"):
+                _post_bk_re = re.compile(r'\[((?:[^\[\]]|\[\[[^\[\]]*\]\])*)\]', re.DOTALL)
+
+                def _retranslate_if_english(m: re.Match) -> str:  # type: ignore[type-arg]
+                    inner = m.group(1)
+                    if "\n" not in inner:
+                        return m.group(0)  # single-line bracket — leave it
+                    _cyr = sum(1 for c in inner if "Ѐ" <= c <= "ӿ")
+                    _lat = sum(1 for c in inner if c.isalpha() and c.isascii())
+                    if _cyr > 0 or _lat < 20:
+                        return m.group(0)  # already translated or too short
+                    from dataclasses import replace as _dc_replace_bk
+                    _bk_req = _dc_replace_bk(
+                        req, original_text=inner.strip(), retry_hint="", string_id=-1
+                    )
+                    _bk_trans = self._translate_single(_bk_req)
+                    if _bk_trans and _bk_trans.strip():
+                        return f"[{_bk_trans.strip()}]"
+                    return m.group(0)
+
+                translated = _post_bk_re.sub(_retranslate_if_english, translated)
+
             # Restore structural newlines + per-line leading spaces that the model
             # dropped (translategemma3-st routinely ignores [[STRUCT_BREAK_*]] tokens).
             # Only runs when those tokens were injected AND the output is short on \n.
@@ -1514,23 +1522,6 @@ class OllamaWorker(QObject):
             ):
                 if translated.count("\n") < req.original_text.count("\n"):
                     translated = _restore_line_structure(translated, req.original_text)
-
-            # Sub-translate bracket spans that were extracted before the main call.
-            # Each inner text has no [multiline] spans so recursion terminates immediately.
-            # string_id=-1 avoids a false translation-memory hit returning the full string.
-            if translated and _extracted_brackets:
-                from dataclasses import replace as _dc_replace_bracket
-                for _ph, _orig_bracket in _extracted_brackets:
-                    if _ph not in translated:
-                        # Model dropped the placeholder — leave English as fallback
-                        continue
-                    _bracket_inner = _orig_bracket[1:-1]  # strip surrounding [ and ]
-                    _sub_req = _dc_replace_bracket(req, original_text=_bracket_inner, retry_hint="", string_id=-1)
-                    _sub_trans = self._translate_single(_sub_req)
-                    if _sub_trans and _sub_trans.strip():
-                        translated = translated.replace(_ph, f"[{_sub_trans.strip()}]", 1)
-                    else:
-                        translated = translated.replace(_ph, _orig_bracket, 1)
 
             # Clean up only if we have text
             if translated:
