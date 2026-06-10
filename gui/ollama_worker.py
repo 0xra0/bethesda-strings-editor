@@ -1480,10 +1480,35 @@ class OllamaWorker(QObject):
             # Fix AI-garbled STRUCT_BREAK token names before counting newlines.
             # Models sometimes double the STRUCT_ prefix, e.g. [[STRUCT_STRUCT_BREAK_DBL_N]].
             # Must run here so _restore_line_structure sees the correct \n count.
-            if translated and token_map.get("[[STRUCT_BREAK_DBL_N]]"):
-                translated = re.sub(r"\[\[(?:STRUCT_)+BREAK_DBL_N\]\]", "\n\n", translated)
-            if translated and token_map.get("[[STRUCT_BREAK_SGL_N]]"):
-                translated = re.sub(r"\[\[(?:STRUCT_)+BREAK_SGL_N\]\]", "\n", translated)
+            # Comprehensive cleanup of leaked/garbled [[...]] tokens.
+            # Must run before _restore_line_structure so newline counts are accurate.
+            if translated:
+                # DBL/DOUBLE STRUCT_BREAK variants → \n\n
+                # Catches: [[STRUCT__BREAK_DBL_N]], [[STRUCT_BREAK_DOUBLE_NEWLINE]], etc.
+                if token_map.get("[[STRUCT_BREAK_DBL_N]]"):
+                    translated = re.sub(
+                        r'\[\[STRUCT\w*(?:DBL|DOUBLE)\w*\]{2,}', '\n\n',
+                        translated, flags=re.IGNORECASE
+                    )
+                # SGL/SINGLE STRUCT_BREAK variants → \n
+                # Catches: [[STRUCT_SGL_N]]], [[STRUCT__BREAK_SGL_N]], etc.
+                if token_map.get("[[STRUCT_BREAK_SGL_N]]"):
+                    translated = re.sub(
+                        r'\[\[STRUCT\w*(?:SGL|SINGLE)\w*\]{2,}', '\n',
+                        translated, flags=re.IGNORECASE
+                    )
+                # Any remaining [[STRUCT_*]] variants (e.g. [[STRUCT_REDACTED]]) → \n
+                if token_map.get("[[STRUCT_BREAK_DBL_N]]") or token_map.get("[[STRUCT_BREAK_SGL_N]]"):
+                    translated = re.sub(
+                        r'\[\[STRUCT\w+\]{2,}', '\n', translated, flags=re.IGNORECASE
+                    )
+                # Restore any token_map tokens missed by restore_text() (e.g. leaked [[TK_*]])
+                if token_map:
+                    for _t, _v in list(token_map.items()):
+                        if _t in translated:
+                            translated = translated.replace(_t, _v)
+                # Strip remaining [[...]] artifacts hallucinated by the model
+                translated = re.sub(r'\[\[\w+\]{2,}', '', translated)
 
             # Post-translation: sub-translate any bracket spans still in English.
             # The model often preserves [multi-paragraph publisher/author notes] verbatim
