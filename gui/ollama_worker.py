@@ -487,7 +487,7 @@ class TranslationRequest:
 class OllamaWorker(QObject):
     """Worker object for AI translation calls with term protection."""
 
-    translation_ready = Signal(int, str, int)
+    translation_ready = Signal(int, str, object)  # object avoids signed-int overflow for FormIDs > 0x7FFFFFFF
     progress = Signal(int, int)
     error = Signal(str)
     finished = Signal(int, int)

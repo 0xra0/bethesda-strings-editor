@@ -32,7 +32,7 @@ class ClaudeTranslationWorker(QObject):
     translate_batch() calls via QueuedConnection, exactly like OllamaWorker.
     """
 
-    translation_ready = Signal(int, str, int)
+    translation_ready = Signal(int, str, object)  # object avoids signed-int overflow for FormIDs > 0x7FFFFFFF
     progress = Signal(int, int)
     error = Signal(str)
     finished = Signal(int, int)
