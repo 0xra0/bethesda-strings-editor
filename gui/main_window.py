@@ -2380,7 +2380,7 @@ class MainWindow(QMainWindow):
 
         def _fmt_cost(usd: float) -> str:
             if usd < 0.01:
-                return f"< $0.01"
+                return "< $0.01"
             return f"${usd:.3f}"
 
         dlg = QDialog(self)
