@@ -68,7 +68,7 @@ from gui.crash_recovery import CrashRecoveryDialog, CrashRecoveryManager
 from gui.desktop_notify import send_notification
 from gui.file_dialog_helper import get_open_filename, get_save_filename
 from gui.keyboard_manager import ActionEntry, KeyboardManager
-from gui.claude_client import is_claude_model
+from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
 from gui.translation_memory import TranslationMemory
@@ -2328,6 +2328,11 @@ class MainWindow(QMainWindow):
             )
             return
 
+        # Pre-flight cost estimate for Claude backend
+        if is_claude_model(self.settings.ollama_model):
+            if not self._claude_preflight_check(requests):
+                return
+
         # Show progress UI BEFORE emitting signal
         self.progress_bar.setVisible(True)
         self.progress_bar.setRange(0, len(requests))
@@ -2351,6 +2356,96 @@ class MainWindow(QMainWindow):
         )
         # CRITICAL FIX: Emit signal instead of direct method call
         self.translation_requested.emit(requests)
+
+    def _claude_preflight_check(self, requests: list) -> bool:
+        """
+        Show a token-cost estimate dialog before a Claude batch translation.
+        Returns True if the user wants to proceed, False to cancel.
+        """
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QDialogButtonBox, QLabel, QFrame
+        model = self.settings.ollama_model
+        est = estimate_batch_cost(model, requests)
+
+        def _fmt_tokens(n: float) -> str:
+            if n >= 1_000_000:
+                return f"~{n / 1_000_000:.2f}M"
+            if n >= 1_000:
+                return f"~{n / 1_000:.1f}K"
+            return str(n)
+
+        def _fmt_cost(usd: float) -> str:
+            if usd < 0.01:
+                return f"< $0.01"
+            return f"${usd:.3f}"
+
+        dlg = QDialog(self)
+        dlg.setWindowTitle(self.tr("Pre-flight Cost Estimate"))
+        dlg.setMinimumWidth(380)
+        root = QVBoxLayout(dlg)
+
+        title = QLabel(self.tr("<b>Claude API — estimated cost for this batch</b>"))
+        title.setWordWrap(True)
+        root.addWidget(title)
+
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setFrameShadow(QFrame.Sunken)
+        root.addWidget(sep)
+
+        form = QFormLayout()
+        form.setLabelAlignment(Qt.AlignRight)
+        form.addRow(self.tr("Model:"), QLabel(model))
+        form.addRow(self.tr("Strings to translate:"), QLabel(str(len(requests))))
+        root.addLayout(form)
+
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.HLine)
+        sep2.setFrameShadow(QFrame.Sunken)
+        root.addWidget(sep2)
+
+        form2 = QFormLayout()
+        form2.setLabelAlignment(Qt.AlignRight)
+        form2.addRow(self.tr("Est. input tokens:"),  QLabel(_fmt_tokens(est["input_tokens"])))
+        form2.addRow(self.tr("Est. output tokens:"), QLabel(_fmt_tokens(est["output_tokens"])))
+        root.addLayout(form2)
+
+        sep3 = QFrame()
+        sep3.setFrameShape(QFrame.HLine)
+        sep3.setFrameShadow(QFrame.Sunken)
+        root.addWidget(sep3)
+
+        form3 = QFormLayout()
+        form3.setLabelAlignment(Qt.AlignRight)
+        cost_lbl = QLabel(
+            f"<b>{_fmt_cost(est['cost_with_cache'])}</b>"
+            f"  <span style='color:#6b7280;font-size:.9em'>"
+            f"(without cache: {_fmt_cost(est['cost_without_cache'])})</span>"
+        )
+        cost_lbl.setTextFormat(Qt.RichText)
+        form3.addRow(self.tr("Est. cost (USD):"), cost_lbl)
+        form3.addRow(
+            self.tr("Cache savings:"),
+            QLabel(self.tr("~{pct:.0f}% via prompt caching").format(pct=est["cache_savings_pct"])),
+        )
+        root.addLayout(form3)
+
+        note = QLabel(self.tr(
+            "<i>Estimates use ~3.5 chars/token. Actual cost depends on "
+            "prompt caching state and output length.</i>"
+        ))
+        note.setWordWrap(True)
+        note.setTextFormat(Qt.RichText)
+        note.setStyleSheet("color: #6b7280; font-size: 0.85em;")
+        root.addWidget(note)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Cancel)
+        btn_go = buttons.addButton(self.tr("Translate"), QDialogButtonBox.AcceptRole)
+        btn_go.setDefault(True)
+        buttons.accepted.connect(dlg.accept)
+        buttons.rejected.connect(dlg.reject)
+        root.addWidget(buttons)
+
+        return dlg.exec() == QDialog.Accepted
 
     @Slot()
     def translate_starfield_txt(self):

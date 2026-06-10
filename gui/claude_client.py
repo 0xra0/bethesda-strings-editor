@@ -26,6 +26,81 @@ CLAUDE_MODELS: Dict[str, str] = {
 
 DEFAULT_MODEL = "claude-haiku-4-5"
 
+# ── Pricing table (USD per million tokens, Anthropic public pricing) ───────────
+# cache_write: cost to write a cache entry (first call per session)
+# cache_read:  cost to read a cached entry (~10 % of normal input)
+CLAUDE_PRICING: Dict[str, Dict[str, float]] = {
+    "claude-haiku-4-5":  {"input": 0.80,  "output": 4.00,  "cache_write": 1.00,  "cache_read": 0.08},
+    "claude-sonnet-4-6": {"input": 3.00,  "output": 15.00, "cache_write": 3.75,  "cache_read": 0.30},
+    "claude-opus-4-8":   {"input": 15.00, "output": 75.00, "cache_write": 18.75, "cache_read": 1.50},
+}
+
+_CHARS_PER_TOKEN = 3.5   # conservative chars-per-token ratio for mixed EN/CYR text
+_SYS_PROMPT_TOKENS = 1220  # measured: TranslationRequest.to_system_prompt() ≈ 4250 chars
+
+
+def estimate_batch_cost(model: str, requests: list) -> Dict[str, float]:
+    """
+    Estimate Claude API cost for a translation batch (offline, no API call).
+
+    Uses character-based token approximation (chars / 3.5) and models Anthropic
+    prompt caching: the system prompt is written to cache on the first request
+    and read from cache on all subsequent ones.
+
+    Returns a dict with keys:
+        input_tokens, output_tokens, cache_write_tokens, cache_read_tokens,
+        cost_with_cache, cost_without_cache, cache_savings_pct
+    """
+    price = CLAUDE_PRICING.get(model, CLAUDE_PRICING[DEFAULT_MODEL])
+
+    user_tokens_list = [len(r.original_text) / _CHARS_PER_TOKEN for r in requests]
+    output_tokens_list = [len(r.original_text) / 3.0 for r in requests]
+
+    n = len(requests)
+    total_user_input = sum(user_tokens_list)
+    total_output = sum(output_tokens_list)
+
+    # First request: full system prompt (input) + cache write
+    # Remaining requests: cached system prompt read + user input
+    if n == 0:
+        return {
+            "input_tokens": 0, "output_tokens": 0,
+            "cache_write_tokens": 0, "cache_read_tokens": 0,
+            "cost_with_cache": 0.0, "cost_without_cache": 0.0,
+            "cache_savings_pct": 0.0,
+        }
+
+    # Tokens billed at normal input rate: first sys prompt + all user prompts
+    normal_input = _SYS_PROMPT_TOKENS + total_user_input
+    cache_write  = float(_SYS_PROMPT_TOKENS)         # written once
+    cache_read   = _SYS_PROMPT_TOKENS * max(0, n - 1)  # read on remaining
+
+    cost_with_cache = (
+        normal_input   / 1_000_000 * price["input"]
+        + cache_write  / 1_000_000 * price["cache_write"]
+        + cache_read   / 1_000_000 * price["cache_read"]
+        + total_output / 1_000_000 * price["output"]
+    )
+
+    # What it would cost with no caching at all
+    cost_no_cache = (
+        (_SYS_PROMPT_TOKENS * n + total_user_input) / 1_000_000 * price["input"]
+        + total_output / 1_000_000 * price["output"]
+    )
+
+    savings_pct = (1 - cost_with_cache / cost_no_cache) * 100 if cost_no_cache > 0 else 0.0
+
+    return {
+        "input_tokens":      int(normal_input + cache_read),
+        "output_tokens":     int(total_output),
+        "cache_write_tokens": int(cache_write),
+        "cache_read_tokens":  int(cache_read),
+        "cost_with_cache":   cost_with_cache,
+        "cost_without_cache": cost_no_cache,
+        "cache_savings_pct": savings_pct,
+    }
+
+
 # Key used in the app's SecretStore
 _SECRET_KEY = "anthropic-api-key"
 
