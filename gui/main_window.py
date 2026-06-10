@@ -1095,6 +1095,17 @@ class MainWindow(QMainWindow):
         self.lore_rag_action.triggered.connect(self._open_lore_rag_dialog)
         trans_menu.addAction(self.lore_rag_action)
 
+        self.font_checker_action = QAction(self.tr("Font &Glyph Checker…"), self)
+        self.font_checker_action.setIcon(QIcon.fromTheme("font-x-generic"))
+        self.font_checker_action.setToolTip(self.tr(
+            "Scan translated strings for characters that will render as missing\n"
+            "glyphs (tofu □) in-game due to incomplete font atlas coverage.\n"
+            "Supports Scaleform SWF font atlases and TTF/OTF fonts."
+        ))
+        self.font_checker_action.triggered.connect(self._open_font_checker)
+        self.font_checker_action.setEnabled(False)
+        trans_menu.addAction(self.font_checker_action)
+
         self.version_compare_action = QAction(
             self.tr("Compare Game &Versions…"), self
         )
@@ -1550,6 +1561,8 @@ class MainWindow(QMainWindow):
             self.discover_terms_action.setEnabled(has_file and self.term_protector is not None)
         if hasattr(self, "check_consistency_action"):
             self.check_consistency_action.setEnabled(has_file)
+        if hasattr(self, "font_checker_action"):
+            self.font_checker_action.setEnabled(has_file)
         if hasattr(self, "btn_encoding_change"):
             self.btn_encoding_change.setEnabled(
                 has_file and not isinstance(self.current_file, EspFile)
@@ -4701,6 +4714,25 @@ class MainWindow(QMainWindow):
         # Refresh manager settings after dialog in case data was added
         if self._lore_rag_manager is not None:
             self._lore_rag_manager.enabled = self.settings.enable_lore_rag
+
+    def _open_font_checker(self) -> None:
+        """Open the Font & Glyph Checker dialog."""
+        from gui.font_checker_dialog import FontCheckerDialog
+        rows = list(self.table_model._data)
+        dlg = FontCheckerDialog(rows=rows, parent=self)
+        dlg.jump_to_row.connect(self._jump_to_row)
+        dlg.fix_applied.connect(self._apply_font_fixes)
+        dlg.exec()
+
+    def _apply_font_fixes(self, patches: list) -> None:
+        """Apply auto-fix patches from the font checker to the table model."""
+        if not patches:
+            return
+        self.table_model.set_translated_text_batch(patches)
+        self.statusBar().showMessage(
+            self.tr("Font auto-fix applied to {n} string(s)").format(n=len(patches)),
+            5000,
+        )
 
     def _open_dialogue_tree(self) -> None:
         dlg = self._dialogue_tree_dlg
