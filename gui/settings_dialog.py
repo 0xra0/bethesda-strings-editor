@@ -51,8 +51,10 @@ class SettingsDialog(QDialog):
         self._keyboard_manager = keyboard_manager
         self._shortcut_editors: dict = {}  # action_id → QKeySequenceEdit
         self._original_theme: str = settings.theme  # restore on cancel
+        self._dirty: bool = False
         self._setup_ui()
         self._fit_to_screen()
+        self._setup_dirty_tracking()
 
     def _fit_to_screen(self):
         """Size dialog to screen and keep it centered/usable on 1080p."""
@@ -812,8 +814,41 @@ class SettingsDialog(QDialog):
         preview_qss = self._theme_manager.get_stylesheet(concrete) or ""
         self.setStyleSheet(preview_qss)
 
+    def _setup_dirty_tracking(self) -> None:
+        """Connect all form widgets to _mark_dirty so any edit sets the flag."""
+        for w in self.findChildren(QLineEdit):
+            w.textChanged.connect(self._mark_dirty)
+        for w in self.findChildren(QComboBox):
+            w.currentIndexChanged.connect(self._mark_dirty)
+        for w in self.findChildren(QSpinBox):
+            w.valueChanged.connect(self._mark_dirty)
+        for w in self.findChildren(QCheckBox):
+            w.toggled.connect(self._mark_dirty)
+        for w in self.findChildren(QSlider):
+            w.valueChanged.connect(self._mark_dirty)
+        for w in self.findChildren(QKeySequenceEdit):
+            w.keySequenceChanged.connect(self._mark_dirty)
+
+    @Slot()
+    def _mark_dirty(self, *_args) -> None:
+        self._dirty = True
+
+    def accept(self):
+        self._dirty = False  # saved — no warning needed on subsequent close
+        super().accept()
+
     def reject(self):
-        """Restore the original theme preview on cancel."""
+        """Warn about unsaved changes, then restore the original theme preview."""
+        if self._dirty:
+            reply = QMessageBox.question(
+                self,
+                self.tr("Unsaved Changes"),
+                self.tr("You have unsaved changes.\nDiscard them and close?"),
+                QMessageBox.Discard | QMessageBox.Cancel,
+                QMessageBox.Cancel,
+            )
+            if reply != QMessageBox.Discard:
+                return
         if self._theme_manager:
             orig_concrete = self._theme_manager.effective_theme(self._original_theme)
             orig_qss = self._theme_manager.get_stylesheet(orig_concrete) or ""
