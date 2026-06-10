@@ -667,6 +667,8 @@ class OllamaWorker(QObject):
         self.translation_memory: Optional[TranslationMemory] = None
         self.tm_fuzzy_max_score: float = 3.0
         self.glossary_manager: Optional[GlossaryManager] = None
+        # StringType names to skip (e.g. ["BOOK", "NOTE"]). Set from AppSettings.
+        self.skipped_types: list = []
 
         logger.info(
             f"OllamaWorker initialized: url={self.base_url}, model={self.model}, "
@@ -1180,6 +1182,19 @@ class OllamaWorker(QObject):
                 logger.info(
                     "String %s: source already in Ukrainian — skipping AI retranslation "
                     "(use Auto-Fix for mechanical issues)", req.string_id
+                )
+                return SKIP_SIGNAL
+
+        # Skip strings whose content type is in the configured skipped list.
+        # string_id==-1 means this is a paragraph sub-request; skip the check
+        # because the outer string was already allowed through.
+        if self.skipped_types and req.string_id != -1:
+            from gui.string_type_detector import classify
+            _stype = classify(req.original_text)
+            if _stype.name in self.skipped_types:
+                logger.debug(
+                    "String %s: type %s is in skipped list, skipping",
+                    req.string_id, _stype.name,
                 )
                 return SKIP_SIGNAL
 

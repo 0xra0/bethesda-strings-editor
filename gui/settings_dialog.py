@@ -364,6 +364,35 @@ class SettingsDialog(QDialog):
         )
         trans_layout.addRow(self.tr("Long String Action:"), self.combo_long_action)
 
+        # Skip string types — checkboxes for each content type
+        from gui.string_type_detector import StringType
+        _skip_types_saved = set(getattr(self._settings, "skip_string_types", []))
+        _skip_types_row = QWidget()
+        _skip_types_layout = QHBoxLayout(_skip_types_row)
+        _skip_types_layout.setContentsMargins(0, 0, 0, 0)
+        _skip_types_layout.setSpacing(8)
+        self._skip_type_checks: dict = {}
+        _skip_labels = {
+            StringType.BOOK:     self.tr("Books"),
+            StringType.NOTE:     self.tr("Notes"),
+            StringType.TERMINAL: self.tr("Terminals"),
+            StringType.DIALOGUE: self.tr("Dialogue"),
+            StringType.QUEST:    self.tr("Quests"),
+            StringType.UI:       self.tr("UI"),
+            StringType.SYSTEM:   self.tr("System"),
+        }
+        for _st, _lbl in _skip_labels.items():
+            _chk = QCheckBox(_lbl)
+            _chk.setChecked(_st.name in _skip_types_saved)
+            _skip_types_layout.addWidget(_chk)
+            self._skip_type_checks[_st.name] = _chk
+        _skip_types_layout.addStretch()
+        _skip_types_row.setToolTip(self.tr(
+            "String types to skip during AI batch translation.\n"
+            "Skipped strings are left untranslated (marked as pending)."
+        ))
+        trans_layout.addRow(self.tr("Skip Types:"), _skip_types_row)
+
         self.chk_auto_save = QCheckBox(self.tr("Auto-save after translation"))
         self.chk_auto_save.setChecked(self._settings.auto_save)
         trans_layout.addRow(self.chk_auto_save)
@@ -846,6 +875,9 @@ class SettingsDialog(QDialog):
         settings.quality_level = self.spin_quality.value()
         settings.long_string_threshold = self.spin_threshold.value()
         settings.long_string_action = self.combo_long_action.currentData()
+        settings.skip_string_types = [
+            name for name, chk in self._skip_type_checks.items() if chk.isChecked()
+        ]
         settings.auto_save = self.chk_auto_save.isChecked()
         settings.enable_term_protection = self.chk_enable_protection.isChecked()
         settings.protect_english_text = self.chk_protect_english_text.isChecked()

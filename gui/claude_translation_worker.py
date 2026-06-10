@@ -58,6 +58,7 @@ class ClaudeTranslationWorker(QObject):
         self.translation_cache = translation_cache
         self.protect_named_entities = protect_named_entities
         self.glossary_manager = None
+        self.skipped_types: list = []
 
         self._stop_flag = False
         self._mutex = QMutex()
@@ -103,6 +104,12 @@ class ClaudeTranslationWorker(QObject):
 
             # Normalize CRLF/CR → LF (same as OllamaWorker) before tokenization.
             source_text = req.original_text.replace("\r\n", "\n").replace("\r", "\n")
+
+            # Skip strings whose content type is in the configured skipped list.
+            if self.skipped_types:
+                from gui.string_type_detector import classify
+                if classify(source_text).name in self.skipped_types:
+                    return req.index, None, req.string_id
 
             # Check translation cache (keyed the same way as OllamaWorker's cache)
             cache_key = None

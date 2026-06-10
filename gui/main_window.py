@@ -625,6 +625,7 @@ class MainWindow(QMainWindow):
                 protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
+            self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             logger.info("Translation worker initialized (Claude: %s)", model)
         else:
             self.ollama_worker = OllamaWorker(
@@ -642,6 +643,7 @@ class MainWindow(QMainWindow):
                 protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
+            self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             logger.info("Translation worker initialized (Ollama: %s)", model)
 

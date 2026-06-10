@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 23  # Increment when schema changes
+CONFIG_VERSION = 24  # Increment when schema changes
 
 
 @dataclass
@@ -95,6 +95,11 @@ class AppSettings:
     # ── AI Quality Check ──────────────────────────────────────────────────────
     enable_ai_qc: bool = False
     ai_qc_model: str = "qcgemma4-st"
+
+    # ── String-type skipping ──────────────────────────────────────────────────
+    # List of StringType names (e.g. ["BOOK", "NOTE"]) to skip during AI
+    # translation batch.  Strings of skipped types are left untranslated.
+    skip_string_types: list = field(default_factory=list)
 
     # ── Validation rules ─────────────────────────────────────────
     _URL_MIN_LENGTH = 5
