@@ -524,15 +524,29 @@ class QualityDialog(QDialog):
 
         # ── Filter / export bar ────────────────────────────────────────────────
         filter_bar = QHBoxLayout()
-        filter_bar.addWidget(QLabel(self.tr("Show:")))
+        filter_bar.addWidget(QLabel(self.tr("Severity:")))
 
         self.combo_filter = QComboBox()
-        self.combo_filter.addItem(self.tr("All issues"), "all")
-        self.combo_filter.addItem(self.tr("Errors only"), SEVERITY_ERROR)
-        self.combo_filter.addItem(self.tr("Warnings only"), SEVERITY_WARNING)
-        self.combo_filter.addItem(self.tr("Info only"), SEVERITY_INFO)
+        self.combo_filter.addItem(self.tr("All"), "all")
+        self.combo_filter.addItem(self.tr("Errors"), SEVERITY_ERROR)
+        self.combo_filter.addItem(self.tr("Warnings"), SEVERITY_WARNING)
+        self.combo_filter.addItem(self.tr("Info"), SEVERITY_INFO)
         self.combo_filter.currentIndexChanged.connect(self._apply_filter)
         filter_bar.addWidget(self.combo_filter)
+
+        filter_bar.addSpacing(12)
+        filter_bar.addWidget(QLabel(self.tr("Error code:")))
+
+        self.combo_code_filter = QComboBox()
+        self.combo_code_filter.setMinimumWidth(200)
+        self.combo_code_filter.setToolTip(self.tr(
+            "Filter rows by a specific issue code.\n"
+            "Only codes that appear in the current results are listed."
+        ))
+        self.combo_code_filter.currentIndexChanged.connect(self._apply_filter)
+        filter_bar.addWidget(self.combo_code_filter)
+        self._populate_code_filter()   # fill from reports
+
         filter_bar.addStretch()
 
         btn_export = QPushButton(self.tr("Export Report…"))
@@ -878,6 +892,7 @@ class QualityDialog(QDialog):
             return
         fresh = self._checker.check_all(self._table_model._data)
         self._all_reports = fresh
+        self._populate_code_filter()
         self._apply_filter()
 
     # ── Slots ──────────────────────────────────────────────────────────────────
@@ -912,13 +927,39 @@ class QualityDialog(QDialog):
         if 0 <= row < len(self._shown_reports):
             self.jump_to_row.emit(self._shown_reports[row].row_index)
 
+    def _populate_code_filter(self) -> None:
+        """Rebuild the code combo from all codes present in _all_reports."""
+        codes: list = sorted({
+            i.code
+            for r in self._all_reports
+            for i in r.issues
+            if i.code
+        })
+        current = self.combo_code_filter.currentData()
+        self.combo_code_filter.blockSignals(True)
+        self.combo_code_filter.clear()
+        self.combo_code_filter.addItem(self.tr("All codes"), "all")
+        for code in codes:
+            self.combo_code_filter.addItem(code, code)
+        # Restore previous selection if still available
+        idx = self.combo_code_filter.findData(current)
+        self.combo_code_filter.setCurrentIndex(max(0, idx))
+        self.combo_code_filter.blockSignals(False)
+
     @Slot()
     def _apply_filter(self) -> None:
-        val = self.combo_filter.currentData()
-        if val == "all":
-            self._shown_reports = list(self._all_reports)
-        else:
-            self._shown_reports = [r for r in self._all_reports if r.severity == val]
+        sev_val = self.combo_filter.currentData()
+        code_val = self.combo_code_filter.currentData()
+
+        def _matches(report: "QualityReport") -> bool:
+            if sev_val != "all" and report.severity != sev_val:
+                return False
+            if code_val != "all":
+                if not any(i.code == code_val for i in report.issues):
+                    return False
+            return True
+
+        self._shown_reports = [r for r in self._all_reports if _matches(r)]
         self._populate()
 
     # ── Export ─────────────────────────────────────────────────────────────────
