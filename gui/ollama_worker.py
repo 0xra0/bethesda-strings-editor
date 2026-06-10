@@ -1519,12 +1519,13 @@ class OllamaWorker(QObject):
             # Each inner text has no [multiline] spans so recursion terminates immediately.
             # string_id=-1 avoids a false translation-memory hit returning the full string.
             if translated and _extracted_brackets:
+                from dataclasses import replace as _dc_replace_bracket
                 for _ph, _orig_bracket in _extracted_brackets:
                     if _ph not in translated:
                         # Model dropped the placeholder — leave English as fallback
                         continue
                     _bracket_inner = _orig_bracket[1:-1]  # strip surrounding [ and ]
-                    _sub_req = _dc_replace(req, original_text=_bracket_inner, retry_hint="", string_id=-1)
+                    _sub_req = _dc_replace_bracket(req, original_text=_bracket_inner, retry_hint="", string_id=-1)
                     _sub_trans = self._translate_single(_sub_req)
                     if _sub_trans and _sub_trans.strip():
                         translated = translated.replace(_ph, f"[{_sub_trans.strip()}]", 1)
