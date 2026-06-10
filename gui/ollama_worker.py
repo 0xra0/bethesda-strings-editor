@@ -5,7 +5,7 @@ Background worker for Ollama translation calls with term protection
 import logging
 import re
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
+from dataclasses import dataclass, replace as _dc_replace
 from typing import Any, Dict, Optional, Tuple
 
 import requests
@@ -1274,40 +1274,35 @@ class OllamaWorker(QObject):
         # Merge token maps
         token_map.update(english_token_map)
 
+        # Two-pass approach for multi-paragraph bracket spans ([content\n\ncontent]):
+        # Extract them as [[BRACKET_N]] placeholders before STRUCT_BREAK so the main
+        # model call sees a simple token it preserves (rule 2), then sub-translate the
+        # inner content in a separate call after restoration.  NOT added to token_map
+        # so restore_text() leaves the placeholder intact for the sub-translation step.
+        _extracted_brackets: list[tuple[str, str]] = []  # [(placeholder, full "[content]")]
+        if "\n" in protected_text:
+            _eb_re = re.compile(r'\[((?:[^\[\]]|\[\[[^\[\]]*\]\])+)\]', re.DOTALL)
+
+            def _extract_bracket(m: re.Match) -> str:  # type: ignore[type-arg]
+                inner = m.group(1)
+                if "\n" in inner and " " in inner:
+                    n = len(_extracted_brackets)
+                    ph = f"[[BRACKET_{n}]]"
+                    _extracted_brackets.append((ph, m.group(0)))
+                    return ph
+                return m.group(0)
+
+            protected_text = _eb_re.sub(_extract_bracket, protected_text)
+
         # Tokenize structural newlines so the AI cannot collapse paragraph breaks.
         # Must happen after term protection so \\n escape sequences (already protected
         # as "newline" tokens) are not confused with actual newline characters.
         # The tokens are added to token_map so restore_text() restores them
         # automatically via the same anchor-based mechanism used for all other tokens.
-        #
-        # IMPORTANT: bracket spans ([...]) that contain spaces or newlines are
-        # editorial/narrative text that the model must translate (rule 3e).  If we
-        # tokenise newlines inside them the model sees [[STRUCT_BREAK_DBL_N]] inside
-        # a bracket and treats the whole block as a formatting token — the content
-        # stays in English.  Fix: apply STRUCT_BREAK only to text *between* bracket
-        # spans, leaving raw \n inside them so the model reads plain translatable prose.
         _DBL_NL = "[[STRUCT_BREAK_DBL_N]]"
         _SGL_NL = "[[STRUCT_BREAK_SGL_N]]"
         if "\n" in protected_text:
-            # Regex matches [[double-bracket-token]] or [bracket-span (may contain [[TK_]] inside)]
-            _sb_re = re.compile(
-                r'\[\[[^\[\]]*\]\]'                       # [[double-bracket-token]]
-                r'|\[(?:[^\[\]]|\[\[[^\[\]]*\]\])*\]',   # [bracket span, may have [[TK_]] inside]
-            )
-            _sb_parts: list[str] = []
-            _sb_last = 0
-            for _m in _sb_re.finditer(protected_text):
-                # Text before this span → apply STRUCT_BREAK tokenisation
-                _before = protected_text[_sb_last:_m.start()]
-                _sb_parts.append(_before.replace("\n\n", _DBL_NL).replace("\n", _SGL_NL))
-                # The bracket span itself → keep raw (preserve newlines inside)
-                _sb_parts.append(_m.group(0))
-                _sb_last = _m.end()
-            # Tail after last bracket span
-            _sb_parts.append(
-                protected_text[_sb_last:].replace("\n\n", _DBL_NL).replace("\n", _SGL_NL)
-            )
-            protected_text = "".join(_sb_parts)
+            protected_text = protected_text.replace("\n\n", _DBL_NL).replace("\n", _SGL_NL)
             token_map[_DBL_NL] = "\n\n"
             token_map[_SGL_NL] = "\n"
 
@@ -1519,6 +1514,21 @@ class OllamaWorker(QObject):
             ):
                 if translated.count("\n") < req.original_text.count("\n"):
                     translated = _restore_line_structure(translated, req.original_text)
+
+            # Sub-translate bracket spans that were extracted before the main call.
+            # Each inner text has no [multiline] spans so recursion terminates immediately.
+            if translated and _extracted_brackets:
+                for _ph, _orig_bracket in _extracted_brackets:
+                    if _ph not in translated:
+                        # Model dropped the placeholder — leave English as fallback
+                        continue
+                    _bracket_inner = _orig_bracket[1:-1]  # strip surrounding [ and ]
+                    _sub_req = _dc_replace(req, original_text=_bracket_inner, retry_hint="")
+                    _sub_trans = self._translate_one(_sub_req, is_retry=False)
+                    if _sub_trans and _sub_trans.strip():
+                        translated = translated.replace(_ph, f"[{_sub_trans.strip()}]", 1)
+                    else:
+                        translated = translated.replace(_ph, _orig_bracket, 1)
 
             # Clean up only if we have text
             if translated:
