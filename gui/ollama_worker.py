@@ -1625,12 +1625,13 @@ class OllamaWorker(QObject):
         if not text:
             return ""
 
-        # Safety net: restore structural newline tokens (exact or AI-garbled variants).
-        # e.g. [[STRUCT_BREAK_DBL_N]] or [[STRUCT_STRUCT_BREAK_DBL_N]] (doubled prefix).
-        if "BREAK_DBL_N]]" in text:
-            text = re.sub(r"\[\[(?:STRUCT_)+BREAK_DBL_N\]\]", "\n\n", text)
-        if "BREAK_SGL_N]]" in text:
-            text = re.sub(r"\[\[(?:STRUCT_)+BREAK_SGL_N\]\]", "\n", text)
+        # Safety net: restore structural newline tokens (all model-garbled variants).
+        if "STRUCT" in text and "]]" in text:
+            text = re.sub(r'\[\[STRUCT\w*(?:DBL|DOUBLE)\w*\]{2,}', '\n\n', text, flags=re.IGNORECASE)
+            text = re.sub(r'\[\[STRUCT\w*(?:SGL|SINGLE)\w*\]{2,}', '\n', text, flags=re.IGNORECASE)
+            text = re.sub(r'\[\[STRUCT\w+\]{2,}', '\n', text, flags=re.IGNORECASE)
+        # Strip any remaining [[...]] artifact tokens the model may have hallucinated
+        text = re.sub(r'\[\[\w+\]{2,}', '', text)
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
         # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).
@@ -1649,6 +1650,35 @@ class OllamaWorker(QObject):
             text,
             flags=re.DOTALL | re.IGNORECASE,
         ).strip()
+
+        # Strip model-invented markup artifacts that never appear in Bethesda game strings.
+
+        # Markdown code fences — model wraps output in ``` blocks
+        text = re.sub(r'```[\s\S]*?```', '', text)
+        text = text.replace('```', '')
+
+        # Garbled/invented image tags (e.g. <image|>) — not a valid Bethesda tag
+        text = re.sub(r'<image\b[^>]*>', '', text, flags=re.IGNORECASE)
+
+        # [Redacted] — model hallucinating a redaction instead of translating
+        if not original_text or '[Redacted]' not in original_text:
+            text = re.sub(r'\[Redacted\]', '', text, flags=re.IGNORECASE)
+
+        # Extra </font> close tags beyond what the original had
+        if original_text:
+            _orig_fc = original_text.count('</font>')
+            while text.count('</font>') > _orig_fc:
+                _last = text.rfind('</font>')
+                if _last == -1:
+                    break
+                text = text[:_last] + text[_last + 7:]
+
+        # Hallucinated <Alias=...> tags not present in the original
+        if original_text:
+            _orig_al = {a.lower() for a in re.findall(r'<Alias=[^>]+>', original_text, re.IGNORECASE)}
+            for _a in re.findall(r'<Alias=[^>]+>', text, re.IGNORECASE):
+                if _a.lower() not in _orig_al:
+                    text = text.replace(_a, '', 1)
 
         # Strip prompt-echo preambles (case-insensitive, handles with/without trailing newline).
         # The model sometimes echoes the "To Ukrainian:" instruction from to_prompt() back
