@@ -382,6 +382,7 @@ class MainWindow(QMainWindow):
         # State variables
         self.current_file = None
         self.current_path = None
+        self._last_profile_loaded_path = None  # path for which profile tints are currently applied
         self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
         self._current_ba2_entry: Optional[str] = None  # internal path of the loaded strings file
         self._dialogue_tree_dlg: Optional[DialogueTreeDialog] = None
@@ -456,6 +457,11 @@ class MainWindow(QMainWindow):
         self._lore_db = None
         if self.settings.enable_lore_rag:
             self._init_lore_rag()
+
+        # Character profile manager + per-file assignments
+        from bethesda_strings.character_profiles import ProfileManager, ProfileAssignments
+        self._profile_manager = ProfileManager(get_config_dir())
+        self._profile_assignments = ProfileAssignments(get_config_dir())
 
         # Pre-translation complexity estimator
         self._pre_estimator = None
@@ -634,6 +640,8 @@ class MainWindow(QMainWindow):
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
             self.ollama_worker.lore_rag_manager = self._lore_rag_manager
+            self.ollama_worker.profile_manager = self._profile_manager
+            self.ollama_worker.profile_assignments = self._profile_assignments
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             logger.info("Translation worker initialized (Claude: %s)", model)
         else:
@@ -653,6 +661,8 @@ class MainWindow(QMainWindow):
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
             self.ollama_worker.lore_rag_manager = self._lore_rag_manager
+            self.ollama_worker.profile_manager = self._profile_manager
+            self.ollama_worker.profile_assignments = self._profile_assignments
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             logger.info("Translation worker initialized (Ollama: %s)", model)
@@ -1095,6 +1105,16 @@ class MainWindow(QMainWindow):
         self.lore_rag_action.triggered.connect(self._open_lore_rag_dialog)
         trans_menu.addAction(self.lore_rag_action)
 
+        self.character_profiles_action = QAction(self.tr("&Character Profiles…"), self)
+        self.character_profiles_action.setIcon(QIcon.fromTheme("user-identity"))
+        self.character_profiles_action.setToolTip(self.tr(
+            "Create and manage character personas (Freestar Ranger, SysDef Officer, …).\n"
+            "Assign profiles to strings via right-click; the AI will adapt its register,\n"
+            "tone, and temperature to match the character's voice."
+        ))
+        self.character_profiles_action.triggered.connect(self._open_character_profiles)
+        trans_menu.addAction(self.character_profiles_action)
+
         self.font_checker_action = QAction(self.tr("Font &Glyph Checker…"), self)
         self.font_checker_action.setIcon(QIcon.fromTheme("font-x-generic"))
         self.font_checker_action.setToolTip(self.tr(
@@ -1456,6 +1476,7 @@ class MainWindow(QMainWindow):
             self._on_selection_changed
         )
         self.table_model.string_manually_corrected.connect(self._on_string_corrected)
+        self.table_view.assign_profile_requested.connect(self._open_profile_assign)
 
         # Debounce glossary dock refresh so rapid arrow-key navigation doesn't
         # fire a 20K-entry search on every intermediate row.
@@ -1585,6 +1606,69 @@ class MainWindow(QMainWindow):
             self.claude_review_action.setEnabled(has_file and has_selection)
         if hasattr(self, "claude_suggest_action"):
             self.claude_suggest_action.setEnabled(has_file and has_selection)
+
+        # Reload profile tints when the open file changes
+        if has_file and self.current_path != self._last_profile_loaded_path:
+            self._last_profile_loaded_path = self.current_path
+            self._reload_profile_tints()
+        elif not has_file and self._last_profile_loaded_path is not None:
+            self._last_profile_loaded_path = None
+            self.table_model.clear_profile_data()
+
+    def _reload_profile_tints(self) -> None:
+        """Load per-file profile assignments and apply background tints to the table."""
+        if self.current_path:
+            self._profile_assignments.load(self.current_path)
+        id_to_row = {row["id"]: i for i, row in enumerate(self.table_model._data)}
+        profile_map = {}
+        for sid, pid in self._profile_assignments.all().items():
+            row_idx = id_to_row.get(sid)
+            if row_idx is not None:
+                p = self._profile_manager.get(pid)
+                if p:
+                    profile_map[row_idx] = p
+        self.table_model.set_profile_data(profile_map)
+
+    def _open_character_profiles(self) -> None:
+        """Open the Character Profile editor dialog."""
+        from gui.profile_editor_dialog import ProfileEditorDialog
+        dlg = ProfileEditorDialog(manager=self._profile_manager, parent=self)
+        dlg.exec()
+
+    def _open_profile_assign(self, row_indices: list) -> None:
+        """Open the profile picker for the given source-model row indices."""
+        if not row_indices:
+            return
+        from gui.profile_assign_dialog import ProfileAssignDialog
+        # Determine which profile (if any) all selected rows share
+        rows = self.table_model._data
+        pids = {
+            self._profile_assignments.get(rows[i]["id"])
+            for i in row_indices
+            if i < len(rows)
+        }
+        current_pid = next(iter(pids)) if len(pids) == 1 else None
+
+        dlg = ProfileAssignDialog(
+            manager=self._profile_manager,
+            row_count=len(row_indices),
+            current_profile_id=current_pid,
+            parent=self,
+        )
+        if dlg.exec() and dlg.was_accepted:
+            string_ids = [rows[i]["id"] for i in row_indices if i < len(rows)]
+            self._profile_assignments.set_many(string_ids, dlg.accepted_profile_id)
+            self._reload_profile_tints()
+            profile_name = (
+                self._profile_manager.get(dlg.accepted_profile_id).name
+                if dlg.accepted_profile_id else self.tr("(none)")
+            )
+            self.statusBar().showMessage(
+                self.tr("Profile '{name}' assigned to {n} string(s)").format(
+                    name=profile_name, n=len(string_ids)
+                ),
+                4000,
+            )
 
     @Slot()
     def open_advanced_search(self):

@@ -6,7 +6,10 @@ import logging
 import re
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+
+if TYPE_CHECKING:
+    from bethesda_strings.character_profiles import CharacterProfile
 
 import requests
 from PySide6.QtCore import QMutex, QMutexLocker, QObject, Signal, Slot
@@ -369,6 +372,7 @@ class TranslationRequest:
     model_override: str = ""  # Use a different model for this request (QA fixes)
     context_note: str = ""  # NLDT developer context note from ESP (explains variables)
     lore_snippet: str = ""  # Lore RAG context retrieved from local lore database
+    character_profile: Optional["CharacterProfile"] = None  # per-string persona
 
     def to_prompt(self, text: Optional[str] = None) -> str:
         """Generate the user-turn prompt.
@@ -490,6 +494,8 @@ class TranslationRequest:
             result += "\nGlossary (use these exact translations):\n" + self.glossary_snippet
         if self.retry_hint:
             result += self.retry_hint
+        if self.character_profile and self.character_profile.system_addendum:
+            result += f"\n\n## Character Voice\n{self.character_profile.system_addendum}"
         return result
 
 
@@ -696,7 +702,9 @@ class OllamaWorker(QObject):
         self.translation_memory: Optional[TranslationMemory] = None
         self.tm_fuzzy_max_score: float = 3.0
         self.glossary_manager: Optional[GlossaryManager] = None
-        self.lore_rag_manager = None  # gui.lore_rag_manager.LoreRAGManager (optional)
+        self.lore_rag_manager = None    # gui.lore_rag_manager.LoreRAGManager (optional)
+        self.profile_manager = None     # bethesda_strings.character_profiles.ProfileManager (optional)
+        self.profile_assignments = None # bethesda_strings.character_profiles.ProfileAssignments (optional)
         # StringType names to skip (e.g. ["BOOK", "NOTE"]). Set from AppSettings.
         self.skipped_types: list = []
 
@@ -1286,6 +1294,13 @@ class OllamaWorker(QObject):
                 from dataclasses import replace as _dc_lore
                 req = _dc_lore(req, lore_snippet=lore_ctx)
 
+        # Character profile: attach from assignment map if not already set
+        if req.character_profile is None and self.profile_assignments is not None and req.string_id != -1:
+            pid = self.profile_assignments.get(req.string_id)
+            if pid and self.profile_manager is not None:
+                from dataclasses import replace as _dc_prof
+                req = _dc_prof(req, character_profile=self.profile_manager.get(pid))
+
         # Strip leading/trailing separator lines from the source text before sending
         # to the model so it doesn't echo them back or get confused by them.
         # Separators are stored and restored around the final translation.
@@ -1501,9 +1516,11 @@ class OllamaWorker(QObject):
                 "stream": False,
                 "keep_alive": -1,
                 "options": {
-                    "temperature": model_config.get("temperature", 0.1)
-                    if req.quality_level >= 7
-                    else 0.3,
+                    "temperature": (
+                        req.character_profile.temperature
+                        if req.character_profile and req.character_profile.temperature is not None
+                        else model_config.get("temperature", 0.1) if req.quality_level >= 7 else 0.3
+                    ),
                     "num_predict": adaptive_num_predict,
                     "num_ctx": effective_num_ctx,
                 },

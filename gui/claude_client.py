@@ -12,7 +12,10 @@ for the stable system-prompt portion.
 from __future__ import annotations
 
 import logging
-from typing import Dict, Generator, List, Optional
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional
+
+if TYPE_CHECKING:
+    from bethesda_strings.character_profiles import CharacterProfile
 
 logger = logging.getLogger(__name__)
 
@@ -168,6 +171,7 @@ class ClaudeClient:
         glossary_snippet: str = "",
         lore_snippet: str = "",
         context_note: str = "",
+        character_profile: "Optional[CharacterProfile]" = None,
     ) -> str:
         """
         Translate *text* from *source_lang* to *target_lang*.
@@ -187,17 +191,23 @@ class ClaudeClient:
             glossary_snippet=glossary_snippet,
             lore_snippet=lore_snippet,
             context_note=context_note,
+            character_profile=character_profile,
         )
         system = req.to_system_prompt()
         prompt = req.to_prompt()
 
-        response = self._client.messages.create(
-            model=self.model,
-            max_tokens=min(4096, max(256, len(text) * 3)),
-            system=[{"type": "text", "text": system,
-                     "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": prompt}],
-        )
+        # Build API kwargs — add temperature only when a profile overrides it
+        api_kwargs: dict = {
+            "model": self.model,
+            "max_tokens": min(4096, max(256, len(text) * 3)),
+            "system": [{"type": "text", "text": system,
+                        "cache_control": {"type": "ephemeral"}}],
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        if character_profile and character_profile.temperature is not None:
+            api_kwargs["temperature"] = character_profile.temperature
+
+        response = self._client.messages.create(**api_kwargs)
         return response.content[0].text.strip()
 
     # ── Chat ───────────────────────────────────────────────────────────────────

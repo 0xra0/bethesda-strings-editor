@@ -58,7 +58,9 @@ class ClaudeTranslationWorker(QObject):
         self.translation_cache = translation_cache
         self.protect_named_entities = protect_named_entities
         self.glossary_manager = None
-        self.lore_rag_manager = None  # gui.lore_rag_manager.LoreRAGManager (optional)
+        self.lore_rag_manager = None    # gui.lore_rag_manager.LoreRAGManager (optional)
+        self.profile_manager = None     # bethesda_strings.character_profiles.ProfileManager (optional)
+        self.profile_assignments = None # bethesda_strings.character_profiles.ProfileAssignments (optional)
         self.skipped_types: list = []
 
         self._stop_flag = False
@@ -158,6 +160,13 @@ class ClaudeTranslationWorker(QObject):
                 except Exception:
                     lore_snippet = ""
 
+            # Character profile
+            profile = req.character_profile
+            if profile is None and self.profile_assignments and self.profile_manager:
+                pid = self.profile_assignments.get(req.string_id)
+                if pid:
+                    profile = self.profile_manager.get(pid)
+
             try:
                 result = self._claude.translate(
                     text=protected,
@@ -167,6 +176,7 @@ class ClaudeTranslationWorker(QObject):
                     glossary_snippet=glossary_snippet,
                     lore_snippet=lore_snippet,
                     context_note=req.context_note,
+                    character_profile=profile,
                 )
             except Exception as exc:
                 logger.error(

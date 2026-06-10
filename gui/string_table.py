@@ -63,6 +63,7 @@ class StringTableModel(QAbstractTableModel):
         self._pre_est_data: Dict[int, Any] = {}   # row_index → ComplexityReport
         self._type_cache: Dict[int, StringType] = {}  # row_index → StringType (lazy)
         self._color_blind_mode: bool = False
+        self._profile_data: Dict[int, Any] = {}  # row_index → CharacterProfile (lazy import)
 
     def set_color_blind_mode(self, enabled: bool) -> None:
         """Switch between default red/green and color-blind-friendly blue/orange palette."""
@@ -234,6 +235,16 @@ class StringTableModel(QAbstractTableModel):
         """Remove all quality highlights."""
         if self._quality_data:
             self._quality_data.clear()
+            self.layoutChanged.emit()
+
+    def set_profile_data(self, profile_map: Dict[int, Any]) -> None:
+        """Set per-row CharacterProfile map for tint display.  profile_map: {row_index → CharacterProfile}."""
+        self._profile_data = profile_map
+        self.layoutChanged.emit()
+
+    def clear_profile_data(self) -> None:
+        if self._profile_data:
+            self._profile_data.clear()
             self.layoutChanged.emit()
 
     def set_pre_est_data(self, est_map: Dict[int, Any]) -> None:
@@ -544,6 +555,16 @@ class StringTableModel(QAbstractTableModel):
             ):
                 return QColor("#0a2535") if dark else QColor("#f0f9ff")
 
+            # Profile tint: lowest priority, all columns, very subtle
+            profile = self._profile_data.get(row)
+            if profile is not None:
+                c = QColor(profile.color)
+                if dark:
+                    c.setHsvF(c.hueF(), 0.45, 0.22)
+                else:
+                    c.setHsvF(c.hueF(), 0.12, 0.97)
+                return c
+
         elif role == Qt.ToolTipRole:
             row_id = row_data["id"]
             base_tooltip = ""
@@ -571,8 +592,12 @@ class StringTableModel(QAbstractTableModel):
 
             q_sev = self._quality_data.get(row)
             if col_name == "Status":
+                profile = self._profile_data.get(row)
+                if profile is not None:
+                    base_tooltip = f"Profile: {profile.name}"
                 if q_sev:
-                    base_tooltip = f"Quality: {q_sev.upper()}"
+                    prefix = f"Profile: {profile.name}\n" if profile else ""
+                    base_tooltip = f"{prefix}Quality: {q_sev.upper()}"
                 elif row_data["status"] == "pending":
                     est = self._pre_est_data.get(row)
                     if est is not None:
@@ -693,6 +718,9 @@ class StringEditDialog(QDialog):
 
 class StringTableView(QTableView):
     """Customized QTableView for string data."""
+
+    # Emitted with a list of source-model row indices when the user requests profile assignment.
+    assign_profile_requested = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -906,6 +934,12 @@ class StringTableView(QTableView):
 
         act = menu.addAction(self.tr("Fill Translation from Source\tCtrl+Shift+V"))
         act.triggered.connect(self._fill_translated_from_source)
+
+        menu.addSeparator()
+        profile_act = menu.addAction(self.tr("Assign Character Profile…"))
+        selected = self._selected_source_rows()
+        profile_act.setEnabled(bool(selected))
+        profile_act.triggered.connect(lambda: self.assign_profile_requested.emit(selected))
 
         menu.exec(self.viewport().mapToGlobal(position))
 
