@@ -71,6 +71,7 @@ from gui.keyboard_manager import ActionEntry, KeyboardManager
 from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
+from gui.dialogue_tree_dialog import DialogueTreeDialog
 from gui.translation_memory import TranslationMemory
 from gui.string_table import StringTableModel, StringTableView
 from gui.term_protector import ProtectedTerm, TermProtector
@@ -383,6 +384,7 @@ class MainWindow(QMainWindow):
         self.current_path = None
         self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
         self._current_ba2_entry: Optional[str] = None  # internal path of the loaded strings file
+        self._dialogue_tree_dlg: Optional[DialogueTreeDialog] = None
         self.settings: AppSettings = (
             settings if settings is not None else load_settings()
         )
@@ -1062,6 +1064,18 @@ class MainWindow(QMainWindow):
         self.diff_viewer_action.setEnabled(False)
         trans_menu.addAction(self.diff_viewer_action)
 
+        self.dialogue_tree_action = QAction(
+            self.tr("Dialogue &Tree Visualizer…"), self, shortcut=QKeySequence("Ctrl+Shift+T")
+        )
+        self.dialogue_tree_action.setIcon(QIcon.fromTheme("view-list-tree"))
+        self.dialogue_tree_action.setToolTip(self.tr(
+            "Visualise the Quest → Topic → Response dialogue tree from an ESP/ESM file.\n"
+            "Shows conversation flow as a node graph so translators can see context."
+        ))
+        self.dialogue_tree_action.triggered.connect(self._open_dialogue_tree)
+        self.dialogue_tree_action.setEnabled(False)
+        trans_menu.addAction(self.dialogue_tree_action)
+
         self.version_compare_action = QAction(
             self.tr("Compare Game &Versions…"), self
         )
@@ -1503,6 +1517,8 @@ class MainWindow(QMainWindow):
         self.compare_action.setEnabled(has_file)
         if hasattr(self, "diff_viewer_action"):
             self.diff_viewer_action.setEnabled(has_file)
+        if hasattr(self, "dialogue_tree_action"):
+            self.dialogue_tree_action.setEnabled(has_file)
         if hasattr(self, "quality_check_action"):
             self.quality_check_action.setEnabled(has_file)
         if hasattr(self, "auto_retranslate_action"):
@@ -4630,6 +4646,40 @@ class MainWindow(QMainWindow):
             parent=self,
         )
         dlg.exec()
+
+    def _open_dialogue_tree(self) -> None:
+        dlg = self._dialogue_tree_dlg
+        if dlg is None:
+            path = self.current_path if isinstance(self.current_file, EspFile) else None
+            encoding = self.table_model._encoding or "utf-8"
+            dlg = DialogueTreeDialog(path=path, encoding=encoding, parent=self)
+            dlg.jump_requested.connect(self._jump_to_esp_field)
+            dlg.finished.connect(lambda: setattr(self, "_dialogue_tree_dlg", None))
+            self._dialogue_tree_dlg = dlg
+        dlg.show()
+        dlg.raise_()
+        dlg.activateWindow()
+
+    def _jump_to_esp_field(self, form_id: int, field_sig: str) -> None:
+        """Navigate the string table to the row for (form_id, field_sig)."""
+        if not isinstance(self.current_file, EspFile):
+            QMessageBox.information(
+                self, self.tr("Not in ESP Mode"),
+                self.tr("Open the ESP/ESM file in the main table first."),
+            )
+            return
+        target = f" {field_sig}"
+        for i, row in enumerate(self.table_model._data):
+            if row.get("id") == form_id and str(row.get("offset", "")).endswith(target):
+                self._on_search_results([i])
+                self.activateWindow()
+                return
+        QMessageBox.information(
+            self, self.tr("Not Found"),
+            self.tr("0x{fid:08X} / {fs} not found in the current file.").format(
+                fid=form_id, fs=field_sig,
+            ),
+        )
 
     def _open_config_file(self):
         """Open the config file directory in file manager."""
