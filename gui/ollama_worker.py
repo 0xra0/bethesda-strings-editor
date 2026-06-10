@@ -548,6 +548,7 @@ class OllamaWorker(QObject):
             "repeat_penalty": 1.1,
             "think_disabled": True,
             "recommended_quality": 7,
+            "timeout": 600,  # thinking chains add ~2000-4000 tokens before the translation
             "stops": ["<end_of_turn>", "<start_of_turn>"],
         },
         # Gemma 4 12B IT fine-tuned on Claude Opus 4.6/4.7/4.8 reasoning distillation.
@@ -562,6 +563,7 @@ class OllamaWorker(QObject):
             "repeat_penalty": 1.1,
             "think_disabled": True,
             "recommended_quality": 7,
+            "timeout": 600,
             "stops": ["<end_of_turn>", "<start_of_turn>"],
         },
     }
@@ -1047,7 +1049,10 @@ class OllamaWorker(QObject):
             if self._stop_flag:
                 return None
 
-        response = self._session.post(url, json=payload, timeout=self._CHUNK_TIMEOUT)
+        _chunk_timeout = self._CHUNK_TIMEOUT
+        if model_config.get("think_disabled"):
+            _chunk_timeout = max(_chunk_timeout, 300 + input_len // 20)
+        response = self._session.post(url, json=payload, timeout=_chunk_timeout)
         if response.status_code == 404:
             raise Exception(
                 f"Model '{self.model}' not found in Ollama. "
@@ -1353,6 +1358,10 @@ class OllamaWorker(QObject):
             # because the AMD GPU serialises requests — a queued string may wait several
             # minutes just for its GPU slot before generation even starts.
             model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
+            # Thinking models generate a reasoning chain before the translation output;
+            # scale timeout with text length so large strings don't time out mid-think.
+            if model_config.get("think_disabled"):
+                model_timeout += max(0, len(protected_text) // 20)
 
             # Adaptive num_ctx: allocate only what this string needs.
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
