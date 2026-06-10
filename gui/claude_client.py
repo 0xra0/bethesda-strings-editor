@@ -166,6 +166,7 @@ class ClaudeClient:
         target_lang: str,
         retry_hint: str = "",
         glossary_snippet: str = "",
+        lore_snippet: str = "",
         context_note: str = "",
     ) -> str:
         """
@@ -184,6 +185,7 @@ class ClaudeClient:
             target_lang=target_lang,
             retry_hint=retry_hint,
             glossary_snippet=glossary_snippet,
+            lore_snippet=lore_snippet,
             context_note=context_note,
         )
         system = req.to_system_prompt()

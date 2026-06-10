@@ -58,6 +58,7 @@ class ClaudeTranslationWorker(QObject):
         self.translation_cache = translation_cache
         self.protect_named_entities = protect_named_entities
         self.glossary_manager = None
+        self.lore_rag_manager = None  # gui.lore_rag_manager.LoreRAGManager (optional)
         self.skipped_types: list = []
 
         self._stop_flag = False
@@ -149,6 +150,14 @@ class ClaudeTranslationWorker(QObject):
                 except Exception:
                     glossary_snippet = ""
 
+            # Lore RAG context
+            lore_snippet = req.lore_snippet
+            if not lore_snippet and self.lore_rag_manager:
+                try:
+                    lore_snippet = self.lore_rag_manager.get_snippet(source_text)
+                except Exception:
+                    lore_snippet = ""
+
             try:
                 result = self._claude.translate(
                     text=protected,
@@ -156,6 +165,7 @@ class ClaudeTranslationWorker(QObject):
                     target_lang=self.target_lang,
                     retry_hint=req.retry_hint,
                     glossary_snippet=glossary_snippet,
+                    lore_snippet=lore_snippet,
                     context_note=req.context_note,
                 )
             except Exception as exc:

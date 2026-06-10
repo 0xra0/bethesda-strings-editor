@@ -615,6 +615,39 @@ class SettingsDialog(QDialog):
         ai_qc_group.setLayout(ai_qc_layout)
         layout.addWidget(ai_qc_group)
 
+        # Lore RAG
+        lore_rag_group = QGroupBox(self.tr("Lore RAG (Context Retrieval)"))
+        lore_rag_layout = QFormLayout()
+
+        self.chk_enable_lore_rag = QCheckBox(
+            self.tr("Inject lore context into translation prompts")
+        )
+        self.chk_enable_lore_rag.setChecked(getattr(self._settings, "enable_lore_rag", False))
+        self.chk_enable_lore_rag.setToolTip(
+            self.tr(
+                "When enabled, relevant lore articles (factions, places, characters) are\n"
+                "retrieved from the local lore database and prepended to each translation\n"
+                "prompt so the AI uses accurate Starfield terminology.\n"
+                "Use Translation → Lore RAG Context… to download articles from UESP."
+            )
+        )
+        lore_rag_layout.addRow(self.chk_enable_lore_rag)
+
+        self.lore_rag_max_chars_spin = QSpinBox()
+        self.lore_rag_max_chars_spin.setRange(100, 2000)
+        self.lore_rag_max_chars_spin.setSingleStep(50)
+        self.lore_rag_max_chars_spin.setValue(
+            getattr(self._settings, "lore_rag_max_snippet_chars", 480)
+        )
+        self.lore_rag_max_chars_spin.setToolTip(
+            self.tr("Maximum characters of lore context injected per prompt.\n"
+                    "Higher values give more context but consume more tokens.")
+        )
+        lore_rag_layout.addRow(self.tr("Max context chars:"), self.lore_rag_max_chars_spin)
+
+        lore_rag_group.setLayout(lore_rag_layout)
+        layout.addWidget(lore_rag_group)
+
         # Weblate Sync
         weblate_group = QGroupBox(self.tr("Weblate Community Translation Sync"))
         weblate_layout = QFormLayout()
@@ -959,6 +992,8 @@ class SettingsDialog(QDialog):
         settings.audit_logging = self.chk_audit_log.isChecked()
         settings.enable_ai_qc = self.chk_enable_ai_qc.isChecked()
         settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
+        settings.enable_lore_rag = self.chk_enable_lore_rag.isChecked()
+        settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
         settings.weblate_url       = self.weblate_url_edit.text().strip().rstrip('/')
         settings.weblate_api_token = self.weblate_token_edit.text().strip()
         settings.weblate_project   = self.weblate_project_edit.text().strip()

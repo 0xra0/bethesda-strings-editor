@@ -368,6 +368,7 @@ class TranslationRequest:
     retry_hint: str = ""  # Quality feedback from a prior failed attempt
     model_override: str = ""  # Use a different model for this request (QA fixes)
     context_note: str = ""  # NLDT developer context note from ESP (explains variables)
+    lore_snippet: str = ""  # Lore RAG context retrieved from local lore database
 
     def to_prompt(self, text: Optional[str] = None) -> str:
         """Generate the user-turn prompt.
@@ -375,12 +376,17 @@ class TranslationRequest:
         TranslateGemma was fine-tuned on the English Anchor format:
         ``"To {Language}:\n{text}"`` — the target language name must be the
         full display name (e.g. "Ukrainian"), not the locale code ("uk").
+
+        Lore context is injected here (user turn) rather than in the system
+        prompt so Claude's system-prompt caching is not broken by per-string
+        variation.
         """
         content = text if text is not None else self.original_text
         tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
+        lore_prefix = f"Lore context: {self.lore_snippet}\n\n" if self.lore_snippet else ""
         if self.retry_hint:
-            return f"To {tgt_name}:\n{self.retry_hint}\n\nText to translate:\n{content}"
-        return f"To {tgt_name}:\n{content}"
+            return f"To {tgt_name}:\n{self.retry_hint}\n\n{lore_prefix}Text to translate:\n{content}"
+        return f"To {tgt_name}:\n{lore_prefix}{content}"
 
     def to_system_prompt(self) -> str:
         """Build a language-pair-aware system prompt.
@@ -690,6 +696,7 @@ class OllamaWorker(QObject):
         self.translation_memory: Optional[TranslationMemory] = None
         self.tm_fuzzy_max_score: float = 3.0
         self.glossary_manager: Optional[GlossaryManager] = None
+        self.lore_rag_manager = None  # gui.lore_rag_manager.LoreRAGManager (optional)
         # StringType names to skip (e.g. ["BOOK", "NOTE"]). Set from AppSettings.
         self.skipped_types: list = []
 
@@ -1267,6 +1274,17 @@ class OllamaWorker(QObject):
             if snippet:
                 from dataclasses import replace as _dc_replace
                 req = _dc_replace(req, glossary_snippet=snippet)
+
+        # Lore RAG: retrieve relevant lore context from the local lore database
+        # and attach it as a user-turn prefix (not system prompt, to preserve caching).
+        # Only run for the primary string (string_id != -1) to avoid N×N calls for
+        # line-by-line / paragraph sub-requests — the parent string already carries
+        # the snippet via dataclasses.replace().
+        if not req.lore_snippet and self.lore_rag_manager is not None and req.string_id != -1:
+            lore_ctx = self.lore_rag_manager.get_snippet(req.original_text)
+            if lore_ctx:
+                from dataclasses import replace as _dc_lore
+                req = _dc_lore(req, lore_snippet=lore_ctx)
 
         # Strip leading/trailing separator lines from the source text before sending
         # to the model so it doesn't echo them back or get confused by them.

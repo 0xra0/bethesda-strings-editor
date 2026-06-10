@@ -451,6 +451,12 @@ class MainWindow(QMainWindow):
             from gui.glossary import GlossaryManager
             self._glossary_manager = GlossaryManager(get_config_dir())
 
+        # Lore RAG manager
+        self._lore_rag_manager = None
+        self._lore_db = None
+        if self.settings.enable_lore_rag:
+            self._init_lore_rag()
+
         # Pre-translation complexity estimator
         self._pre_estimator = None
         self._pending_est_items: list = []
@@ -627,6 +633,7 @@ class MainWindow(QMainWindow):
                 protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
+            self.ollama_worker.lore_rag_manager = self._lore_rag_manager
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             logger.info("Translation worker initialized (Claude: %s)", model)
         else:
@@ -645,6 +652,7 @@ class MainWindow(QMainWindow):
                 protect_named_entities=self.settings.protect_named_entities,
             )
             self.ollama_worker.glossary_manager = self._glossary_manager
+            self.ollama_worker.lore_rag_manager = self._lore_rag_manager
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
             self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             logger.info("Translation worker initialized (Ollama: %s)", model)
@@ -1075,6 +1083,17 @@ class MainWindow(QMainWindow):
         self.dialogue_tree_action.triggered.connect(self._open_dialogue_tree)
         self.dialogue_tree_action.setEnabled(False)
         trans_menu.addAction(self.dialogue_tree_action)
+
+        self.lore_rag_action = QAction(self.tr("Lore &RAG Context…"), self)
+        self.lore_rag_action.setIcon(QIcon.fromTheme("document-properties"))
+        self.lore_rag_action.setToolTip(self.tr(
+            "Manage the local lore database used for Retrieval-Augmented Generation.\n"
+            "Download articles from UESP or import a local JSON file to give the AI\n"
+            "accurate lore context when translating strings mentioning factions, places,\n"
+            "or characters (e.g. House Va'ruun, Akila City, Freestar Collective)."
+        ))
+        self.lore_rag_action.triggered.connect(self._open_lore_rag_dialog)
+        trans_menu.addAction(self.lore_rag_action)
 
         self.version_compare_action = QAction(
             self.tr("Compare Game &Versions…"), self
@@ -4646,6 +4665,42 @@ class MainWindow(QMainWindow):
             parent=self,
         )
         dlg.exec()
+
+    def _init_lore_rag(self) -> None:
+        """Initialise the LoreDB and LoreRAGManager.  Called once at startup."""
+        try:
+            from bethesda_strings.lore_db import LoreDB
+            from gui.lore_rag_manager import LoreRAGManager
+            from gui.app_settings import get_config_dir
+            db_path = get_config_dir() / "lore.sqlite"
+            self._lore_db = LoreDB(db_path)
+            self._lore_rag_manager = LoreRAGManager(
+                db=self._lore_db,
+                max_snippet_chars=self.settings.lore_rag_max_snippet_chars,
+            )
+            logger.info("Lore RAG initialized: %s", db_path)
+        except Exception as exc:
+            logger.warning("Lore RAG init failed: %s", exc)
+            self._lore_db = None
+            self._lore_rag_manager = None
+
+    def _open_lore_rag_dialog(self) -> None:
+        """Open the Lore RAG management dialog (modeless)."""
+        if self._lore_db is None:
+            self._init_lore_rag()
+        if self._lore_db is None:
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.warning(
+                self, self.tr("Lore RAG Unavailable"),
+                self.tr("Failed to open the lore database. Check the log for details."),
+            )
+            return
+        from gui.lore_rag_dialog import LoreRAGDialog
+        dlg = LoreRAGDialog(db=self._lore_db, parent=self)
+        dlg.exec()
+        # Refresh manager settings after dialog in case data was added
+        if self._lore_rag_manager is not None:
+            self._lore_rag_manager.enabled = self.settings.enable_lore_rag
 
     def _open_dialogue_tree(self) -> None:
         dlg = self._dialogue_tree_dlg

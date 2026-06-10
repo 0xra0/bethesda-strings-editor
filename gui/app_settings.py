@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 25  # Increment when schema changes
+CONFIG_VERSION = 26  # Increment when schema changes
 
 
 @dataclass
@@ -73,6 +73,10 @@ class AppSettings:
 
     # ── Glossary ─────────────────────────────────────────────────
     enable_glossary: bool = True
+
+    # ── Lore RAG ──────────────────────────────────────────────────
+    enable_lore_rag: bool = False   # off by default until user downloads lore data
+    lore_rag_max_snippet_chars: int = 480  # max chars of lore context per prompt
 
     # ── Keyboard shortcuts ────────────────────────────────────────────────
     custom_shortcuts: dict = field(default_factory=dict)
