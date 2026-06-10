@@ -1727,6 +1727,24 @@ class OllamaWorker(QObject):
                 if _a.lower() not in _orig_al:
                     text = text.replace(_a, '', 1)
 
+        # Extra printf format specifiers (%s, %d, %1$s, %%, …) beyond the original count.
+        # The model sometimes hallucinates these into translations.
+        # We remove the rightmost extras (model artifacts land at the end of output).
+        if original_text and '%' in text:
+            _FMT_RE = re.compile(r'%(?:[1-9]\$)?[sdfioxXeEgGcpn%]')
+            _orig_fmt_n = len(_FMT_RE.findall(original_text))
+            _trans_fmt_m = list(_FMT_RE.finditer(text))
+            _extra_fmt = len(_trans_fmt_m) - _orig_fmt_n
+            if _extra_fmt > 0:
+                _remove_spans = [(m.start(), m.end()) for m in _trans_fmt_m[-_extra_fmt:]]
+                _parts: list = []
+                _prev = 0
+                for _s, _e in _remove_spans:
+                    _parts.append(text[_prev:_s])
+                    _prev = _e
+                _parts.append(text[_prev:])
+                text = ''.join(_parts)
+
         # Strip prompt-echo preambles (case-insensitive, handles with/without trailing newline).
         # The model sometimes echoes the "To Ukrainian:" instruction from to_prompt() back
         # into its output — this regex catches all known variants in one pass.
