@@ -408,7 +408,10 @@ class TranslationRequest:
             f"1. {style_rule}\n"
             "2. Preserve ALL formatting tokens unchanged: <Alias=…>, <font>, "
             "[[TK_…]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]], "
-            "\\n, \\t, %s, %d, #IDs. Never alter, split, or translate these.\n"
+            "\\n, \\t, %s, %d, %f, %.1f, %.2f, %.3f, %g, %e, %i, %u, %x, %%, %1$s, %2$d, #IDs. "
+            "When [[STRUCT_BREAK_SGL_N]] or [[STRUCT_BREAK_DBL_N]] appears in the input, "
+            "output it verbatim at the same position — never convert it to \\n, \\н, or any other form. "
+            "Never alter, split, or translate these.\n"
             "3. Square brackets [] — four categories:\n"
             "   a) TRANSLATE dialogue-choice and skill tokens (keep the brackets, translate the word inside): "
             "[Lie]→[Збрехати], [Flirt]→[Залицятися], [Persuade]→[Переконати], "
@@ -1165,6 +1168,7 @@ class OllamaWorker(QObject):
 
         if result:
             result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
+            result = self._restore_dropped_tags(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1298,6 +1302,29 @@ class OllamaWorker(QObject):
                 if cache_key and self.translation_cache is not None:
                     self.translation_cache.set(cache_key, _pp_result)
                 return _pp_result
+
+        # Line-by-line translation for multi-line strings with 3+ short lines.
+        # Eliminates reliance on [[STRUCT_BREAK_SGL_N]] tokens for format strings
+        # like "%.2f - mechanics\n%.2f - mercantile\n..." where the model drops
+        # format specifiers or garbles newline tokens in a long single-pass call.
+        if "\n" in protected_text and "\n\n" not in protected_text:
+            _ll_segs = protected_text.split("\n")
+            _ll_nonempty = [s for s in _ll_segs if s.strip()]
+            if len(_ll_nonempty) >= 3 and max((len(s) for s in _ll_nonempty), default=0) < 200:
+                from dataclasses import replace as _dc_ll
+                _ll_results: list = []
+                for _seg in _ll_segs:
+                    if not _seg.strip():
+                        _ll_results.append(_seg)
+                        continue
+                    _ll_req = _dc_ll(req, original_text=_seg, string_id=-1)
+                    _ll_trans = self._translate_single(_ll_req)
+                    _ll_results.append(_ll_trans if _ll_trans else _seg)
+                _ll_result = "\n".join(_ll_results)
+                _ll_result = leading_seps + _ll_result + trailing_seps
+                if cache_key and self.translation_cache is not None:
+                    self.translation_cache.set(cache_key, _ll_result)
+                return _ll_result
 
         english_token_map = {}
 
@@ -1576,6 +1603,13 @@ class OllamaWorker(QObject):
                             translated = translated.replace(_t, _v)
                 # Strip remaining [[...]] artifacts hallucinated by the model
                 translated = re.sub(r'\[\[\w+\]{2,}', '', translated)
+                # Fix model garbling [[STRUCT_BREAK_*]] tokens to Cyrillic escape sequences.
+                # Models sometimes "translate" the N in SGL_N → Cyrillic н, producing \н
+                # instead of an actual newline.  Process double (\нн) before single (\н).
+                if token_map.get("[[STRUCT_BREAK_DBL_N]]"):
+                    translated = translated.replace("\\" + "нн", "\n\n")
+                if token_map.get("[[STRUCT_BREAK_SGL_N]]"):
+                    translated = translated.replace("\\" + "н", "\n")
 
             # Post-translation: sub-translate any bracket spans still in English.
             # The model often preserves [multi-paragraph publisher/author notes] verbatim
@@ -1655,6 +1689,10 @@ class OllamaWorker(QObject):
                     if rewritten:
                         translated = rewritten
 
+            # Restore any <Alias=…>/<Global=…> tags the model dropped
+            if translated:
+                translated = self._restore_dropped_tags(translated, req.original_text)
+
             # Restore separator lines that were stripped before sending to model
             if translated and (leading_seps or trailing_seps):
                 translated = leading_seps + translated + trailing_seps
@@ -1684,6 +1722,40 @@ class OllamaWorker(QObject):
             raise Exception(f"Ollama HTTP error: {e}")
         except Exception as e:
             raise Exception(f"Ollama translation error: {e}")
+
+    @staticmethod
+    def _restore_dropped_tags(translated: str, original: str) -> str:
+        """Re-insert Bethesda XML alias/variable tags that the AI dropped.
+
+        Models frequently drop <Alias=…>, <Global=…> etc. even when instructed
+        to preserve them.  After restore_text() runs, we scan for any such tags
+        that were in the original but are absent from the translation and
+        re-insert them at their approximate original position.
+        """
+        if not original or not translated:
+            return translated
+        _TAG_RE = re.compile(
+            r'<(?:Alias|Global|Token|Base|ActorValue|PlayerName|Keyword|QuestName)\b[^>]*/?>',
+            re.IGNORECASE,
+        )
+        orig_len = len(original)
+        for m in _TAG_RE.finditer(original):
+            tag = m.group(0)
+            if tag.lower() in translated.lower():
+                continue  # already present
+            frac = m.start() / orig_len if orig_len > 0 else 0.0
+            if frac <= 0.15:
+                sp = " " if translated and not translated[0].isspace() else ""
+                translated = tag + sp + translated
+            elif frac >= 0.85:
+                sp = " " if translated and not translated[-1].isspace() else ""
+                translated = translated + sp + tag
+            else:
+                insert_pos = max(0, min(int(len(translated) * frac), len(translated)))
+                while insert_pos < len(translated) and translated[insert_pos] not in " \n\t":
+                    insert_pos += 1
+                translated = translated[:insert_pos] + " " + tag + translated[insert_pos:]
+        return translated
 
     def _clean_translation(
         self, text: str, target_lang: str, original_text: str = "", string_id: int = 0
