@@ -848,6 +848,7 @@ class OllamaWorker(QObject):
                 )
                 cached = self.translation_cache.get(cache_key)
                 if cached:
+                    cached = self._restore_missing_newlines(cached, req.original_text)
                     self.translation_ready.emit(req.index, cached, req.string_id)
                     successful += 1
                     completed_count += 1
@@ -1186,6 +1187,7 @@ class OllamaWorker(QObject):
             result = self._restore_dropped_tags(result, req.original_text)
             result = self._restore_size_spacers(result, req.original_text)
             result = self._restore_missing_format_specs(result, req.original_text)
+            result = self._restore_missing_newlines(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1731,6 +1733,7 @@ class OllamaWorker(QObject):
                 translated = self._restore_dropped_tags(translated, req.original_text)
                 translated = self._restore_size_spacers(translated, req.original_text)
                 translated = self._restore_missing_format_specs(translated, req.original_text)
+                translated = self._restore_missing_newlines(translated, req.original_text)
 
             # Restore separator lines that were stripped before sending to model
             if translated and (leading_seps or trailing_seps):
@@ -1869,6 +1872,48 @@ class OllamaWorker(QObject):
             return '\n'.join(result)
 
         return _fix_single(translated, original)
+
+    @staticmethod
+    def _restore_missing_newlines(translated: str, original: str) -> str:
+        """Re-insert newlines the model dropped, using proportional positioning.
+
+        Advances past sentence-ending punctuation and absorbs the inter-sentence
+        space the model inserts when it joins two lines (". Next" → ".\\nNext").
+        """
+        if not original or not translated:
+            return translated
+        _NL_RE = re.compile(r"\\n|\n")
+        orig_markers = [(m.start(), m.group()) for m in _NL_RE.finditer(original)]
+        if not orig_markers:
+            return translated
+        trans_nl_positions = [m.start() for m in _NL_RE.finditer(translated)]
+        if len(trans_nl_positions) >= len(orig_markers):
+            return translated
+        orig_len = len(original)
+        trans_len = len(translated)
+        if orig_len == 0 or trans_len == 0:
+            return translated
+        existing = set(trans_nl_positions)
+        insertions: list = []
+        for orig_pos, token in orig_markers:
+            pos = min(int(orig_pos / orig_len * trans_len), trans_len)
+            while pos < trans_len and translated[pos] not in (" ", "\t", ".", ",", "!", "?", "\n"):
+                pos += 1
+            if pos < trans_len and translated[pos] in ".!?":
+                pos += 1
+                while pos < trans_len and translated[pos] in ('"', "'", '»', ')'):
+                    pos += 1
+            if any(abs(pos - ep) <= 10 for ep in existing):
+                continue
+            skip = 0
+            while pos + skip < trans_len and translated[pos + skip] == " ":
+                skip += 1
+            insertions.append((pos, token, skip))
+        if not insertions:
+            return translated
+        for pos, token, skip in sorted(insertions, key=lambda x: x[0], reverse=True):
+            translated = translated[:pos] + token + translated[pos + skip:]
+        return translated
 
     def _clean_translation(
         self, text: str, target_lang: str, original_text: str = "", string_id: int = 0
