@@ -37,7 +37,8 @@ from typing import Optional
 
 from PySide6.QtCore import Qt, QRect, Slot
 from PySide6.QtGui import (
-    QColor, QFont, QFontDatabase, QFontMetrics, QPainter, QPen, QPixmap,
+    QBrush, QColor, QFont, QFontDatabase, QFontMetrics, QLinearGradient,
+    QPainter, QPen, QPixmap,
 )
 from PySide6.QtWidgets import (
     QButtonGroup, QComboBox, QDockWidget, QHBoxLayout, QLabel,
@@ -117,15 +118,21 @@ def _clean_for_preview(text: str) -> str:
 # Virtual pixel dimensions matching Starfield's 1280×720 native UI canvas.
 
 _PRESETS: dict[str, dict] = {
+    # Dialogue uses game-accurate rendering (see _render_dialogue_scene).
+    # These values are only used by the stats bar (char/line counts); the
+    # visual render ignores them entirely.
     "dialogue": {
         "label": "Dialogue / Subtitle",
-        "box_w": 680, "box_h": 90,
-        "font_size": 17, "font_bold": False, "mono": False,
-        "max_lines": 3,
-        "bg": "#0d0d1a", "fg": "#e8e8f0",
-        "frame_bg": "#16162a", "border": "#3a3a6a",
-        "corner_r": 4, "pad": 12,
-        "hint": "3 lines at 1280×720",
+        # Native SWF sprite: 597×147 px; stage 1920×1080.
+        # Box spans ~91% of stage width, height ~14.8% of stage height.
+        # Font: RF_35_M ($NB_Grotesk_Semibold) fontHeight=520 twips = 26 pt.
+        "box_w": 597, "box_h": 147,
+        "font_size": 26, "font_bold": False, "mono": False,
+        "max_lines": 4,
+        "bg": "#0d111a", "fg": "#ffffff",
+        "frame_bg": "#00000080", "border": "#ffffff33",
+        "corner_r": 0, "pad": 10,
+        "hint": "~4 lines at 1920×1080",
     },
     "quest": {
         "label": "Quest Objective",
@@ -235,7 +242,177 @@ def _wrap_text(text: str, font: QFont, box_w: int) -> list[str]:
     return lines
 
 
-# ── Render helper ─────────────────────────────────────────────────────────────
+# ── Background tile cache ─────────────────────────────────────────────────────
+# 50×50 RGBA noise texture extracted from the game's Scaleform SWF (shape 79 /
+# DefineBitsLossless2 id 78 in dialoguemenu.swf).  White pixels at alpha 0-92
+# are tiled over the subtitle panel fill to add the characteristic grain.
+
+_DATA_DIR = Path(__file__).parent.parent / "data"
+_bg_tile_px: Optional[QPixmap] = None
+
+
+def _ensure_bg_tile() -> Optional[QPixmap]:
+    global _bg_tile_px
+    if _bg_tile_px is not None:
+        return _bg_tile_px
+    path = _DATA_DIR / "dialogue_bg_tile.png"
+    if path.exists():
+        _bg_tile_px = QPixmap(str(path))
+    return _bg_tile_px
+
+
+# ── Dialogue scene renderer ───────────────────────────────────────────────────
+# Faithful recreation of the Starfield dialogue subtitle box.
+#
+# Measurements from dialoguemenu.swf (JPEXS export, verified pixel-by-pixel):
+#   Panel sprite:   597 × 147 px at SWF native scale
+#   Border top:     1 px, white alpha=51  (~20 %)
+#   Border left/rt: 1 px, white alpha=38  (~15 %)
+#   Border bottom:  1 px, white alpha=19  (~ 7 %)
+#   Fill:           black alpha=127       (~50 %)
+#   Noise tile:     50×50, white 0-92 alpha, tiled over fill
+#   Font:           $NB_Grotesk_Semibold → RF_35_M (UK), fontHeight=520 = 26 pt
+#   Stage:          1920 × 1080 (Scaleform full-screen)
+#   Box position:   full-width with ~4.5 % margin; ~8 % from bottom
+
+_STAGE_W = 1920.0
+_STAGE_H = 1080.0
+_BOX_H_RATIO  = 147 / _STAGE_H        # box height fraction
+_MARGIN_RATIO = 0.045                  # horizontal margin fraction
+_BOTTOM_RATIO = 0.074                  # box bottom margin fraction
+_NATIVE_FONT_PT = 26                   # fontHeight=520/20
+
+
+def _render_dialogue_scene(
+    text: str,
+    label: str,
+    canvas_w: int,
+    canvas_h: int,
+) -> tuple[QPixmap, int, int, bool]:
+    """Game-accurate Starfield subtitle panel render.
+
+    Returns (pixmap, line_count, max_lines, overflows).
+    """
+    # ── Layout maths ──────────────────────────────────────────────────────────
+    margin_x   = max(8, int(canvas_w * _MARGIN_RATIO))
+    box_w      = canvas_w - margin_x * 2
+    font_scale = canvas_w / _STAGE_W          # proportional to stage width
+    font_size  = max(8, int(_NATIVE_FONT_PT * font_scale))
+
+    font = _make_font(False, font_size)
+    fm   = QFontMetrics(font)
+    line_h = fm.height() + max(1, int(2 * font_scale))
+
+    # The native panel height tracks the box-width scale
+    box_h = max(int(canvas_h * _BOX_H_RATIO), fm.height() + 16)
+
+    pad_x = max(6, int(10 * font_scale))
+    pad_y = max(4, int(8  * font_scale))
+    text_w = box_w - pad_x * 2
+
+    bottom_margin = max(8, int(canvas_h * _BOTTOM_RATIO))
+    box_y = canvas_h - bottom_margin - box_h
+    box_x = margin_x
+
+    # Speaker name font (smaller than subtitle)
+    name_font_pt = max(7, int(font_size * 0.82))
+    name_font = _make_font(False, name_font_pt)
+
+    # ── Word-wrap ──────────────────────────────────────────────────────────────
+    clean   = _clean_for_preview(text)
+    lines   = _wrap_text(clean, font, text_w)
+    n_lines = len(lines)
+    max_lines = max(1, (box_h - pad_y * 2) // line_h)
+    overflows = n_lines > max_lines
+
+    # ── Render ─────────────────────────────────────────────────────────────────
+    px = QPixmap(canvas_w, canvas_h)
+    px.fill(Qt.transparent)
+    painter = QPainter(px)
+    painter.setRenderHint(QPainter.Antialiasing, False)  # pixel-accurate borders
+
+    # Background: atmospheric dark gradient (deep-space sky)
+    grad = QLinearGradient(0, 0, 0, canvas_h)
+    grad.setColorAt(0.0, QColor("#0e1420"))
+    grad.setColorAt(0.5, QColor("#0a1018"))
+    grad.setColorAt(1.0, QColor("#06080e"))
+    painter.fillRect(0, 0, canvas_w, canvas_h, QBrush(grad))
+
+    # Subtle star-field dots (deterministic for stable rendering)
+    painter.setPen(QColor(255, 255, 255, 60))
+    for i in range(40):
+        sx = (i * 137 + 47) % canvas_w
+        sy = (i * 251 + 83) % (box_y - 10)
+        painter.drawPoint(sx, sy)
+
+    # Label ("Source" / "Translation") at top-left
+    lbl_font = _make_font(True, max(7, name_font_pt - 1))
+    painter.setFont(lbl_font)
+    painter.setPen(QColor("#556688"))
+    painter.drawText(box_x, max(14, int(14 * font_scale)), label)
+
+    # Speaker name above box
+    name_gap = max(4, int(6 * font_scale))
+    name_y   = box_y - name_gap
+    painter.setFont(name_font)
+    painter.setPen(QColor("#b0b8cc"))
+    painter.drawText(box_x, name_y, "NPC Name")
+
+    # Panel fill: black at 50 % opacity (alpha=127)
+    painter.setPen(Qt.NoPen)
+    painter.setBrush(QColor(0, 0, 0, 127))
+    painter.drawRect(box_x, box_y, box_w, box_h)
+
+    # Noise tile overlay (grain from the original SWF texture)
+    tile = _ensure_bg_tile()
+    if tile and not tile.isNull():
+        painter.setOpacity(0.28)
+        painter.drawTiledPixmap(box_x, box_y, box_w, box_h, tile)
+        painter.setOpacity(1.0)
+
+    # Borders (pixel-exact from sprite measurements)
+    # Top: white alpha=51
+    painter.setPen(QPen(QColor(255, 255, 255, 51), 1, Qt.SolidLine))
+    painter.drawLine(box_x, box_y, box_x + box_w - 1, box_y)
+    # Left: white alpha=38
+    painter.setPen(QPen(QColor(255, 255, 255, 38), 1, Qt.SolidLine))
+    painter.drawLine(box_x, box_y, box_x, box_y + box_h - 1)
+    # Right: white alpha=38
+    painter.drawLine(box_x + box_w - 1, box_y, box_x + box_w - 1, box_y + box_h - 1)
+    # Bottom: white alpha=19
+    painter.setPen(QPen(QColor(255, 255, 255, 19), 1, Qt.SolidLine))
+    painter.drawLine(box_x, box_y + box_h - 1, box_x + box_w - 1, box_y + box_h - 1)
+
+    # Subtitle text
+    painter.setFont(font)
+    text_x = box_x + pad_x
+    text_y = box_y + pad_y + fm.ascent()
+    fg_col  = QColor("#ffffff")
+    ov_col  = QColor("#ff4444")
+
+    for i, line in enumerate(lines):
+        if text_y > box_y + box_h - pad_y:
+            break
+        painter.setPen(ov_col if i >= max_lines else fg_col)
+        painter.drawText(text_x, text_y, line)
+        text_y += line_h
+
+    # Overflow badge
+    if overflows:
+        bw, bh = 76, 18
+        bx = box_x + box_w - bw - 4
+        by = box_y + box_h - bh - 4
+        painter.fillRect(bx, by, bw, bh, QColor("#cc2222"))
+        bf = _make_font(True, max(6, font_size - 4))
+        painter.setFont(bf)
+        painter.setPen(QColor("#ffffff"))
+        painter.drawText(bx + 4, by + 13, "OVERFLOW")
+
+    painter.end()
+    return px, n_lines, max_lines, overflows
+
+
+# ── Generic render helper ─────────────────────────────────────────────────────
 
 def _render_preview(
     text: str,
@@ -247,8 +424,12 @@ def _render_preview(
     """
     Render text into a *canvas_w* × *canvas_h* pixmap styled as a Bethesda UI box.
 
+    Dialogue context uses the game-accurate ``_render_dialogue_scene`` renderer.
     Returns (pixmap, line_count, max_lines, overflows).
     """
+    if preset_key == "dialogue":
+        return _render_dialogue_scene(text, label, canvas_w, canvas_h)
+
     p = _PRESETS[preset_key]
     font = _make_font(p["font_bold"], p["font_size"], p["mono"])
     fm = QFontMetrics(font)
