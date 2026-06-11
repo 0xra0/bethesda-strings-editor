@@ -87,6 +87,23 @@ class TranslationMemory:
         self.loaded_count = len(self._by_id)
         return count
 
+    def load_strings_file(self, path: str | Path) -> int:
+        """Load a BethesdaStringFile (.strings/.dlstrings/.ilstrings) as a TM.
+
+        String IDs map directly to translated text.  Skips empty entries.
+        Returns the number of entries loaded.  Merges with existing data.
+        """
+        from bethesda_strings.core import BethesdaStringFile
+        sf = BethesdaStringFile(str(path))
+        count = 0
+        for string_id, text in sf.strings.items():
+            if text and text.strip():
+                self._by_id[string_id] = text
+                count += 1
+        self.loaded_count = len(self._by_id)
+        self.source_path = str(path)
+        return count
+
     def clear(self) -> None:
         self._by_id.clear()
         self._by_src.clear()

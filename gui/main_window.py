@@ -996,6 +996,11 @@ class MainWindow(QMainWindow):
         nexusmods_action.triggered.connect(self._open_nexusmods_upload)
         file_menu.addAction(nexusmods_action)
 
+        nexusmods_browse_action = QAction(self.tr("&Browse NexusMods for Translations…"), self)
+        nexusmods_browse_action.setIcon(QIcon.fromTheme("network-receive"))
+        nexusmods_browse_action.triggered.connect(self._open_nexusmods_browser)
+        file_menu.addAction(nexusmods_browse_action)
+
         weblate_action = QAction(self.tr("&Weblate Community Sync…"), self)
         weblate_action.setIcon(QIcon.fromTheme("network-server"))
         weblate_action.triggered.connect(self._open_weblate_sync)
@@ -5021,6 +5026,42 @@ class MainWindow(QMainWindow):
             initial_file=self.current_path,
         )
         dlg.exec()
+
+    def _open_nexusmods_browser(self) -> None:
+        from gui.nexusmods_browser_dialog import NexusModsBrowserDialog
+        api_key = self.settings.nexusmods_api_key or ""
+        dlg = NexusModsBrowserDialog(
+            api_key=api_key,
+            cache_dir=get_cache_dir(),
+            parent=self,
+        )
+        dlg.tm_ready.connect(self._apply_nexus_tm)
+        dlg.merge_requested.connect(self._apply_nexus_merge)
+        dlg.exec()
+
+    @Slot(object, str)
+    def _apply_nexus_tm(self, tm: TranslationMemory, label: str) -> None:
+        if self.ollama_worker:
+            self.ollama_worker.translation_memory = tm
+        applied = 0
+        if self.current_file is not None:
+            applied = self.table_model.import_translations(tm.as_id_dict())
+        self.statusBar().showMessage(
+            self.tr("NexusMods TM loaded ({label}): {n} entries, {applied} applied").format(
+                label=label, n=len(tm), applied=applied
+            ),
+            8000,
+        )
+
+    @Slot(object)
+    def _apply_nexus_merge(self, tm: TranslationMemory) -> None:
+        applied = 0
+        if self.current_file is not None:
+            applied = self.table_model.import_translations(tm.as_id_dict())
+        self.statusBar().showMessage(
+            self.tr("NexusMods merge: {applied} translation(s) applied.").format(applied=applied),
+            8000,
+        )
 
     def _open_weblate_sync(self):
         from gui.weblate_sync_dialog import WelateSyncDialog

@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` files directly as a Translation Memory or merge them into the current file; accessible via File → Browse NexusMods for Translations; free-account download restriction handled gracefully (opens mod page in browser as fallback); zip archives are automatically extracted for their strings files
+
+---
+
 ## [0.2.2] — 2026-06-11
 
 ### Added
