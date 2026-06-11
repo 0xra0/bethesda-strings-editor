@@ -1524,6 +1524,7 @@ class MainWindow(QMainWindow):
     def _create_toolbar(self):
         """Create toolbar."""
         toolbar = QToolBar(self.tr("Main Toolbar"))
+        toolbar.setObjectName("MainToolBar")
         toolbar.setIconSize(QSize(24, 24))
         self.addToolBar(toolbar)
 
