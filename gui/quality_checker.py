@@ -46,6 +46,10 @@ AUTOFIX_CODES: frozenset = frozenset({
     # Translation is a truncated prefix of the original (AI stopped mid-text)
     # → copy original when source is already in target language
     "TRANSLATION_TRUNCATED",
+    # <size=N%> </size> spacer restructured to content wrapper → undo mechanically
+    "SIZE_TAG_RESTRUCTURED",
+    # Leading "-" stripped from header lines (e.g. "-Costs" → "Вартість")
+    "LINE_PREFIX_DROPPED",
 })
 
 # Codes that require AI retranslation to properly fix.
@@ -66,6 +70,8 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "SPELL_ERROR",
     # Truncated Russian originals need AI retranslation
     "TRANSLATION_TRUNCATED",
+    "SIZE_TAG_RESTRUCTURED",
+    "LINE_PREFIX_DROPPED",
 })
 
 
@@ -134,8 +140,8 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r"\[[A-Z][A-Za-z0-9_/]*\]",        "bracket_tag"),
     # xTranslator / toolkit tokens: [tk_Something]
     (r"\[tk_[A-Za-z0-9_]*\]",           "tk_tag"),
-    # Printf format specifiers
-    (r"%[sdfoxXceEgGpn%]",              "printf_var"),
+    # Printf format specifiers — full pattern including flags, width, precision (%.0f etc.)
+    (r"%[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]", "printf_var"),
     # Brace variables  {variable}
     (r"\{[^}]+\}",                       "brace_var"),
     # Escape sequences used as inline formatting
@@ -221,6 +227,11 @@ _SOURCE_LABEL_RE = re.compile(
     r"^(?:Note[:\s–—]|Примечание[:\s–—]|ПРИМЕЧАНИЕ|Перевод[:\s]|"
     r"Translation[:\s]|Translated[:\s])",
     re.IGNORECASE,
+)
+
+# ── Scaleform size/font spacer: <size=100%> </size> (whitespace-only content) ──
+_SIZE_SPACER_RE = re.compile(
+    r'(<(?:size|font)\b[^>]*>)([ \t]+)(</(?:size|font)>)', re.IGNORECASE
 )
 
 # ── Sentence-ending punctuation ─────────────────────────────────────────────────
@@ -317,6 +328,8 @@ class QualityChecker:
         self._check_english_leak(original, translated, report)
         self._check_repetition(translated, report)
         self._check_ai_artifacts(original, translated, report)
+        self._check_size_spacer_structure(original, translated, report)
+        self._check_line_prefix(original, translated, report)
         self._check_whitespace_frame(original, translated, report)
         self._check_spurious_quotes(original, translated, report)
         self._check_spelling(original, translated, report)
@@ -444,6 +457,18 @@ class QualityChecker:
             ):
                 text = original
                 applied.append("restored original (truncated translation replaced with source)")
+
+        if "SIZE_TAG_RESTRUCTURED" in codes:
+            fixed = self._fix_size_spacers(original, text)
+            if fixed != text:
+                text = fixed
+                applied.append("restored <size>/<font> spacer tag positions")
+
+        if "LINE_PREFIX_DROPPED" in codes:
+            fixed = self._fix_line_prefixes(original, text)
+            if fixed != text:
+                text = fixed
+                applied.append("restored leading '-' on header lines")
 
         return text, applied
 
@@ -1249,21 +1274,30 @@ class QualityChecker:
     def _fix_missing_tags(
         original: str, translated: str, issues: List[QualityIssue]
     ) -> Tuple[str, List[str]]:
-        """Append tags present in the original but absent from the translation."""
+        """Re-insert tags present in the original but absent from the translation.
+
+        Tags that lead the original line are prepended; all others are appended.
+        """
         msgs: List[str] = []
         text = translated
-        orig_lower = original.lower()
+        orig_lower = original.strip().lower()
         for issue in issues:
             tag = issue.detail  # already lowercase from _extract_tags
             if not tag:
                 continue
-            orig_count = orig_lower.count(tag)
+            orig_count = original.lower().count(tag)
             trans_count = text.lower().count(tag)
             missing = orig_count - trans_count
             if missing <= 0:
                 continue
-            text = text.rstrip() + " " + " ".join([tag] * missing)
-            msgs.append(f"appended missing tag {tag!r} ({missing}×)")
+            for _ in range(missing):
+                if orig_lower.startswith(tag.lower()):
+                    # Tag leads the original — prepend to translation
+                    sep = " " if text and not text[0].isspace() else ""
+                    text = tag + sep + text
+                else:
+                    text = text.rstrip() + " " + tag
+            msgs.append(f"{'prepended' if orig_lower.startswith(tag.lower()) else 'appended'} missing tag {tag!r} ({missing}×)")
         return text, msgs
 
     @staticmethod
@@ -1294,6 +1328,46 @@ class QualityChecker:
                     text = text[:pos] + text[end:]
             msgs.append(f"removed {extra} extra occurrence(s) of tag {tag!r}")
         return text, msgs
+
+    @staticmethod
+    def _fix_size_spacers(original: str, translated: str) -> str:
+        """Restore <size=N%> </size> spacers restructured into content wrappers."""
+        for m in _SIZE_SPACER_RE.finditer(original):
+            open_tag = m.group(1)
+            close_tag = m.group(3)
+            spacer = m.group(0)
+            wrapper_re = re.compile(
+                re.escape(open_tag) + r'(.+?)' + re.escape(close_tag),
+                re.IGNORECASE | re.DOTALL,
+            )
+            w = wrapper_re.search(translated)
+            if w and w.group(1).strip():
+                translated = (
+                    translated[: w.start()] + spacer + w.group(1) + translated[w.end() :]
+                )
+        return translated
+
+    @staticmethod
+    def _fix_line_prefixes(original: str, translated: str) -> str:
+        """Restore leading '-' stripped from header lines (e.g. '-Costs' → '-Вартість')."""
+        orig_lines = original.split('\n')
+        trans_lines = translated.split('\n')
+        changed = False
+        for i, orig_line in enumerate(orig_lines):
+            if i >= len(trans_lines):
+                break
+            orig_s = orig_line.strip()
+            trans_s = trans_lines[i].strip()
+            if (
+                orig_s[:1] == '-'
+                and len(orig_s) > 1
+                and orig_s[1:2].isalpha()
+                and trans_s
+                and not trans_s.startswith('-')
+            ):
+                trans_lines[i] = '-' + trans_lines[i].lstrip()
+                changed = True
+        return '\n'.join(trans_lines) if changed else translated
 
     def _check_untranslated(
         self, original: str, translated: str, report: QualityReport
@@ -1390,6 +1464,61 @@ class QualityChecker:
                     detail=translated.strip()[:80],
                 )
             )
+
+    def _check_size_spacer_structure(
+        self, original: str, translated: str, report: QualityReport
+    ) -> None:
+        """Warn when a <size=N%> </size> spacer tag is restructured into a content wrapper.
+
+        Original: <size=100%> </size>TEXT  →  Model: <size=100%>TEXT</size>
+        The spacer creates a visual gap; wrapping content changes the layout.
+        """
+        for m in _SIZE_SPACER_RE.finditer(original):
+            spacer = m.group(0)
+            if spacer.lower() in translated.lower():
+                continue  # spacer preserved correctly
+            open_tag = m.group(1)
+            close_tag = m.group(3)
+            wrapper_re = re.compile(
+                re.escape(open_tag) + r'.+?' + re.escape(close_tag),
+                re.IGNORECASE | re.DOTALL,
+            )
+            if wrapper_re.search(translated):
+                report.issues.append(
+                    QualityIssue(
+                        severity=SEVERITY_WARNING,
+                        code="SIZE_TAG_RESTRUCTURED",
+                        message="Scaleform spacer tag restructured into content wrapper",
+                        detail=open_tag,
+                    )
+                )
+
+    def _check_line_prefix(
+        self, original: str, translated: str, report: QualityReport
+    ) -> None:
+        """Error when a leading dash is stripped from header lines such as '-Costs'."""
+        orig_lines = original.split('\n')
+        trans_lines = translated.split('\n')
+        for i, orig_line in enumerate(orig_lines):
+            if i >= len(trans_lines):
+                break
+            orig_s = orig_line.strip()
+            trans_s = trans_lines[i].strip()
+            if (
+                orig_s[:1] == '-'
+                and len(orig_s) > 1
+                and orig_s[1:2].isalpha()
+                and trans_s
+                and not trans_s.startswith('-')
+            ):
+                report.issues.append(
+                    QualityIssue(
+                        severity=SEVERITY_ERROR,
+                        code="LINE_PREFIX_DROPPED",
+                        message="Leading '-' stripped from header line",
+                        detail=orig_s[:50],
+                    )
+                )
 
     def _check_sentence_structure(
         self, original: str, translated: str, report: QualityReport
@@ -1527,6 +1656,19 @@ class QualityChecker:
                 hints.append(
                     f"Your previous translation contained spelling error(s){detail}. "
                     "Check your spelling carefully and use correct target-language orthography."
+                )
+            elif code == "SIZE_TAG_RESTRUCTURED":
+                detail = f" ({issue.detail})" if issue.detail else ""
+                hints.append(
+                    f"Your previous translation restructured a Scaleform spacer tag{detail} into "
+                    "a content wrapper. The pattern <size=N%> </size>TEXT must be preserved "
+                    "exactly as-is with the whitespace INSIDE the tag pair, not wrapped around the text."
+                )
+            elif code == "LINE_PREFIX_DROPPED":
+                hints.append(
+                    "Your previous translation dropped the leading '-' from one or more header lines "
+                    "(e.g. '-Costs' must translate as '-Вартість', not 'Вартість'). "
+                    "Preserve the '-' at the start of such lines."
                 )
 
         if not hints:
