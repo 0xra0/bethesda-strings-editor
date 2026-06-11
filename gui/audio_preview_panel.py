@@ -23,6 +23,8 @@ from __future__ import annotations
 
 import logging
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -31,13 +33,106 @@ from PySide6.QtCore import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPainter, QPen
-from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import (
     QDockWidget, QFileDialog, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QToolButton, QVBoxLayout, QWidget,
 )
 
 logger = logging.getLogger(__name__)
+
+# ── Subprocess audio player (bypasses Qt Multimedia / PipeWire) ───────────────
+
+class _SubprocessPlayer(QObject):
+    """Audio player that delegates to paplay/ffplay/aplay via subprocess.
+
+    Avoids Qt Multimedia's FFmpeg backend which tries PipeWire before PulseAudio
+    and crashes when PipeWire is installed but not running.
+
+    Preference order: paplay (PulseAudio native) → ffplay → aplay (ALSA).
+    Pause is not supported by these tools; pause() stops playback instead.
+    """
+
+    class PlaybackState:
+        StoppedState = 0
+        PlayingState = 1
+        PausedState  = 2
+
+    playbackStateChanged: Signal = Signal(int)
+
+    def __init__(self, parent: Optional[QObject] = None) -> None:
+        super().__init__(parent)
+        self._path: str = ""
+        self._proc: Optional[subprocess.Popen] = None  # type: ignore[type-arg]
+        self._state: int = self.PlaybackState.StoppedState
+        self._poll_timer = QTimer(self)
+        self._poll_timer.setInterval(150)
+        self._poll_timer.timeout.connect(self._poll)
+
+    def setSource(self, url: str) -> None:
+        if url.startswith("file://"):
+            self._path = url[7:]
+        else:
+            self._path = url
+
+    def play(self) -> None:
+        self._kill()
+        if not self._path:
+            return
+        cmd = self._build_cmd(self._path)
+        if cmd is None:
+            logger.warning("No audio player found (tried paplay, ffplay, aplay)")
+            return
+        try:
+            self._proc = subprocess.Popen(
+                cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            self._set_state(self.PlaybackState.PlayingState)
+            self._poll_timer.start()
+        except (FileNotFoundError, OSError) as exc:
+            logger.warning("Audio playback failed (%s): %s", cmd[0], exc)
+
+    def pause(self) -> None:
+        self.stop()
+
+    def stop(self) -> None:
+        self._kill()
+        self._poll_timer.stop()
+        self._set_state(self.PlaybackState.StoppedState)
+
+    def playbackState(self) -> int:
+        return self._state
+
+    def _kill(self) -> None:
+        if self._proc is not None:
+            try:
+                self._proc.terminate()
+                self._proc.wait(timeout=1)
+            except Exception:
+                pass
+            self._proc = None
+
+    @Slot()
+    def _poll(self) -> None:
+        if self._proc is not None and self._proc.poll() is not None:
+            self._proc = None
+            self._poll_timer.stop()
+            self._set_state(self.PlaybackState.StoppedState)
+
+    def _set_state(self, state: int) -> None:
+        if self._state != state:
+            self._state = state
+            self.playbackStateChanged.emit(state)
+
+    @staticmethod
+    def _build_cmd(path: str) -> Optional[list]:  # type: ignore[type-arg]
+        if shutil.which("paplay"):
+            return ["paplay", path]
+        if shutil.which("ffplay"):
+            return ["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", path]
+        if shutil.which("aplay"):
+            return ["aplay", "-q", path]
+        return None
+
 
 # ── Timing bar widget ─────────────────────────────────────────────────────────
 
@@ -179,15 +274,11 @@ class AudioPreviewPanel(QDockWidget):
         self._current_translated: str = ""
         self._current_string_id: int = -1
 
-        # Media players
-        self._orig_player = QMediaPlayer(self)
-        self._orig_audio_out = QAudioOutput(self)
-        self._orig_player.setAudioOutput(self._orig_audio_out)
+        # Media players (subprocess-based to avoid Qt Multimedia / PipeWire dependency)
+        self._orig_player = _SubprocessPlayer(self)
         self._orig_player.playbackStateChanged.connect(self._on_orig_state_changed)
 
-        self._tts_player = QMediaPlayer(self)
-        self._tts_audio_out = QAudioOutput(self)
-        self._tts_player.setAudioOutput(self._tts_audio_out)
+        self._tts_player = _SubprocessPlayer(self)
         self._tts_player.playbackStateChanged.connect(self._on_tts_state_changed)
 
         # TTS synthesis result
@@ -370,7 +461,7 @@ class AudioPreviewPanel(QDockWidget):
         self._orig_play_btn.setEnabled(p.is_file())
 
     def _toggle_orig(self) -> None:
-        if self._orig_player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if self._orig_player.playbackState() == _SubprocessPlayer.PlaybackState.PlayingState:
             self._orig_player.pause()
         else:
             path = self._orig_path_edit.text().strip()
@@ -380,7 +471,7 @@ class AudioPreviewPanel(QDockWidget):
 
     @Slot(object)
     def _on_orig_state_changed(self, state) -> None:
-        playing = (state == QMediaPlayer.PlaybackState.PlayingState)
+        playing = (state == _SubprocessPlayer.PlaybackState.PlayingState)
         self._orig_play_btn.setText(self.tr("⏸ Pause") if playing else self.tr("▶ Play"))
 
     # ── TTS synthesis ─────────────────────────────────────────────────────────
@@ -419,14 +510,14 @@ class AudioPreviewPanel(QDockWidget):
         self._tts_player.setSource(f"file://{result.audio_path}")
 
     def _toggle_tts(self) -> None:
-        if self._tts_player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if self._tts_player.playbackState() == _SubprocessPlayer.PlaybackState.PlayingState:
             self._tts_player.pause()
         else:
             self._tts_player.play()
 
     @Slot(object)
     def _on_tts_state_changed(self, state) -> None:
-        playing = (state == QMediaPlayer.PlaybackState.PlayingState)
+        playing = (state == _SubprocessPlayer.PlaybackState.PlayingState)
         self._tts_play_btn.setText(self.tr("⏸ Pause") if playing else self.tr("▶ Play"))
 
     # ── Timing bar ────────────────────────────────────────────────────────────
