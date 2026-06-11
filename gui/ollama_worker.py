@@ -1345,7 +1345,7 @@ class OllamaWorker(QObject):
         if "\n" in protected_text and "\n\n" not in protected_text:
             _ll_segs = protected_text.split("\n")
             _ll_nonempty = [s for s in _ll_segs if s.strip()]
-            if len(_ll_nonempty) >= 3 and max((len(s) for s in _ll_nonempty), default=0) < 200:
+            if len(_ll_nonempty) >= 2 and max((len(s) for s in _ll_nonempty), default=0) < 200:
                 from dataclasses import replace as _dc_ll
                 _ll_results: list = []
                 for _seg in _ll_segs:
@@ -1834,31 +1834,41 @@ class OllamaWorker(QObject):
         if not original or not translated:
             return translated
         _FS_RE = re.compile(r'%[-+0 #]*\d*(?:\.\d+)?[diouxXeEfFgGcsp]')
-        orig_matches = list(_FS_RE.finditer(original))
-        trans_specs = [m.group(0) for m in _FS_RE.finditer(translated)]
-        if len(trans_specs) >= len(orig_matches):
-            return translated
-        trans_idx = 0
-        to_restore: list = []
-        orig_len = len(original)
-        for m in orig_matches:
-            spec = m.group(0)
-            if trans_idx < len(trans_specs) and trans_specs[trans_idx] == spec:
-                trans_idx += 1
-            else:
-                to_restore.append((m.start() / orig_len if orig_len else 0.5, spec))
-        if not to_restore:
-            return translated
-        for frac, spec in sorted(to_restore, key=lambda x: x[0], reverse=True):
-            target = max(0, min(int(len(translated) * frac), len(translated)))
-            pos = target
-            while pos < len(translated) and translated[pos] not in ' \n\t':
-                pos += 1
-            if pos >= len(translated):
-                translated = translated + ' ' + spec
-            else:
-                translated = translated[:pos] + ' ' + spec + translated[pos:]
-        return translated
+
+        def _fix_single(trans: str, orig: str) -> str:
+            om = list(_FS_RE.finditer(orig))
+            ts = [m.group(0) for m in _FS_RE.finditer(trans)]
+            if len(ts) >= len(om):
+                return trans
+            ti = 0
+            restore: list = []
+            orig_len = len(orig)
+            for m in om:
+                sp = m.group(0)
+                if ti < len(ts) and ts[ti] == sp:
+                    ti += 1
+                else:
+                    restore.append((m.start() / orig_len if orig_len else 0.5, sp))
+            if not restore:
+                return trans
+            for frac, spec in sorted(restore, key=lambda x: x[0], reverse=True):
+                target = max(0, min(int(len(trans) * frac), len(trans)))
+                pos = target
+                while pos < len(trans) and trans[pos] not in ' \n\t':
+                    pos += 1
+                trans = (trans + ' ' + spec) if pos >= len(trans) else (trans[:pos] + ' ' + spec + trans[pos:])
+            return trans
+
+        # Process each line pair independently to prevent specs from crossing line boundaries
+        if '\n' in original and '\n' in translated:
+            orig_lines = original.split('\n')
+            trans_lines = translated.split('\n')
+            result = [_fix_single(trans_lines[i] if i < len(trans_lines) else '', ol)
+                      for i, ol in enumerate(orig_lines)]
+            result.extend(trans_lines[len(orig_lines):])
+            return '\n'.join(result)
+
+        return _fix_single(translated, original)
 
     def _clean_translation(
         self, text: str, target_lang: str, original_text: str = "", string_id: int = 0
