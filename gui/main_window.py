@@ -962,7 +962,7 @@ class MainWindow(QMainWindow):
         self._editor_pane.translation_approved.connect(self._on_editor_pane_approved)
 
         # ── Detached table window reference (None until user opens it) ────────
-        self._detached_table: Optional["DetachedTableWindow"] = None
+        self._detached_table: Optional["DetachedTableWindow"] = None  # pyright: ignore[reportUndefinedVariable]
 
         # ── Dock / window state persistence ───────────────────────────────────
         self._restore_window_state()
@@ -1756,10 +1756,8 @@ class MainWindow(QMainWindow):
             string_ids = [rows[i]["id"] for i in row_indices if i < len(rows)]
             self._profile_assignments.set_many(string_ids, dlg.accepted_profile_id)
             self._reload_profile_tints()
-            profile_name = (
-                self._profile_manager.get(dlg.accepted_profile_id).name
-                if dlg.accepted_profile_id else self.tr("(none)")
-            )
+            _p = self._profile_manager.get(dlg.accepted_profile_id) if dlg.accepted_profile_id else None
+            profile_name = _p.name if _p is not None else self.tr("(none)")
             self.statusBar().showMessage(
                 self.tr("Profile '{name}' assigned to {n} string(s)").format(
                     name=profile_name, n=len(string_ids)

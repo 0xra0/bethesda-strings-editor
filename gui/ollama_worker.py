@@ -1190,7 +1190,7 @@ class OllamaWorker(QObject):
 
         return result or None
 
-    def _translate_single(self, req: TranslationRequest) -> Optional[str]:
+    def _translate_single(self, req: TranslationRequest) -> Optional[str]:  # pyright: ignore[reportGeneralTypeIssues]
         """Translate a single string with term protection and optional cache lookup."""
         # Respect stop flag before doing any work
         with QMutexLocker(self._mutex):

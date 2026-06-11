@@ -23,7 +23,6 @@ import hashlib
 import logging
 import re
 import shutil
-import struct
 import subprocess
 import wave
 from pathlib import Path
@@ -149,7 +148,7 @@ def synthesize_espeak(
 # ── Piper engine ──────────────────────────────────────────────────────────────
 
 def piper_available(binary: str = "piper") -> bool:
-    return shutil.which(binary) is not None or (binary and Path(binary).is_file())
+    return shutil.which(binary) is not None or (len(binary) > 0 and Path(binary).is_file())
 
 
 def synthesize_piper(
