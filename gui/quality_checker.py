@@ -1231,23 +1231,34 @@ class QualityChecker:
         # Positions already covered by newlines in the translation (±10 char window).
         existing_positions = {m.start() for m in nl_pat.finditer(translated)}
 
-        insertions: List[Tuple[int, str]] = []
+        insertions: List[Tuple[int, str, int]] = []
         for orig_pos, token in markers:
             pos = min(int(orig_pos / orig_len * trans_len), trans_len)
             # Snap forward to the end of the current word
             while pos < trans_len and translated[pos] not in (" ", "\t", ".", ",", "!", "?", "\n"):
                 pos += 1
+            # Advance past sentence-ending punctuation so the newline lands after it,
+            # not before — e.g. "Tag>.\n Next" not "Tag>\n. Next"
+            if pos < trans_len and translated[pos] in ".!?":
+                pos += 1
+                while pos < trans_len and translated[pos] in ('"', "'", '»', ')'):
+                    pos += 1
             # Skip positions already near an existing newline (count-mismatch case)
             if any(abs(pos - ep) <= 10 for ep in existing_positions):
                 continue
-            insertions.append((pos, token))
+            # Count how many inter-sentence spaces to absorb (model writes ". Next"
+            # when it joins two lines; we want ".\nNext", not ".\n Next")
+            skip = 0
+            while pos + skip < trans_len and translated[pos + skip] == " ":
+                skip += 1
+            insertions.append((pos, token, skip))
 
         if not insertions:
             return translated, ""
 
         result = translated
-        for pos, token in sorted(insertions, key=lambda x: x[0], reverse=True):
-            result = result[:pos] + token + result[pos:]
+        for pos, token, skip in sorted(insertions, key=lambda x: x[0], reverse=True):
+            result = result[:pos] + token + result[pos + skip:]
 
         added = len(insertions)
         needed = orig_nl_count - trans_nl_count
