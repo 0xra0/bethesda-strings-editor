@@ -2959,7 +2959,11 @@ class MainWindow(QMainWindow):
         self._eta_start_time = 0.0
         self._eta_lbl.setVisible(False)
         self._refresh_stats()
-        self.progress_bar.setVisible(False)
+        if failed == 0 and successful > 0:
+            from gui.micro_animations import flash_progress_bar_success
+            flash_progress_bar_success(self.progress_bar)
+        else:
+            self.progress_bar.setVisible(False)
         self._set_ui_enabled(True)
 
         if self.settings.enable_cache and successful > 0:
@@ -3678,6 +3682,12 @@ class MainWindow(QMainWindow):
             quality_map = {r.row_index: r.severity for r in reports if r.severity}
 
         self.table_model.set_quality_data(quality_map)
+
+        if not reports:
+            from gui.micro_animations import show_success_badge
+            show_success_badge(self, self.tr("Quality check passed — no issues found"))
+            return
+
         dialog = QualityDialog(
             reports,
             table_model=self.table_model,
