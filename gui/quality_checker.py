@@ -23,6 +23,14 @@ SEVERITY_ERROR = "error"      # Will break in game
 SEVERITY_WARNING = "warning"  # May look wrong in game
 SEVERITY_INFO = "info"        # Informational only
 
+# Bethesda UI bounding-box constraint: translations more than this multiple of the
+# English original are likely to overflow hardcoded text regions (dialogue panels,
+# pip-boy entries, loading-screen tips, etc.).  Strings shorter than
+# _UI_OVERFLOW_MIN_ORIG chars are excluded — single words and short labels have
+# noisy ratios and are unlikely to be clipped for a few extra characters.
+UI_OVERFLOW_RATIO: float = 1.40
+_UI_OVERFLOW_MIN_ORIG: int = 20
+
 # ── Issue classification ───────────────────────────────────────────────────────
 
 # Codes fixable by mechanical text manipulation (no AI needed).
@@ -72,6 +80,8 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "TRANSLATION_TRUNCATED",
     "SIZE_TAG_RESTRUCTURED",
     "LINE_PREFIX_DROPPED",
+    # Translation too long for Bethesda hardcoded UI bounding boxes
+    "UI_OVERFLOW",
 })
 
 
@@ -582,6 +592,27 @@ class QualityChecker:
                     message=(
                         f"Translation is much shorter than original "
                         f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                    ),
+                )
+            )
+        elif orig_len >= _UI_OVERFLOW_MIN_ORIG and ratio >= UI_OVERFLOW_RATIO:
+            # Translation overflows the hardcoded Bethesda UI bounding box.
+            # Compute the character budget (40% headroom) so the retry hint can
+            # give the model a concrete target.
+            budget = int(orig_len * UI_OVERFLOW_RATIO)
+            excess = trans_len - budget
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_WARNING,
+                    code="UI_OVERFLOW",
+                    message=(
+                        f"Translation is {ratio:.0%} of original length "
+                        f"({trans_len} vs {orig_len} chars) — likely overflows "
+                        f"Bethesda hardcoded UI bounding box"
+                    ),
+                    detail=(
+                        f"budget: ≤{budget} chars ({orig_len}×1.4); "
+                        f"current: {trans_len} chars; shorten by {excess}+ chars"
                     ),
                 )
             )
@@ -1614,6 +1645,14 @@ class QualityChecker:
                 hints.append(
                     "Your previous translation was excessively long. "
                     "Be concise and match the scope of the original."
+                )
+            elif code == "UI_OVERFLOW":
+                detail = f" ({issue.detail})" if issue.detail else ""
+                hints.append(
+                    f"Your previous translation overflows the Bethesda hardcoded UI "
+                    f"bounding box{detail}. Shorten it to fit within the character budget "
+                    f"by choosing more concise phrasing. Keep all meaning — do NOT cut "
+                    f"content, just say it more briefly."
                 )
             elif code == "EMPTY_TRANSLATION":
                 hints.append(
