@@ -678,6 +678,101 @@ class SettingsDialog(QDialog):
         weblate_group.setLayout(weblate_layout)
         layout.addWidget(weblate_group)
 
+        # Audio / TTS Preview
+        audio_group = QGroupBox(self.tr("Audio / TTS Preview"))
+        audio_layout = QFormLayout()
+
+        self.chk_enable_audio_preview = QCheckBox(self.tr("Enable Audio Preview panel"))
+        self.chk_enable_audio_preview.setChecked(
+            getattr(self._settings, "enable_audio_preview", False)
+        )
+        self.chk_enable_audio_preview.setToolTip(self.tr(
+            "Show the Audio Preview dock so you can play the original game audio\n"
+            "and synthesize a TTS read-out of your translation for timing comparison."
+        ))
+        audio_layout.addRow(self.chk_enable_audio_preview)
+
+        self.combo_tts_engine = QComboBox()
+        for label, val in [
+            (self.tr("eSpeak-NG (built-in)"), "espeak"),
+            (self.tr("Piper (neural, external binary)"), "piper"),
+            (self.tr("None (duration estimate only)"), "none"),
+        ]:
+            self.combo_tts_engine.addItem(label, val)
+        cur_engine = getattr(self._settings, "tts_engine_type", "espeak")
+        idx = self.combo_tts_engine.findData(cur_engine)
+        if idx >= 0:
+            self.combo_tts_engine.setCurrentIndex(idx)
+        audio_layout.addRow(self.tr("TTS engine:"), self.combo_tts_engine)
+
+        self.espeak_voice_edit = QLineEdit(getattr(self._settings, "espeak_voice", "uk"))
+        self.espeak_voice_edit.setPlaceholderText("uk")
+        self.espeak_voice_edit.setToolTip(self.tr(
+            "eSpeak-NG voice code, e.g. uk, ru, de, fr, en-us.\n"
+            "Run `espeak-ng --voices` for the full list."
+        ))
+        audio_layout.addRow(self.tr("eSpeak voice:"), self.espeak_voice_edit)
+
+        self.espeak_speed_spin = QSpinBox()
+        self.espeak_speed_spin.setRange(60, 350)
+        self.espeak_speed_spin.setValue(getattr(self._settings, "espeak_speed", 130))
+        self.espeak_speed_spin.setToolTip(self.tr(
+            "eSpeak-NG words-per-minute rate (default 130 — slower than natural\n"
+            "speech to better match game dialogue cadence)."
+        ))
+        audio_layout.addRow(self.tr("eSpeak speed (WPM):"), self.espeak_speed_spin)
+
+        piper_row = QHBoxLayout()
+        self.piper_binary_edit = QLineEdit(getattr(self._settings, "piper_binary", ""))
+        self.piper_binary_edit.setPlaceholderText("piper")
+        self.piper_binary_edit.setToolTip(self.tr("Path to the Piper binary, or just 'piper' if on PATH."))
+        piper_row.addWidget(self.piper_binary_edit, stretch=1)
+        btn_browse_piper = QPushButton(self.tr("…"))
+        btn_browse_piper.setMaximumWidth(28)
+        btn_browse_piper.clicked.connect(self._browse_piper_binary)
+        piper_row.addWidget(btn_browse_piper)
+        audio_layout.addRow(self.tr("Piper binary:"), piper_row)
+
+        piper_model_row = QHBoxLayout()
+        self.piper_model_edit = QLineEdit(getattr(self._settings, "piper_model", ""))
+        self.piper_model_edit.setPlaceholderText(self.tr("path/to/model.onnx"))
+        self.piper_model_edit.setToolTip(self.tr("Path to the Piper .onnx voice model file."))
+        piper_model_row.addWidget(self.piper_model_edit, stretch=1)
+        btn_browse_model = QPushButton(self.tr("…"))
+        btn_browse_model.setMaximumWidth(28)
+        btn_browse_model.clicked.connect(self._browse_piper_model)
+        piper_model_row.addWidget(btn_browse_model)
+        audio_layout.addRow(self.tr("Piper model:"), piper_model_row)
+
+        audio_dir_row = QHBoxLayout()
+        self.audio_dir_edit = QLineEdit(getattr(self._settings, "audio_dir", ""))
+        self.audio_dir_edit.setPlaceholderText(self.tr("Root dir of extracted game audio files"))
+        self.audio_dir_edit.setToolTip(self.tr(
+            "Directory containing extracted Starfield/Fallout/Skyrim audio files.\n"
+            "The panel will try to auto-locate files by form ID from the filename."
+        ))
+        audio_dir_row.addWidget(self.audio_dir_edit, stretch=1)
+        btn_browse_audio = QPushButton(self.tr("…"))
+        btn_browse_audio.setMaximumWidth(28)
+        btn_browse_audio.clicked.connect(self._browse_audio_dir)
+        audio_dir_row.addWidget(btn_browse_audio)
+        audio_layout.addRow(self.tr("Audio directory:"), audio_dir_row)
+
+        self.chk_tts_auto_preview = QCheckBox(
+            self.tr("Auto-synthesize TTS on string selection")
+        )
+        self.chk_tts_auto_preview.setChecked(
+            getattr(self._settings, "tts_auto_preview", False)
+        )
+        self.chk_tts_auto_preview.setToolTip(self.tr(
+            "Automatically synthesize the TTS read-out whenever you select\n"
+            "a new string. May slow down navigation if synthesis takes > 1 s."
+        ))
+        audio_layout.addRow(self.chk_tts_auto_preview)
+
+        audio_group.setLayout(audio_layout)
+        layout.addWidget(audio_group)
+
         # Keyboard Shortcuts
         if self._keyboard_manager is not None:
             layout.addWidget(self._build_shortcuts_section())
@@ -842,6 +937,33 @@ class SettingsDialog(QDialog):
         dialog = ProtectedTermsDialog(self._settings, self, term_protector=self._term_protector)
         dialog.exec()
 
+    @Slot()
+    def _browse_piper_binary(self) -> None:
+        path, _ = get_open_filename(
+            self, self.tr("Select Piper Binary"), "", self.tr("Executable (*);;All Files (*)")
+        )
+        if path:
+            self.piper_binary_edit.setText(path)
+
+    @Slot()
+    def _browse_piper_model(self) -> None:
+        path, _ = get_open_filename(
+            self, self.tr("Select Piper Voice Model"), "",
+            self.tr("ONNX model (*.onnx);;All Files (*)")
+        )
+        if path:
+            self.piper_model_edit.setText(path)
+
+    @Slot()
+    def _browse_audio_dir(self) -> None:
+        from PySide6.QtWidgets import QFileDialog
+        d = QFileDialog.getExistingDirectory(
+            self, self.tr("Select audio files directory"),
+            self.audio_dir_edit.text() or str(Path.home()),
+        )
+        if d:
+            self.audio_dir_edit.setText(d)
+
     @Slot(str)
     @Slot(int)
     def _on_lang_changed(self, _index: int) -> None:
@@ -998,6 +1120,14 @@ class SettingsDialog(QDialog):
         settings.weblate_api_token = self.weblate_token_edit.text().strip()
         settings.weblate_project   = self.weblate_project_edit.text().strip()
         settings.weblate_component = self.weblate_component_edit.text().strip()
+        settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
+        settings.tts_engine_type = self.combo_tts_engine.currentData()
+        settings.espeak_voice = self.espeak_voice_edit.text().strip() or "uk"
+        settings.espeak_speed = self.espeak_speed_spin.value()
+        settings.piper_binary = self.piper_binary_edit.text().strip()
+        settings.piper_model = self.piper_model_edit.text().strip()
+        settings.audio_dir = self.audio_dir_edit.text().strip()
+        settings.tts_auto_preview = self.chk_tts_auto_preview.isChecked()
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
         # Config/cache dir overrides are stored in bootstrap files, not in AppSettings

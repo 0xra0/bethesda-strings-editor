@@ -940,6 +940,13 @@ class MainWindow(QMainWindow):
         self._claude_panel.hide()
         self._claude_panel.apply_translation.connect(self._apply_claude_translation)
 
+        # ── Audio / TTS Preview dock ──────────────────────────────────────────
+        from gui.audio_preview_panel import AudioPreviewPanel
+        self._audio_panel = AudioPreviewPanel(self)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self._audio_panel)
+        self._audio_panel.setVisible(self.settings.enable_audio_preview)
+        self._apply_audio_settings()
+
     def _create_menus(self):
         """Create menu bar."""
         menubar = self.menuBar()
@@ -1369,6 +1376,19 @@ class MainWindow(QMainWindow):
         self.claude_suggest_action.triggered.connect(self._claude_suggest_current)
         self.claude_suggest_action.setEnabled(False)
         claude_menu.addAction(self.claude_suggest_action)
+
+        # View menu — panel toggles
+        view_menu = menubar.addMenu(self.tr("&View"))
+        self.audio_panel_action = QAction(self.tr("&Audio Preview"), self)
+        self.audio_panel_action.setIcon(QIcon.fromTheme("media-playback-start"))
+        self.audio_panel_action.setShortcut("Ctrl+Shift+A")
+        self.audio_panel_action.setCheckable(True)
+        self.audio_panel_action.setChecked(self.settings.enable_audio_preview)
+        self.audio_panel_action.setToolTip(
+            self.tr("Show/hide the Audio Preview panel (Ctrl+Shift+A)")
+        )
+        self.audio_panel_action.triggered.connect(self._toggle_audio_panel)
+        view_menu.addAction(self.audio_panel_action)
 
         # Settings menu
         settings_menu = menubar.addMenu(self.tr("&Settings"))
@@ -2917,6 +2937,49 @@ class MainWindow(QMainWindow):
         # Update Claude panel context (only when visible — free if hidden)
         if hasattr(self, "_claude_panel") and self._claude_panel.isVisible():
             self._push_string_to_claude_panel()
+        # Update audio preview panel (only when visible — skip if hidden)
+        if hasattr(self, "_audio_panel") and self._audio_panel.isVisible():
+            self._push_string_to_audio_panel()
+
+    def _push_string_to_audio_panel(self) -> None:
+        """Forward the currently selected row data to the Audio Preview panel."""
+        row = self._get_current_row()
+        self._audio_panel.update_string(row)
+
+    def _get_current_row(self):
+        """Return the data dict for the currently selected row, or None."""
+        indexes = self.table_view.selectionModel().selectedRows()
+        if not indexes:
+            return None
+        proxy_row = indexes[0].row()
+        source_row = self.table_view.model().mapToSource(
+            self.table_view.model().index(proxy_row, 0)
+        ).row()
+        if 0 <= source_row < len(self.table_model._data):
+            return self.table_model._data[source_row]
+        return None
+
+    def _toggle_audio_panel(self) -> None:
+        visible = self._audio_panel.isVisible()
+        self._audio_panel.setVisible(not visible)
+        self.audio_panel_action.setChecked(not visible)
+        if not visible:
+            self._push_string_to_audio_panel()
+
+    def _apply_audio_settings(self) -> None:
+        """Push current audio settings to the preview panel."""
+        cache_dir = get_config_dir() / "tts_cache"
+        self._audio_panel.apply_settings(
+            engine_type=getattr(self.settings, "tts_engine_type", "espeak"),
+            voice=getattr(self.settings, "espeak_voice", "uk"),
+            piper_binary=getattr(self.settings, "piper_binary", ""),
+            piper_model=getattr(self.settings, "piper_model", ""),
+            espeak_binary=getattr(self.settings, "espeak_binary", "espeak-ng"),
+            espeak_speed=getattr(self.settings, "espeak_speed", 130),
+            audio_dir=getattr(self.settings, "audio_dir", ""),
+            auto_preview=getattr(self.settings, "tts_auto_preview", False),
+            cache_dir=cache_dir,
+        )
 
     # ── Pre-translation estimation ─────────────────────────────────────────────
 
@@ -4055,6 +4118,11 @@ class MainWindow(QMainWindow):
                 self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             # Propagate color-blind mode to the table model immediately
             self.table_model.set_color_blind_mode(self.settings.color_blind_mode)
+
+            # Apply audio preview settings to panel
+            self._apply_audio_settings()
+            self._audio_panel.setVisible(self.settings.enable_audio_preview)
+            self.audio_panel_action.setChecked(self.settings.enable_audio_preview)
 
             self.statusBar().showMessage("Settings updated")
 

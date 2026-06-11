@@ -15,7 +15,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 26  # Increment when schema changes
+CONFIG_VERSION = 27  # Increment when schema changes
 
 
 @dataclass
@@ -110,6 +110,17 @@ class AppSettings:
     weblate_api_token: str = ""   # User API key from Weblate profile
     weblate_project:   str = ""   # project slug
     weblate_component: str = ""   # component slug
+
+    # ── Audio / TTS Preview ───────────────────────────────────────────────────
+    enable_audio_preview: bool = False
+    tts_engine_type: str = "espeak"   # "espeak" | "piper" | "none"
+    espeak_voice: str = "uk"          # espeak-ng voice code
+    espeak_binary: str = "espeak-ng"
+    espeak_speed: int = 130
+    piper_binary: str = ""
+    piper_model: str = ""
+    audio_dir: str = ""               # root directory of extracted game audio files
+    tts_auto_preview: bool = False    # auto-synthesize on selection change
 
     # ── Validation rules ─────────────────────────────────────────
     _URL_MIN_LENGTH = 5
