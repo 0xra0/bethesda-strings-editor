@@ -383,6 +383,7 @@ class MainWindow(QMainWindow):
         self.current_file = None
         self.current_path = None
         self._last_profile_loaded_path = None  # path for which profile tints are currently applied
+        self._focus_overlay = None            # FocusModeOverlay when active
         self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
         self._current_ba2_entry: Optional[str] = None  # internal path of the loaded strings file
         self._dialogue_tree_dlg: Optional[DialogueTreeDialog] = None
@@ -1379,6 +1380,19 @@ class MainWindow(QMainWindow):
 
         # View menu — panel toggles
         view_menu = menubar.addMenu(self.tr("&View"))
+
+        self.focus_mode_action = QAction(self.tr("&Zen / Focus Mode"), self)
+        self.focus_mode_action.setIcon(QIcon.fromTheme("view-fullscreen"))
+        self.focus_mode_action.setShortcut("F11")
+        self.focus_mode_action.setCheckable(True)
+        self.focus_mode_action.setToolTip(self.tr(
+            "Hide all panels and enter a distraction-free single-string editor (F11)"
+        ))
+        self.focus_mode_action.triggered.connect(self._toggle_focus_mode)
+        view_menu.addAction(self.focus_mode_action)
+
+        view_menu.addSeparator()
+
         self.audio_panel_action = QAction(self.tr("&Audio Preview"), self)
         self.audio_panel_action.setIcon(QIcon.fromTheme("media-playback-start"))
         self.audio_panel_action.setShortcut("Ctrl+Shift+A")
@@ -2980,6 +2994,71 @@ class MainWindow(QMainWindow):
             auto_preview=getattr(self.settings, "tts_auto_preview", False),
             cache_dir=cache_dir,
         )
+
+    # ── Focus / Zen mode ──────────────────────────────────────────────────────
+
+    def _toggle_focus_mode(self) -> None:
+        if hasattr(self, "_focus_overlay") and self._focus_overlay is not None:
+            self._focus_overlay.close()
+        else:
+            self._enter_focus_mode()
+
+    def _enter_focus_mode(self) -> None:
+        from gui.focus_overlay import FocusModeOverlay
+        row = self._get_focus_start_row()
+        overlay = FocusModeOverlay(self.table_model, row, self)
+        overlay.translation_committed.connect(self._on_focus_translation)
+        overlay.row_navigated.connect(self._on_focus_row_navigated)
+        overlay.destroyed.connect(self._on_focus_overlay_closed)
+        overlay.finished.connect(self._on_focus_overlay_closed)
+        self._focus_overlay = overlay
+        self.focus_mode_action.setChecked(True)
+        overlay.show()
+
+    @Slot()
+    def _on_focus_overlay_closed(self) -> None:
+        self._focus_overlay = None
+        self.focus_mode_action.setChecked(False)
+
+    @Slot(int, str)
+    def _on_focus_translation(self, source_row: int, text: str) -> None:
+        """Apply a translation committed from the focus overlay to the model."""
+        if 0 <= source_row < len(self.table_model._data):
+            self.table_model.set_translated_text(source_row, text)
+            self.table_model.string_manually_corrected.emit(
+                source_row, self.table_model._data[source_row].get("original", "")
+            )
+
+    @Slot(int)
+    def _on_focus_row_navigated(self, source_row: int) -> None:
+        """Sync the main table's selection when the overlay navigates."""
+        if self.table_view.selectionModel() is None:
+            return
+        # Map source row → proxy row and select it (visual sync only)
+        proxy = self.table_view.model()
+        if proxy is None:
+            return
+        source_index = self.table_model.index(source_row, 0)
+        proxy_index = proxy.mapFromSource(source_index)
+        if proxy_index.isValid():
+            self.table_view.selectionModel().select(
+                proxy_index,
+                self.table_view.selectionModel().SelectionFlag.ClearAndSelect
+                | self.table_view.selectionModel().SelectionFlag.Rows,
+            )
+            self.table_view.scrollTo(proxy_index)
+
+    def _get_focus_start_row(self) -> int:
+        """Return the model source row for the currently selected row, or 0."""
+        indexes = self.table_view.selectionModel().selectedRows()
+        if indexes:
+            proxy_row = indexes[0].row()
+            proxy = self.table_view.model()
+            if proxy is not None:
+                src = proxy.mapToSource(proxy.index(proxy_row, 0))
+                if src.isValid():
+                    return src.row()
+        return 0
 
     # ── Pre-translation estimation ─────────────────────────────────────────────
 
