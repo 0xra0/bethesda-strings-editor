@@ -225,6 +225,14 @@ _SOURCE_LABEL_RE = re.compile(
 
 # ── Sentence-ending punctuation ─────────────────────────────────────────────────
 _SENT_END_RE = re.compile(r"[.!?…]+")
+# Printf/format-spec pattern whose decimal point would be false-counted as a
+# sentence terminator (e.g. %.2f, %+08.3g, %d, %s).
+_FORMAT_SPEC_RE = re.compile(r"%[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]")
+
+
+def _count_sentences(text: str) -> int:
+    """Count sentence-ending punctuation marks, excluding format specifiers."""
+    return len(_SENT_END_RE.findall(_FORMAT_SPEC_RE.sub("", text)))
 
 
 # ── Repetition / hallucination detection ──────────────────────────────────────
@@ -1387,8 +1395,8 @@ class QualityChecker:
         self, original: str, translated: str, report: QualityReport
     ) -> None:
         """Info when sentence count changes significantly (possible truncation or expansion)."""
-        orig_sents = len(_SENT_END_RE.findall(original))
-        trans_sents = len(_SENT_END_RE.findall(translated))
+        orig_sents = _count_sentences(original)
+        trans_sents = _count_sentences(translated)
         if orig_sents < 3:
             return  # Not meaningful for very short strings
         ratio = trans_sents / max(orig_sents, 1)
