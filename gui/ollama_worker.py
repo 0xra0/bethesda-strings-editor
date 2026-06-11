@@ -60,7 +60,7 @@ def _fix_mixed_script(text: str) -> str:
         word = m.group(0)
         lat = len(_LATIN_ALPHA_RE.findall(word))
         cyr = len(_CYRILLIC_ALPHA_RE.findall(word))
-        if lat > 0 and cyr >= 2 and cyr > lat:
+        if lat > 0 and cyr >= 1 and cyr >= lat:
             return word.translate(_LATIN_TO_UKR)
         return word
 
@@ -1347,7 +1347,7 @@ class OllamaWorker(QObject):
         if "\n" in protected_text and "\n\n" not in protected_text:
             _ll_segs = protected_text.split("\n")
             _ll_nonempty = [s for s in _ll_segs if s.strip()]
-            if len(_ll_nonempty) >= 2 and max((len(s) for s in _ll_nonempty), default=0) < 200:
+            if len(_ll_nonempty) >= 2 and max((len(s) for s in _ll_nonempty), default=0) < 400:
                 from dataclasses import replace as _dc_ll
                 _ll_results: list = []
                 for _seg in _ll_segs:
@@ -1929,6 +1929,10 @@ class OllamaWorker(QObject):
             text = re.sub(r'\[\[STRUCT\w+\]{2,}', '\n', text, flags=re.IGNORECASE)
         # Strip any remaining [[...]] artifact tokens the model may have hallucinated
         text = re.sub(r'\[\[\w+\]{2,}', '', text)
+        # Model sometimes writes \н (backslash + Cyrillic н) instead of \n when Cyrillic
+        # script substitution bleeds into the newline escape token.
+        if '\\н' in text:  # \н
+            text = text.replace('\\н', '\n')
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
         # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).
