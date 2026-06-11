@@ -1184,6 +1184,8 @@ class OllamaWorker(QObject):
         if result:
             result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
             result = self._restore_dropped_tags(result, req.original_text)
+            result = self._restore_size_spacers(result, req.original_text)
+            result = self._restore_missing_format_specs(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1727,6 +1729,8 @@ class OllamaWorker(QObject):
             # Restore any <Alias=…>/<Global=…> tags the model dropped
             if translated:
                 translated = self._restore_dropped_tags(translated, req.original_text)
+                translated = self._restore_size_spacers(translated, req.original_text)
+                translated = self._restore_missing_format_specs(translated, req.original_text)
 
             # Restore separator lines that were stripped before sending to model
             if translated and (leading_seps or trailing_seps):
@@ -1790,6 +1794,70 @@ class OllamaWorker(QObject):
                 while insert_pos < len(translated) and translated[insert_pos] not in " \n\t":
                     insert_pos += 1
                 translated = translated[:insert_pos] + " " + tag + translated[insert_pos:]
+        return translated
+
+    @staticmethod
+    def _restore_size_spacers(translated: str, original: str) -> str:
+        """Restore <size=N%> </size> spacers restructured by the model into wrappers.
+
+        Original: <size=100%> </size>TEXT
+        Model:    <size=100%>TEXT</size>
+        Fixed:    <size=100%> </size>TEXT
+        """
+        if not original or not translated:
+            return translated
+        _SPACER_RE = re.compile(
+            r'(<(?:size|font)\b[^>]*>)([ \t]+)(</(?:size|font)>)',
+            re.IGNORECASE,
+        )
+        for m in _SPACER_RE.finditer(original):
+            open_tag = m.group(1)
+            close_tag = m.group(3)
+            spacer = m.group(0)
+            wrapper_re = re.compile(
+                re.escape(open_tag) + r'(.+?)' + re.escape(close_tag),
+                re.IGNORECASE | re.DOTALL,
+            )
+            w = wrapper_re.search(translated)
+            if w and w.group(1).strip():
+                translated = (
+                    translated[: w.start()]
+                    + spacer
+                    + w.group(1)
+                    + translated[w.end() :]
+                )
+        return translated
+
+    @staticmethod
+    def _restore_missing_format_specs(translated: str, original: str) -> str:
+        """Re-insert printf-style format specifiers the model dropped from inline positions."""
+        if not original or not translated:
+            return translated
+        _FS_RE = re.compile(r'%[-+0 #]*\d*(?:\.\d+)?[diouxXeEfFgGcsp]')
+        orig_matches = list(_FS_RE.finditer(original))
+        trans_specs = [m.group(0) for m in _FS_RE.finditer(translated)]
+        if len(trans_specs) >= len(orig_matches):
+            return translated
+        trans_idx = 0
+        to_restore: list = []
+        orig_len = len(original)
+        for m in orig_matches:
+            spec = m.group(0)
+            if trans_idx < len(trans_specs) and trans_specs[trans_idx] == spec:
+                trans_idx += 1
+            else:
+                to_restore.append((m.start() / orig_len if orig_len else 0.5, spec))
+        if not to_restore:
+            return translated
+        for frac, spec in sorted(to_restore, key=lambda x: x[0], reverse=True):
+            target = max(0, min(int(len(translated) * frac), len(translated)))
+            pos = target
+            while pos < len(translated) and translated[pos] not in ' \n\t':
+                pos += 1
+            if pos >= len(translated):
+                translated = translated + ' ' + spec
+            else:
+                translated = translated[:pos] + ' ' + spec + translated[pos:]
         return translated
 
     def _clean_translation(
@@ -2103,6 +2171,19 @@ class OllamaWorker(QObject):
                     return ""
             if orig_len > 50 and text_len < max(10, int(orig_len * 0.3)):
                 return ""
+
+        # Restore leading format-specifier prefix (e.g. "%.0f - ") or dash-header
+        # (e.g. "-Costs") that the model dropped from a single-line string.
+        if original_text and '\n' not in original_text:
+            _orig_s = original_text.strip()
+            _text_s = text.strip()
+            _FMT_PFX_RE = re.compile(r'^(%[-+0 #]*\d*(?:\.\d+)?[diouxXeEfFgGcsp]\s*[-–—]+\s+)')
+            _fp = _FMT_PFX_RE.match(_orig_s)
+            if _fp and not _FMT_PFX_RE.match(_text_s):
+                text = _fp.group(0) + _text_s
+            elif _orig_s[:1] == '-' and len(_orig_s) > 1 and _orig_s[1:2].isalpha():
+                if not _text_s.startswith('-'):
+                    text = '-' + _text_s
 
         text = self._fix_known_errors(text, original_text)
         text = self._fix_truncated_tags(text)
