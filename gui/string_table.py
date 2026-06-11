@@ -722,6 +722,10 @@ class StringTableView(QTableView):
     # Emitted with a list of source-model row indices when the user requests profile assignment.
     assign_profile_requested = Signal(list)
 
+    # Vim macro: q → open editor, @ → replay last macro on current row
+    macro_open_requested = Signal()
+    macro_replay_requested = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAlternatingRowColors(True)
@@ -806,6 +810,20 @@ class StringTableView(QTableView):
             self._vim_g_pending = False
             self._vim_g_timer.stop()
             self._vim_go_to_row(self.model().rowCount() - 1)
+            return
+
+        # ── Vim macro shortcuts ─────────────────────────────────────────────
+        if mods == Qt.KeyboardModifier.NoModifier:
+            if key == Qt.Key.Key_Q:
+                self._vim_g_pending = False
+                self._vim_g_timer.stop()
+                self.macro_open_requested.emit()
+                return
+
+        if key == Qt.Key.Key_At:
+            self._vim_g_pending = False
+            self._vim_g_timer.stop()
+            self.macro_replay_requested.emit()
             return
 
         self._vim_g_pending = False

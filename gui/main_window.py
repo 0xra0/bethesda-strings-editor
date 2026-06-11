@@ -68,6 +68,7 @@ from gui.crash_recovery import CrashRecoveryDialog, CrashRecoveryManager
 from gui.desktop_notify import send_notification
 from gui.file_dialog_helper import get_open_filename, get_save_filename
 from gui.keyboard_manager import ActionEntry, KeyboardManager
+from gui.macro_recorder import MacroRecorder
 from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
@@ -489,6 +490,9 @@ class MainWindow(QMainWindow):
         # Keyboard shortcut registry
         self.keyboard_manager = KeyboardManager()
         self.keyboard_manager.load_custom_shortcuts(self.settings.custom_shortcuts)
+
+        # Vim macro recorder (shared across macro dialog opens)
+        self.macro_recorder = MacroRecorder()
 
         # Setup UI and signals
         self._setup_ui()
@@ -1262,6 +1266,19 @@ class MainWindow(QMainWindow):
         self.auto_retranslate_action.setEnabled(False)
         trans_menu.addAction(self.auto_retranslate_action)
 
+        self.macro_action = QAction(self.tr("&Macro Editor… (q)"), self)
+        self.macro_action.setIcon(QIcon.fromTheme("media-record"))
+        self.macro_action.setShortcut("Ctrl+M")
+        self.macro_action.setToolTip(
+            self.tr(
+                "Open the macro editor to define regex-replace steps and apply\n"
+                "them to thousands of strings in one batch. (Ctrl+M or 'q' in table)"
+            )
+        )
+        self.macro_action.triggered.connect(self._open_macro_dialog)
+        self.macro_action.setEnabled(False)
+        trans_menu.addAction(self.macro_action)
+
         self.import_quality_action = QAction(
             self.tr("&Import Quality Report…"), self
         )
@@ -1575,6 +1592,8 @@ class MainWindow(QMainWindow):
         )
         self.table_model.string_manually_corrected.connect(self._on_string_corrected)
         self.table_view.assign_profile_requested.connect(self._open_profile_assign)
+        self.table_view.macro_open_requested.connect(self._open_macro_dialog)
+        self.table_view.macro_replay_requested.connect(self._replay_macro_on_current)
 
         # Debounce glossary dock refresh so rapid arrow-key navigation doesn't
         # fire a 20K-entry search on every intermediate row.
@@ -1704,6 +1723,8 @@ class MainWindow(QMainWindow):
             self.claude_review_action.setEnabled(has_file and has_selection)
         if hasattr(self, "claude_suggest_action"):
             self.claude_suggest_action.setEnabled(has_file and has_selection)
+        if hasattr(self, "macro_action"):
+            self.macro_action.setEnabled(has_file)
 
         # Reload profile tints when the open file changes
         if has_file and self.current_path != self._last_profile_loaded_path:
@@ -4145,6 +4166,31 @@ class MainWindow(QMainWindow):
         dialog = CommandPaletteDialog(self.keyboard_manager, parent=self)
         dialog.exec()
 
+    # ── Macro editor ──────────────────────────────────────────────────────────
+
+    @Slot()
+    def _open_macro_dialog(self) -> None:
+        """Open the macro editor dialog (Ctrl+M / q in table)."""
+        from gui.macro_dialog import MacroDialog
+        selected = [idx.row() for idx in self.table_view.selectionModel().selectedRows()]
+        dlg = MacroDialog(self.macro_recorder, self.table_model, selected, parent=self)
+        dlg.exec()
+
+    @Slot()
+    def _replay_macro_on_current(self) -> None:
+        """Replay the current macro on the focused row only (@ in table)."""
+        if not self.current_file or not self.macro_recorder.steps:
+            return
+        row = self.table_view.currentIndex().row()
+        if row < 0:
+            return
+        modified = self.macro_recorder.replay_on_rows(self.table_model, [row])
+        self.table_model.layoutChanged.emit()
+        if modified:
+            self.statusBar().showMessage(self.tr("Macro applied to row {n}.").format(n=row))
+        else:
+            self.statusBar().showMessage(self.tr("Macro: no changes on row {n}.").format(n=row))
+
     # ── Action registration ────────────────────────────────────────────────────
 
     def _register_actions(self) -> None:
@@ -4258,6 +4304,18 @@ class MainWindow(QMainWindow):
             id="vim_G", name="Go to Last Row (vim G)", description="Jump to the last string",
             default_shortcut="Shift+G", callback=lambda: None,
             category="Navigation", keywords=("vim", "bottom", "last", "G"),
+        ))
+
+        # Macro
+        km.register_qaction("macro_editor", self.macro_action, "Macro",
+                             description=self.tr("Open macro editor for batch regex-replace"),
+                             keywords=("macro", "batch", "replace", "regex", "vim"),
+                             enabled_check=has)
+        km.register(ActionEntry(
+            id="macro_replay", name="Replay Macro (@)", description="Replay last macro on the current row",
+            default_shortcut="@", callback=self._replay_macro_on_current,
+            category="Macro", keywords=("macro", "replay", "vim", "at"),
+            enabled_check=has,
         ))
 
     @Slot()
