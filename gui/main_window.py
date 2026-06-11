@@ -962,7 +962,7 @@ class MainWindow(QMainWindow):
         self._editor_pane.translation_approved.connect(self._on_editor_pane_approved)
 
         # ── Detached table window reference (None until user opens it) ────────
-        self._detached_table: Optional["DetachedTableWindow"] = None  # pyright: ignore[reportUndefinedVariable]
+        self._detached_table: Optional["DetachedTableWindow"] = None  # noqa: F821  # pyright: ignore[reportUndefinedVariable]
 
         # ── Dock / window state persistence ───────────────────────────────────
         self._restore_window_state()
