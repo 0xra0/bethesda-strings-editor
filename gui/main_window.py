@@ -948,6 +948,12 @@ class MainWindow(QMainWindow):
         self._audio_panel.setVisible(self.settings.enable_audio_preview)
         self._apply_audio_settings()
 
+        # ── Visual Context Preview dock ───────────────────────────────────────
+        from gui.visual_context_preview import VisualContextPreview
+        self._visual_preview = VisualContextPreview(self)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self._visual_preview)
+        self._visual_preview.hide()
+
         # ── Translation Editor Pane dock (hidden by default) ──────────────────
         from gui.translation_editor_pane import TranslationEditorPane
         self._editor_pane = TranslationEditorPane(self)
@@ -1445,6 +1451,21 @@ class MainWindow(QMainWindow):
         )
         self.audio_panel_action.triggered.connect(self._toggle_audio_panel)
         view_menu.addAction(self.audio_panel_action)
+
+        self.visual_preview_action = QAction(self.tr("&Visual Context Preview"), self)
+        self.visual_preview_action.setIcon(QIcon.fromTheme("image-x-generic"))
+        self.visual_preview_action.setShortcut("Ctrl+Shift+P")
+        self.visual_preview_action.setCheckable(True)
+        self.visual_preview_action.setChecked(False)
+        self.visual_preview_action.setToolTip(
+            self.tr(
+                "Show/hide the Visual Context Preview panel — renders the current "
+                "string in a faithful Bethesda UI box using the actual game fonts "
+                "(Ctrl+Shift+P)"
+            )
+        )
+        self.visual_preview_action.triggered.connect(self._toggle_visual_preview)
+        view_menu.addAction(self.visual_preview_action)
 
         # Settings menu
         settings_menu = menubar.addMenu(self.tr("&Settings"))
@@ -3004,6 +3025,9 @@ class MainWindow(QMainWindow):
         # Update translation editor pane (only when visible)
         if hasattr(self, "_editor_pane") and self._editor_pane.isVisible():
             self._push_string_to_editor_pane()
+        # Update visual context preview (only when visible)
+        if hasattr(self, "_visual_preview") and self._visual_preview.isVisible():
+            self._push_string_to_visual_preview()
 
     def _push_string_to_audio_panel(self) -> None:
         """Forward the currently selected row data to the Audio Preview panel."""
@@ -3031,6 +3055,16 @@ class MainWindow(QMainWindow):
         self.audio_panel_action.setChecked(not visible)
         if not visible:
             self._push_string_to_audio_panel()
+
+    def _push_string_to_visual_preview(self) -> None:
+        self._visual_preview.update_string(self._get_current_row())
+
+    def _toggle_visual_preview(self) -> None:
+        visible = self._visual_preview.isVisible()
+        self._visual_preview.setVisible(not visible)
+        self.visual_preview_action.setChecked(not visible)
+        if not visible:
+            self._push_string_to_visual_preview()
 
     def _apply_audio_settings(self) -> None:
         """Push current audio settings to the preview panel."""
@@ -3123,6 +3157,8 @@ class MainWindow(QMainWindow):
                 self.editor_pane_action.setChecked(self._editor_pane.isVisible())
             if hasattr(self, "audio_panel_action"):
                 self.audio_panel_action.setChecked(self._audio_panel.isVisible())
+            if hasattr(self, "visual_preview_action"):
+                self.visual_preview_action.setChecked(self._visual_preview.isVisible())
 
     def _save_window_state(self) -> None:
         """Persist main-window geometry and all dock positions."""

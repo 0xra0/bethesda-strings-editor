@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- **Visual Context Preview** (View → Visual Context Preview, Ctrl+Shift+P) — dockable panel that renders the current string inside a faithful recreation of the Bethesda Starfield UI box using the actual game fonts (RF_35_M / RF_55_M Cyrillic body extracted from `fonts_en.swf`/`fonts_uk.swf`); auto-detects context (Dialogue, Quest, Book, Note, Terminal, UI) from the string type and shows box dimensions matching the 1280×720 native Scaleform canvas; colour-coded overflow indicator flags when a translation is too long to fit the target box; side-by-side Source/Translation/Both view modes; context can be overridden manually via the combo box; font files live in `data/fonts/`
 - **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` files directly as a Translation Memory or merge them into the current file; accessible via File → Browse NexusMods for Translations; free-account download restriction handled gracefully (opens mod page in browser as fallback); zip archives are automatically extracted for their strings files
 
 ---
