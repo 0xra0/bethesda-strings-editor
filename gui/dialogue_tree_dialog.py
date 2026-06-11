@@ -80,31 +80,31 @@ _ROLE_FORM_ID = Qt.UserRole + 1     # int
 
 
 # ── Graph constants ────────────────────────────────────────────────────────────
-_CARD_W     = 340
-_PLAYER_H   = 58
-_NPC_H      = 80
-_CARD_H     = _PLAYER_H + _NPC_H + 2   # total = 140
-_V_GAP      = 48    # vertical gap between chained cards (space for arrow)
-_CHAIN_GAP  = 22    # extra gap between separate chains
-_PAD        = 10    # text padding inside sections
+_CARD_W     = 420
+_PLAYER_H   = 76    # player choice row — tall enough for 2 lines at 11 pt bold
+_NPC_H      = 84    # NPC subtitle strip — room for label + 2 lines at 10 pt
+_CARD_H     = _PLAYER_H + _NPC_H + 1
+_V_GAP      = 44    # vertical gap between chained cards (space for arrow)
+_CHAIN_GAP  = 20    # extra gap between separate chains
+_PAD        = 14    # text padding inside sections
 
-# Starfield UI palette (verified from dialoguemenu.swf pixel analysis)
-# Fills use pre-multiplied RGBA so they layer correctly over the dark canvas.
-_C_GRAPH_BG      = QColor("#080d16")          # dark space background
-_C_CARD_BG       = QColor(0, 0, 0, 153)       # card base: black alpha=153 (60 %)
-_C_PLAYER_BG     = QColor(10, 18, 36, 180)    # player section: slightly bluer dark
-_C_NPC_BG        = QColor(0, 0, 0, 127)       # NPC section: black alpha=127 (50 %)
-_C_PLAYER_TEXT   = QColor("#c0c8d8")           # player text: soft white-blue
-_C_NPC_TEXT      = QColor("#e8ecf8")           # NPC text: bright white
-_C_BORDER        = QColor(255, 255, 255, 38)   # card border: white alpha=38 (15 %)
-_C_BORDER_TOP    = QColor(255, 255, 255, 51)   # top edge: white alpha=51 (20 %)
-_C_BORDER_BTM    = QColor(255, 255, 255, 19)   # bottom fade: white alpha=19 (7 %)
-_C_BORDER_SEL    = QColor("#3ff0ff")           # selected: Starfield cyan accent
-_C_SEP           = QColor(255, 255, 255, 22)   # player/NPC separator
-_C_IND           = QColor(60, 100, 140, 180)   # left-bar indicator (player section)
-_C_LABEL         = QColor("#2e4060")           # formID watermark
-_C_ARROW         = QColor(80, 140, 200, 200)   # connection arrows: muted blue
-_C_CHAIN_SEP     = QColor(30, 50, 80, 120)     # dashed chain separator
+# Starfield UI palette — calibrated against sc1.jpg (choice rows) and sc2.jpg
+# (NPC subtitle bar). Opacity values pixel-measured from SWF sprite sheets.
+_C_GRAPH_BG       = QColor("#050a14")           # near-black with blue cast
+_C_PLAYER_BG      = QColor(5, 10, 22, 196)      # choice row: very dark blue-black
+_C_NPC_BG         = QColor(0, 0, 0, 218)        # subtitle strip: essentially pure black
+_C_PLAYER_TEXT    = QColor("#ffffff")            # choice text: pure white bold (sc1)
+_C_NPC_TEXT       = QColor("#eef2ff")            # NPC speech: near-white (sc2)
+_C_NPC_SPEAKER    = QColor(105, 138, 178, 135)   # "NPC ▸" tag: dim steel-blue
+_C_BORDER         = QColor(255, 255, 255, 22)    # side edges (barely visible)
+_C_BORDER_TOP     = QColor(255, 255, 255, 52)    # top row separator (sc1 row edge)
+_C_BORDER_BTM     = QColor(255, 255, 255, 10)    # bottom fade
+_C_BORDER_SEL     = QColor("#3ff0ff")            # selected: Starfield cyan accent
+_C_SEP            = QColor(255, 255, 255, 48)    # choice/subtitle divider (sc1)
+_C_HOVER          = QColor(255, 255, 255, 16)    # hover overlay on player section
+_C_LABEL          = QColor("#1c2e48")            # formID watermark (very dim)
+_C_ARROW          = QColor(60, 118, 190, 172)    # connection arrows
+_C_CHAIN_SEP      = QColor(30, 50, 80, 95)       # dashed chain separator
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -184,6 +184,7 @@ class _ResponseCard(QGraphicsObject):
         super().__init__(parent)
         self._resp     = response
         self._selected = False
+        self._hovered  = False
         self.setAcceptedMouseButtons(Qt.LeftButton)
         self.setAcceptHoverEvents(True)
         self.setCursor(Qt.PointingHandCursor)
@@ -200,91 +201,103 @@ class _ResponseCard(QGraphicsObject):
             self.update()
 
     def paint(self, painter: QPainter, _option, _widget=None) -> None:
-        # ── Card fill ─────────────────────────────────────────────────────────
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(_C_CARD_BG)
-        painter.drawRect(0, 0, _CARD_W, _CARD_H)
-
-        # Player prompt section (top)
         p_rect = QRectF(0, 0, _CARD_W, _PLAYER_H)
+        n_y    = _PLAYER_H + 1
+        n_rect = QRectF(0, n_y, _CARD_W, _CARD_H - n_y)
+
+        # ── Player choice row (sc1.jpg style) ─────────────────────────────────
+        painter.setPen(Qt.NoPen)
         painter.setBrush(_C_PLAYER_BG)
         painter.drawRect(p_rect)
 
-        # 3-px left indicator bar on player section
-        painter.setBrush(_C_IND)
-        painter.drawRect(QRectF(0, 0, 3, _PLAYER_H))
+        # Hover: faint white overlay makes the row feel "focusable"
+        if self._hovered and not self._selected:
+            painter.setBrush(_C_HOVER)
+            painter.drawRect(p_rect)
 
-        # NPC line section (bottom)
-        n_y    = _PLAYER_H + 1
-        n_rect = QRectF(0, n_y, _CARD_W, _CARD_H - n_y)
+        # ── NPC subtitle strip (sc2.jpg style) ────────────────────────────────
         painter.setBrush(_C_NPC_BG)
         painter.drawRect(n_rect)
 
-        # Noise tile over NPC section
+        # Very subtle noise texture on the subtitle strip
         tile = _bg_tile()
         if tile and not tile.isNull():
-            painter.setOpacity(0.22)
+            painter.setOpacity(0.13)
             painter.drawTiledPixmap(n_rect.toRect(), tile)
             painter.setOpacity(1.0)
 
-        # ── Borders (pixel-exact from sprite) ─────────────────────────────────
-        # Top: white alpha=51 (20 %)
+        # ── Row edges (mirroring sc1 thin white separators) ────────────────────
+        # Top bright line — visible row separator like in sc1
         painter.setPen(QPen(_C_BORDER_TOP, 1, Qt.SolidLine))
         painter.drawLine(0, 0, _CARD_W - 1, 0)
-        # Left + right: white alpha=38 (15 %)
+        # Player/NPC divider — same weight as between rows
+        painter.setPen(QPen(_C_SEP, 1, Qt.SolidLine))
+        painter.drawLine(0, _PLAYER_H, _CARD_W - 1, _PLAYER_H)
+        # Bottom fade
+        painter.setPen(QPen(_C_BORDER_BTM, 1, Qt.SolidLine))
+        painter.drawLine(0, _CARD_H - 1, _CARD_W - 1, _CARD_H - 1)
+        # Side edges (nearly invisible — game has none, but keeps cards legible)
         painter.setPen(QPen(_C_BORDER, 1, Qt.SolidLine))
         painter.drawLine(0, 0, 0, _CARD_H - 1)
         painter.drawLine(_CARD_W - 1, 0, _CARD_W - 1, _CARD_H - 1)
-        # Section separator
-        painter.setPen(QPen(_C_SEP, 1, Qt.SolidLine))
-        painter.drawLine(3, _PLAYER_H, _CARD_W - 1, _PLAYER_H)
-        # Bottom: white alpha=19 (7 %)
-        painter.setPen(QPen(_C_BORDER_BTM, 1, Qt.SolidLine))
-        painter.drawLine(0, _CARD_H - 1, _CARD_W - 1, _CARD_H - 1)
 
-        # Selection highlight: cyan border (Starfield accent)
+        # Selection highlight: Starfield cyan border
         if self._selected:
             painter.setPen(QPen(_C_BORDER_SEL, 2, Qt.SolidLine))
             painter.setBrush(Qt.NoBrush)
             painter.drawRect(1, 1, _CARD_W - 2, _CARD_H - 2)
 
-        # ── Text ──────────────────────────────────────────────────────────────
-        font9 = _game_font(9)
-        painter.setFont(font9)
-
-        # Player text
+        # ── Player choice text ─────────────────────────────────────────────────
+        # Large bold white — exactly like sc1.jpg player choice rows
+        painter.setFont(_game_font(11, bold=True))
         painter.setPen(_C_PLAYER_TEXT)
-        p_text_r = p_rect.adjusted(_PAD + 3, _PAD - 2, -_PAD, -3)
-        painter.drawText(p_text_r, Qt.TextWordWrap | Qt.AlignTop,
-                         _trunc(self._resp.player_prompt or "—", 120))
+        p_text_r = p_rect.adjusted(_PAD + 4, _PAD - 2, -_PAD, -_PAD)
+        painter.drawText(
+            p_text_r,
+            Qt.TextWordWrap | Qt.AlignLeft | Qt.AlignVCenter,
+            _trunc(self._resp.player_prompt or "—", 130),
+        )
 
-        # NPC text
-        npc_font = _game_font(9)
-        painter.setFont(npc_font)
+        # ── NPC speech ─────────────────────────────────────────────────────────
+        # "NPC ▸" tag — dim steel-blue, tiny, above the line (like sc2 speaker name)
+        painter.setFont(_game_font(7))
+        painter.setPen(_C_NPC_SPEAKER)
+        painter.drawText(
+            QRectF(_PAD + 2, n_y + 4, 64, 12),
+            Qt.AlignLeft | Qt.AlignVCenter,
+            "NPC  ▸",
+        )
+        # NPC line text — near-white, same weight as sc2 subtitle text
+        painter.setFont(_game_font(10))
         painter.setPen(_C_NPC_TEXT)
-        npc_r = n_rect.adjusted(_PAD, _PAD - 2, -_PAD, -14)
-        painter.drawText(npc_r, Qt.TextWordWrap | Qt.AlignTop,
-                         _trunc(self._resp.npc_line or "—", 160))
+        npc_r = QRectF(_PAD + 2, n_y + 17, _CARD_W - _PAD * 2, _CARD_H - n_y - 26)
+        painter.drawText(
+            npc_r,
+            Qt.TextWordWrap | Qt.AlignLeft | Qt.AlignTop,
+            _trunc(self._resp.npc_line or "—", 200),
+        )
 
-        # FormID watermark (bottom-right, very subtle)
-        tiny = _game_font(7)
-        painter.setFont(tiny)
+        # ── FormID watermark (bottom-right, very subtle) ───────────────────────
+        painter.setFont(_game_font(7))
         painter.setPen(_C_LABEL)
-        fid_rect = QRectF(0, _CARD_H - 13, _CARD_W - 4, 12)
-        painter.drawText(fid_rect, Qt.AlignRight | Qt.AlignVCenter,
-                         f"0x{self._resp.form_id:08X}")
+        painter.drawText(
+            QRectF(0, _CARD_H - 13, _CARD_W - 4, 12),
+            Qt.AlignRight | Qt.AlignVCenter,
+            f"0x{self._resp.form_id:08X}",
+        )
 
     def mousePressEvent(self, event) -> None:
         self.clicked.emit(self._resp.form_id)
         super().mousePressEvent(event)
 
     def hoverEnterEvent(self, event) -> None:
-        if not self._selected:
-            self.setOpacity(0.80)
+        self._hovered = True
+        self.update()
         super().hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event) -> None:
-        self.setOpacity(1.0)
+        self._hovered = False
+        self.update()
         super().hoverLeaveEvent(event)
 
 
@@ -340,6 +353,7 @@ class _DialogueGraphView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
         self.setBackgroundBrush(QBrush(_C_GRAPH_BG))
+        self.setStyleSheet("border: 1px solid rgba(255,255,255,18);")
         self._cards: Dict[int, _ResponseCard] = {}
         self._selected_fid: Optional[int] = None
 
