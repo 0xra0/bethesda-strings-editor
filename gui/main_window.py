@@ -948,6 +948,19 @@ class MainWindow(QMainWindow):
         self._audio_panel.setVisible(self.settings.enable_audio_preview)
         self._apply_audio_settings()
 
+        # ── Translation Editor Pane dock (hidden by default) ──────────────────
+        from gui.translation_editor_pane import TranslationEditorPane
+        self._editor_pane = TranslationEditorPane(self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self._editor_pane)
+        self._editor_pane.hide()
+        self._editor_pane.translation_approved.connect(self._on_editor_pane_approved)
+
+        # ── Detached table window reference (None until user opens it) ────────
+        self._detached_table: Optional["DetachedTableWindow"] = None
+
+        # ── Dock / window state persistence ───────────────────────────────────
+        self._restore_window_state()
+
     def _create_menus(self):
         """Create menu bar."""
         menubar = self.menuBar()
@@ -1390,6 +1403,30 @@ class MainWindow(QMainWindow):
         ))
         self.focus_mode_action.triggered.connect(self._toggle_focus_mode)
         view_menu.addAction(self.focus_mode_action)
+
+        view_menu.addSeparator()
+
+        self.editor_pane_action = QAction(self.tr("&Editor Pane"), self)
+        self.editor_pane_action.setIcon(QIcon.fromTheme("accessories-text-editor"))
+        self.editor_pane_action.setShortcut("Ctrl+Shift+E")
+        self.editor_pane_action.setCheckable(True)
+        self.editor_pane_action.setToolTip(self.tr(
+            "Show/hide the Translation Editor pane — a larger editing area "
+            "that can be dragged to a second monitor (Ctrl+Shift+E)"
+        ))
+        self.editor_pane_action.triggered.connect(self._toggle_editor_pane)
+        view_menu.addAction(self.editor_pane_action)
+
+        self.detach_table_action = QAction(self.tr("&Pop Out String List"), self)
+        self.detach_table_action.setIcon(QIcon.fromTheme("window-new"))
+        self.detach_table_action.setShortcut("Ctrl+Shift+L")
+        self.detach_table_action.setCheckable(True)
+        self.detach_table_action.setToolTip(self.tr(
+            "Open the string list in a separate window "
+            "— ideal for placing on a second monitor (Ctrl+Shift+L)"
+        ))
+        self.detach_table_action.triggered.connect(self._toggle_detached_table)
+        view_menu.addAction(self.detach_table_action)
 
         view_menu.addSeparator()
 
@@ -2030,6 +2067,11 @@ class MainWindow(QMainWindow):
                     enc=self.current_file.encoding,
                 )
             )
+            # Update detached table window title to reflect the new file
+            if self._detached_table is not None:
+                self._detached_table.setWindowTitle(
+                    self.tr("String List") + f" — {self.current_path.name}"
+                )
             if self._glossary_manager:
                 self._glossary_manager.load_project_glossary(self.current_path)
             self._start_pre_estimation()
@@ -2954,6 +2996,9 @@ class MainWindow(QMainWindow):
         # Update audio preview panel (only when visible — skip if hidden)
         if hasattr(self, "_audio_panel") and self._audio_panel.isVisible():
             self._push_string_to_audio_panel()
+        # Update translation editor pane (only when visible)
+        if hasattr(self, "_editor_pane") and self._editor_pane.isVisible():
+            self._push_string_to_editor_pane()
 
     def _push_string_to_audio_panel(self) -> None:
         """Forward the currently selected row data to the Audio Preview panel."""
@@ -2965,13 +3010,15 @@ class MainWindow(QMainWindow):
         indexes = self.table_view.selectionModel().selectedRows()
         if not indexes:
             return None
-        proxy_row = indexes[0].row()
-        source_row = self.table_view.model().mapToSource(
-            self.table_view.model().index(proxy_row, 0)
-        ).row()
-        if 0 <= source_row < len(self.table_model._data):
-            return self.table_model._data[source_row]
+        row = indexes[0].row()
+        if 0 <= row < len(self.table_model._data):
+            return self.table_model._data[row]
         return None
+
+    def _get_current_source_row(self) -> int:
+        """Return the source model row for the current selection, or 0."""
+        indexes = self.table_view.selectionModel().selectedRows()
+        return indexes[0].row() if indexes else 0
 
     def _toggle_audio_panel(self) -> None:
         visible = self._audio_panel.isVisible()
@@ -2994,6 +3041,92 @@ class MainWindow(QMainWindow):
             auto_preview=getattr(self.settings, "tts_auto_preview", False),
             cache_dir=cache_dir,
         )
+
+    # ── Editor pane ───────────────────────────────────────────────────────────
+
+    def _push_string_to_editor_pane(self) -> None:
+        row_data = self._get_current_row()
+        source_row = self._get_current_source_row()
+        self._editor_pane.update_string(row_data, source_row)
+
+    def _toggle_editor_pane(self) -> None:
+        visible = self._editor_pane.isVisible()
+        self._editor_pane.setVisible(not visible)
+        self.editor_pane_action.setChecked(not visible)
+        if not visible:
+            self._push_string_to_editor_pane()
+
+    @Slot(int, str)
+    def _on_editor_pane_approved(self, source_row: int, text: str) -> None:
+        """Apply an editor pane translation commit to the model."""
+        if 0 <= source_row < len(self.table_model._data):
+            self.table_model.set_translated_text(source_row, text)
+            self.table_model.string_manually_corrected.emit(
+                source_row, self.table_model._data[source_row].get("original", "")
+            )
+
+    # ── Detached table window ─────────────────────────────────────────────────
+
+    def _toggle_detached_table(self) -> None:
+        if self._detached_table is not None and not self._detached_table.isVisible():
+            self._detached_table = None
+        if self._detached_table is None:
+            self._open_detached_table()
+        else:
+            self._detached_table.close()
+
+    def _open_detached_table(self) -> None:
+        from gui.detached_table_window import DetachedTableWindow
+        from PySide6.QtCore import QSettings
+        title = self.tr("String List")
+        if self.current_path:
+            import os
+            title += f" — {os.path.basename(self.current_path)}"
+        win = DetachedTableWindow(
+            table_model=self.table_model,
+            selection_model=self.table_view.selectionModel(),
+            title=title,
+            parent=None,   # top-level window, not child of MainWindow
+        )
+        win.setAttribute(Qt.WA_DeleteOnClose, True)
+        win.destroyed.connect(self._on_detached_table_closed)
+        self._detached_table = win
+        self.detach_table_action.setChecked(True)
+        qs = QSettings("BSE", "BethesdaStringsEditor")
+        win.place_and_show(qs)
+        win.scroll_to_current()
+
+    @Slot()
+    def _on_detached_table_closed(self) -> None:
+        self._detached_table = None
+        self.detach_table_action.setChecked(False)
+
+    # ── Dock/window state persistence ─────────────────────────────────────────
+
+    def _restore_window_state(self) -> None:
+        """Restore main-window geometry and all dock positions."""
+        from PySide6.QtCore import QSettings
+        qs = QSettings("BSE", "BethesdaStringsEditor")
+        geom = qs.value("MainWindow/geometry")
+        if geom is not None:
+            self.restoreGeometry(geom)
+        state = qs.value("MainWindow/windowState")
+        if state is not None:
+            self.restoreState(state)
+            # Sync action checked states with restored dock visibility
+            if hasattr(self, "editor_pane_action"):
+                self.editor_pane_action.setChecked(self._editor_pane.isVisible())
+            if hasattr(self, "audio_panel_action"):
+                self.audio_panel_action.setChecked(self._audio_panel.isVisible())
+
+    def _save_window_state(self) -> None:
+        """Persist main-window geometry and all dock positions."""
+        from PySide6.QtCore import QSettings
+        qs = QSettings("BSE", "BethesdaStringsEditor")
+        qs.setValue("MainWindow/geometry", self.saveGeometry())
+        qs.setValue("MainWindow/windowState", self.saveState())
+        if self._detached_table is not None:
+            self._detached_table.save_geometry_to(qs)
 
     # ── Focus / Zen mode ──────────────────────────────────────────────────────
 
@@ -3032,33 +3165,20 @@ class MainWindow(QMainWindow):
     @Slot(int)
     def _on_focus_row_navigated(self, source_row: int) -> None:
         """Sync the main table's selection when the overlay navigates."""
-        if self.table_view.selectionModel() is None:
+        sm = self.table_view.selectionModel()
+        if sm is None:
             return
-        # Map source row → proxy row and select it (visual sync only)
-        proxy = self.table_view.model()
-        if proxy is None:
-            return
-        source_index = self.table_model.index(source_row, 0)
-        proxy_index = proxy.mapFromSource(source_index)
-        if proxy_index.isValid():
-            self.table_view.selectionModel().select(
-                proxy_index,
-                self.table_view.selectionModel().SelectionFlag.ClearAndSelect
-                | self.table_view.selectionModel().SelectionFlag.Rows,
+        index = self.table_model.index(source_row, 0)
+        if index.isValid():
+            sm.select(
+                index,
+                sm.SelectionFlag.ClearAndSelect | sm.SelectionFlag.Rows,
             )
-            self.table_view.scrollTo(proxy_index)
+            self.table_view.scrollTo(index)
 
     def _get_focus_start_row(self) -> int:
-        """Return the model source row for the currently selected row, or 0."""
-        indexes = self.table_view.selectionModel().selectedRows()
-        if indexes:
-            proxy_row = indexes[0].row()
-            proxy = self.table_view.model()
-            if proxy is not None:
-                src = proxy.mapToSource(proxy.index(proxy_row, 0))
-                if src.isValid():
-                    return src.row()
-        return 0
+        """Return the model row for the currently selected row, or 0."""
+        return self._get_current_source_row()
 
     # ── Pre-translation estimation ─────────────────────────────────────────────
 
@@ -4257,6 +4377,7 @@ class MainWindow(QMainWindow):
                 logger.warning(f"Failed to clear recovery snapshot: {e}")
 
             self._audit_log.app_close()
+            self._save_window_state()
             logger.info("Application closed")
         except Exception as e:
             logger.error(f"Error during close: {e}", exc_info=True)
