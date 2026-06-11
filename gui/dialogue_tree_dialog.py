@@ -19,7 +19,8 @@ from PySide6.QtCore import (
     QObject, QPointF, QRectF, QSize, QThread, Qt, Signal, Slot,
 )
 from PySide6.QtGui import (
-    QBrush, QColor, QFont, QPainter, QPainterPath, QPen, QPolygonF,
+    QBrush, QColor, QFont,
+    QPainter, QPen, QPixmap, QPolygonF,
 )
 from PySide6.QtWidgets import (
     QDialog, QDialogButtonBox, QGraphicsItem, QGraphicsObject,
@@ -37,20 +38,73 @@ from gui.file_dialog_helper import get_open_filename
 
 logger = logging.getLogger(__name__)
 
+# ── Starfield game-font helper ────────────────────────────────────────────────
+# Shares the font registry from visual_context_preview (QFontDatabase is app-global).
+
+def _game_font(size: int, bold: bool = False) -> QFont:
+    """RF_35_M (Starfield body/Cyrillic) at *size* pt, or system sans-serif fallback."""
+    try:
+        from gui.visual_context_preview import _ensure_fonts, _registered  # noqa: PLC0415
+        _ensure_fonts()
+        family = _registered.get("bold" if bold else "body", "")
+    except Exception:
+        family = ""
+    f = QFont(family) if family else QFont()
+    f.setStyleHint(QFont.StyleHint.SansSerif)
+    f.setPointSize(size)
+    if bold and not family:
+        f.setBold(True)
+    return f
+
+
+# ── Background tile ───────────────────────────────────────────────────────────
+# The same 50×50 noise tile used by the subtitle panel.
+
+_DATA_DIR = Path(__file__).parent.parent / "data"
+_tile_px: QPixmap | None = None
+
+
+def _bg_tile() -> QPixmap | None:
+    global _tile_px
+    if _tile_px is not None:
+        return _tile_px
+    p = _DATA_DIR / "dialogue_bg_tile.png"
+    if p.exists():
+        _tile_px = QPixmap(str(p))
+    return _tile_px
+
+
 # ── Tree item roles ────────────────────────────────────────────────────────────
 _ROLE_KIND    = Qt.UserRole          # 'quest' | 'topic' | 'response'
 _ROLE_FORM_ID = Qt.UserRole + 1     # int
 
 
 # ── Graph constants ────────────────────────────────────────────────────────────
-_CARD_W     = 310
-_PLAYER_H   = 52
-_NPC_H      = 72
-_CARD_H     = _PLAYER_H + _NPC_H + 4   # total = 128
-_V_GAP      = 42    # vertical gap between chained cards (space for arrow)
-_CHAIN_GAP  = 18    # extra gap between separate chains
-_PAD        = 8     # text padding inside sections
-_RADIUS     = 6
+_CARD_W     = 340
+_PLAYER_H   = 58
+_NPC_H      = 80
+_CARD_H     = _PLAYER_H + _NPC_H + 2   # total = 140
+_V_GAP      = 48    # vertical gap between chained cards (space for arrow)
+_CHAIN_GAP  = 22    # extra gap between separate chains
+_PAD        = 10    # text padding inside sections
+
+# Starfield UI palette (verified from dialoguemenu.swf pixel analysis)
+# Fills use pre-multiplied RGBA so they layer correctly over the dark canvas.
+_C_GRAPH_BG      = QColor("#080d16")          # dark space background
+_C_CARD_BG       = QColor(0, 0, 0, 153)       # card base: black alpha=153 (60 %)
+_C_PLAYER_BG     = QColor(10, 18, 36, 180)    # player section: slightly bluer dark
+_C_NPC_BG        = QColor(0, 0, 0, 127)       # NPC section: black alpha=127 (50 %)
+_C_PLAYER_TEXT   = QColor("#c0c8d8")           # player text: soft white-blue
+_C_NPC_TEXT      = QColor("#e8ecf8")           # NPC text: bright white
+_C_BORDER        = QColor(255, 255, 255, 38)   # card border: white alpha=38 (15 %)
+_C_BORDER_TOP    = QColor(255, 255, 255, 51)   # top edge: white alpha=51 (20 %)
+_C_BORDER_BTM    = QColor(255, 255, 255, 19)   # bottom fade: white alpha=19 (7 %)
+_C_BORDER_SEL    = QColor("#3ff0ff")           # selected: Starfield cyan accent
+_C_SEP           = QColor(255, 255, 255, 22)   # player/NPC separator
+_C_IND           = QColor(60, 100, 140, 180)   # left-bar indicator (player section)
+_C_LABEL         = QColor("#2e4060")           # formID watermark
+_C_ARROW         = QColor(80, 140, 200, 200)   # connection arrows: muted blue
+_C_CHAIN_SEP     = QColor(30, 50, 80, 120)     # dashed chain separator
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -114,18 +168,17 @@ def _build_chains(responses: List[ResponseNode]) -> List[List[ResponseNode]]:
 # ── Node graph items ───────────────────────────────────────────────────────────
 
 class _ResponseCard(QGraphicsObject):
-    """A clickable card showing one INFO record's player prompt and NPC line."""
+    """A clickable card showing one INFO record's player prompt and NPC line.
+
+    Styled after the Starfield dialogue menu (dialoguemenu.swf):
+      - Sharp corners (no rounding), matching Scaleform UI geometry
+      - Fill: black at varying opacity, same as the subtitle panel
+      - Border: white at 15 % / 20 % opacity (pixel-measured from SWF sprite)
+      - Selected: Starfield cyan (#3ff0ff) border
+      - Font: RF_35_M (extracted from fonts_uk.swf)
+    """
 
     clicked: Signal = Signal(int)   # emits form_id
-
-    _C_PLAYER_BG   = QColor("#DBEAFE")
-    _C_PLAYER_TEXT = QColor("#1E3A8A")
-    _C_NPC_BG      = QColor("#D1FAE5")
-    _C_NPC_TEXT    = QColor("#064E3B")
-    _C_CARD_BG     = QColor("#F9FAFB")
-    _C_BORDER      = QColor("#D1D5DB")
-    _C_BORDER_SEL  = QColor("#2563EB")
-    _C_LABEL       = QColor("#6B7280")
 
     def __init__(self, response: ResponseNode, parent=None) -> None:
         super().__init__(parent)
@@ -146,48 +199,78 @@ class _ResponseCard(QGraphicsObject):
             self._selected = sel
             self.update()
 
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        r = self.boundingRect()
+    def paint(self, painter: QPainter, _option, _widget=None) -> None:
+        # ── Card fill ─────────────────────────────────────────────────────────
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(_C_CARD_BG)
+        painter.drawRect(0, 0, _CARD_W, _CARD_H)
 
-        # Card background + rounded border
-        path = QPainterPath()
-        path.addRoundedRect(r.adjusted(1, 1, -1, -1), _RADIUS, _RADIUS)
-        painter.fillPath(path, QBrush(self._C_CARD_BG))
-        border = self._C_BORDER_SEL if self._selected else self._C_BORDER
-        painter.setPen(QPen(border, 2 if self._selected else 1))
-        painter.drawPath(path)
+        # Player prompt section (top)
+        p_rect = QRectF(0, 0, _CARD_W, _PLAYER_H)
+        painter.setBrush(_C_PLAYER_BG)
+        painter.drawRect(p_rect)
 
-        font = QFont()
-        font.setPointSize(8)
-        painter.setFont(font)
+        # 3-px left indicator bar on player section
+        painter.setBrush(_C_IND)
+        painter.drawRect(QRectF(0, 0, 3, _PLAYER_H))
 
-        # Player prompt section
-        p_rect = QRectF(2, 2, _CARD_W - 4, _PLAYER_H - 1)
-        pp = QPainterPath()
-        pp.addRoundedRect(p_rect, _RADIUS - 1, _RADIUS - 1)
-        painter.fillPath(pp, QBrush(self._C_PLAYER_BG))
-        painter.setPen(self._C_PLAYER_TEXT)
-        text_r = p_rect.adjusted(_PAD, _PAD, -_PAD, -_PAD)
-        painter.drawText(text_r, Qt.TextWordWrap | Qt.AlignTop,
-                         _trunc(self._resp.player_prompt or "—", 130))
+        # NPC line section (bottom)
+        n_y    = _PLAYER_H + 1
+        n_rect = QRectF(0, n_y, _CARD_W, _CARD_H - n_y)
+        painter.setBrush(_C_NPC_BG)
+        painter.drawRect(n_rect)
 
-        # NPC line section
-        n_y    = _PLAYER_H + 3
-        n_rect = QRectF(2, n_y, _CARD_W - 4, _CARD_H - n_y - 2)
-        np_    = QPainterPath()
-        np_.addRoundedRect(n_rect, _RADIUS - 1, _RADIUS - 1)
-        painter.fillPath(np_, QBrush(self._C_NPC_BG))
-        painter.setPen(self._C_NPC_TEXT)
-        npc_r = n_rect.adjusted(_PAD, _PAD, -_PAD, -_PAD)
+        # Noise tile over NPC section
+        tile = _bg_tile()
+        if tile and not tile.isNull():
+            painter.setOpacity(0.22)
+            painter.drawTiledPixmap(n_rect.toRect(), tile)
+            painter.setOpacity(1.0)
+
+        # ── Borders (pixel-exact from sprite) ─────────────────────────────────
+        # Top: white alpha=51 (20 %)
+        painter.setPen(QPen(_C_BORDER_TOP, 1, Qt.SolidLine))
+        painter.drawLine(0, 0, _CARD_W - 1, 0)
+        # Left + right: white alpha=38 (15 %)
+        painter.setPen(QPen(_C_BORDER, 1, Qt.SolidLine))
+        painter.drawLine(0, 0, 0, _CARD_H - 1)
+        painter.drawLine(_CARD_W - 1, 0, _CARD_W - 1, _CARD_H - 1)
+        # Section separator
+        painter.setPen(QPen(_C_SEP, 1, Qt.SolidLine))
+        painter.drawLine(3, _PLAYER_H, _CARD_W - 1, _PLAYER_H)
+        # Bottom: white alpha=19 (7 %)
+        painter.setPen(QPen(_C_BORDER_BTM, 1, Qt.SolidLine))
+        painter.drawLine(0, _CARD_H - 1, _CARD_W - 1, _CARD_H - 1)
+
+        # Selection highlight: cyan border (Starfield accent)
+        if self._selected:
+            painter.setPen(QPen(_C_BORDER_SEL, 2, Qt.SolidLine))
+            painter.setBrush(Qt.NoBrush)
+            painter.drawRect(1, 1, _CARD_W - 2, _CARD_H - 2)
+
+        # ── Text ──────────────────────────────────────────────────────────────
+        font9 = _game_font(9)
+        painter.setFont(font9)
+
+        # Player text
+        painter.setPen(_C_PLAYER_TEXT)
+        p_text_r = p_rect.adjusted(_PAD + 3, _PAD - 2, -_PAD, -3)
+        painter.drawText(p_text_r, Qt.TextWordWrap | Qt.AlignTop,
+                         _trunc(self._resp.player_prompt or "—", 120))
+
+        # NPC text
+        npc_font = _game_font(9)
+        painter.setFont(npc_font)
+        painter.setPen(_C_NPC_TEXT)
+        npc_r = n_rect.adjusted(_PAD, _PAD - 2, -_PAD, -14)
         painter.drawText(npc_r, Qt.TextWordWrap | Qt.AlignTop,
-                         _trunc(self._resp.npc_line or "—", 170))
+                         _trunc(self._resp.npc_line or "—", 160))
 
-        # FormID watermark
-        painter.setPen(QPen(self._C_LABEL, 0.5))
-        tiny = QFont()
-        tiny.setPointSize(7)
+        # FormID watermark (bottom-right, very subtle)
+        tiny = _game_font(7)
         painter.setFont(tiny)
-        fid_rect = QRectF(0, _CARD_H - 14, _CARD_W - 4, 13)
+        painter.setPen(_C_LABEL)
+        fid_rect = QRectF(0, _CARD_H - 13, _CARD_W - 4, 12)
         painter.drawText(fid_rect, Qt.AlignRight | Qt.AlignVCenter,
                          f"0x{self._resp.form_id:08X}")
 
@@ -197,7 +280,7 @@ class _ResponseCard(QGraphicsObject):
 
     def hoverEnterEvent(self, event) -> None:
         if not self._selected:
-            self.setOpacity(0.85)
+            self.setOpacity(0.80)
         super().hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event) -> None:
@@ -208,8 +291,8 @@ class _ResponseCard(QGraphicsObject):
 class _Arrow(QGraphicsItem):
     """Directional arrow between two points."""
 
-    _PEN   = QPen(QColor("#9CA3AF"), 1.5, Qt.SolidLine, Qt.RoundCap)
-    _BRUSH = QBrush(QColor("#9CA3AF"))
+    _PEN   = QPen(_C_ARROW, 1.5, Qt.SolidLine, Qt.RoundCap)
+    _BRUSH = QBrush(_C_ARROW)
 
     def __init__(self, start: QPointF, end: QPointF, parent=None) -> None:
         super().__init__(parent)
@@ -222,7 +305,7 @@ class _Arrow(QGraphicsItem):
         return QRectF(min(x1, x2) - 6, min(y1, y2) - 6,
                       abs(x2 - x1) + 12, abs(y2 - y1) + 12)
 
-    def paint(self, painter: QPainter, option, widget=None) -> None:
+    def paint(self, painter: QPainter, _option, _widget=None) -> None:
         painter.setPen(self._PEN)
         painter.drawLine(self._start, self._end)
 
@@ -256,7 +339,7 @@ class _DialogueGraphView(QGraphicsView):
         self.setDragMode(QGraphicsView.ScrollHandDrag)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setBackgroundBrush(QBrush(QColor("#EAECEF")))
+        self.setBackgroundBrush(QBrush(_C_GRAPH_BG))
         self._cards: Dict[int, _ResponseCard] = {}
         self._selected_fid: Optional[int] = None
 
@@ -267,7 +350,7 @@ class _DialogueGraphView(QGraphicsView):
 
         if not responses:
             item = self._scene.addText("No responses in this topic.")
-            item.setDefaultTextColor(QColor("#6B7280"))
+            item.setDefaultTextColor(_C_NPC_TEXT)
             return
 
         chains = _build_chains(responses)
@@ -277,7 +360,7 @@ class _DialogueGraphView(QGraphicsView):
             if chain_idx > 0:
                 sep_y = y - (_CHAIN_GAP / 2 + 1)
                 line  = self._scene.addLine(-12, sep_y, _CARD_W + 12, sep_y)
-                line.setPen(QPen(QColor("#CBD5E1"), 1, Qt.DashLine))
+                line.setPen(QPen(_C_CHAIN_SEP, 1, Qt.DashLine))
 
             prev_card_y: Optional[float] = None
 
@@ -394,7 +477,7 @@ class DialogueTreeDialog(QDialog):
         # ── Toolbar ───────────────────────────────────────────────────────────
         toolbar = QHBoxLayout()
         self._lbl_file = QLabel(self.tr("No file loaded"))
-        self._lbl_file.setStyleSheet("color: #6B7280; font-size: 0.9em;")
+        self._lbl_file.setStyleSheet("color: #4a6080; font-size: 0.9em;")
         toolbar.addWidget(self._lbl_file, 1)
 
         btn_open = QPushButton(self.tr("Open ESP/ESM…"))
@@ -424,13 +507,27 @@ class DialogueTreeDialog(QDialog):
         left_lay = QVBoxLayout(left)
         left_lay.setContentsMargins(0, 0, 0, 0)
         tree_label = QLabel(self.tr("Dialogue Structure"))
-        tree_label.setStyleSheet("font-weight: bold; padding: 4px;")
+        tree_label.setStyleSheet(
+            "font-weight: bold; padding: 4px; color: #c0c8d8; background: transparent;"
+        )
         left_lay.addWidget(tree_label)
         self._tree_widget = QTreeWidget()
         self._tree_widget.setHeaderHidden(True)
         self._tree_widget.setIndentation(16)
         self._tree_widget.setUniformRowHeights(True)
         self._tree_widget.itemSelectionChanged.connect(self._on_tree_selection)
+        self._tree_widget.setStyleSheet("""
+            QTreeWidget {
+                background: #0a1220;
+                color: #c0c8d8;
+                border: 1px solid rgba(255,255,255,24);
+                selection-background-color: #152030;
+                selection-color: #3ff0ff;
+            }
+            QTreeWidget::item:hover { background: #111c2e; }
+            QTreeWidget::item:selected { color: #3ff0ff; background: #152030; }
+            QTreeWidget::branch { background: #0a1220; }
+        """)
         left_lay.addWidget(self._tree_widget)
         left.setMinimumWidth(240)
         splitter.addWidget(left)
@@ -443,7 +540,7 @@ class DialogueTreeDialog(QDialog):
 
         self._topic_label = QLabel(self.tr("Select a topic from the tree"))
         self._topic_label.setStyleSheet(
-            "font-weight: bold; padding: 4px 4px 2px 4px; color: #374151;"
+            "font-weight: bold; padding: 4px 4px 2px 4px; color: #3ff0ff;"
         )
         right_lay.addWidget(self._topic_label)
 
@@ -453,12 +550,36 @@ class DialogueTreeDialog(QDialog):
 
         # Detail panel
         detail_grp = QGroupBox(self.tr("Selected Response"))
+        detail_grp.setStyleSheet("""
+            QGroupBox {
+                background: #0a1220;
+                color: #c0c8d8;
+                border: 1px solid rgba(255,255,255,24);
+                border-radius: 0px;
+                margin-top: 6px;
+                padding-top: 4px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 4px;
+                color: #3ff0ff;
+            }
+        """)
         detail_lay = QVBoxLayout(detail_grp)
         detail_lay.setSpacing(4)
 
         self._txt_detail = QTextBrowser()
         self._txt_detail.setFixedHeight(100)
         self._txt_detail.setOpenLinks(False)
+        self._txt_detail.setStyleSheet("""
+            QTextBrowser {
+                background: #060c18;
+                color: #c0c8d8;
+                border: 1px solid rgba(255,255,255,18);
+                selection-background-color: #1a3050;
+            }
+        """)
         detail_lay.addWidget(self._txt_detail)
 
         btn_row = QHBoxLayout()
@@ -558,7 +679,7 @@ class DialogueTreeDialog(QDialog):
         if orphans:
             no_quest = QTreeWidgetItem([self.tr("(No Quest / Unlinked)")])
             no_quest.setData(0, _ROLE_KIND, "group")
-            no_quest.setForeground(0, QColor("#6B7280"))
+            no_quest.setForeground(0, QColor("#4a6080"))
             for topic in orphans:
                 t_item = self._make_topic_item(topic)
                 no_quest.addChild(t_item)
@@ -571,7 +692,7 @@ class DialogueTreeDialog(QDialog):
         item  = QTreeWidgetItem([label])
         item.setData(0, _ROLE_KIND, "quest")
         item.setData(0, _ROLE_FORM_ID, quest.form_id)
-        item.setForeground(0, QColor("#1D4ED8"))
+        item.setForeground(0, QColor("#3fb0ff"))
         item.setToolTip(0, f"0x{quest.form_id:08X}  EDID: {quest.edid or '—'}")
         return item
 
@@ -580,7 +701,7 @@ class DialogueTreeDialog(QDialog):
         item  = QTreeWidgetItem([label])
         item.setData(0, _ROLE_KIND, "topic")
         item.setData(0, _ROLE_FORM_ID, topic.form_id)
-        item.setForeground(0, QColor("#047857"))
+        item.setForeground(0, QColor("#3fd8b0"))
         item.setToolTip(0, f"0x{topic.form_id:08X}  EDID: {topic.edid or '—'}")
         return item
 
@@ -590,7 +711,7 @@ class DialogueTreeDialog(QDialog):
         item    = QTreeWidgetItem([label])
         item.setData(0, _ROLE_KIND, "response")
         item.setData(0, _ROLE_FORM_ID, resp.form_id)
-        item.setForeground(0, QColor("#374151"))
+        item.setForeground(0, QColor("#c0c8d8"))
         tip = (
             f"0x{resp.form_id:08X}  EDID: {resp.edid or '—'}\n"
             f"Player: {_trunc(resp.player_prompt, 80) or '—'}\n"
@@ -685,16 +806,16 @@ class DialogueTreeDialog(QDialog):
         self._selected_fid = resp.form_id
         lines = [
             f"<b>FormID:</b> 0x{resp.form_id:08X}"
-            + (f"  <span style='color:#6B7280'>{resp.edid}</span>" if resp.edid else ""),
+            + (f"  <span style='color:#4a6080'>{resp.edid}</span>" if resp.edid else ""),
         ]
         if resp.player_prompt:
             lines.append(
-                f"<p><span style='color:#1E40AF'><b>Player:</b></span> "
+                f"<p><span style='color:#3fb0ff'><b>Player:</b></span> "
                 f"{_html_escape(resp.player_prompt)}</p>"
             )
         if resp.npc_line:
             lines.append(
-                f"<p><span style='color:#065F46'><b>NPC:</b></span> "
+                f"<p><span style='color:#3ff0ff'><b>NPC:</b></span> "
                 f"{_html_escape(resp.npc_line)}</p>"
             )
         self._txt_detail.setHtml("".join(lines))
