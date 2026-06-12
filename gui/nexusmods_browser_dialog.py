@@ -281,44 +281,98 @@ class _ModCard(QFrame):
 
 # ── Misc helpers ──────────────────────────────────────────────────────────────
 
+def _extract_from_archive(path: Path, out_dir: Path, wanted_exts: set) -> List[Path]:
+    """Extract files whose suffix is in *wanted_exts* from any supported archive.
+
+    Supports .zip (stdlib), .7z (py7zr library or 7z CLI), and .rar (rarfile
+    library or unrar/7z CLI).  Returns a list of extracted file paths.
+    """
+    import subprocess
+    suffix = path.suffix.lower()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    found: List[Path] = []
+
+    if suffix == ".zip":
+        with zipfile.ZipFile(path, "r") as zf:
+            for member in zf.namelist():
+                if Path(member).suffix.lower() in wanted_exts:
+                    extracted = zf.extract(member, out_dir)
+                    found.append(Path(extracted))
+
+    elif suffix == ".7z":
+        try:
+            import py7zr  # type: ignore[import-untyped]
+            with py7zr.SevenZipFile(path, mode="r") as archive:
+                targets = [n for n in archive.getnames()
+                           if Path(n).suffix.lower() in wanted_exts]
+                if targets:
+                    archive.extract(path=out_dir, targets=targets)
+                    for t in targets:
+                        p = out_dir / t
+                        if p.exists():
+                            found.append(p)
+        except ImportError:
+            # Fall back to 7z CLI (p7zip package)
+            try:
+                result = subprocess.run(
+                    ["7z", "e", str(path), "-y", f"-o{out_dir}",
+                     *[f"*{ext}" for ext in wanted_exts]],
+                    capture_output=True, timeout=120,
+                )
+                if result.returncode == 0:
+                    found = [p for p in out_dir.iterdir()
+                             if p.suffix.lower() in wanted_exts]
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                pass
+
+    elif suffix == ".rar":
+        try:
+            import rarfile  # type: ignore[import-untyped]
+            with rarfile.RarFile(path) as rf:
+                for member in rf.namelist():
+                    if Path(member).suffix.lower() in wanted_exts:
+                        rf.extract(member, out_dir)
+                        found.append(out_dir / member)
+        except ImportError:
+            try:
+                result = subprocess.run(
+                    ["7z", "e", str(path), "-y", f"-o{out_dir}",
+                     *[f"*{ext}" for ext in wanted_exts]],
+                    capture_output=True, timeout=120,
+                )
+                if result.returncode == 0:
+                    found = [p for p in out_dir.iterdir()
+                             if p.suffix.lower() in wanted_exts]
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                pass
+
+    return found
+
+
 def _extract_strings(path: Path) -> List[Path]:
-    """Return a list of .strings/.dlstrings/.ilstrings paths from path.
+    """Return .strings/.dlstrings/.ilstrings paths from path or archive.
 
     If path is already a strings file, return [path].
-    If it's a zip, extract all strings files to path.parent/{stem}/ and return them.
-    Otherwise return [] (BA2 — caller will handle via BA2File picker).
+    If it's a zip/7z/rar, extract matching files and return them.
+    Otherwise return [path] (BA2 — caller handles via BA2File picker).
     """
     suffix = path.suffix.lower()
     if suffix in _STRINGS_EXTS:
         return [path]
-    if suffix == ".zip":
+    if suffix in {".zip", ".7z", ".rar"}:
         out_dir = path.parent / path.stem
-        out_dir.mkdir(exist_ok=True)
-        found = []
-        with zipfile.ZipFile(path, "r") as zf:
-            for member in zf.namelist():
-                if Path(member).suffix.lower() in _STRINGS_EXTS:
-                    extracted = zf.extract(member, out_dir)
-                    found.append(Path(extracted))
-        return found
+        return _extract_from_archive(path, out_dir, _STRINGS_EXTS) or [path]
     return [path]
 
 
 def _extract_plugins(path: Path) -> List[Path]:
-    """Return .esp/.esm/.esl files from path (direct or extracted from zip)."""
+    """Return .esp/.esm/.esl files from path or archive."""
     suffix = path.suffix.lower()
     if suffix in _PLUGIN_EXTS:
         return [path]
-    if suffix == ".zip":
+    if suffix in {".zip", ".7z", ".rar"}:
         out_dir = path.parent / path.stem
-        out_dir.mkdir(exist_ok=True)
-        found = []
-        with zipfile.ZipFile(path, "r") as zf:
-            for member in zf.namelist():
-                if Path(member).suffix.lower() in _PLUGIN_EXTS:
-                    extracted = zf.extract(member, out_dir)
-                    found.append(Path(extracted))
-        return found
+        return _extract_from_archive(path, out_dir, _PLUGIN_EXTS)
     return []
 
 
