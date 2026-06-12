@@ -1353,6 +1353,19 @@ class MainWindow(QMainWindow):
         self.check_consistency_action.setEnabled(False)
         trans_menu.addAction(self.check_consistency_action)
 
+        self.register_check_action = QAction(
+            self.tr("Check &Register (ти/ви)…"), self
+        )
+        self.register_check_action.setIcon(QIcon.fromTheme("format-text-direction-ltr"))
+        self.register_check_action.setShortcut("Ctrl+Alt+R")
+        self.register_check_action.setToolTip(self.tr(
+            "Detect NPC speakers whose translated lines mix informal (ти) and\n"
+            "formal (ви) address when speaking to the player. (Ctrl+Alt+R)"
+        ))
+        self.register_check_action.triggered.connect(self._check_register)
+        self.register_check_action.setEnabled(False)
+        trans_menu.addAction(self.register_check_action)
+
         # Glossary menu
         glossary_menu = menubar.addMenu(self.tr("&Glossary"))
         self.glossary_editor_action = QAction(self.tr("&Edit Glossary…"), self)
@@ -1699,6 +1712,8 @@ class MainWindow(QMainWindow):
             self.discover_terms_action.setEnabled(has_file and self.term_protector is not None)
         if hasattr(self, "check_consistency_action"):
             self.check_consistency_action.setEnabled(has_file)
+        if hasattr(self, "register_check_action"):
+            self.register_check_action.setEnabled(has_file)
         if hasattr(self, "font_checker_action"):
             self.font_checker_action.setEnabled(has_file)
         if hasattr(self, "btn_encoding_change"):
@@ -5524,6 +5539,29 @@ class MainWindow(QMainWindow):
 
         dlg = ConsistencyDialog(groups, parent=self)
         dlg.replacements_requested.connect(self._apply_consistency_replacements)
+        dlg.exec()
+
+    def _check_register(self) -> None:
+        """Detect NPC speakers with mixed ти/ви register in their translated lines."""
+        from gui.register_checker import check_register
+        from gui.register_dialog import RegisterDialog
+
+        rows = list(self.table_model._data)
+        translated_count = sum(
+            1 for r in rows
+            if r.get("status") in ("translated", "approved") and r.get("translated")
+        )
+        if translated_count == 0:
+            QMessageBox.information(
+                self,
+                self.tr("Register Check"),
+                self.tr("No translated strings found. Translate some strings first."),
+            )
+            return
+
+        groups = check_register(rows)
+        dlg = RegisterDialog(groups, parent=self)
+        dlg.jump_to_row.connect(self._jump_to_row)
         dlg.exec()
 
     def _apply_consistency_replacements(self, replacements: list):
