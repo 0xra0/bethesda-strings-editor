@@ -3,41 +3,41 @@ NexusMods API Bridge — browse, download, and import translation mods as TM.
 
 Layout
 ------
-┌─ Search ──────────────────────────────────┬─ Mod detail ──────────────────────────────┐
-│  Game  [Starfield ▼]  [translation query] │  Mod name (large)                         │
-│  [🔍 Search]                              │  by <author>  ·  category  ·  updated     │
-│                                           │  ─────────────────────────────────────── │
-│  ┌──────────────────────────────────────┐ │  Summary text (word-wrap)                 │
-│  │ Mod name | Author | ↓ | ★ | Updated │ │                                           │
-│  │ ...                                  │ │  Files                                    │
-│  └──────────────────────────────────────┘ │  ┌──────────────────────────────────────┐│
-│                                           │  │ file.ba2 | 1.0 | 4 MB | Main       ││
-│                                           │  │ ...                                  ││
-│                                           │  └──────────────────────────────────────┘│
-│                                           │                                           │
-│                                           │  [🌐 Open mod page]                      │
-│                                           │  [⬇ Download & Import as TM]             │
-│                                           │  [⬇ Download & Merge into Current]       │
-└───────────────────────────────────────────┴───────────────────────────────────────────┘
+┌─ Search ─────────────────────────────────────┬─ Mod detail ────────────────────────────┐
+│  Game  [Starfield ▼]  [search query…] [🔍]   │  Mod name (large)                       │
+│  N results                                    │  by <author>  ·  updated                │
+│  ┌──────┐ ┌──────┐ ┌──────┐                  │  ─────────────────────────────────────  │
+│  │thumb │ │thumb │ │thumb │                  │  Summary text (word-wrap)               │
+│  │      │ │      │ │      │                  │                                         │
+│  │Name  │ │Name  │ │Name  │                  │  Files                                  │
+│  │auth  │ │auth  │ │auth  │                  │  ┌──────────────────────────────────┐  │
+│  │★ ↓   │ │★ ↓   │ │★ ↓   │                  │  │ file.ba2 | 1.0 | 4 MB | Main   │  │
+│  └──────┘ └──────┘ └──────┘                  │  └──────────────────────────────────┘  │
+│  ...                                          │  [🌐 Open mod page]                    │
+│                                               │  [⬇ Download & Import as TM]           │
+└───────────────────────────────────────────────┴─────────────────────────────────────────┘
   ── Status bar ──────────────────────────────────────────────────────────────────────────
 
-Keyboard: Enter in search box triggers search; double-click result selects mod.
+Keyboard: Enter in search box triggers search; click card selects mod.
 """
 
 from __future__ import annotations
 
+import hashlib
 import threading
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
+import requests as _requests
+
 from PySide6.QtCore import QObject, QRunnable, QSize, Qt, QThreadPool, Signal, Slot
-from PySide6.QtGui import QColor, QDesktopServices, QFont
+from PySide6.QtGui import QColor, QDesktopServices, QFont, QPixmap
 from PySide6.QtWidgets import (
     QComboBox, QDialog, QDialogButtonBox,
-    QFrame, QHBoxLayout, QHeaderView, QLabel, QLineEdit,
-    QProgressBar, QPushButton,
+    QFrame, QGridLayout, QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QProgressBar, QPushButton, QScrollArea,
     QSplitter, QTableWidget, QTableWidgetItem, QTextEdit,
     QVBoxLayout, QWidget,
 )
@@ -45,6 +45,10 @@ from PySide6.QtWidgets import (
 from gui.nexusmods_client import GAMES, NexusClient, NexusModFile, NexusModsError, NexusSearchResult
 
 _STRINGS_EXTS = {".strings", ".dlstrings", ".ilstrings"}
+
+_CARD_W   = 215
+_CARD_IMG = 121   # 16:9
+_COLS     = 3
 
 
 # ── Background workers ────────────────────────────────────────────────────────
@@ -102,42 +106,180 @@ class _DownloadWorker(QRunnable):
     ) -> None:
         super().__init__()
         self.setAutoDelete(True)
-        self._client = client
-        self._domain = domain
-        self._mod_id = mod_id
+        self._client   = client
+        self._domain   = domain
+        self._mod_id   = mod_id
         self._mod_name = mod_name
-        self._nf = nf
+        self._nf       = nf
         self._dest_dir = dest_dir
-        self._stop = threading.Event()
-        self.signals = _WorkerSignals()
+        self.signals   = _WorkerSignals()
+        self._cancelled = threading.Event()
 
     def cancel(self) -> None:
-        self._stop.set()
+        self._cancelled.set()
 
     def run(self) -> None:
         try:
             url = self._client.download_url(self._domain, self._mod_id, self._nf.file_id)
             if not url:
-                # Free account or page-visit restriction — tell the dialog
-                self.signals.error.emit(
-                    "NO_DIRECT_LINK:" + self._client.mod_page_url(self._domain, self._mod_id)
-                )
+                page_url = self._client.mod_page_url(self._domain, self._mod_id)
+                self.signals.error.emit(f"NO_DIRECT_LINK:{page_url}")
                 return
 
+            self._dest_dir.mkdir(parents=True, exist_ok=True)
             dest = self._dest_dir / self._nf.file_name
-            self._client.download_file(
-                url, dest,
-                progress=lambda d, t: self.signals.progress.emit(d, t),
-                stop_event=self._stop,
-            )
-            # Resolve to actual strings files
-            strings_paths = _extract_strings(dest)
-            self.signals.finished.emit(strings_paths)
-        except NexusModsError as exc:
-            self.signals.error.emit(str(exc))
-        except Exception as exc:
-            self.signals.error.emit(f"Unexpected error: {exc}")
 
+            self._client.stream_download(
+                url, dest,
+                progress=lambda done, total: self.signals.progress.emit(done, total),
+                cancelled=self._cancelled,
+            )
+            if self._cancelled.is_set():
+                dest.unlink(missing_ok=True)
+                return
+
+            paths = _extract_strings(dest)
+            self.signals.finished.emit(paths)
+        except Exception as exc:
+            self.signals.error.emit(str(exc))
+
+
+# ── Thumbnail loading ─────────────────────────────────────────────────────────
+
+class _ThumbnailSignals(QObject):
+    loaded = Signal(object, bytes)   # (_ModCard, raw image bytes)
+
+
+class _ThumbnailLoader(QRunnable):
+    def __init__(self, url: str, card: "_ModCard", cache_dir: Path) -> None:
+        super().__init__()
+        self.setAutoDelete(True)
+        self._url      = url
+        self._card     = card
+        self._cache_dir = cache_dir
+        self.signals   = _ThumbnailSignals()
+
+    def run(self) -> None:
+        key        = hashlib.md5(self._url.encode()).hexdigest()
+        cache_file = self._cache_dir / "thumb_cache" / key
+        try:
+            if cache_file.exists():
+                data = cache_file.read_bytes()
+            else:
+                resp = _requests.get(self._url, timeout=10)
+                if not resp.ok:
+                    return
+                data = resp.content
+                cache_file.parent.mkdir(parents=True, exist_ok=True)
+                cache_file.write_bytes(data)
+            self.signals.loaded.emit(self._card, data)
+        except Exception:
+            pass
+
+
+# ── Mod card widget ───────────────────────────────────────────────────────────
+
+class _ModCard(QFrame):
+    clicked = Signal(object)   # NexusSearchResult
+
+    _STYLE_NORMAL = (
+        "QFrame#ModCard { border: 1px solid #2d2d3d; border-radius: 4px;"
+        " background: #16161e; }"
+    )
+    _STYLE_SELECTED = (
+        "QFrame#ModCard { border: 2px solid #DA8B15; border-radius: 4px;"
+        " background: #1e1b0e; }"
+    )
+
+    def __init__(self, result: NexusSearchResult, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._result = result
+        self.setFixedWidth(_CARD_W)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setObjectName("ModCard")
+        self.setStyleSheet(self._STYLE_NORMAL)
+
+        vl = QVBoxLayout(self)
+        vl.setContentsMargins(0, 0, 0, 6)
+        vl.setSpacing(3)
+
+        # Thumbnail
+        self._thumb_lbl = QLabel()
+        self._thumb_lbl.setFixedSize(_CARD_W, _CARD_IMG)
+        self._thumb_lbl.setAlignment(Qt.AlignCenter)
+        self._thumb_lbl.setStyleSheet(
+            "background: #0d0d1a; border-top-left-radius: 4px;"
+            " border-top-right-radius: 4px;"
+        )
+        vl.addWidget(self._thumb_lbl)
+
+        body = QWidget()
+        bl = QVBoxLayout(body)
+        bl.setContentsMargins(8, 2, 8, 0)
+        bl.setSpacing(2)
+
+        name_lbl = QLabel(result.name)
+        name_lbl.setWordWrap(True)
+        name_lbl.setMaximumHeight(40)
+        f = QFont()
+        f.setBold(True)
+        f.setPointSize(9)
+        name_lbl.setFont(f)
+        bl.addWidget(name_lbl)
+
+        if result.author:
+            by_lbl = QLabel(f"by {result.author}")
+            by_lbl.setStyleSheet("color: #8b949e; font-size: 9px;")
+            by_lbl.setMaximumHeight(16)
+            bl.addWidget(by_lbl)
+
+        def _fmt(n: int) -> str:
+            return f"{n / 1000:.1f}k" if n >= 1000 else str(n)
+
+        stats_parts = []
+        if result.endorsements:
+            stats_parts.append(f"👍 {_fmt(result.endorsements)}")
+        if result.downloads:
+            stats_parts.append(f"↓ {_fmt(result.downloads)}")
+        if stats_parts:
+            stats_lbl = QLabel("  ".join(stats_parts))
+            stats_lbl.setStyleSheet("color: #8b949e; font-size: 9px;")
+            stats_lbl.setMaximumHeight(16)
+            bl.addWidget(stats_lbl)
+
+        if result.updated_ts:
+            ts = datetime.fromtimestamp(result.updated_ts, tz=timezone.utc)
+            date_lbl = QLabel(ts.strftime("%d %b %Y"))
+            date_lbl.setStyleSheet("color: #6e7681; font-size: 9px;")
+            date_lbl.setMaximumHeight(14)
+            bl.addWidget(date_lbl)
+
+        vl.addWidget(body)
+
+    def set_thumbnail(self, pixmap: QPixmap) -> None:
+        scaled = pixmap.scaled(
+            _CARD_W, _CARD_IMG,
+            Qt.KeepAspectRatioByExpanding,
+            Qt.SmoothTransformation,
+        )
+        x = (scaled.width()  - _CARD_W)   // 2
+        y = (scaled.height() - _CARD_IMG) // 2
+        self._thumb_lbl.setPixmap(scaled.copy(x, y, _CARD_W, _CARD_IMG))
+
+    def set_selected(self, selected: bool) -> None:
+        self.setStyleSheet(self._STYLE_SELECTED if selected else self._STYLE_NORMAL)
+
+    @property
+    def result(self) -> NexusSearchResult:
+        return self._result
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit(self._result)
+        super().mousePressEvent(event)
+
+
+# ── Misc helpers ──────────────────────────────────────────────────────────────
 
 def _extract_strings(path: Path) -> List[Path]:
     """Return a list of .strings/.dlstrings/.ilstrings paths from path.
@@ -159,8 +301,6 @@ def _extract_strings(path: Path) -> List[Path]:
                     extracted = zf.extract(member, out_dir)
                     found.append(Path(extracted))
         return found
-    # .ba2, .7z, .rar — return the archive path with a special marker so caller
-    # can open the BA2 picker or prompt the user
     return [path]
 
 
@@ -169,10 +309,8 @@ def _extract_strings(path: Path) -> List[Path]:
 class NexusModsBrowserDialog(QDialog):
     """Browse NexusMods for translation mods and import them as Translation Memory."""
 
-    # Emitted when the user imports a TM; parent connects this to _load_tm_from_memory
-    tm_ready = Signal(object, str)   # (TranslationMemory, source_label)
-    # Emitted when the user wants to merge into the current table
-    merge_requested = Signal(object)  # TranslationMemory
+    tm_ready       = Signal(object, str)   # (TranslationMemory, source_label)
+    merge_requested = Signal(object)       # TranslationMemory
 
     def __init__(
         self,
@@ -182,15 +320,17 @@ class NexusModsBrowserDialog(QDialog):
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle(self.tr("NexusMods Translation Browser"))
-        self.setMinimumSize(QSize(1000, 640))
-        self.resize(1100, 680)
+        self.setMinimumSize(QSize(1100, 640))
+        self.resize(1300, 750)
 
-        self._api_key   = api_key
-        self._cache_dir = cache_dir
+        self._api_key          = api_key
+        self._cache_dir        = cache_dir
         self._client: Optional[NexusClient] = None
         self._current_mod: Optional[NexusSearchResult] = None
         self._current_files: List[NexusModFile] = []
         self._active_download: Optional[_DownloadWorker] = None
+        self._cards: List[_ModCard] = []
+        self._selected_card: Optional[_ModCard] = None
 
         if api_key:
             try:
@@ -216,9 +356,8 @@ class NexusModsBrowserDialog(QDialog):
 
         splitter.addWidget(self._build_search_panel())
         splitter.addWidget(self._build_detail_panel())
-        splitter.setSizes([420, 580])
+        splitter.setSizes([700, 600])
 
-        # ── Progress + status ──────────────────────────────────────────
         self._progress = QProgressBar()
         self._progress.setVisible(False)
         self._progress.setTextVisible(True)
@@ -246,14 +385,14 @@ class NexusModsBrowserDialog(QDialog):
         self._game_combo = QComboBox()
         for name in GAMES:
             self._game_combo.addItem(name, GAMES[name])
-        self._game_combo.setCurrentIndex(0)  # Starfield
+        self._game_combo.setCurrentIndex(0)
         game_row.addWidget(self._game_combo, stretch=1)
         layout.addLayout(game_row)
 
         # Search bar
         search_row = QHBoxLayout()
         self._search_edit = QLineEdit()
-        self._search_edit.setPlaceholderText(self.tr("Search: e.g. \"Ukrainian translation\""))
+        self._search_edit.setPlaceholderText(self.tr('Search: e.g. "Ukrainian translation"'))
         self._search_edit.returnPressed.connect(self._do_search)
         search_row.addWidget(self._search_edit, stretch=1)
         self._search_btn = QPushButton(self.tr("🔍  Search"))
@@ -262,24 +401,23 @@ class NexusModsBrowserDialog(QDialog):
         search_row.addWidget(self._search_btn)
         layout.addLayout(search_row)
 
-        # Results table
-        self._results_table = QTableWidget(0, 5)
-        self._results_table.setHorizontalHeaderLabels(
-            [self.tr("Mod Name"), self.tr("Author"), self.tr("↓"), self.tr("★"), self.tr("Updated")]
-        )
-        hdr = self._results_table.horizontalHeader()
-        hdr.setSectionResizeMode(0, QHeaderView.Stretch)
-        hdr.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        hdr.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        hdr.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        hdr.setSectionResizeMode(4, QHeaderView.ResizeToContents)
-        self._results_table.setSelectionBehavior(QTableWidget.SelectRows)
-        self._results_table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self._results_table.setAlternatingRowColors(True)
-        self._results_table.verticalHeader().setVisible(False)
-        self._results_table.itemSelectionChanged.connect(self._on_result_selected)
-        self._results_table.doubleClicked.connect(self._on_result_selected)
-        layout.addWidget(self._results_table, stretch=1)
+        # Result count label
+        self._results_count_lbl = QLabel()
+        self._results_count_lbl.setStyleSheet("color: #8b949e; font-size: 11px;")
+        layout.addWidget(self._results_count_lbl)
+
+        # Card grid inside scroll area
+        self._card_container = QWidget()
+        self._card_grid = QGridLayout(self._card_container)
+        self._card_grid.setSpacing(8)
+        self._card_grid.setContentsMargins(4, 4, 4, 4)
+        self._card_grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self._card_container)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        layout.addWidget(scroll, stretch=1)
 
         return panel
 
@@ -289,8 +427,7 @@ class NexusModsBrowserDialog(QDialog):
         layout.setContentsMargins(4, 0, 0, 0)
         layout.setSpacing(6)
 
-        # Mod header
-        self._mod_name_label = QLabel(self.tr("(select a mod from the list)"))
+        self._mod_name_label = QLabel(self.tr("(click a mod card)"))
         font = QFont()
         font.setBold(True)
         font.setPointSize(13)
@@ -331,7 +468,6 @@ class NexusModsBrowserDialog(QDialog):
         self._files_table.itemSelectionChanged.connect(self._on_file_selected)
         layout.addWidget(self._files_table, stretch=1)
 
-        # Action buttons
         self._open_page_btn = QPushButton(self.tr("🌐  Open mod page in browser"))
         self._open_page_btn.setEnabled(False)
         self._open_page_btn.clicked.connect(self._open_mod_page)
@@ -370,14 +506,6 @@ class NexusModsBrowserDialog(QDialog):
         color = "#da3633" if error else "#8b949e"
         self._status_label.setText(f"<span style='color:{color}'>{msg}</span>")
 
-    def _selected_result(self) -> Optional[NexusSearchResult]:
-        rows = self._results_table.selectedItems()
-        if not rows:
-            return None
-        row = self._results_table.currentRow()
-        item = self._results_table.item(row, 0)
-        return item.data(Qt.UserRole) if item is not None else None
-
     def _selected_file(self) -> Optional[NexusModFile]:
         rows = self._files_table.selectedItems()
         if not rows:
@@ -399,8 +527,18 @@ class NexusModsBrowserDialog(QDialog):
         if not query:
             return
         game_domain, game_id = self._game_info()
+
+        # Clear existing cards
+        while self._card_grid.count():
+            item = self._card_grid.takeAt(0)
+            w = item.widget() if item else None
+            if w:
+                w.deleteLater()
+        self._cards.clear()
+        self._selected_card = None
+        self._results_count_lbl.setText("")
+
         self._search_btn.setEnabled(False)
-        self._results_table.setRowCount(0)
         self._set_status(self.tr("Searching…"))
 
         worker = _SearchWorker(self._client, query, game_id, game_domain)
@@ -413,9 +551,12 @@ class NexusModsBrowserDialog(QDialog):
         self._search_btn.setEnabled(True)
         if not results:
             self._set_status(self.tr("No results found."))
+            self._results_count_lbl.setText(self.tr("0 results"))
             return
         self._populate_results(results)
-        self._set_status(self.tr(f"{len(results)} result(s)"))
+        n = len(results)
+        self._results_count_lbl.setText(self.tr(f"{n} result{'s' if n != 1 else ''}"))
+        self._set_status("")
 
     @Slot(str)
     def _on_search_error(self, msg: str) -> None:
@@ -423,25 +564,38 @@ class NexusModsBrowserDialog(QDialog):
         self._set_status(self.tr(f"Search failed: {msg}"), error=True)
 
     def _populate_results(self, results: list) -> None:
-        self._results_table.setRowCount(len(results))
         for i, r in enumerate(results):
-            name_item = QTableWidgetItem(r.name)
-            name_item.setData(Qt.UserRole, r)
-            self._results_table.setItem(i, 0, name_item)
-            self._results_table.setItem(i, 1, QTableWidgetItem(r.author))
-            self._results_table.setItem(i, 2, _num_item(r.downloads))
-            self._results_table.setItem(i, 3, _num_item(r.endorsements))
-            ts = datetime.fromtimestamp(r.updated_ts, tz=timezone.utc) if r.updated_ts else None
-            date_str = ts.strftime("%Y-%m-%d") if ts else "—"
-            self._results_table.setItem(i, 4, QTableWidgetItem(date_str))
-        self._results_table.resizeRowsToContents()
+            card = _ModCard(r, self._card_container)
+            card.clicked.connect(self._on_card_clicked)
+            self._card_grid.addWidget(card, i // _COLS, i % _COLS)
+            self._cards.append(card)
+
+            if r.picture_url:
+                loader = _ThumbnailLoader(r.picture_url, card, self._cache_dir)
+                loader.signals.loaded.connect(self._on_thumbnail_loaded)
+                QThreadPool.globalInstance().start(loader)
+
+    @Slot(object, bytes)
+    def _on_thumbnail_loaded(self, card: _ModCard, data: bytes) -> None:
+        pixmap = QPixmap()
+        pixmap.loadFromData(data)
+        if not pixmap.isNull():
+            card.set_thumbnail(pixmap)
 
     # ── Mod selection ─────────────────────────────────────────────────────────
 
-    @Slot()
-    def _on_result_selected(self) -> None:
-        result = self._selected_result()
-        if result is None or result == self._current_mod:
+    @Slot(object)
+    def _on_card_clicked(self, result: NexusSearchResult) -> None:
+        # Update selection highlight
+        if self._selected_card:
+            self._selected_card.set_selected(False)
+        for card in self._cards:
+            if card.result is result:
+                card.set_selected(True)
+                self._selected_card = card
+                break
+
+        if result == self._current_mod:
             return
         self._current_mod = result
         self._show_mod_detail(result)
@@ -462,10 +616,13 @@ class NexusModsBrowserDialog(QDialog):
         self._mod_name_label.setText(r.name)
         ts = datetime.fromtimestamp(r.updated_ts, tz=timezone.utc) if r.updated_ts else None
         date_str = ts.strftime("%Y-%m-%d") if ts else "—"
-        self._mod_meta_label.setText(
-            f"by {r.author}  ·  {r.category}  ·  "
-            f"↓ {r.downloads:,}  ·  ★ {r.endorsements:,}  ·  updated {date_str}"
-        )
+        meta_parts = [f"by {r.author}"] if r.author else []
+        if r.downloads:
+            meta_parts.append(f"↓ {r.downloads:,}")
+        if r.endorsements:
+            meta_parts.append(f"★ {r.endorsements:,}")
+        meta_parts.append(f"updated {date_str}")
+        self._mod_meta_label.setText("  ·  ".join(meta_parts))
         self._mod_summary.setPlainText(r.summary)
 
     @Slot(object)
@@ -475,7 +632,6 @@ class NexusModsBrowserDialog(QDialog):
         for i, f in enumerate(files):
             name_item = QTableWidgetItem(f.file_name)
             name_item.setData(Qt.UserRole, f)
-            # Highlight likely translation files
             if f.likely_translation:
                 name_item.setForeground(QColor("#3fb950"))
             self._files_table.setItem(i, 0, name_item)
@@ -519,7 +675,7 @@ class NexusModsBrowserDialog(QDialog):
         self._merge_btn.setEnabled(False)
         self._cancel_btn.setVisible(True)
         self._progress.setVisible(True)
-        self._progress.setRange(0, 0)  # indeterminate until first progress signal
+        self._progress.setRange(0, 0)
         self._set_status(self.tr(f"Downloading {nf.file_name}…"))
 
         worker = _DownloadWorker(self._client, domain, self._current_mod.mod_id, mod_name, nf, dest_dir)
@@ -549,7 +705,7 @@ class NexusModsBrowserDialog(QDialog):
         if total > 0:
             self._progress.setRange(0, total)
             self._progress.setValue(done)
-            mb_done = done / 1_048_576
+            mb_done  = done  / 1_048_576
             mb_total = total / 1_048_576
             self._set_status(self.tr(f"Downloading… {mb_done:.1f} / {mb_total:.1f} MB"))
         else:
@@ -579,7 +735,6 @@ class NexusModsBrowserDialog(QDialog):
             self._set_status(self.tr("No .strings files found in the downloaded archive."), error=True)
             return
 
-        # If it's a BA2 or unsupported archive, we can only offer open-in-editor
         from gui.nexusmods_client import CONTAINER_EXTS
         if paths[0].suffix.lower() in (CONTAINER_EXTS - {".zip"}):
             self._set_status(self.tr(
@@ -588,7 +743,6 @@ class NexusModsBrowserDialog(QDialog):
             ))
             return
 
-        # Load all strings files into one TM
         from gui.translation_memory import TranslationMemory
         tm = TranslationMemory()
         loaded = 0
@@ -606,7 +760,7 @@ class NexusModsBrowserDialog(QDialog):
                 f"✓  TM imported: {loaded} string(s) from {len(paths)} file(s).  "
                 "Known strings will be skipped during AI translation."
             ))
-        else:  # merge
+        else:
             self.merge_requested.emit(tm)
             self._set_status(self.tr(
                 f"✓  Merge requested: {loaded} string(s) from {len(paths)} file(s)."
@@ -619,12 +773,3 @@ class NexusModsBrowserDialog(QDialog):
         has_file = self._selected_file() is not None
         self._import_tm_btn.setEnabled(has_file)
         self._merge_btn.setEnabled(has_file)
-
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
-def _num_item(n: int) -> QTableWidgetItem:
-    """Right-aligned number table cell."""
-    item = QTableWidgetItem(f"{n:,}")
-    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-    return item
