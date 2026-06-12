@@ -76,6 +76,7 @@ from gui.translation_memory import TranslationMemory
 from gui.string_table import StringTableModel, StringTableView
 from gui.term_protector import ProtectedTerm, TermProtector
 from gui.translation_cache import TranslationCache
+from gui.gpu_monitor import GpuMonitorWidget
 
 logger = logging.getLogger(__name__)
 
@@ -924,6 +925,9 @@ class MainWindow(QMainWindow):
         self._eta_lbl.setToolTip(self.tr("Estimated time remaining for current translation batch"))
         self._eta_lbl.setVisible(False)
         status_bar.addPermanentWidget(self._eta_lbl)
+
+        self._gpu_widget = GpuMonitorWidget()
+        status_bar.addPermanentWidget(self._gpu_widget)
 
         # Debounce timer so rapid dataChanged signals don't thrash the count loop
         self._stats_refresh_timer = QTimer(self)
