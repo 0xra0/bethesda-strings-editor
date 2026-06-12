@@ -3,6 +3,7 @@ requests>=2.31
 cryptography>=43.0
 anthropic>=0.25
 keyring>=25.0  # optional — falls back to encrypted file store if unavailable
+curl-cffi>=0.7  # optional — required for free-user NexusMods downloads (Chrome TLS impersonation)
 # Spell-check — optional; install separately after meeting the system-level build dep:
 #   Arch:          pacman -S hunspell-dev && pip install hunspell
 #   Debian/Ubuntu: apt install libhunspell-dev && pip install hunspell
