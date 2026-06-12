@@ -248,9 +248,16 @@ class NexusClient:
         except requests.RequestException as exc:
             raise NexusModsError(f"Files request failed: {exc}") from exc
 
+        # catId 4 = OLD_VERSION, catId 7 = ARCHIVED — both should be hidden.
+        # Use both name and numeric id so the filter is robust across API versions.
+        _HIDE_IDS  = {4, 7}
+        _HIDE_CATS = {"OLD_VERSION", "ARCHIVED"}
+
         files = []
         for f in data.get("files", []):
-            if f.get("category_name", "").upper() == "OLD_VERSION":
+            cat_name = (f.get("category_name", "") or "").upper().replace(" ", "_")
+            cat_id   = int(f.get("category_id", 0) or 0)
+            if cat_name in _HIDE_CATS or cat_id in _HIDE_IDS:
                 continue
             files.append(NexusModFile(
                 file_id=int(f.get("file_id", 0)),
