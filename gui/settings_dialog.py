@@ -678,6 +678,40 @@ class SettingsDialog(QDialog):
         weblate_group.setLayout(weblate_layout)
         layout.addWidget(weblate_group)
 
+        # NexusMods
+        nexus_group = QGroupBox(self.tr("NexusMods"))
+        nexus_layout = QFormLayout()
+
+        nexus_key_row = QHBoxLayout()
+        self.nexusmods_api_key_edit = QLineEdit(getattr(self._settings, "nexusmods_api_key", ""))
+        self.nexusmods_api_key_edit.setPlaceholderText(self.tr("Paste your NexusMods API key here"))
+        self.nexusmods_api_key_edit.setEchoMode(QLineEdit.Password)
+        self.nexusmods_api_key_edit.setToolTip(self.tr(
+            "Personal API key from nexusmods.com → Settings → API Keys.\n"
+            "Required for uploading mod files and browsing download links."
+        ))
+        nexus_key_row.addWidget(self.nexusmods_api_key_edit, stretch=1)
+        btn_show_nexus_key = QPushButton(self.tr("Show"))
+        btn_show_nexus_key.setMaximumWidth(52)
+        btn_show_nexus_key.setCheckable(True)
+        btn_show_nexus_key.toggled.connect(
+            lambda checked: self.nexusmods_api_key_edit.setEchoMode(
+                QLineEdit.Normal if checked else QLineEdit.Password
+            )
+        )
+        nexus_key_row.addWidget(btn_show_nexus_key)
+        nexus_layout.addRow(self.tr("API Key:"), nexus_key_row)
+
+        self.nexusmods_file_group_edit = QLineEdit(getattr(self._settings, "nexusmods_file_group_id", ""))
+        self.nexusmods_file_group_edit.setPlaceholderText("123456")
+        self.nexusmods_file_group_edit.setToolTip(self.tr(
+            "Optional: NexusMods file group ID to attach uploaded files to an existing group."
+        ))
+        nexus_layout.addRow(self.tr("File Group ID:"), self.nexusmods_file_group_edit)
+
+        nexus_group.setLayout(nexus_layout)
+        layout.addWidget(nexus_group)
+
         # Audio / TTS Preview
         audio_group = QGroupBox(self.tr("Audio / TTS Preview"))
         audio_layout = QFormLayout()
@@ -1120,6 +1154,8 @@ class SettingsDialog(QDialog):
         settings.weblate_api_token = self.weblate_token_edit.text().strip()
         settings.weblate_project   = self.weblate_project_edit.text().strip()
         settings.weblate_component = self.weblate_component_edit.text().strip()
+        settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
+        settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
         settings.tts_engine_type = self.combo_tts_engine.currentData()
         settings.espeak_voice = self.espeak_voice_edit.text().strip() or "uk"
