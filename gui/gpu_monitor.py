@@ -121,21 +121,31 @@ def read_gpu_stats() -> Optional[GpuStats]:
 # ── Widget ────────────────────────────────────────────────────────────────────
 
 def _color_gpu(pct: int) -> str:
-    if pct < 50: return "#4ade80"
-    if pct < 80: return "#fbbf24"
+    if pct < 50:
+        return "#4ade80"
+    if pct < 80:
+        return "#fbbf24"
     return "#f87171"
+
 
 def _color_vram(used_mb: int, total_mb: int) -> str:
-    if total_mb == 0: return "#6b7280"
+    if total_mb == 0:
+        return "#6b7280"
     ratio = used_mb / total_mb
-    if ratio < 0.70: return "#4ade80"
-    if ratio < 0.90: return "#fbbf24"
+    if ratio < 0.70:
+        return "#4ade80"
+    if ratio < 0.90:
+        return "#fbbf24"
     return "#f87171"
 
+
 def _color_temp(t: int) -> str:
-    if t < 0:  return "#6b7280"
-    if t < 70: return "#4ade80"
-    if t < 85: return "#fbbf24"
+    if t < 0:
+        return "#6b7280"
+    if t < 70:
+        return "#4ade80"
+    if t < 85:
+        return "#fbbf24"
     return "#f87171"
 
 def _fmt_mb(mb: int) -> str:
