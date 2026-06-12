@@ -125,6 +125,16 @@ class NexusClient:
             )
             resp.raise_for_status()
             data = resp.json()
+        except requests.exceptions.ConnectionError as exc:
+            msg = str(exc)
+            if "NameResolutionError" in msg or "Name or service not known" in msg or "Errno -2" in msg:
+                raise NexusModsError(
+                    "Cannot reach NexusMods search server (DNS resolution failed).\n"
+                    "Check your internet connection or try again later."
+                ) from exc
+            raise NexusModsError(f"Connection error: {exc}") from exc
+        except requests.exceptions.Timeout as exc:
+            raise NexusModsError("NexusMods search timed out. Try again later.") from exc
         except requests.RequestException as exc:
             raise NexusModsError(f"Search request failed: {exc}") from exc
 
