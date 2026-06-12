@@ -19,9 +19,10 @@ logger = logging.getLogger(__name__)
 class WordChecker:
     """Thread-safe lazy-loading word list checker for a single language."""
 
-    def __init__(self, filename: str, lang: str) -> None:
+    def __init__(self, filename: str, lang: str, min_word_len: int = 3) -> None:
         self._filename = filename
         self._lang = lang
+        self._min_word_len = min_word_len
         self._dict: Optional[FrozenSet[str]] = None
         self._lock = threading.Lock()
         self._failed = False
@@ -61,7 +62,7 @@ class WordChecker:
                             continue
                         # Accept "word" or "word count" format
                         word = stripped.split()[0].lower()
-                        if len(word) >= 3 and word.isalpha():
+                        if len(word) >= self._min_word_len and word.isalpha():
                             words.add(word)
                 result: FrozenSet[str] = frozenset(words)
                 elapsed = time.monotonic() - t0
