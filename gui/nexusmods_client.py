@@ -7,14 +7,24 @@ Search  : https://search.nexusmods.com/mods          (unofficial, used by the si
 Mod info: GET /v1/games/{domain}/mods/{mod_id}.json
 Files   : GET /v1/games/{domain}/mods/{mod_id}/files.json
 DL link : GET /v1/games/{domain}/mods/{mod_id}/files/{file_id}/download_link.json
-          (returns CDN URLs; requires premium or a recent page visit for free accounts)
+          (returns CDN URLs; requires premium or NXM key+expires for free accounts)
+PopUp   : https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp
+          (requires browser session cookies; returns NXM key+expires for free accounts)
 
 All calls need the ``apikey`` header (Settings → NexusMods API key).
+Free-user downloads additionally require ``curl_cffi`` (pip install curl-cffi)
+and an active NexusMods login in Firefox or a Chromium-based browser.
 """
 
 from __future__ import annotations
 
+import glob
 import logging
+import os
+import re
+import shutil
+import sqlite3
+import tempfile
 import threading
 from dataclasses import dataclass
 from datetime import datetime
@@ -26,6 +36,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 _SEARCH_URL  = "https://search.nexusmods.com/mods"
+_POPUP_URL   = "https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp"
 _GRAPHQL_URL = "https://api.nexusmods.com/v2/graphql"
 _API_BASE    = "https://api.nexusmods.com/v1"
 _UA          = "bethesda-strings-editor"
@@ -51,7 +62,98 @@ _GQL_SEARCH = """
 }
 """
 
-# Games where Bethesda strings files are relevant
+# ── Browser cookie helpers (free-user download) ───────────────────────────────
+
+def _read_sqlite_cookies(db_path: Path, query: str) -> dict[str, str]:
+    """Copy a browser SQLite cookie DB to a temp file and run query on it.
+
+    Copying avoids "database is locked" errors on live browser databases.
+    """
+    fd, tmp_str = tempfile.mkstemp(suffix=".sqlite")
+    os.close(fd)
+    shutil.copy2(str(db_path), tmp_str)
+    tmp = Path(tmp_str)
+    try:
+        conn = sqlite3.connect(str(tmp))
+        rows = conn.execute(query).fetchall()
+        conn.close()
+        return dict(rows)
+    except Exception:
+        return {}
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def find_browser_cookies() -> dict[str, str]:
+    """Return NexusMods session cookies from Firefox or a Chromium browser.
+
+    Firefox cookies are stored as plaintext SQLite — easiest path.
+    Chromium cookies may be encrypted with the OS keyring; only unencrypted
+    (or non-v10 encrypted) values are returned as a fallback.
+
+    Returns an empty dict if no session cookie is found.
+    """
+    # Firefox — plaintext SQLite
+    ff_patterns = [
+        str(Path.home() / ".mozilla/firefox/*.default-release/cookies.sqlite"),
+        str(Path.home() / ".mozilla/firefox/*.default/cookies.sqlite"),
+        str(Path.home() / "snap/firefox/common/.mozilla/firefox/*.default-release/cookies.sqlite"),
+    ]
+    for pat in ff_patterns:
+        for match in glob.glob(pat):
+            db = Path(match)
+            if not db.exists():
+                continue
+            cookies = _read_sqlite_cookies(
+                db,
+                "SELECT name, value FROM moz_cookies WHERE host LIKE '%nexusmods.com'",
+            )
+            if cookies.get("nexusmods_session"):
+                logger.debug("Found Firefox NexusMods cookies: %s", db)
+                return cookies
+
+    # Chromium / Chrome / Brave — try unencrypted cookies only
+    cr_paths = [
+        Path.home() / ".config/chromium/Default/Cookies",
+        Path.home() / ".config/google-chrome/Default/Cookies",
+        Path.home() / ".config/brave-browser/Default/Cookies",
+    ]
+    for db in cr_paths:
+        if not db.exists():
+            continue
+        fd, tmp_str = tempfile.mkstemp(suffix=".sqlite")
+        os.close(fd)
+        shutil.copy2(str(db), tmp_str)
+        tmp = Path(tmp_str)
+        try:
+            conn = sqlite3.connect(str(tmp))
+            rows = conn.execute(
+                "SELECT name, encrypted_value, value FROM cookies "
+                "WHERE host_key LIKE '%nexusmods.com'"
+            ).fetchall()
+            conn.close()
+        except Exception:
+            rows = []
+        finally:
+            tmp.unlink(missing_ok=True)
+
+        cookies: dict[str, str] = {}
+        for name, enc, plain in rows:
+            if plain:
+                cookies[name] = plain
+            elif enc and not enc.startswith(b"v10"):
+                try:
+                    cookies[name] = enc.decode()
+                except Exception:
+                    pass
+        if cookies.get("nexusmods_session"):
+            logger.debug("Found Chromium NexusMods cookies: %s", db)
+            return cookies
+
+    return {}
+
+
+# ── Games where Bethesda strings files are relevant ───────────────────────────
 GAMES: dict[str, tuple[str, int]] = {
     "Starfield":                  ("starfield",             4853),
     "Skyrim Special Edition":     ("skyrimspecialedition",  1704),
@@ -130,6 +232,7 @@ class NexusClient:
             "User-Agent": _UA,
             "Accept": "application/json",
         })
+        self._game_ids: dict[str, int] = {}  # domain → numeric game ID (cached)
 
     # ── Search ────────────────────────────────────────────────────────────────
 
@@ -281,22 +384,114 @@ class NexusClient:
 
     # ── Download link ─────────────────────────────────────────────────────────
 
-    def download_url(self, domain: str, mod_id: int, file_id: int) -> Optional[str]:
-        """Return the best CDN download URL, or None for free-account 403s."""
+    def _get_game_numeric_id(self, domain: str) -> int:
+        """Return the NexusMods numeric game ID for *domain* (cached)."""
+        if domain not in self._game_ids:
+            resp = self._session.get(f"{_API_BASE}/games/{domain}.json", timeout=_TIMEOUT)
+            resp.raise_for_status()
+            self._game_ids[domain] = int(resp.json()["id"])
+        return self._game_ids[domain]
+
+    def _free_download_url(self, domain: str, mod_id: int, file_id: int) -> str:
+        """Obtain a CDN download URL for free-tier accounts.
+
+        Uses curl_cffi (Chrome TLS impersonation) + browser session cookies to
+        hit the DownloadPopUp endpoint and extract the signed key+expires tokens
+        that the download_link API accepts from free accounts.
+
+        Raises NexusModsError with a FREE_* sentinel on recoverable failures so
+        the UI can show a targeted hint instead of a generic error.
+        """
+        try:
+            from curl_cffi import requests as cffi_requests  # type: ignore[import-untyped]
+        except ImportError:
+            raise NexusModsError("FREE_NO_CURL_CFFI")
+
+        cookies = find_browser_cookies()
+        if not cookies.get("nexusmods_session"):
+            raise NexusModsError("FREE_NO_COOKIES")
+
+        try:
+            game_id = self._get_game_numeric_id(domain)
+        except Exception as exc:
+            raise NexusModsError(f"Could not resolve game ID for '{domain}': {exc}") from exc
+
+        cffi_session = cffi_requests.Session(impersonate="chrome124")
+        for name, value in cookies.items():
+            cffi_session.cookies.set(name, value, domain=".nexusmods.com")
+
+        mod_page = f"https://www.nexusmods.com/{domain}/mods/{mod_id}?tab=files"
+        try:
+            popup_resp = cffi_session.get(
+                _POPUP_URL,
+                params={"id": file_id, "nmm": "1", "game_id": game_id},
+                headers={"Referer": mod_page, "X-Requested-With": "XMLHttpRequest"},
+                timeout=30,
+            )
+        except Exception as exc:
+            raise NexusModsError(f"DownloadPopUp request failed: {exc}") from exc
+
+        if popup_resp.status_code == 403:
+            raise NexusModsError("FREE_SESSION_EXPIRED")
+        if not popup_resp.ok:
+            raise NexusModsError(f"DownloadPopUp HTTP {popup_resp.status_code}")
+
+        text = popup_resp.text
+        # Extract key+expires from the NXM URL embedded in the popup HTML
+        nxm_m = re.search(
+            r"nxm://[^\"'<\s]*[?&]key=([^&\"'<\s]+)[^\"'<\s]*expires=([^\"'<\s&]+)",
+            text, re.IGNORECASE,
+        )
+        if nxm_m:
+            key, expires = nxm_m.group(1), nxm_m.group(2)
+        else:
+            key_m   = re.search(r'"key"\s*:\s*"([^"]+)"', text)
+            exp_m   = re.search(r'"expires"\s*:\s*"?(\d+)"?', text)
+            if not (key_m and exp_m):
+                raise NexusModsError(
+                    "FREE_POPUP_PARSE: could not find key+expires in DownloadPopUp response"
+                )
+            key, expires = key_m.group(1), exp_m.group(1)
+
+        dl_url = (
+            f"{_API_BASE}/games/{domain}/mods/{mod_id}/files/{file_id}/download_link.json"
+            f"?key={key}&expires={expires}"
+        )
+        try:
+            resp = self._session.get(dl_url, timeout=_TIMEOUT)
+            resp.raise_for_status()
+            links = resp.json()
+            if links:
+                return links[0].get("URI", "")
+            raise NexusModsError("Download link API returned no URLs")
+        except NexusModsError:
+            raise
+        except requests.RequestException as exc:
+            raise NexusModsError(f"download_link (free) failed: {exc}") from exc
+
+    def download_url(self, domain: str, mod_id: int, file_id: int) -> str:
+        """Return the best CDN download URL.
+
+        Tries the standard (premium) API first.  On a 403 automatically falls
+        back to the free-user path via DownloadPopUp + browser cookies.
+        Raises NexusModsError on all failures (including FREE_* sentinels).
+        """
         url = f"{_API_BASE}/games/{domain}/mods/{mod_id}/files/{file_id}/download_link.json"
         try:
             resp = self._session.get(url, timeout=_TIMEOUT)
             if resp.status_code == 403:
                 logger.info(
-                    "Download link 403 for mod %d file %d "
-                    "(premium required or page not recently visited)", mod_id, file_id
+                    "Download link 403 for mod %d file %d — trying free-user path",
+                    mod_id, file_id,
                 )
-                return None
+                return self._free_download_url(domain, mod_id, file_id)
             resp.raise_for_status()
             links = resp.json()
             if links:
                 return links[0].get("URI", "")
-            return None
+            raise NexusModsError("Download link API returned no URLs")
+        except NexusModsError:
+            raise
         except requests.RequestException as exc:
             raise NexusModsError(f"Download link request failed: {exc}") from exc
 
@@ -305,14 +500,14 @@ class NexusClient:
 
     # ── File download ─────────────────────────────────────────────────────────
 
-    def download_file(
+    def stream_download(
         self,
         url: str,
         dest: Path,
         progress: Optional[Callable[[int, int], None]] = None,
-        stop_event: Optional[threading.Event] = None,
+        cancelled: Optional[threading.Event] = None,
     ) -> None:
-        """Stream *url* to *dest*, calling progress(bytes_done, total) if given."""
+        """Stream *url* to *dest*, calling progress(bytes_done, total) periodically."""
         resp = self._session.get(url, stream=True, timeout=60)
         resp.raise_for_status()
         total = int(resp.headers.get("Content-Length", 0))
@@ -320,7 +515,7 @@ class NexusClient:
         dest.parent.mkdir(parents=True, exist_ok=True)
         with open(dest, "wb") as fh:
             for chunk in resp.iter_content(chunk_size=65536):
-                if stop_event and stop_event.is_set():
+                if cancelled and cancelled.is_set():
                     raise NexusModsError("Download cancelled")
                 if chunk:
                     fh.write(chunk)

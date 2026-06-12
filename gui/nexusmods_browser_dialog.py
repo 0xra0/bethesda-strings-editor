@@ -125,10 +125,6 @@ class _DownloadWorker(QRunnable):
     def run(self) -> None:
         try:
             url = self._client.download_url(self._domain, self._mod_id, self._nf.file_id)
-            if not url:
-                page_url = self._client.mod_page_url(self._domain, self._mod_id)
-                self.signals.error.emit(f"NO_DIRECT_LINK:{page_url}")
-                return
 
             self._dest_dir.mkdir(parents=True, exist_ok=True)
             dest = self._dest_dir / self._nf.file_name
@@ -756,17 +752,38 @@ class NexusModsBrowserDialog(QDialog):
     @Slot(str)
     def _on_download_error(self, msg: str) -> None:
         self._reset_download_ui()
-        if msg.startswith("NO_DIRECT_LINK:"):
-            page_url = msg[len("NO_DIRECT_LINK:"):]
+        if msg == "FREE_NO_CURL_CFFI":
             self._set_status(
                 self.tr(
-                    "⚠  Direct download requires NexusMods Premium.  "
-                    "The mod page has been opened in your browser — "
-                    "download manually and use <b>Translation → Load Translation Memory…</b>."
+                    "⚠  Free-user download requires <b>curl-cffi</b>.  "
+                    "Run <code>pip install curl-cffi</code> then restart the app."
                 ),
                 error=True,
             )
-            QDesktopServices.openUrl(page_url)
+        elif msg == "FREE_NO_COOKIES":
+            self._set_status(
+                self.tr(
+                    "⚠  No NexusMods session found in Firefox or Chromium.  "
+                    "Log in to NexusMods in your browser, then retry."
+                ),
+                error=True,
+            )
+        elif msg == "FREE_SESSION_EXPIRED":
+            self._set_status(
+                self.tr(
+                    "⚠  NexusMods session expired.  "
+                    "Log in again in your browser, then retry."
+                ),
+                error=True,
+            )
+        elif msg.startswith("FREE_POPUP_PARSE"):
+            self._set_status(
+                self.tr(
+                    "⚠  Could not parse download tokens from NexusMods.  "
+                    "The site may have changed — please report this issue."
+                ),
+                error=True,
+            )
         else:
             self._set_status(self.tr(f"Download failed: {msg}"), error=True)
 
