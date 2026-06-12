@@ -648,36 +648,6 @@ class SettingsDialog(QDialog):
         lore_rag_group.setLayout(lore_rag_layout)
         layout.addWidget(lore_rag_group)
 
-        # Weblate Sync
-        weblate_group = QGroupBox(self.tr("Weblate Community Translation Sync"))
-        weblate_layout = QFormLayout()
-
-        self.weblate_url_edit = QLineEdit(getattr(self._settings, "weblate_url", ""))
-        self.weblate_url_edit.setPlaceholderText("https://hosted.weblate.org")
-        self.weblate_url_edit.setToolTip(self.tr("Base URL of your Weblate instance"))
-        weblate_layout.addRow(self.tr("Weblate URL:"), self.weblate_url_edit)
-
-        self.weblate_token_edit = QLineEdit(getattr(self._settings, "weblate_api_token", ""))
-        self.weblate_token_edit.setPlaceholderText(self.tr("Paste your API token here"))
-        self.weblate_token_edit.setEchoMode(QLineEdit.Password)
-        self.weblate_token_edit.setToolTip(
-            self.tr("API token from your Weblate profile (Settings → API access).")
-        )
-        weblate_layout.addRow(self.tr("API Token:"), self.weblate_token_edit)
-
-        self.weblate_project_edit = QLineEdit(getattr(self._settings, "weblate_project", ""))
-        self.weblate_project_edit.setPlaceholderText("starfield-uk")
-        self.weblate_project_edit.setToolTip(self.tr("Weblate project slug (from the project URL)"))
-        weblate_layout.addRow(self.tr("Project slug:"), self.weblate_project_edit)
-
-        self.weblate_component_edit = QLineEdit(getattr(self._settings, "weblate_component", ""))
-        self.weblate_component_edit.setPlaceholderText("main-strings")
-        self.weblate_component_edit.setToolTip(self.tr("Weblate component slug (from the component URL)"))
-        weblate_layout.addRow(self.tr("Component slug:"), self.weblate_component_edit)
-
-        weblate_group.setLayout(weblate_layout)
-        layout.addWidget(weblate_group)
-
         # NexusMods
         nexus_group = QGroupBox(self.tr("NexusMods"))
         nexus_layout = QFormLayout()
@@ -1150,10 +1120,6 @@ class SettingsDialog(QDialog):
         settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
         settings.enable_lore_rag = self.chk_enable_lore_rag.isChecked()
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
-        settings.weblate_url       = self.weblate_url_edit.text().strip().rstrip('/')
-        settings.weblate_api_token = self.weblate_token_edit.text().strip()
-        settings.weblate_project   = self.weblate_project_edit.text().strip()
-        settings.weblate_component = self.weblate_component_edit.text().strip()
         settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()

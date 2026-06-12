@@ -236,3 +236,5 @@ gui/translations/*.qm
 *.gguf
 *.bin
 *.safetensors
+Modelfile.mamaylm
+scripts/starfield_en_uk_sharegpt.jsonl

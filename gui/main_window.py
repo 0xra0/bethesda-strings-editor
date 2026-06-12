@@ -1033,11 +1033,6 @@ class MainWindow(QMainWindow):
         nexusmods_browse_action.triggered.connect(self._open_nexusmods_browser)
         file_menu.addAction(nexusmods_browse_action)
 
-        weblate_action = QAction(self.tr("&Weblate Community Sync…"), self)
-        weblate_action.setIcon(QIcon.fromTheme("network-server"))
-        weblate_action.triggered.connect(self._open_weblate_sync)
-        file_menu.addAction(weblate_action)
-
         file_menu.addSeparator()
         exit_action = QAction(self.tr("E&xit"), self, shortcut=QKeySequence("Ctrl+Q"))
         exit_action.setIcon(QIcon.fromTheme("application-exit"))
@@ -5288,15 +5283,6 @@ class MainWindow(QMainWindow):
             self.tr("NexusMods merge: {applied} translation(s) applied.").format(applied=applied),
             8000,
         )
-
-    def _open_weblate_sync(self):
-        from gui.weblate_sync_dialog import WelateSyncDialog
-        dlg = WelateSyncDialog(
-            table_model=self.table_model,
-            settings=self.settings,
-            parent=self,
-        )
-        dlg.exec()
 
     def _init_lore_rag(self) -> None:
         """Initialise the LoreDB and LoreRAGManager.  Called once at startup."""

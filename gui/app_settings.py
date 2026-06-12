@@ -16,12 +16,12 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 27  # Increment when schema changes
+CONFIG_VERSION = 28  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
 # Prefix "enc:" distinguishes obfuscated values from legacy plaintext entries.
-_OBFUSCATED_FIELDS = {"nexusmods_api_key", "weblate_api_token"}
+_OBFUSCATED_FIELDS = {"nexusmods_api_key"}
 _OBF_SALT = b"bethesda_strings_ed_v1"
 
 
@@ -131,11 +131,6 @@ class AppSettings:
     # translation batch.  Strings of skipped types are left untranslated.
     skip_string_types: list = field(default_factory=list)
 
-    # ── Weblate sync ──────────────────────────────────────────────────────────
-    weblate_url:       str = ""   # e.g. https://hosted.weblate.org
-    weblate_api_token: str = ""   # User API key from Weblate profile
-    weblate_project:   str = ""   # project slug
-    weblate_component: str = ""   # component slug
 
     # ── Audio / TTS Preview ───────────────────────────────────────────────────
     enable_audio_preview: bool = False
