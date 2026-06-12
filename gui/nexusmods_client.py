@@ -250,6 +250,8 @@ class NexusClient:
 
         files = []
         for f in data.get("files", []):
+            if f.get("category_name", "").upper() == "OLD_VERSION":
+                continue
             files.append(NexusModFile(
                 file_id=int(f.get("file_id", 0)),
                 name=f.get("name", ""),
@@ -260,8 +262,8 @@ class NexusClient:
                 description=f.get("description", ""),
                 uploaded_ts=int(f.get("uploaded_timestamp", 0)),
             ))
-        # Sort: likely translation files first, then by size (smaller first)
-        files.sort(key=lambda f: (not f.likely_translation, f.size_kb))
+        # Sort: likely translation files first, then by upload date (newest first)
+        files.sort(key=lambda f: (not f.likely_translation, -f.uploaded_ts))
         return files
 
     # ── Download link ─────────────────────────────────────────────────────────
