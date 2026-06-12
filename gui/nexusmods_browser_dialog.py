@@ -56,17 +56,18 @@ class _WorkerSignals(QObject):
 
 
 class _SearchWorker(QRunnable):
-    def __init__(self, client: NexusClient, query: str, game_id: int) -> None:
+    def __init__(self, client: NexusClient, query: str, game_id: int, game_domain: str = "") -> None:
         super().__init__()
         self.setAutoDelete(True)
         self._client = client
         self._query = query
         self._game_id = game_id
+        self._game_domain = game_domain
         self.signals = _WorkerSignals()
 
     def run(self) -> None:
         try:
-            results = self._client.search(self._query, self._game_id)
+            results = self._client.search(self._query, self._game_id, game_domain=self._game_domain)
             self.signals.finished.emit(results)
         except Exception as exc:
             self.signals.error.emit(str(exc))
@@ -397,12 +398,12 @@ class NexusModsBrowserDialog(QDialog):
         query = self._search_edit.text().strip()
         if not query:
             return
-        _, game_id = self._game_info()
+        game_domain, game_id = self._game_info()
         self._search_btn.setEnabled(False)
         self._results_table.setRowCount(0)
         self._set_status(self.tr("Searching…"))
 
-        worker = _SearchWorker(self._client, query, game_id)
+        worker = _SearchWorker(self._client, query, game_id, game_domain)
         worker.signals.finished.connect(self._on_search_done)
         worker.signals.error.connect(self._on_search_error)
         QThreadPool.globalInstance().start(worker)

@@ -17,6 +17,7 @@ from __future__ import annotations
 import logging
 import threading
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Callable, List, Optional
 
@@ -24,10 +25,31 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-_SEARCH_URL = "https://search.nexusmods.com/mods"
-_API_BASE   = "https://api.nexusmods.com/v1"
-_UA         = "bethesda-strings-editor"
-_TIMEOUT    = 20
+_SEARCH_URL  = "https://search.nexusmods.com/mods"
+_GRAPHQL_URL = "https://api.nexusmods.com/v2/graphql"
+_API_BASE    = "https://api.nexusmods.com/v1"
+_UA          = "bethesda-strings-editor"
+_TIMEOUT     = 20
+
+# GraphQL query: nameStemmed MATCHES is a full-text/stemmed search, works for
+# multi-word queries.  gameDomainName is the slug from GAMES (e.g. "starfield").
+_GQL_SEARCH = """
+{
+  mods(
+    filter: {
+      gameDomainName: [{ value: "%s", op: EQUALS }]
+      nameStemmed: [{ value: "%s", op: MATCHES }]
+    }
+    sort: [{ endorsements: { direction: DESC } }]
+    count: 30
+  ) {
+    nodes {
+      modId gameId name summary author
+      downloads endorsements updatedAt thumbnailUrl
+    }
+  }
+}
+"""
 
 # Games where Bethesda strings files are relevant
 GAMES: dict[str, tuple[str, int]] = {
@@ -111,7 +133,18 @@ class NexusClient:
         game_id: int,
         *,
         include_adult: bool = False,
+        game_domain: str = "",
     ) -> List[NexusSearchResult]:
+        # Prefer the official GraphQL API (api.nexusmods.com) — it lives on the
+        # same host as all other API calls so DNS issues with search.nexusmods.com
+        # don't affect it.  Fall back to the legacy Elasticsearch endpoint only if
+        # GraphQL itself fails.
+        if game_domain:
+            try:
+                return self._graphql_search(query, game_domain, game_id)
+            except NexusModsError:
+                pass  # fall through to legacy endpoint
+
         params = {
             "terms": query,
             "game_id": game_id,
@@ -151,6 +184,56 @@ class NexusClient:
                 endorsements=int(item.get("endorsements", 0)),
                 updated_ts=int(item.get("updated_at", 0)),
                 picture_url=item.get("thumbnail_url", ""),
+            ))
+        return results
+
+    def _graphql_search(
+        self,
+        query: str,
+        game_domain: str,
+        game_id: int,
+    ) -> List[NexusSearchResult]:
+        safe_query = query.replace("\\", "\\\\").replace('"', '\\"')
+        gql = _GQL_SEARCH % (game_domain, safe_query)
+        try:
+            resp = self._session.post(
+                _GRAPHQL_URL,
+                json={"query": gql},
+                timeout=_TIMEOUT,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except requests.exceptions.ConnectionError as exc:
+            raise NexusModsError(f"GraphQL connection error: {exc}") from exc
+        except requests.exceptions.Timeout as exc:
+            raise NexusModsError("NexusMods GraphQL search timed out.") from exc
+        except requests.RequestException as exc:
+            raise NexusModsError(f"GraphQL request failed: {exc}") from exc
+
+        if "errors" in data:
+            msgs = "; ".join(e.get("message", "") for e in data["errors"])
+            raise NexusModsError(f"GraphQL error: {msgs}")
+
+        results = []
+        for item in data.get("data", {}).get("mods", {}).get("nodes", []):
+            updated_str = item.get("updatedAt", "")
+            try:
+                updated_ts = int(
+                    datetime.fromisoformat(updated_str.replace("Z", "+00:00")).timestamp()
+                )
+            except (ValueError, AttributeError):
+                updated_ts = 0
+            results.append(NexusSearchResult(
+                mod_id=int(item.get("modId", 0)),
+                name=item.get("name", ""),
+                author=item.get("author") or "",
+                summary=item.get("summary") or "",
+                game_id=int(item.get("gameId") or game_id),
+                category="",
+                downloads=int(item.get("downloads", 0)),
+                endorsements=int(item.get("endorsements", 0)),
+                updated_ts=updated_ts,
+                picture_url=item.get("thumbnailUrl") or "",
             ))
         return results
 
