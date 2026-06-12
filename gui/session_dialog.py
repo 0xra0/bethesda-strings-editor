@@ -101,7 +101,9 @@ class SessionManagerDialog(QDialog):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self._table.setAlternatingRowColors(False)
         self._table.verticalHeader().setVisible(False)
-        self._table.currentRowChanged.connect(self._on_row_changed)
+        self._table.selectionModel().currentRowChanged.connect(
+            lambda cur, _prev: self._on_row_changed(cur.row())
+        )
         self._table.cellDoubleClicked.connect(self._resume)
         root.addWidget(self._table, 1)
 
