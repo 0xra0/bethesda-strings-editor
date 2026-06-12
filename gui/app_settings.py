@@ -3,6 +3,7 @@ Centralized application settings with validation, versioning, and migration.
 Replaces scattered QSettings usage with a single typed config object.
 """
 
+import base64
 import json
 import logging
 import os
@@ -16,6 +17,31 @@ from PySide6.QtCore import QSettings
 logger = logging.getLogger(__name__)
 
 CONFIG_VERSION = 27  # Increment when schema changes
+
+# Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
+# The in-memory value is always plaintext; only the serialized form is wrapped.
+# Prefix "enc:" distinguishes obfuscated values from legacy plaintext entries.
+_OBFUSCATED_FIELDS = {"nexusmods_api_key", "weblate_api_token"}
+_OBF_SALT = b"bethesda_strings_ed_v1"
+
+
+def _obfuscate(plaintext: str) -> str:
+    if not plaintext:
+        return plaintext
+    data = plaintext.encode("utf-8")
+    salt = (_OBF_SALT * (len(data) // len(_OBF_SALT) + 1))[: len(data)]
+    return "enc:" + base64.b64encode(bytes(a ^ b for a, b in zip(data, salt))).decode()
+
+
+def _deobfuscate(value: str) -> str:
+    if not value or not value.startswith("enc:"):
+        return value  # legacy plaintext — use as-is
+    try:
+        raw = base64.b64decode(value[4:])
+        salt = (_OBF_SALT * (len(raw) // len(_OBF_SALT) + 1))[: len(raw)]
+        return bytes(a ^ b for a, b in zip(raw, salt)).decode("utf-8")
+    except Exception:
+        return ""
 
 
 @dataclass
@@ -138,6 +164,11 @@ class AppSettings:
         valid_keys = {f.name for f in cls.__dataclass_fields__.values()}
         filtered = {k: v for k, v in data.items() if k in valid_keys and v is not None}
 
+        # Decode obfuscated fields before constructing
+        for field_name in _OBFUSCATED_FIELDS:
+            if field_name in filtered and isinstance(filtered[field_name], str):
+                filtered[field_name] = _deobfuscate(filtered[field_name])
+
         # Migrate if version is old
         version = filtered.get("config_version", 1)
         if version < CONFIG_VERSION:
@@ -146,8 +177,12 @@ class AppSettings:
         return cls(**filtered)
 
     def to_dict(self) -> dict:
-        """Convert to a serializable dict."""
-        return asdict(self)
+        """Convert to a serializable dict (sensitive fields obfuscated)."""
+        d = asdict(self)
+        for field_name in _OBFUSCATED_FIELDS:
+            if d.get(field_name):
+                d[field_name] = _obfuscate(d[field_name])
+        return d
 
     def validate(self) -> list[str]:
         """Validate all settings. Returns list of error messages (empty = valid)."""
