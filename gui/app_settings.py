@@ -342,7 +342,7 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         # to Starfield locale codes ("ru", "uk", "en") to support all official languages.
         _lang_name_to_code = {
             "English": "en", "German": "de", "Spanish": "es", "French": "fr",
-            "Italian": "it", "Japanese": "ja", "Polish": "pl",
+            "Italian": "it", "Japanese": "ja", "Korean": "ko", "Polish": "pl",
             "Portuguese (Brazil)": "ptbr", "Chinese (Simplified)": "zhhans",
             "Russian": "ru", "Ukrainian": "uk",
         }

@@ -205,6 +205,8 @@ _LATIN_SCRIPT_TARGETS: frozenset = frozenset({
 _CYRILLIC_SOURCES: frozenset = frozenset({"ru", "russian", "uk", "ukrainian"})
 # Target language codes that use CJK / kana script.
 _CJK_TARGETS: frozenset = frozenset({"ja", "japanese", "zhhans", "chinese", "zh"})
+# Target language codes that use Hangul script.
+_HANGUL_TARGETS: frozenset = frozenset({"ko", "korean"})
 
 # ── Standalone numbers (2+ digits, not embedded in IDs/paths/tags) ─────────────
 _STANDALONE_NUM_RE = re.compile(r"(?<![/#:\w])\d{2,}(?![/:\w])")
@@ -981,25 +983,30 @@ class QualityChecker:
 
     def _check_script_coverage(self, translated: str, report: QualityReport) -> None:
         """
-        For CJK target languages (Japanese, Chinese Simplified), warn when the
-        translation contains no characters from the expected script family.
+        For CJK/Hangul target languages, warn when the translation contains no
+        characters from the expected script family.
 
-        A long string with zero CJK / kana characters almost certainly means the
-        model returned untranslated Latin or Cyrillic text.
+        A long string with zero native-script characters almost certainly means
+        the model returned untranslated Latin or Cyrillic text.
 
         Minimum length: 6 non-whitespace characters to avoid false positives on
         short strings that might legitimately be all-ASCII (numbers, game codes).
         """
         tgt = self.target_language.lower()
-        if tgt not in _CJK_TARGETS:
+        is_cjk    = tgt in _CJK_TARGETS
+        is_hangul = tgt in _HANGUL_TARGETS
+        if not (is_cjk or is_hangul):
             return
 
-        # Need at least some meaningful non-whitespace content to check.
         content = translated.strip()
         if len(re.sub(r"\s", "", content)) < 6:
             return
 
-        if tgt in ("ja", "japanese"):
+        if is_hangul:
+            # Hangul syllables U+AC00-U+D7A3, Jamo U+1100-U+11FF
+            has_script = any("가" <= c <= "힣" or "ᄀ" <= c <= "ᇿ" for c in translated)
+            script_name = "Korean (Hangul)"
+        elif tgt in ("ja", "japanese"):
             # Hiragana U+3040-U+309F, Katakana U+30A0-U+30FF, CJK U+4E00-U+9FFF
             has_script = any(
                 "぀" <= c <= "ゟ"

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 class SettingsDialog(QDialog):
     """Dialog for configuring Ollama and term protection settings."""
     SUPPORTED_LANGUAGES = [
-        'English', 'Russian', 'Ukrainian',
+        'English', 'Russian', 'Ukrainian', 'Korean',
     ]
 
     # Default Ollama model suggestions shown before the user refreshes from the server

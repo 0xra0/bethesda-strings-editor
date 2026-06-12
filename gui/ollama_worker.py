@@ -191,6 +191,7 @@ _LANG_DISPLAY: dict[str, str] = {
     "fr":     "French",
     "it":     "Italian",
     "ja":     "Japanese",
+    "ko":     "Korean",
     "pl":     "Polish",
     "ptbr":   "Portuguese (Brazilian)",
     "zhhans": "Chinese (Simplified)",
@@ -228,6 +229,15 @@ _TARGET_STYLE: dict[str, str] = {
         "match the register (丁寧語/普通体) of the source for dialogue. "
         "Use katakana for sci-fi terms and proper nouns (e.g. ニューアトランティス). "
         "Technical readouts use present tense (システム正常)."
+    ),
+    "ko": (
+        "Write Korean appropriate to Starfield's sci-fi tone. "
+        "Use formal polite endings (합쇼체/해요체) for UI labels, system messages, "
+        "and NPC dialogue unless the source is clearly casual. "
+        "Render sci-fi proper nouns in Hangul transliteration "
+        "(e.g. 뉴 애틀랜티스 for New Atlantis, 사라 for Sarah). "
+        "Technical readouts use present tense (시스템 정상). "
+        "Avoid unnecessary English loanwords when a natural Korean equivalent exists."
     ),
     "pl": (
         "Write standard Polish with correct grammatical gender and case agreement. "
@@ -327,6 +337,13 @@ _LANG_EXAMPLES: dict[tuple[str, str], str] = {
         "[FAILED] Access denied. Entry unauthorized. "
         "→ [失敗] アクセス拒否。入場は許可されていません。\n"
         "Mining Equipment → 採掘装備"
+    ),
+    ("en", "ko"): (
+        "I'm heading to New Atlantis to meet with Sarah. "
+        "→ 사라를 만나러 뉴 애틀랜티스로 향하고 있습니다.\n"
+        "[FAILED] Access denied. Entry unauthorized. "
+        "→ [실패] 접근이 거부되었습니다. 입장이 승인되지 않았습니다.\n"
+        "Mining Equipment → 채굴 장비"
     ),
     ("en", "pl"): (
         "I'm heading to New Atlantis to meet with Sarah. "
