@@ -237,7 +237,7 @@ class RegisterDialog(QDialog):
         self._last_hit_table = tbl
         self._btn_jump.setEnabled(tbl.currentRow() >= 0)
 
-    def _on_double_click(self, table_row: int, __col: int) -> None:
+    def _on_double_click(self, table_row: int, _col: int) -> None:  # noqa: ARG002
         tbl = self.sender()
         if not isinstance(tbl, QTableWidget):
             return
