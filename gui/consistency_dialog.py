@@ -27,11 +27,12 @@ from PySide6.QtWidgets import (
 )
 
 from gui.consistency_checker import InconsistencyGroup
+from gui.micro_animations import FadeInMixin
 
 logger = logging.getLogger(__name__)
 
 
-class ConsistencyDialog(QDialog):
+class ConsistencyDialog(FadeInMixin, QDialog):
     """Shows inconsistently-translated strings and lets user pick the canonical form.
 
     Emits replacements_requested with a list of (row_indices, canonical_text) tuples

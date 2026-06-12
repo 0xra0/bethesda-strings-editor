@@ -35,7 +35,6 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMenu,
     QMessageBox,
-    QProgressBar,
     QPushButton,
     QRadioButton,
     QScrollArea,
@@ -211,8 +210,13 @@ class _WelcomeWidget(QWidget):
 
         outer.addWidget(card)
 
+        # Start idle pulse after the widget is shown
+        from gui.micro_animations import start_card_pulse
+        QTimer.singleShot(400, lambda: start_card_pulse(card))
+
     def dragEnterEvent(self, event):
         try:
+            from gui.micro_animations import stop_card_pulse
             urls = event.mimeData().urls()
             valid = [
                 u.toLocalFile() for u in urls
@@ -221,6 +225,7 @@ class _WelcomeWidget(QWidget):
             ]
             if valid:
                 event.acceptProposedAction()
+                stop_card_pulse(self._card)
                 self._card.setStyleSheet(
                     "QFrame#WelcomeCard {"
                     "  border: 2px dashed #10b981;"
@@ -234,7 +239,9 @@ class _WelcomeWidget(QWidget):
             pass
 
     def dragLeaveEvent(self, event):
+        from gui.micro_animations import start_card_pulse
         self._card.setStyleSheet(self._card_default_style)
+        start_card_pulse(self._card)
 
     def dropEvent(self, event):
         self._card.setStyleSheet(self._card_default_style)
@@ -311,12 +318,16 @@ class _DropOverlay(QWidget):
         self._apply_style(valid=True)
         self.raise_()
         self.show()
+        from gui.micro_animations import fade_in_overlay
+        fade_in_overlay(self)
 
     def show_invalid(self) -> None:
         self._headline.setText("Unsupported file type")
         self._apply_style(valid=False)
         self.raise_()
         self.show()
+        from gui.micro_animations import fade_in_overlay
+        fade_in_overlay(self)
 
     # ── Internals ──────────────────────────────────────────────────────────────
 
@@ -864,8 +875,9 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(self._content_stack)
 
-        # Progress bar
-        self.progress_bar = QProgressBar()
+        # Progress bar (smooth animated)
+        from gui.micro_animations import SmoothProgressBar
+        self.progress_bar = SmoothProgressBar()
         self.progress_bar.setVisible(False)
         self.lbl_progress = QLabel("")
         progress_layout = QHBoxLayout()
@@ -2465,6 +2477,9 @@ class MainWindow(QMainWindow):
                 self.current_file.save(str(self.current_path))
                 _count = len(self.current_file)
             self.statusBar().showMessage(self.tr("Saved successfully ✓"))
+            from gui.micro_animations import show_toast
+            show_toast(self, self.tr("Saved ✓  {name}").format(
+                name=self.current_path.name), kind="success", timeout_ms=2500)
             self._audit_log.file_saved(
                 str(self.current_path), self.current_path.suffix.lower(), _count
             )
@@ -2975,7 +2990,7 @@ class MainWindow(QMainWindow):
     @Slot(int, int)
     def _on_ollama_progress(self, completed: int, total: int):
         """Update progress bar and ETA label."""
-        self.progress_bar.setValue(completed)
+        self.progress_bar.set_value_animated(completed)
         self.lbl_progress.setText(
             self.tr("Translating {current}/{total}...").format(
                 current=completed, total=total
@@ -3044,9 +3059,23 @@ class MainWindow(QMainWindow):
         self._eta_start_time = 0.0
         self._eta_lbl.setVisible(False)
         self._refresh_stats()
+        from gui.micro_animations import flash_progress_bar_success, show_toast
         if failed == 0 and successful > 0:
-            from gui.micro_animations import flash_progress_bar_success
             flash_progress_bar_success(self.progress_bar)
+            show_toast(
+                self,
+                self.tr("{n} strings translated").format(n=successful),
+                kind="success",
+            )
+        elif failed > 0:
+            self.progress_bar.setVisible(False)
+            show_toast(
+                self,
+                self.tr("{ok} translated, {fail} failed").format(
+                    ok=successful, fail=failed
+                ),
+                kind="warning",
+            )
         else:
             self.progress_bar.setVisible(False)
         self._set_ui_enabled(True)

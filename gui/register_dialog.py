@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from gui.micro_animations import FadeInMixin
 from gui.register_checker import RegisterGroup, RegisterHit
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ _COL_VY_HDR = QColor("#2563eb")
 _ROLE_ROW   = Qt.ItemDataRole.UserRole
 
 
-class RegisterDialog(QDialog):
+class RegisterDialog(FadeInMixin, QDialog):
     """Dialog displaying ти/ви register inconsistency results."""
 
     jump_to_row = Signal(int)

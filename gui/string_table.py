@@ -37,6 +37,8 @@ from gui.string_type_detector import (
 
 logger = logging.getLogger(__name__)
 
+_FLASH_ROLE = Qt.ItemDataRole.UserRole + 5   # float 0.0–1.0 flash overlay alpha
+
 
 class StringTableModel(QAbstractTableModel):
     """Model for Bethesda string data in QTableView."""
@@ -64,6 +66,12 @@ class StringTableModel(QAbstractTableModel):
         self._type_cache: Dict[int, StringType] = {}  # row_index → StringType (lazy)
         self._color_blind_mode: bool = False
         self._profile_data: Dict[int, Any] = {}  # row_index → CharacterProfile (lazy import)
+
+        # Row-flash: maps row_index → alpha float (1.0 = just flashed, decays to 0)
+        self._flash_rows: Dict[int, float] = {}
+        self._flash_timer = QTimer(self)
+        self._flash_timer.setInterval(16)  # ~60 fps decay
+        self._flash_timer.timeout.connect(self._decay_flash)
 
     def set_color_blind_mode(self, enabled: bool) -> None:
         """Switch between default red/green and color-blind-friendly blue/orange palette."""
@@ -257,6 +265,40 @@ class StringTableModel(QAbstractTableModel):
             self._pre_est_data.clear()
             self.layoutChanged.emit()
 
+    # ── Row-flash animation ────────────────────────────────────────────────────
+
+    def _start_flash(self, rows: list) -> None:
+        """Mark *rows* for a green fade-in flash."""
+        for r in rows:
+            self._flash_rows[r] = 1.0
+        if not self._flash_timer.isActive():
+            self._flash_timer.start()
+
+    def _decay_flash(self) -> None:
+        """Decay flash alphas ~60 fps; stop timer when all rows are done."""
+        if not self._flash_rows:
+            self._flash_timer.stop()
+            return
+        dirty: list = []
+        done: list = []
+        for r, alpha in list(self._flash_rows.items()):
+            new_alpha = alpha - 0.05   # ~20 frames = ~330 ms total
+            if new_alpha <= 0.0:
+                del self._flash_rows[r]
+                done.append(r)
+            else:
+                self._flash_rows[r] = new_alpha
+                dirty.append(r)
+        affected = dirty + done
+        if affected:
+            min_r = min(affected)
+            max_r = max(affected)
+            self.dataChanged.emit(
+                self.index(min_r, 0),
+                self.index(max_r, self.columnCount() - 1),
+                [_FLASH_ROLE],
+            )
+
     def compute_complexity_estimates(self, estimator: Any, source_lang: str = "English") -> None:
         """Compute and store pre-translation estimates for all pending rows."""
         result: Dict[int, Any] = {}
@@ -274,6 +316,7 @@ class StringTableModel(QAbstractTableModel):
             status_idx = self.index(row_index, self.COLUMNS.index("Status"))
             self.dataChanged.emit(trans_idx, trans_idx, [Qt.DisplayRole, Qt.ForegroundRole])
             self.dataChanged.emit(status_idx, status_idx, [Qt.DisplayRole, Qt.ForegroundRole])
+            self._start_flash([row_index])
 
     def set_translated_text_batch(self, updates: list) -> None:
         """Apply multiple (row_index, text) pairs and emit a single dataChanged range.
@@ -301,6 +344,7 @@ class StringTableModel(QAbstractTableModel):
             self.index(max_row, last_col),
             [Qt.DisplayRole, Qt.ForegroundRole],
         )
+        self._start_flash(rows_changed)
 
     def import_translations(
         self,
@@ -564,6 +608,9 @@ class StringTableModel(QAbstractTableModel):
                 else:
                     c.setHsvF(c.hueF(), 0.12, 0.97)
                 return c
+
+        elif role == _FLASH_ROLE:
+            return self._flash_rows.get(row, 0.0)
 
         elif role == Qt.ToolTipRole:
             row_id = row_data["id"]
@@ -1094,6 +1141,15 @@ class StringItemDelegate(QStyledItemDelegate):
 
         # Call parent paint
         super().paint(painter, option, index)
+
+        # Flash overlay: green fade after translation applied
+        flash_alpha = index.data(_FLASH_ROLE)
+        if flash_alpha and flash_alpha > 0.0:
+            painter.save()
+            painter.setOpacity(flash_alpha * 0.55)
+            painter.fillRect(option.rect, QColor(34, 197, 94))
+            painter.setOpacity(1.0)
+            painter.restore()
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex):
         """Provide row height hint for better text wrapping."""

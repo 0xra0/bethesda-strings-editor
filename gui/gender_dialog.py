@@ -28,6 +28,7 @@ from PySide6.QtWidgets import (
 )
 
 from gui.gender_checker import GENDER_LABEL, GenderMismatch
+from gui.micro_animations import FadeInMixin
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ _COL_HDR = {
 }
 
 
-class GenderDialog(QDialog):
+class GenderDialog(FadeInMixin, QDialog):
     """Dialog displaying gendered noun agreement mismatches."""
 
     jump_to_row = Signal(int)

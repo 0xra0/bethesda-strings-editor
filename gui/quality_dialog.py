@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
+from gui.micro_animations import FadeInMixin
 from gui.quality_checker import (
     SEVERITY_ERROR,
     SEVERITY_INFO,
@@ -453,7 +454,8 @@ def load_csv(
 
 # ── Dialog ────────────────────────────────────────────────────────────────────
 
-class QualityDialog(QDialog):
+
+class QualityDialog(FadeInMixin, QDialog):
     """
     Modal dialog presenting quality check results with auto-fix and
     retranslation queuing.
