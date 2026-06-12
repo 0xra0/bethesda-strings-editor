@@ -107,10 +107,10 @@ jobs:
           retention-days: 7
 
   # ── Release ───────────────────────────────────────────────────────────────────
-  # Requires two repository secrets:
+  # Requires one repository secret:
   #   GPG_PRIVATE_KEY  — base64-encoded armored private key
   #                      (gpg --armor --export-secret-keys KEYID | base64 -w0)
-  #   GPG_PASSPHRASE   — passphrase for the key (empty string if key has none)
+  #   (key has no passphrase — no GPG_PASSPHRASE secret needed)
   release:
     name: Create Release
     needs: [changelog, build]
@@ -136,11 +136,9 @@ jobs:
       - name: Import GPG signing key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
         run: |
           echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --batch --import
-          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
-            --pinentry-mode loopback \
+          gpg --batch --yes --pinentry-mode loopback \
             --armor --detach-sign SHA256SUMS
           echo "--- Signature ---"
           gpg --verify SHA256SUMS.asc SHA256SUMS
