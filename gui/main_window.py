@@ -383,6 +383,9 @@ class MainWindow(QMainWindow):
         # State variables
         self.current_file = None
         self.current_path = None
+        # Session tracking (WorkSession + baseline set of already-translated IDs)
+        self._current_session = None          # Optional[WorkSession]
+        self._session_baseline: set = set()   # string IDs translated before this session
         self._last_profile_loaded_path = None  # path for which profile tints are currently applied
         self._focus_overlay = None            # FocusModeOverlay when active
         self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
@@ -513,6 +516,10 @@ class MainWindow(QMainWindow):
         self._recovery_timer.start()
         if self._recovery_manager.has_snapshot():
             QTimer.singleShot(300, self._check_for_crash_recovery)
+
+        # Session store
+        from gui.session_manager import SessionStore
+        self._session_store = SessionStore(get_config_dir() / "sessions")
 
         # System theme auto-follow (Qt 6.5+)
         try:
@@ -689,6 +696,7 @@ class MainWindow(QMainWindow):
     def _setup_ui(self):
         """Initialize user interface."""
         self._create_menus()
+        self._populate_recent_sessions()
         self._create_toolbar()
 
         central_widget = QWidget()
@@ -841,6 +849,8 @@ class MainWindow(QMainWindow):
             lambda *_: self._stats_refresh_timer.start()
         )
         self.table_model.layoutChanged.connect(self._refresh_stats)
+        # Session progress tracking: record any newly-translated string ID
+        self.table_model.dataChanged.connect(self._session_track_datachanged)
 
         # Replace the default delegate with one that has a completion source.
         from gui.string_table import StringItemDelegate
@@ -1379,6 +1389,48 @@ class MainWindow(QMainWindow):
         self.gender_check_action.setEnabled(False)
         trans_menu.addAction(self.gender_check_action)
 
+        # ── Sessions menu ─────────────────────────────────────────────────────
+        self._sessions_menu = menubar.addMenu(self.tr("&Sessions"))
+
+        self._session_new_action = QAction(
+            self.tr("&New Session…"), self)
+        self._session_new_action.setShortcut("Ctrl+Shift+N")
+        self._session_new_action.setIcon(QIcon.fromTheme("document-new"))
+        self._session_new_action.setToolTip(self.tr(
+            "Start a named work session that saves your search filter, "
+            "cursor, and per-session translation count. (Ctrl+Shift+N)"
+        ))
+        self._session_new_action.triggered.connect(self._session_new)
+        self._sessions_menu.addAction(self._session_new_action)
+
+        self._session_save_action = QAction(
+            self.tr("&Save Session"), self)
+        self._session_save_action.setShortcut("Ctrl+Shift+S")
+        self._session_save_action.setIcon(QIcon.fromTheme("document-save"))
+        self._session_save_action.setEnabled(False)
+        self._session_save_action.triggered.connect(self._session_save)
+        self._sessions_menu.addAction(self._session_save_action)
+
+        self._session_save_as_action = QAction(
+            self.tr("Save Session &As…"), self)
+        self._session_save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
+        self._session_save_as_action.setEnabled(False)
+        self._session_save_as_action.triggered.connect(self._session_save_as)
+        self._sessions_menu.addAction(self._session_save_as_action)
+
+        self._sessions_menu.addSeparator()
+
+        self._session_manage_action = QAction(
+            self.tr("&Manage Sessions…"), self)
+        self._session_manage_action.setIcon(QIcon.fromTheme("view-list-details"))
+        self._session_manage_action.triggered.connect(self._open_session_manager)
+        self._sessions_menu.addAction(self._session_manage_action)
+
+        self._sessions_menu.addSeparator()
+        self._sessions_recent_menu = self._sessions_menu.addMenu(
+            self.tr("Recent Sessions"))
+        self._sessions_recent_menu.setIcon(QIcon.fromTheme("document-open-recent"))
+
         # Glossary menu
         glossary_menu = menubar.addMenu(self.tr("&Glossary"))
         self.glossary_editor_action = QAction(self.tr("&Edit Glossary…"), self)
@@ -1763,6 +1815,9 @@ class MainWindow(QMainWindow):
         elif not has_file and self._last_profile_loaded_path is not None:
             self._last_profile_loaded_path = None
             self.table_model.clear_profile_data()
+
+        if hasattr(self, "_current_session"):
+            self._update_session_title()
 
     def _reload_profile_tints(self) -> None:
         """Load per-file profile assignments and apply background tints to the table."""
@@ -4508,6 +4563,14 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logger.warning(f"Failed to save settings: {e}")
 
+            # Auto-save active session
+            try:
+                if self._current_session is not None:
+                    self._session_capture_state(self._current_session)
+                    self._session_store.save(self._current_session)
+            except Exception as e:
+                logger.warning(f"Failed to auto-save session: {e}")
+
             # Clean exit — remove any crash recovery snapshot
             try:
                 self._recovery_manager.clear()
@@ -5601,6 +5664,270 @@ class MainWindow(QMainWindow):
         dlg = GenderDialog(mismatches, parent=self)
         dlg.jump_to_row.connect(self._jump_to_row)
         dlg.exec()
+
+    # ── Translation Sessions ──────────────────────────────────────────────────
+
+    def _populate_recent_sessions(self) -> None:
+        """Rebuild the Recent Sessions submenu from the session store."""
+        menu = self._sessions_recent_menu
+        menu.clear()
+        try:
+            sessions = self._session_store.list_sessions()
+        except Exception:
+            return
+        recent = sessions[:8]
+        if not recent:
+            no_act = menu.addAction(self.tr("(no sessions yet)"))
+            no_act.setEnabled(False)
+            return
+        for s in recent:
+            name = s.name
+            act = menu.addAction(name)
+            act.setToolTip(s.file_path)
+            act.triggered.connect(
+                lambda checked=False, n=name: self._session_resume_by_name(n)
+            )
+
+    def _session_new(self) -> None:
+        from gui.session_dialog import NewSessionDialog
+        from gui.session_manager import WorkSession
+        from datetime import datetime
+
+        existing = [s.name for s in self._session_store.list_sessions()]
+        suggested = (
+            Path(self.current_path).stem if self.current_path else ""
+        )
+        dlg = NewSessionDialog(existing, suggested_name=suggested, parent=self)
+        if dlg.exec() != dlg.DialogCode.Accepted:
+            return
+
+        now = datetime.now().isoformat(timespec="seconds")
+        ft = "esp" if hasattr(self.current_file, "strings") else "strings"
+        session = WorkSession(
+            name=dlg.session_name,
+            created=now,
+            modified=now,
+            file_path=str(self.current_path) if self.current_path else "",
+            file_type=ft,
+            current_row=self.table_view.currentIndex().row(),
+            scroll_value=self.table_view.verticalScrollBar().value(),
+            translated_in_session=[],
+            note=dlg.session_note,
+        )
+        # Capture current search state if an advanced search dialog is open
+        # (search state is populated by _session_capture_search, called on save)
+        self._current_session = session
+        self._session_baseline = {
+            row["id"] for row in self.table_model._data
+            if row.get("status") in ("translated", "approved")
+        }
+        self._session_store.save(session)
+        self._session_save_action.setEnabled(True)
+        self._session_save_as_action.setEnabled(True)
+        self._update_session_title()
+        self._populate_recent_sessions()
+        self.statusBar().showMessage(
+            self.tr("Session “{name}” started.").format(name=session.name), 5000
+        )
+
+    def _session_save(self) -> None:
+        if self._current_session is None:
+            self._session_new()
+            return
+        self._session_capture_state(self._current_session)
+        self._session_store.save(self._current_session)
+        self._populate_recent_sessions()
+        self.statusBar().showMessage(
+            self.tr("Session saved: {name}").format(
+                name=self._current_session.name), 3000
+        )
+
+    def _session_save_as(self) -> None:
+        from gui.session_dialog import NewSessionDialog
+        from gui.session_manager import WorkSession
+        from datetime import datetime
+
+        existing = [s.name for s in self._session_store.list_sessions()]
+        current_name = (
+            self._current_session.name if self._current_session else ""
+        )
+        dlg = NewSessionDialog(
+            [n for n in existing if n != current_name],
+            suggested_name=current_name + " (copy)" if current_name else "",
+            parent=self,
+        )
+        if dlg.exec() != dlg.DialogCode.Accepted:
+            return
+
+        now = datetime.now().isoformat(timespec="seconds")
+        ft = "esp" if hasattr(self.current_file, "strings") else "strings"
+        old = self._current_session
+        session = WorkSession(
+            name=dlg.session_name,
+            created=now,
+            modified=now,
+            file_path=str(self.current_path) if self.current_path else "",
+            file_type=ft,
+            current_row=self.table_view.currentIndex().row(),
+            scroll_value=self.table_view.verticalScrollBar().value(),
+            translated_in_session=list(old.translated_in_session) if old else [],
+            note=dlg.session_note,
+        )
+        self._current_session = session
+        self._session_store.save(session)
+        self._session_save_action.setEnabled(True)
+        self._session_save_as_action.setEnabled(True)
+        self._update_session_title()
+        self._populate_recent_sessions()
+
+    def _session_resume_by_name(self, name: str) -> None:
+        session = self._session_store.load(name)
+        if session is None:
+            QMessageBox.warning(
+                self,
+                self.tr("Session Not Found"),
+                self.tr("Session “{name}” could not be loaded.").format(name=name),
+            )
+            return
+        self._session_activate(session)
+
+    def _session_activate(self, session) -> None:
+        """Restore a session's context (open file if needed, scroll, search)."""
+        from pathlib import Path as _Path
+        target = _Path(session.file_path) if session.file_path else None
+
+        if target and target.exists() and str(target) != str(self.current_path):
+            # Offer to open the session's file
+            ans = QMessageBox.question(
+                self,
+                self.tr("Open Session File?"),
+                self.tr(
+                    "This session is for:\n{path}\n\n"
+                    "Open that file now?"
+                ).format(path=session.file_path),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            if ans == QMessageBox.StandardButton.Yes:
+                self._open_file_path(session.file_path)
+        elif target and not target.exists():
+            QMessageBox.warning(
+                self,
+                self.tr("File Not Found"),
+                self.tr(
+                    "The session file no longer exists:\n{path}\n\n"
+                    "You can still use the session context, but the file "
+                    "will need to be opened manually."
+                ).format(path=session.file_path),
+            )
+
+        self._current_session = session
+        self._session_baseline = {
+            row["id"] for row in self.table_model._data
+            if row.get("status") in ("translated", "approved")
+        } - set(session.translated_in_session)
+
+        # Restore search filter
+        if not session.search.is_empty():
+            self._session_rerun_search(session.search)
+
+        # Restore scroll + cursor (after search so row is visible)
+        QTimer.singleShot(100, lambda: self._session_restore_position(session))
+
+        self._session_save_action.setEnabled(True)
+        self._session_save_as_action.setEnabled(True)
+        self._update_session_title()
+        self.statusBar().showMessage(
+            self.tr("Session “{name}” resumed — {n} strings translated in session.").format(
+                name=session.name, n=session.translated_count
+            ),
+            6000,
+        )
+
+    def _session_restore_position(self, session) -> None:
+        self.table_view.verticalScrollBar().setValue(session.scroll_value)
+        if 0 <= session.current_row < len(self.table_model._data):
+            self._jump_to_row(session.current_row)
+
+    def _session_rerun_search(self, search) -> None:
+        """Re-run the saved search filter without opening the dialog."""
+        from gui.advanced_search_dialog import AdvancedSearchDialog
+        dlg = AdvancedSearchDialog(self)
+        dlg.txt_search.setText(search.query)
+        dlg.txt_id.setText(search.id_filter)
+        for i in range(dlg.combo_column.count()):
+            if dlg.combo_column.itemData(i) == search.column:
+                dlg.combo_column.setCurrentIndex(i)
+                break
+        for i in range(dlg.combo_status.count()):
+            if dlg.combo_status.itemData(i) == search.status:
+                dlg.combo_status.setCurrentIndex(i)
+                break
+        dlg.chk_regex.setChecked(search.use_regex)
+        dlg.chk_case.setChecked(search.case_sensitive)
+        dlg.chk_whole_word.setChecked(search.whole_word)
+        dlg.search_results.connect(self._on_search_results)
+        dlg._do_search()
+
+    def _session_capture_state(self, session) -> None:
+        """Write current UI state into *session* (in-place)."""
+        session.file_path = str(self.current_path) if self.current_path else ""
+        session.file_type = (
+            "esp" if hasattr(self.current_file, "strings") else "strings"
+        )
+        session.current_row  = self.table_view.currentIndex().row()
+        session.scroll_value = self.table_view.verticalScrollBar().value()
+
+    def _session_track_datachanged(self, top_left, bottom_right, roles) -> None:
+        """Track newly-translated strings into the active session."""
+        if self._current_session is None:
+            return
+        from PySide6.QtCore import Qt as _Qt
+        if _Qt.ItemDataRole.DisplayRole not in roles:
+            return
+        tracked_ids = set(self._current_session.translated_in_session)
+        changed = False
+        for row in range(top_left.row(), bottom_right.row() + 1):
+            if row >= len(self.table_model._data):
+                break
+            row_data = self.table_model._data[row]
+            if row_data.get("status") in ("translated", "approved"):
+                sid = row_data.get("id", 0)
+                if sid and sid not in self._session_baseline and sid not in tracked_ids:
+                    tracked_ids.add(sid)
+                    changed = True
+        if changed:
+            self._current_session.translated_in_session = list(tracked_ids)
+
+    def _open_session_manager(self) -> None:
+        from gui.session_dialog import SessionManagerDialog
+
+        sessions = self._session_store.list_sessions()
+        current_name = (
+            self._current_session.name if self._current_session else None
+        )
+        dlg = SessionManagerDialog(sessions, current_name, parent=self)
+        dlg.resume_requested.connect(self._session_resume_by_name)
+        # After dialog closes, sync any renames/deletes to the store
+        if dlg.exec():
+            # Persist any renames that happened inside the dialog
+            for s in dlg._sessions:
+                if s.name != self._session_store.load(s.name):
+                    self._session_store.save(s)
+            # Re-check deletions: any session missing from dlg._sessions was deleted
+            current_names = {s.name for s in dlg._sessions}
+            for s in sessions:
+                if s.name not in current_names:
+                    self._session_store.delete(s.name)
+            self._populate_recent_sessions()
+
+    def _update_session_title(self) -> None:
+        """Append session name to the window title."""
+        base = self.tr("Bethesda Strings AI Translator")
+        if self.current_path:
+            base = f"{Path(self.current_path).name} — {base}"
+        if self._current_session:
+            base = f"{base}  [{self._current_session.name}]"
+        self.setWindowTitle(base)
 
     def _apply_consistency_replacements(self, replacements: list):
         """Apply a list of (row_indices, canonical_text) from the consistency dialog."""
