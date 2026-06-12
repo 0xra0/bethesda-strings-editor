@@ -259,6 +259,7 @@ class SettingsDialog(QDialog):
                 ("de_DE", "German",     "Deutsch",       False),
                 ("es_ES", "Spanish",    "Español",       False),
                 ("fr_FR", "French",     "Français",      False),
+                ("ko_KR", "Korean",     "한국어",          False),
                 ("pl_PL", "Polish",     "Polski",        False),
                 ("cs_CZ", "Czech",      "Čeština",       False),
             ]
