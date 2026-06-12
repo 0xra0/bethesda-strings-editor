@@ -107,6 +107,10 @@ jobs:
           retention-days: 7
 
   # ── Release ───────────────────────────────────────────────────────────────────
+  # Requires two repository secrets:
+  #   GPG_PRIVATE_KEY  — base64-encoded armored private key
+  #                      (gpg --armor --export-secret-keys KEYID | base64 -w0)
+  #   GPG_PASSPHRASE   — passphrase for the key (empty string if key has none)
   release:
     name: Create Release
     needs: [changelog, build]
@@ -116,15 +120,38 @@ jobs:
       contents: write
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
 
+      - name: Generate SHA256SUMS
+        run: |
+          sha256sum *.zip > SHA256SUMS
+          echo "--- SHA256SUMS ---"
+          cat SHA256SUMS
+
+      - name: Import GPG signing key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --batch --import
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
+            --pinentry-mode loopback \
+            --armor --detach-sign SHA256SUMS
+          echo "--- Signature ---"
+          gpg --verify SHA256SUMS.asc SHA256SUMS
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: '*.zip'
+          files: |
+            *.zip
+            SHA256SUMS
+            SHA256SUMS.asc
           body: ${{ needs.changelog.outputs.body }}
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
