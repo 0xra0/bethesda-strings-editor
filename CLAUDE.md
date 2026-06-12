@@ -65,8 +65,8 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 #### Core window & table
 - `main_window.py` — `MainWindow`: top-level window. Owns the worker thread, file-open/save logic, audit log, crash recovery, and coordinates all other components.
 - `string_table.py` — `StringTableModel` / `StringTableView`: `QAbstractTableModel` with two display modes — `"strings"` (for `.strings`/`.dlstrings`/`.ilstrings`) and `"esp"` (for ESP/ESM). Column layout differs between modes. Emits `Ctrl+C/V/Shift+C/Shift+V` clipboard shortcuts and a status-bar `Total/Done/Left %` + ETA label during batches.
-- `app_settings.py` — `AppSettings` dataclass (`CONFIG_VERSION = 27`). Persisted as JSON (primary) + `QSettings` (secondary). Entry points: `load_settings()` / `save_settings()`. `nexusmods_api_key` and `weblate_api_token` are XOR+base64 obfuscated on disk via `_obfuscate()`/`_deobfuscate()`; in-memory values are always plaintext.
-- `settings_dialog.py` — full settings UI (backend selector, model, keys, QC options, NexusMods, Weblate, Audio/TTS, shortcuts, etc.).
+- `app_settings.py` — `AppSettings` dataclass (`CONFIG_VERSION = 28`). Persisted as JSON (primary) + `QSettings` (secondary). Entry points: `load_settings()` / `save_settings()`. `nexusmods_api_key` is XOR+base64 obfuscated on disk via `_obfuscate()`/`_deobfuscate()`; in-memory value is always plaintext.
+- `settings_dialog.py` — full settings UI (backend selector, model, keys, QC options, NexusMods, Audio/TTS, shortcuts, etc.).
 - `theme_manager.py` — built-in QSS themes (`Slate`, etc.) + custom theme support. Applied as application-wide stylesheets.
 - `theme_dialog.py` — theme picker/editor dialog.
 
@@ -127,10 +127,6 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 - `nexusmods_upload_dialog.py` — UI for the NexusMods upload flow.
 - `nexusmods_uploader.py` — NexusMods v3 multipart upload client (6-step: presigned URLs → S3 → finalise → poll → attach metadata).
 
-#### Weblate integration
-- `weblate_client.py` — `WeblateClient`: REST API client for Weblate community translation sync (pull/push string translations).
-- `weblate_sync_dialog.py` — sync dialog for importing from / exporting to a Weblate instance.
-
 #### Audio / TTS
 - `audio_preview_panel.py` — dock panel: plays original game audio and synthesizes TTS read-out of translations for timing comparison.
 - `tts_engine.py` — local TTS abstraction supporting eSpeak-NG (built-in), Piper (neural, external binary), and duration-estimate-only mode.
@@ -143,7 +139,7 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 - `micro_animations.py` — `SmoothProgressBar` (animated progress), `FadeInMixin` (dialog fade-in), `fade_in_overlay()`, `start_card_pulse()`/`stop_card_pulse()` (welcome card heartbeat), `show_toast()` (transient bottom-right notifications).
 - `audit_log.py` — `AuditLog`: append-only JSON-lines security log. Records file operations, translation batches, settings changes, encryption events — never logs actual string content. Rotates at 5 MB.
 - `crash_recovery.py` — `CrashRecoveryManager`: periodic auto-save of translation progress (JSON snapshot in config dir). `CrashRecoveryDialog`: offered at startup if the previous session ended unexpectedly.
-- `secret_store.py` — `SecretStore`: API key storage. Primary: system keyring (`keyring` library). Fallback: AES-256-GCM encrypted file, key derived from machine ID via PBKDF2-HMAC-SHA256. Used for Claude API key only; NexusMods and Weblate keys are stored in the JSON config with XOR+base64 obfuscation.
+- `secret_store.py` — `SecretStore`: API key storage. Primary: system keyring (`keyring` library). Fallback: AES-256-GCM encrypted file, key derived from machine ID via PBKDF2-HMAC-SHA256. Used for Claude API key only; NexusMods key is stored in the JSON config with XOR+base64 obfuscation.
 - `desktop_notify.py` — `send_notification()`: desktop notification helper (used for batch-complete events).
 - `fuzzy_match.py` — Levenshtein distance, longest common substring/prefix, word-level distance, unicode control char utilities. Used by advanced search and consistency checker.
 - `en_word_checker.py`, `ru_word_checker.py`, `uk_word_checker.py`, `de_word_checker.py`, `fr_word_checker.py`, `es_word_checker.py`, `pl_word_checker.py`, `it_word_checker.py`, `ptbr_word_checker.py` — word-list-based detectors for untranslated source-language text in output. All extend `_word_checker_base.py`. Word lists are in `data/`.
@@ -155,7 +151,7 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 - **Translation pipeline per string**: `TermProtector.protect()` → model API call → `TermProtector.restore()` → `_restore_dropped_tags()` → `QualityChecker` → emit `translation_ready`.
 - **Game tag restoration**: `_restore_dropped_tags()` in `ollama_worker.py` re-inserts Bethesda variable placeholders (`<mag>`, `<dur>`, `<area>`, `<relat>`, `<basename>`, `<repetitions>`, `<N.Prop>`) that the model drops. Uses fractional-position heuristics: `frac ≤ 0.15` → prepend, `frac ≥ 0.92` → append, `0.70 ≤ frac < 0.92` → insert before last token (handles `<dur>с` ordering), `else` → walk to next word boundary. Sign-prefixed tags (`+<mag>`, `-<mag>`) have the sign preserved.
 - **Config location**: JSON config file is written to a platform-appropriate config directory (see `get_config_path()` in `app_settings.py`), not the project root.
-- **API key obfuscation**: `nexusmods_api_key` and `weblate_api_token` are stored in the JSON config as `enc:<base64(xor(value, fixed_salt))>`. Legacy plaintext values (no `enc:` prefix) are still read correctly.
+- **API key obfuscation**: `nexusmods_api_key` is stored in the JSON config as `enc:<base64(xor(value, fixed_salt))>`. Legacy plaintext values (no `enc:` prefix) are still read correctly.
 - **Claude API key**: stored exclusively via `SecretStore` (system keyring or AES-256-GCM file), never in the JSON config.
 - **Protected terms file**: `protected_terms_starfield_hq.txt` in the project root is the default terms list for Starfield localization.
 - **Drag and drop**: `_DropOverlay` + `_WelcomeWidget` on the main window; green/red feedback; extension validation; `dragMoveEvent` required to prevent forbidden cursor.
