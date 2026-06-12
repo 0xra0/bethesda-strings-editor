@@ -1769,34 +1769,69 @@ class OllamaWorker(QObject):
     def _restore_dropped_tags(translated: str, original: str) -> str:
         """Re-insert Bethesda XML alias/variable tags that the AI dropped.
 
-        Models frequently drop <Alias=…>, <Global=…> etc. even when instructed
-        to preserve them.  After restore_text() runs, we scan for any such tags
-        that were in the original but are absent from the translation and
-        re-insert them at their approximate original position.
+        Covers named alias/token tags AND short value-placeholder tags
+        (<mag>, <dur>, <area>, <relat…>, <basename…>, <repetitions>, <N.Prop>).
+        An optional [+−] sign immediately before a tag (e.g. "+<mag>") is captured
+        as a prefix and re-inserted together with the tag.
         """
         if not original or not translated:
             return translated
+
+        # Group 1: optional sign prefix (e.g. "+" in "+<mag>")
+        # Group 2: the tag itself
         _TAG_RE = re.compile(
-            r'<(?:Alias|Global|Token|Base|ActorValue|PlayerName|Keyword|QuestName)\b[^>]*/?>',
+            r'([+\-]?)'
+            r'(<(?:'
+            r'Alias(?:[.=][^>]*)?'
+            r'|TokenAlias(?:[.=][^>]*)?'
+            r'|Token(?:[.=][^>]*)?'
+            r'|Global(?:=[^>]*)?'
+            r'|CurrentName'
+            r'|Base|ActorValue|PlayerName|Keyword|QuestName'
+            r'|mag|dur|area|repetitions'
+            r'|relat[^>]*|basename[^>]*'
+            r'|\d+\.[A-Za-z]+'
+            r')[^>]*/?>'
+            r')',
             re.IGNORECASE,
         )
         orig_len = len(original)
         for m in _TAG_RE.finditer(original):
-            tag = m.group(0)
+            sign = m.group(1)   # "+" / "−" / ""
+            tag  = m.group(2)   # "<mag>" etc.
+            full = m.group(0)   # sign + tag
+
             if tag.lower() in translated.lower():
-                continue  # already present
+                continue  # tag already present
+
             frac = m.start() / orig_len if orig_len > 0 else 0.0
-            if frac <= 0.15:
+
+            # If the sign prefix survived translation (model kept "+" but dropped "<mag>"),
+            # insert the tag right after the existing sign instead of prepending the pair.
+            if sign and translated.lstrip()[:1] == sign:
+                idx = translated.index(sign)
+                after = translated[idx + len(sign):]
+                sp = " " if after and not after[0].isspace() else ""
+                translated = translated[:idx + len(sign)] + tag + sp + after
+            elif frac <= 0.15:
                 sp = " " if translated and not translated[0].isspace() else ""
-                translated = tag + sp + translated
-            elif frac >= 0.85:
+                translated = full + sp + translated
+            elif frac >= 0.92:
+                # Truly trailing tag — append
                 sp = " " if translated and not translated[-1].isspace() else ""
-                translated = translated + sp + tag
+                translated = translated + sp + full
             else:
                 insert_pos = max(0, min(int(len(translated) * frac), len(translated)))
+                # For near-end tags (frac ≥ 0.70) prefer inserting before the last
+                # space-separated token so inline-suffix tags like <dur>с land in
+                # the right relative order (before the unit char, not after it).
+                if frac >= 0.70:
+                    last_sp = translated.rfind(" ", 0, len(translated) - 1)
+                    if last_sp > 0:
+                        insert_pos = last_sp
                 while insert_pos < len(translated) and translated[insert_pos] not in " \n\t":
                     insert_pos += 1
-                translated = translated[:insert_pos] + " " + tag + translated[insert_pos:]
+                translated = translated[:insert_pos] + " " + full + translated[insert_pos:]
         return translated
 
     @staticmethod

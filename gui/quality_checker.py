@@ -1318,11 +1318,13 @@ class QualityChecker:
     ) -> Tuple[str, List[str]]:
         """Re-insert tags present in the original but absent from the translation.
 
-        Tags that lead the original line are prepended; all others are appended.
+        Tags that lead the original line are prepended (with any [+−] sign that
+        precedes them in the original); all others are appended.
         """
         msgs: List[str] = []
         text = translated
-        orig_lower = original.strip().lower()
+        orig_stripped = original.strip()
+        orig_lower    = orig_stripped.lower()
         for issue in issues:
             tag = issue.detail  # already lowercase from _extract_tags
             if not tag:
@@ -1332,14 +1334,37 @@ class QualityChecker:
             missing = orig_count - trans_count
             if missing <= 0:
                 continue
+
+            # Detect whether the tag leads the original and capture any sign prefix.
+            # e.g. "+<mag> скорость" → sign="+", leads=True
+            leads = False
+            sign_prefix = ""
+            tag_idx = orig_lower.find(tag)
+            if tag_idx != -1:
+                pre = orig_stripped[:tag_idx]
+                stripped_pre = pre.strip()
+                if not stripped_pre:        # nothing before the tag
+                    leads = True
+                elif stripped_pre in ("+", "-", "−"):
+                    leads = True
+                    sign_prefix = stripped_pre
+
             for _ in range(missing):
-                if orig_lower.startswith(tag.lower()):
-                    # Tag leads the original — prepend to translation
-                    sep = " " if text and not text[0].isspace() else ""
-                    text = tag + sep + text
+                if leads:
+                    full_prefix = sign_prefix + tag
+                    # If the sign already survived in the translation, insert tag after it
+                    if sign_prefix and text.lstrip()[:1] == sign_prefix:
+                        idx = text.index(sign_prefix)
+                        after = text[idx + len(sign_prefix):]
+                        sep = " " if after and not after[0].isspace() else ""
+                        text = text[:idx + len(sign_prefix)] + tag + sep + after
+                    else:
+                        sep = " " if text and not text[0].isspace() else ""
+                        text = full_prefix + sep + text
                 else:
                     text = text.rstrip() + " " + tag
-            msgs.append(f"{'prepended' if orig_lower.startswith(tag.lower()) else 'appended'} missing tag {tag!r} ({missing}×)")
+            verb = "prepended" if leads else "appended"
+            msgs.append(f"{verb} missing tag {tag!r} ({missing}×)")
         return text, msgs
 
     @staticmethod
