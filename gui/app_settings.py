@@ -136,7 +136,7 @@ class AppSettings:
         """Create settings from a dict, applying migration if needed."""
         # Remove unknown keys
         valid_keys = {f.name for f in cls.__dataclass_fields__.values()}
-        filtered = {k: v for k, v in data.items() if k in valid_keys}
+        filtered = {k: v for k, v in data.items() if k in valid_keys and v is not None}
 
         # Migrate if version is old
         version = filtered.get("config_version", 1)
