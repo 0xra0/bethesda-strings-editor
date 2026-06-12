@@ -148,7 +148,8 @@ class SessionManagerDialog(QDialog):
 
     def _populate(self) -> None:
         self._table.setRowCount(len(self._sessions))
-        bold = QFont(); bold.setBold(True)
+        bold = QFont()
+        bold.setBold(True)
 
         for r, s in enumerate(self._sessions):
             is_active = (s.name == self._current_name)

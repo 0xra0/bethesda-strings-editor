@@ -162,7 +162,8 @@ class GenderDialog(QDialog):
 
             adj_item  = QTableWidgetItem(mm.adj_token)
             adj_item.setForeground(adj_col)
-            bold = QFont(); bold.setBold(True)
+            bold = QFont()
+            bold.setBold(True)
             adj_item.setFont(bold)
 
             adjg_item = QTableWidgetItem(GENDER_LABEL.get(mm.adj_gender, mm.adj_gender))
