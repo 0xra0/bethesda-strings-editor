@@ -4,7 +4,7 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 
 ![NexusMods Header](resources/nexusmods_header.png)
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![PySide6](https://img.shields.io/badge/UI-PySide6-green) ![Ollama](https://img.shields.io/badge/AI-Ollama-orange) [![NexusMods](https://img.shields.io/badge/NexusMods-Starfield-D98F40?logo=nexusmods&logoColor=white)](https://www.nexusmods.com/starfield/mods/17158) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/0xra0/bethesda-strings-editor)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![PySide6](https://img.shields.io/badge/UI-PySide6-green) ![Ollama](https://img.shields.io/badge/AI-Ollama-orange) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![NexusMods](https://img.shields.io/badge/NexusMods-Starfield-D98F40?logo=nexusmods&logoColor=white)](https://www.nexusmods.com/starfield/mods/17158) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/0xra0/bethesda-strings-editor)
 
 ---
 
