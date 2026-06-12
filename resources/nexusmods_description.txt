@@ -42,6 +42,8 @@ Both models are published on the Ollama hub and can be pulled directly — no lo
 [*][b]Persistent cache[/b] — SHA-256 keyed, survives sessions, up to 50,000 entries
 [*][b]Term protector[/b] — 8,000+ Starfield names, places, and UI labels swapped to placeholders before the AI sees the text; proper nouns are never mistranslated
 [*][b]Glossary system[/b] — CSV/TBX/JSON import-export, in-app editor, automatic injection into AI prompts
+[*][b]Named sessions[/b] — save and restore search/filter state across sittings ([b]Ctrl+Shift+N[/b] / [b]Ctrl+Shift+S[/b])
+[*][b]Macro recorder[/b] — record and replay sequences of edit operations ([b]Ctrl+M[/b])
 [/list]
 
 [b]File Support[/b]
@@ -61,8 +63,19 @@ Both models are published on the Ollama hub and can be pulled directly — no lo
 [*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations
 [*][b]Hunspell spell-check[/b] — optional per-language spell checking using system dictionaries; install with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
 [*][b]One-click auto-fix[/b] for mechanically correctable issues; one-click re-translate with a per-string hint for AI issues
-[*][b]Consistency checker[/b] — finds identical source strings translated differently; pick a canonical form and batch-replace
+[*][b]Consistency checker[/b] — finds identical source strings translated differently; pick a canonical form and batch-replace ([b]Ctrl+Alt+K[/b])
+[*][b]Ukrainian gender checker[/b] — detects adjective/noun gender agreement mismatches using a Ukrainian noun gender dictionary ([b]Ctrl+Alt+G[/b])
+[*][b]ти/ви register checker[/b] — detects mixed formal/informal address within a file ([b]Ctrl+Alt+R[/b])
 [*][b]Version diff[/b] — compare two game versions and migrate unchanged translations; export CSV/HTML reports
+[/list]
+
+[b]NexusMods Integration[/b]
+[list]
+[*][b]Mod browser[/b] — search NexusMods directly from the app (File → Browse NexusMods…); card-grid results with thumbnails, endorsements, and download counts
+[*][b]Free-user downloads[/b] — downloads work without a Premium subscription by reusing your active browser session (Firefox or Chromium); no NXM handler or manual clicks needed
+[*][b]Archive extraction[/b] — automatically extracts .esp/.esm/.esl files from .zip, .7z, and .rar mod archives and opens them directly in the editor
+[*][b]Translation Memory import[/b] — download a translation mod from NexusMods and load it as TM in one click; known strings are pre-filled and skipped by AI
+[*][b]Mod upload[/b] — upload release archives directly from inside the app using the NexusMods v3 multipart upload API (File → Upload to NexusMods…)
 [/list]
 
 [b]UI / Workflow[/b]
@@ -71,8 +84,11 @@ Both models are published on the Ollama hub and can be pulled directly — no lo
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
 [*]Dark / Light / Slate / custom QSS themes
 [*]Interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech (community WIP)
+[*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; color-coded green/yellow/red (AMD and NVIDIA)
 [*]Status bar with live progress, translated count, and ETA during AI batches
-[*][b]NexusMods upload[/b] — upload release archives directly from inside the app (File → Upload to NexusMods…)
+[*][b]Focus mode[/b] — full-screen overlay showing one string at a time for distraction-free translation
+[*][b]Dialogue tree viewer[/b] — visualizes Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree ([b]Ctrl+Alt+D[/b])
+[*][b]Lore RAG[/b] — import lore snippets that are injected into AI prompts for contextually accurate translation
 [/list]
 
 [heading]Requirements[/heading]
