@@ -63,7 +63,9 @@ GAMES: dict[str, tuple[str, int]] = {
 
 # Extensions we can import directly
 STRINGS_EXTS = {".strings", ".dlstrings", ".ilstrings"}
-# Archive / BA2 that may contain strings files
+# Plugin files the editor can open directly
+PLUGIN_EXTS = {".esp", ".esm", ".esl"}
+# Archive / BA2 that may contain strings or plugin files
 CONTAINER_EXTS = {".ba2", ".zip", ".7z", ".rar"}
 
 
@@ -95,6 +97,10 @@ class NexusModFile:
     @property
     def is_strings(self) -> bool:
         return Path(self.file_name).suffix.lower() in STRINGS_EXTS
+
+    @property
+    def is_plugin(self) -> bool:
+        return Path(self.file_name).suffix.lower() in PLUGIN_EXTS
 
     @property
     def is_container(self) -> bool:

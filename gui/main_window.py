@@ -5262,6 +5262,7 @@ class MainWindow(QMainWindow):
         )
         dlg.tm_ready.connect(self._apply_nexus_tm)
         dlg.merge_requested.connect(self._apply_nexus_merge)
+        dlg.open_file_requested.connect(lambda p: self._open_file_path(str(p)))
         dlg.exec()
 
     @Slot(object, str)

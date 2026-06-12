@@ -42,9 +42,13 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget,
 )
 
-from gui.nexusmods_client import GAMES, NexusClient, NexusModFile, NexusModsError, NexusSearchResult
+from gui.nexusmods_client import (
+    CONTAINER_EXTS, GAMES, NexusClient, NexusModFile, NexusModsError,
+    NexusSearchResult, PLUGIN_EXTS, STRINGS_EXTS,
+)
 
-_STRINGS_EXTS = {".strings", ".dlstrings", ".ilstrings"}
+_STRINGS_EXTS = STRINGS_EXTS
+_PLUGIN_EXTS  = PLUGIN_EXTS
 
 _CARD_W   = 215
 _CARD_IMG = 121   # 16:9
@@ -304,13 +308,32 @@ def _extract_strings(path: Path) -> List[Path]:
     return [path]
 
 
+def _extract_plugins(path: Path) -> List[Path]:
+    """Return .esp/.esm/.esl files from path (direct or extracted from zip)."""
+    suffix = path.suffix.lower()
+    if suffix in _PLUGIN_EXTS:
+        return [path]
+    if suffix == ".zip":
+        out_dir = path.parent / path.stem
+        out_dir.mkdir(exist_ok=True)
+        found = []
+        with zipfile.ZipFile(path, "r") as zf:
+            for member in zf.namelist():
+                if Path(member).suffix.lower() in _PLUGIN_EXTS:
+                    extracted = zf.extract(member, out_dir)
+                    found.append(Path(extracted))
+        return found
+    return []
+
+
 # ── Main dialog ───────────────────────────────────────────────────────────────
 
 class NexusModsBrowserDialog(QDialog):
     """Browse NexusMods for translation mods and import them as Translation Memory."""
 
-    tm_ready       = Signal(object, str)   # (TranslationMemory, source_label)
-    merge_requested = Signal(object)       # TranslationMemory
+    tm_ready          = Signal(object, str)  # (TranslationMemory, source_label)
+    merge_requested   = Signal(object)      # TranslationMemory
+    open_file_requested = Signal(object)    # Path — open downloaded plugin in editor
 
     def __init__(
         self,
@@ -472,6 +495,15 @@ class NexusModsBrowserDialog(QDialog):
         self._open_page_btn.setEnabled(False)
         self._open_page_btn.clicked.connect(self._open_mod_page)
         layout.addWidget(self._open_page_btn)
+
+        self._open_plugin_btn = QPushButton(self.tr("⬇  Download & Open in Editor"))
+        self._open_plugin_btn.setEnabled(False)
+        self._open_plugin_btn.setToolTip(self.tr(
+            "Download the selected .esp/.esm/.esl file (or zip containing one)\n"
+            "and open it automatically in the editor."
+        ))
+        self._open_plugin_btn.clicked.connect(self._download_open_plugin)
+        layout.addWidget(self._open_plugin_btn)
 
         btn_row = QHBoxLayout()
         self._import_tm_btn = QPushButton(self.tr("⬇  Download & Import as TM"))
@@ -645,9 +677,15 @@ class NexusModsBrowserDialog(QDialog):
     @Slot()
     def _on_file_selected(self) -> None:
         nf = self._selected_file()
-        enabled = nf is not None and self._client is not None
-        self._import_tm_btn.setEnabled(enabled)
-        self._merge_btn.setEnabled(enabled)
+        has_client = self._client is not None
+        self._import_tm_btn.setEnabled(nf is not None and has_client)
+        self._merge_btn.setEnabled(nf is not None and has_client)
+        # Enable "Open in Editor" for plugin files and archives that may contain them
+        can_open = (
+            nf is not None and has_client
+            and (nf.is_plugin or nf.is_container)
+        )
+        self._open_plugin_btn.setEnabled(can_open)
 
     # ── Mod page ──────────────────────────────────────────────────────────────
 
@@ -684,6 +722,10 @@ class NexusModsBrowserDialog(QDialog):
         worker.signals.finished.connect(lambda paths: self._on_download_done(paths, on_done_action))
         self._active_download = worker
         QThreadPool.globalInstance().start(worker)
+
+    @Slot()
+    def _download_open_plugin(self) -> None:
+        self._start_download("open_plugin")
 
     @Slot()
     def _download_import_tm(self) -> None:
@@ -732,10 +774,23 @@ class NexusModsBrowserDialog(QDialog):
     def _on_download_done(self, paths: list, action: str) -> None:
         self._reset_download_ui()
         if not paths:
-            self._set_status(self.tr("No .strings files found in the downloaded archive."), error=True)
+            self._set_status(self.tr("No files found in the downloaded archive."), error=True)
             return
 
-        from gui.nexusmods_client import CONTAINER_EXTS
+        # ── Open plugin in editor ─────────────────────────────────────────────
+        if action == "open_plugin":
+            plugins = _extract_plugins(paths[0])
+            if not plugins:
+                self._set_status(self.tr(
+                    f"No .esp/.esm/.esl found in {paths[0].name}."
+                ), error=True)
+                return
+            self.open_file_requested.emit(plugins[0])
+            self._set_status(self.tr(f"✓  Opening {plugins[0].name} in editor…"))
+            self.accept()
+            return
+
+        # ── BA2 / 7z / rar — suggest manual open ─────────────────────────────
         if paths[0].suffix.lower() in (CONTAINER_EXTS - {".zip"}):
             self._set_status(self.tr(
                 f"Downloaded: {paths[0].name} — open it in the editor via File → Open "
@@ -743,6 +798,7 @@ class NexusModsBrowserDialog(QDialog):
             ))
             return
 
+        # ── Strings / TM actions ──────────────────────────────────────────────
         from gui.translation_memory import TranslationMemory
         tm = TranslationMemory()
         loaded = 0
@@ -770,6 +826,11 @@ class NexusModsBrowserDialog(QDialog):
         self._progress.setVisible(False)
         self._cancel_btn.setVisible(False)
         self._active_download = None
-        has_file = self._selected_file() is not None
+        nf = self._selected_file()
+        has_file = nf is not None
         self._import_tm_btn.setEnabled(has_file)
         self._merge_btn.setEnabled(has_file)
+        self._open_plugin_btn.setEnabled(
+            has_file and self._client is not None
+            and (nf.is_plugin or nf.is_container)
+        )
