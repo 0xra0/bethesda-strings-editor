@@ -84,15 +84,34 @@ def _read_sqlite_cookies(db_path: Path, query: str) -> dict[str, str]:
         tmp.unlink(missing_ok=True)
 
 
-def find_browser_cookies() -> dict[str, str]:
-    """Return NexusMods session cookies from Firefox or a Chromium browser.
+def find_browser_cookies(cookies_file: str = "") -> dict[str, str]:
+    """Return NexusMods session cookies.
 
-    Firefox cookies are stored as plaintext SQLite — easiest path.
-    Chromium cookies may be encrypted with the OS keyring; only unencrypted
-    (or non-v10 encrypted) values are returned as a fallback.
+    If *cookies_file* points to a Cookie-Editor JSON export, that file is
+    loaded first (supports both list and dict format).  Otherwise auto-detects
+    from Firefox (plaintext SQLite) or Chromium (unencrypted cookies fallback).
 
     Returns an empty dict if no session cookie is found.
     """
+    import json as _json
+
+    if cookies_file:
+        p = Path(cookies_file)
+        if p.is_file():
+            try:
+                raw = _json.loads(p.read_text(encoding="utf-8"))
+                cookies: dict[str, str] = (
+                    {c["name"]: c["value"] for c in raw}
+                    if isinstance(raw, list)   # Cookie-Editor exports a list
+                    else {str(k): str(v) for k, v in raw.items()}
+                )
+                if cookies:
+                    logger.debug("Loaded NexusMods cookies from file: %s", p)
+                    return cookies
+            except Exception as exc:
+                logger.warning("Could not read cookies file %s: %s", p, exc)
+        else:
+            logger.warning("Cookies file not found: %s", cookies_file)
     # Firefox — plaintext SQLite
     ff_patterns = [
         str(Path.home() / ".mozilla/firefox/*.default-release/cookies.sqlite"),
@@ -223,7 +242,7 @@ class NexusModsError(Exception):
 class NexusClient:
     """Thin wrapper around the NexusMods REST v1 and search APIs."""
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str, cookies_file: str = "") -> None:
         if not api_key:
             raise NexusModsError("NexusMods API key is not configured.")
         self._session = requests.Session()
@@ -232,7 +251,8 @@ class NexusClient:
             "User-Agent": _UA,
             "Accept": "application/json",
         })
-        self._game_ids: dict[str, int] = {}  # domain → numeric game ID (cached)
+        self._game_ids: dict[str, int] = {}   # domain → numeric game ID (cached)
+        self._cookies_file: str = cookies_file  # optional Cookie-Editor JSON export
 
     # ── Search ────────────────────────────────────────────────────────────────
 
@@ -407,7 +427,7 @@ class NexusClient:
         except ImportError:
             raise NexusModsError("FREE_NO_CURL_CFFI")
 
-        cookies = find_browser_cookies()
+        cookies = find_browser_cookies(self._cookies_file)
         if not cookies.get("nexusmods_session"):
             raise NexusModsError("FREE_NO_COOKIES")
 

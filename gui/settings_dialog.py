@@ -679,6 +679,22 @@ class SettingsDialog(QDialog):
         ))
         nexus_layout.addRow(self.tr("File Group ID:"), self.nexusmods_file_group_edit)
 
+        nexus_cookies_row = QHBoxLayout()
+        self.nexusmods_cookies_edit = QLineEdit(getattr(self._settings, "nexusmods_cookies_file", ""))
+        self.nexusmods_cookies_edit.setPlaceholderText(self.tr("(auto-detect from Firefox / Chromium)"))
+        self.nexusmods_cookies_edit.setToolTip(self.tr(
+            "Optional: path to a Cookie-Editor JSON export for free-user NexusMods downloads.\n"
+            "Export steps: install the 'Cookie-Editor' browser extension → visit nexusmods.com\n"
+            "→ open Cookie-Editor → Export → JSON → save the file → select it here.\n"
+            "Leave blank to auto-detect cookies from Firefox or Chromium."
+        ))
+        nexus_cookies_row.addWidget(self.nexusmods_cookies_edit, stretch=1)
+        btn_browse_cookies = QPushButton(self.tr("Browse…"))
+        btn_browse_cookies.setMaximumWidth(72)
+        btn_browse_cookies.clicked.connect(self._browse_cookies_file)
+        nexus_cookies_row.addWidget(btn_browse_cookies)
+        nexus_layout.addRow(self.tr("Cookies JSON:"), nexus_cookies_row)
+
         nexus_group.setLayout(nexus_layout)
         layout.addWidget(nexus_group)
 
@@ -935,6 +951,15 @@ class SettingsDialog(QDialog):
             self.terms_file_path.setText(file_path)
 
     @Slot()
+    def _browse_cookies_file(self):
+        file_path, _ = get_open_filename(
+            self, self.tr("Select Cookie-Editor JSON Export"), "",
+            self.tr("JSON Files (*.json *.JSON);;All Files (*)")
+        )
+        if file_path:
+            self.nexusmods_cookies_edit.setText(file_path)
+
+    @Slot()
     def _view_protected_terms(self):
         """Show dialog to view/edit protected terms."""
         from gui.protected_terms_dialog import ProtectedTermsDialog
@@ -1122,6 +1147,7 @@ class SettingsDialog(QDialog):
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
         settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
+        settings.nexusmods_cookies_file  = self.nexusmods_cookies_edit.text().strip()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
         settings.tts_engine_type = self.combo_tts_engine.currentData()
         settings.espeak_voice = self.espeak_voice_edit.text().strip() or "uk"

@@ -5253,6 +5253,7 @@ class MainWindow(QMainWindow):
         dlg = NexusModsBrowserDialog(
             api_key=api_key,
             cache_dir=get_cache_dir(),
+            cookies_file=self.settings.nexusmods_cookies_file or "",
             parent=self,
         )
         dlg.tm_ready.connect(self._apply_nexus_tm)

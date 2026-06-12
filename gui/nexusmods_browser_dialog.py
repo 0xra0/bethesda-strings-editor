@@ -335,6 +335,7 @@ class NexusModsBrowserDialog(QDialog):
         self,
         api_key: str,
         cache_dir: Path,
+        cookies_file: str = "",
         parent: Optional[QWidget] = None,
     ) -> None:
         super().__init__(parent)
@@ -353,7 +354,7 @@ class NexusModsBrowserDialog(QDialog):
 
         if api_key:
             try:
-                self._client = NexusClient(api_key)
+                self._client = NexusClient(api_key, cookies_file=cookies_file)
             except NexusModsError:
                 pass
 

@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 28  # Increment when schema changes
+CONFIG_VERSION = 29  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -115,6 +115,7 @@ class AppSettings:
     # ── NexusMods ────────────────────────────────────────────────────────
     nexusmods_api_key: str = ""
     nexusmods_file_group_id: str = ""
+    nexusmods_cookies_file: str = ""  # path to Cookie-Editor JSON export (free-user downloads)
 
     # ── Help ─────────────────────────────────────────────────────────────
     tips_shown: bool = False
