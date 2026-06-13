@@ -16,9 +16,9 @@ from typing import Dict, List, Optional
 from PySide6.QtCore import Qt, QUrl, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
-    QDialog, QDialogButtonBox, QFrame, QHBoxLayout,
-    QLabel, QProgressBar, QPushButton, QScrollArea,
-    QTextEdit, QVBoxLayout, QWidget,
+    QDialog, QFrame, QHBoxLayout,
+    QLabel, QProgressBar, QPushButton,
+    QTextEdit, QVBoxLayout,
 )
 
 from gui.updater import DownloadWorker, RELEASES_URL
@@ -42,7 +42,7 @@ def _human_size(n: int) -> str:
     for unit in ("B", "KB", "MB", "GB"):
         if n < 1024:
             return f"{n:.0f} {unit}"
-        n /= 1024
+        n //= 1024
     return f"{n:.1f} GB"
 
 

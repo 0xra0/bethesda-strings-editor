@@ -636,9 +636,13 @@ class SettingsDialog(QDialog):
 
         btn_check_now = QPushButton(self.tr("Check Now…"))
         btn_check_now.setFixedWidth(120)
-        btn_check_now.clicked.connect(
-            lambda: self.parent()._check_for_updates() if self.parent() and hasattr(self.parent(), "_check_for_updates") else None
-        )
+        def _on_check_now() -> None:
+            p = self.parent()
+            if p is not None:
+                fn = getattr(p, "_check_for_updates", None)
+                if callable(fn):
+                    fn()
+        btn_check_now.clicked.connect(_on_check_now)
         update_layout.addRow(btn_check_now)
 
         update_group.setLayout(update_layout)

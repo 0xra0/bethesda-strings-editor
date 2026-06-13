@@ -6293,7 +6293,8 @@ class MainWindow(QMainWindow):
     # ── Update system ──────────────────────────────────────────────────────────
 
     def _current_version(self) -> str:
-        return QApplication.instance().applicationVersion() or "dev"
+        app = QApplication.instance()
+        return (app.applicationVersion() or "dev") if app is not None else "dev"
 
     def _check_for_updates_silent(self) -> None:
         """Startup silent check — shows dialog only if a new version is found
