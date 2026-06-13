@@ -228,8 +228,8 @@ scripts/
   extract_starfield_glossary.py Build starfield_glossary.json from string files
 
 aur/
-  PKGBUILD                     AUR package build script (bethesda-strings-editor-bin)
-  .SRCINFO                     AUR metadata
+  PKGBUILD                     Manual AUR install script (not yet published to AUR; use makepkg -si)
+  .SRCINFO                     AUR metadata (kept in sync with PKGBUILD)
 ```
 
 ---
