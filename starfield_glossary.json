@@ -2872,8 +2872,8 @@
       "id": "70c755c1-bb5d-4af6-930d-10a2e1543ddb"
     },
     {
-      "source_term": "Terrabrew",
-      "target_term": "Террабрю",
+      "source_term": "TerraBrew",
+      "target_term": "ТерраБрю",
       "category": "Proper Nouns",
       "definition": "",
       "examples": [],
@@ -182816,6 +182816,15 @@
       "examples": [],
       "notes": "src:sfbgs003_uk_translated.strings.txt",
       "id": "72f5a098-a63d-4883-b6fe-db28064a79c7"
+    },
+    {
+      "source_term": "ТерраБрю",
+      "target_term": "ТерраБрю",
+      "category": "Proper Nouns",
+      "definition": "",
+      "examples": [],
+      "notes": "Brand name — keep Cyrillic spelling in Ukrainian; never revert to English 'TerraBrew'",
+      "id": "4232fedb-d40a-49ac-b229-61a0c9e59e43"
     }
   ]
 }

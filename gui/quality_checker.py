@@ -58,6 +58,8 @@ AUTOFIX_CODES: frozenset = frozenset({
     "SIZE_TAG_RESTRUCTURED",
     # Leading "-" stripped from header lines (e.g. "-Costs" → "Вартість")
     "LINE_PREFIX_DROPPED",
+    # Opening «guillemet without matching closing »
+    "UNCLOSED_GUILLEMET",
 })
 
 # Codes that require AI retranslation to properly fix.
@@ -344,6 +346,7 @@ class QualityChecker:
         self._check_line_prefix(original, translated, report)
         self._check_whitespace_frame(original, translated, report)
         self._check_spurious_quotes(original, translated, report)
+        self._check_unclosed_guillemets(original, translated, report)
         self._check_spelling(original, translated, report)
 
         return report
@@ -435,6 +438,11 @@ class QualityChecker:
 
         if "SPURIOUS_QUOTES" in codes:
             text, msg = self._fix_spurious_quotes(text)
+            if msg:
+                applied.append(msg)
+
+        if "UNCLOSED_GUILLEMET" in codes:
+            text, msg = self._fix_unclosed_guillemets(text)
             if msg:
                 applied.append(msg)
 
@@ -1150,6 +1158,43 @@ class QualityChecker:
         fixed, count = _re.subn(r"\1", translated)
         if count:
             return fixed, f"removed {count} spurious guillemet pair(s)"
+        return translated, ""
+
+    def _check_unclosed_guillemets(
+        self, _original: str, translated: str, report: QualityReport
+    ) -> None:
+        """Flag «guillemet opened but never closed with »."""
+        open_count = translated.count("«")
+        close_count = translated.count("»")
+        if open_count > close_count:
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_WARNING,
+                    code="UNCLOSED_GUILLEMET",
+                    message=f"Translation has {open_count} opening « but only {close_count} closing »",
+                )
+            )
+
+    @staticmethod
+    def _fix_unclosed_guillemets(translated: str) -> Tuple[str, str]:
+        """Append a closing » for each unclosed « on each line."""
+        lines = translated.split("\n")
+        fixed_lines = []
+        total_fixed = 0
+        for line in lines:
+            missing = line.count("«") - line.count("»")
+            if missing > 0:
+                # Insert before any trailing sentence-ending punctuation
+                m = re.search(r'([.!?…]+)\s*$', line)
+                if m:
+                    line = line[:m.start()] + "»" * missing + line[m.start():]
+                else:
+                    line = line.rstrip() + "»" * missing
+                total_fixed += missing
+            fixed_lines.append(line)
+        result = "\n".join(fixed_lines)
+        if total_fixed:
+            return result, f"closed {total_fixed} unclosed guillemet(s)"
         return translated, ""
 
     # ── Auto-fix helpers ───────────────────────────────────────────────────────
