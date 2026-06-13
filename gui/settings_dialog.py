@@ -37,6 +37,67 @@ class SettingsDialog(QDialog):
         'gemma4-opus48-st',
     ]
 
+    _GENERAL_TIPS = [
+        "Press F7 to jump instantly to the next untranslated string.",
+        "Ctrl+Enter approves the current translation and advances to the next string.",
+        "Ctrl+R rejects the current translation and marks it for retranslation.",
+        "Ctrl+K opens the Command Palette — fuzzy-search any action without touching the mouse.",
+        "Translation Memory pre-loads known translations from a previous file — matched strings are never sent to the AI.",
+        "Batch Translate Folder (File menu) retranslates an entire directory of string files in one run.",
+        "The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.",
+        "Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.",
+        "Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.",
+        "Ctrl+Alt+R checks ти/ви register consistency so the player is always addressed the same way.",
+        "Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.",
+        "The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.",
+        "Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.",
+        "The Diff Viewer (word-level) shows exactly what changed between two game versions of the same file.",
+        "The Glossary Manager ensures consistent terminology — add key terms and the AI will respect them in every call.",
+        "Protected terms are replaced with unique tokens before the AI sees the string and restored afterward.",
+        "The Audit Log records every file operation and batch without ever storing actual string content.",
+        "Crash Recovery auto-saves progress periodically — if the app crashes, your work is offered on next launch.",
+        "The NexusMods Browser lets you search, preview, and download translation mods without leaving the app.",
+        "Version Comparison migrates unchanged translations from an old file to a new game version automatically.",
+        "Load lore snippets in the Lore RAG Manager to give the AI contextual accuracy for faction names and world events.",
+        "The Font Checker identifies characters missing from Starfield's Scaleform SWF font atlases.",
+        "Ctrl+M opens the Macro Editor — record repetitive edits as named macros and replay them with one click.",
+        "Translator Profiles let you define per-locale style rules and author metadata for each language.",
+        "Session Manager (Ctrl+Shift+N) saves your search and filter state so you can resume exactly where you left off.",
+        "The Plugin Validator dialog scans ESP/ESM files for NPC dialogue camera bugs before packaging.",
+        "Shift+C copies the source text of the selected row; Shift+V pastes it into the translation column.",
+        "The status bar shows Total / Done / Left % and an ETA countdown during AI translation batches.",
+        "Advanced Search supports full regex across source and translation columns simultaneously.",
+        "BA2 archives with multiple .strings entries show a picker so you can choose which file to open.",
+        "The Claude Chat Panel (dock) lets you ask Claude about the selected string and apply its suggestion directly.",
+        "TTS Preview synthesizes a read-out of your translation for timing comparison with the original game audio.",
+        "The Dialogue Tree Viewer shows the Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree.",
+        "Pop out the string table to a second monitor via Window → Pop-out Table for multi-monitor workflows.",
+        "The Visual Context Preview renders the selected string inside a faithful in-game UI widget mockup.",
+        "The fine-tuned qcgemma4-st model checks 16 issue codes including GLOSSARY_MISMATCH, UNTRANSLATED, and REPETITION_ARTIFACT.",
+        "Enable 'Protect English text' when translating RU→UK to keep English terminology untouched.",
+        "English anchors such as 'To Ukrainian:' and 'To English:' in the Modelfile structure the model's output reliably.",
+        "Increasing num_ctx uses more VRAM but lets the model see longer strings and richer system prompts.",
+        "The Translation Cache (SHA-256 keyed) avoids retranslating identical strings across different files or sessions.",
+        "xTranslator SST XML files can be imported and exported — string IDs are matched first, then source text.",
+        "Consistency Checker's auto-replace rewrites all variants to your chosen canonical form in one click.",
+        "Pre-load Translation Memory before a Batch Translate run to skip strings that are already translated.",
+        "The Spell Checker supports Hunspell, spylls (pure Python), or a CLI fallback depending on what is installed.",
+        "The Gender Checker uses a Ukrainian noun gender dictionary — extend the dictionary to improve detection coverage.",
+        "Pop out the Translation Editor pane as a floating dock for a larger, more comfortable editing area.",
+        "The Claude API key is stored with AES-256-GCM encryption via the system keyring — never in plaintext on disk.",
+        "To retranslate only failed strings, open the QC dialog and click 'Auto-Retranslate Issues'.",
+        "The Pre-Translation Estimator learns from your manual corrections — it improves automatically as you work.",
+        "All keyboard shortcuts can be reassigned in Settings → Keyboard Shortcuts to match your personal workflow.",
+        "The Lore RAG search tab lets you preview exactly which context snippets will be injected for a given string.",
+        "Use the Register Checker to ensure you address the player consistently with either ти or ви throughout the whole file.",
+        "The 'Protect proper nouns' option keeps faction, company, ship, and character names from being translated by the AI.",
+        "Rejected strings are highlighted in red in the table so you can find them quickly for manual correction.",
+        "The AI repetition artifact checker catches copy-paste loops and model hallucinations before they reach the player.",
+        "Newline count mismatch detection ensures your translation preserves the same line breaks as the source.",
+        "Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.",
+        "Export the Version Comparison report as HTML or CSV for review by other team members.",
+    ]
+
 
     def __init__(self, settings: AppSettings, parent=None, term_protector: Optional["TermProtector"] = None,
                  theme_manager=None, translation_cache=None, keyboard_manager=None):
@@ -900,7 +961,21 @@ class SettingsDialog(QDialog):
         self._update_model_hint(self.ollama_model.currentText())
         layout.addWidget(self._lbl_model_hint)
 
-        layout.addStretch()
+        # Rotating general tips
+        import random
+        self._tip_index = random.randrange(len(self._GENERAL_TIPS))
+        tip_row = QHBoxLayout()
+        self._lbl_tip = QLabel()
+        self._lbl_tip.setWordWrap(True)
+        self._lbl_tip.setStyleSheet("color: palette(mid); font-style: italic;")
+        self._show_tip()
+        tip_row.addWidget(self._lbl_tip, stretch=1)
+        btn_next_tip = QPushButton(self.tr("Next tip →"))
+        btn_next_tip.setFlat(True)
+        btn_next_tip.setStyleSheet("color: palette(mid); font-style: italic;")
+        btn_next_tip.clicked.connect(self._next_tip)
+        tip_row.addWidget(btn_next_tip)
+        layout.addLayout(tip_row)
 
         layout.addStretch()
         scroll.setWidget(content)
@@ -946,6 +1021,15 @@ class SettingsDialog(QDialog):
         else:
             text = ""
         self._lbl_model_hint.setText(text)
+
+    def _show_tip(self) -> None:
+        tip = self._GENERAL_TIPS[self._tip_index % len(self._GENERAL_TIPS)]
+        self._lbl_tip.setText(f"💡 {tip}")
+
+    @Slot()
+    def _next_tip(self) -> None:
+        self._tip_index = (self._tip_index + 1) % len(self._GENERAL_TIPS)
+        self._show_tip()
 
     @Slot()
     def _refresh_ollama_models(self):
