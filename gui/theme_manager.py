@@ -642,6 +642,133 @@ QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; background: no
 QToolTip { background-color: #ede3c8; color: #3b2e1e; border: 1px solid #c8b89a; border-radius: 4px; padding: 4px 8px; }
 """
 
+THEMES["Starfield"] = """
+/* Starfield - Game-accurate dark navy UI
+   Colors reverse-engineered from Data/Interface SWF/GFX assets:
+     bg        #0a0e1a  (between dialoguemenu #050a14 and inventorymenu #0d111a)
+     panel     #111a28  (panel/toolbar layer)
+     alt-row   #0e1420  (HUD gradient start, alternate table rows)
+     border    #1c2e48  (formID watermark tone, grid lines)
+     border-hi #2a3a54  (visible dividers)
+     fg        #ececec  (inventory item text from invitemcard.gfx)
+     fg-dim    #c0c8d8  (secondary labels, dialogue tree)
+     fg-muted  #556688  (status bar, muted text, HUD border pen)
+     accent    #3ff0ff  (Starfield cyan: dialoguemenu selection, tree highlights)
+     accent-hi #7df8ff  (hover)
+     accent-dn #2bc8d8  (pressed)
+     sel-bg    #152030  (tree selected background)
+     gold      #e8e8ac  (speaker name gold — used for primary buttons)
+*/
+QMainWindow { background-color: #0a0e1a; color: #ececec; }
+QMenuBar { background-color: #111a28; color: #ececec; border-bottom: 1px solid #1c2e48; }
+QMenuBar::item:selected { background-color: #1c2e48; }
+QMenu { background-color: #111a28; color: #ececec; border: 1px solid #2a3a54; }
+QMenu::item:selected { background-color: #152030; color: #3ff0ff; }
+QToolBar { background-color: #111a28; border-bottom: 1px solid #1c2e48; spacing: 4px; }
+QToolBar QToolButton { color: #c0c8d8; border-radius: 2px; }
+QToolBar QToolButton:hover { background-color: #1c2e48; color: #3ff0ff; }
+QStatusBar { background-color: #111a28; color: #556688; border-top: 1px solid #1c2e48; }
+QTableView { background-color: #0a0e1a; color: #ececec; gridline-color: #1c2e48; selection-background-color: #152030; selection-color: #3ff0ff; alternate-background-color: #0e1420; }
+QHeaderView::section { background-color: #111a28; color: #c0c8d8; padding: 4px; border: none; border-right: 1px solid #1c2e48; border-bottom: 1px solid #1c2e48; }
+QTableView::item { padding: 4px; }
+QPushButton { background-color: #1c2e48; color: #c0c8d8; border: 1px solid #2a3a54; border-radius: 2px; padding: 6px 12px; }
+QPushButton:hover { background-color: #2a3a54; color: #3ff0ff; border-color: #3ff0ff; }
+QPushButton:pressed { background-color: #111a28; color: #2bc8d8; }
+QPushButton:disabled { background-color: #0a0e1a; color: #2a3a54; border-color: #1c2e48; }
+QPushButton[primary="true"] { background-color: #152030; color: #3ff0ff; border: 1px solid #3ff0ff; }
+QPushButton[primary="true"]:hover { background-color: #1c3848; color: #7df8ff; border-color: #7df8ff; }
+QPushButton[primary="true"]:pressed { background-color: #111a28; color: #2bc8d8; }
+QLineEdit, QComboBox, QSpinBox { background-color: #0e1420; color: #ececec; border: 1px solid #2a3a54; border-radius: 2px; padding: 4px 8px; }
+QComboBox QAbstractItemView { background-color: #111a28; color: #ececec; selection-background-color: #152030; selection-color: #3ff0ff; border: 1px solid #2a3a54; }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border-color: #3ff0ff; }
+QProgressBar { border: 1px solid #2a3a54; border-radius: 2px; text-align: center; background-color: #0e1420; color: #c0c8d8; }
+QProgressBar::chunk { background-color: #3ff0ff; border-radius: 1px; }
+QDialog { background-color: #0a0e1a; color: #ececec; }
+QCheckBox, QRadioButton { color: #c0c8d8; spacing: 6px; } QCheckBox::indicator, QRadioButton::indicator { width: 18px; height: 18px; background-color: #0e1420; border: 2px solid #2a3a54; border-radius: 2px; } QCheckBox::indicator:checked, QRadioButton::indicator:checked { background-color: #3ff0ff; border-color: #3ff0ff; image: none; } QCheckBox::indicator:unchecked:hover, QRadioButton::indicator:unchecked:hover { border-color: #3ff0ff; } QRadioButton::indicator { border-radius: 9px; }
+QLabel { color: #ececec; }
+QTableWidget { background-color: #0a0e1a; color: #ececec; gridline-color: #1c2e48; selection-background-color: #152030; selection-color: #3ff0ff; alternate-background-color: #0e1420; }
+QGroupBox { background-color: #0e1420; border: 1px solid #2a3a54; border-radius: 2px; margin-top: 8px; padding-top: 16px; }
+QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 6px; color: #556688; }
+QTextEdit { background-color: #0e1420; color: #ececec; border: 1px solid #2a3a54; border-radius: 2px; }
+QScrollArea { background-color: #0a0e1a; border: none; }
+QSplitter::handle { background-color: #1c2e48; }
+QListWidget { background-color: #0a0e1a; color: #ececec; border: 1px solid #2a3a54; }
+QListWidget::item { padding: 2px 4px; }
+QListWidget::item:selected { background-color: #152030; color: #3ff0ff; }
+QListWidget::item:hover { background-color: #0e1420; color: #c0c8d8; }
+QScrollBar:vertical { background-color: #0a0e1a; width: 10px; margin: 0; border-radius: 5px; }
+QScrollBar::handle:vertical { background-color: #2a3a54; border-radius: 5px; min-height: 20px; }
+QScrollBar::handle:vertical:hover { background-color: #3ff0ff; }
+QScrollBar:horizontal { background-color: #0a0e1a; height: 10px; margin: 0; border-radius: 5px; }
+QScrollBar::handle:horizontal { background-color: #2a3a54; border-radius: 5px; min-width: 20px; }
+QScrollBar::handle:horizontal:hover { background-color: #3ff0ff; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; background: none; border: none; }
+QToolTip { background-color: #111a28; color: #3ff0ff; border: 1px solid #3ff0ff; border-radius: 2px; padding: 4px 8px; }
+QTabWidget::pane { border: 1px solid #2a3a54; background-color: #0a0e1a; }
+QTabBar::tab { background-color: #0e1420; color: #c0c8d8; border: 1px solid #1c2e48; border-bottom: none; padding: 4px 12px; margin-right: 2px; }
+QTabBar::tab:selected { background-color: #152030; color: #3ff0ff; border-color: #2a3a54; border-bottom: 2px solid #3ff0ff; }
+QTabBar::tab:hover:!selected { background-color: #1c2e48; color: #c0c8d8; }
+QDockWidget { color: #c0c8d8; }
+QDockWidget::title { background-color: #111a28; color: #556688; border-bottom: 1px solid #1c2e48; padding: 4px 8px; }
+"""
+
+THEMES["Starfield Terminal"] = """
+/* Starfield Terminal - Green-on-black computer/terminal screens
+   Colors from visual_context_preview Terminal context:
+     bg #030e03, fg #00cc00, border #009900 */
+QMainWindow { background-color: #030e03; color: #00cc00; }
+QMenuBar { background-color: #071407; color: #00cc00; border-bottom: 1px solid #005500; }
+QMenuBar::item:selected { background-color: #0a2010; }
+QMenu { background-color: #071407; color: #00cc00; border: 1px solid #005500; }
+QMenu::item:selected { background-color: #0a2010; color: #00ff00; }
+QToolBar { background-color: #071407; border-bottom: 1px solid #005500; spacing: 4px; }
+QToolBar QToolButton { color: #009900; border-radius: 2px; }
+QToolBar QToolButton:hover { background-color: #0a2010; color: #00ff00; }
+QStatusBar { background-color: #071407; color: #005500; border-top: 1px solid #005500; }
+QTableView { background-color: #030e03; color: #00cc00; gridline-color: #0a1e0a; selection-background-color: #0a2010; selection-color: #00ff00; alternate-background-color: #050f05; }
+QHeaderView::section { background-color: #071407; color: #009900; padding: 4px; border: none; border-right: 1px solid #005500; border-bottom: 1px solid #005500; }
+QTableView::item { padding: 4px; }
+QPushButton { background-color: #0a1e0a; color: #009900; border: 1px solid #005500; border-radius: 2px; padding: 6px 12px; }
+QPushButton:hover { background-color: #0a2010; color: #00ff00; border-color: #00cc00; }
+QPushButton:pressed { background-color: #071407; color: #009900; }
+QPushButton:disabled { background-color: #030e03; color: #003300; border-color: #003300; }
+QPushButton[primary="true"] { background-color: #0a2010; color: #00ff00; border: 1px solid #00cc00; }
+QPushButton[primary="true"]:hover { background-color: #0f2818; color: #44ff44; border-color: #44ff44; }
+QPushButton[primary="true"]:pressed { background-color: #071407; }
+QLineEdit, QComboBox, QSpinBox { background-color: #050f05; color: #00cc00; border: 1px solid #005500; border-radius: 2px; padding: 4px 8px; }
+QComboBox QAbstractItemView { background-color: #071407; color: #00cc00; selection-background-color: #0a2010; selection-color: #00ff00; border: 1px solid #005500; }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border-color: #00cc00; }
+QProgressBar { border: 1px solid #005500; border-radius: 2px; text-align: center; background-color: #050f05; color: #009900; }
+QProgressBar::chunk { background-color: #00cc00; border-radius: 1px; }
+QDialog { background-color: #030e03; color: #00cc00; }
+QCheckBox, QRadioButton { color: #009900; spacing: 6px; } QCheckBox::indicator, QRadioButton::indicator { width: 18px; height: 18px; background-color: #050f05; border: 2px solid #005500; border-radius: 2px; } QCheckBox::indicator:checked, QRadioButton::indicator:checked { background-color: #00cc00; border-color: #00cc00; image: none; } QCheckBox::indicator:unchecked:hover, QRadioButton::indicator:unchecked:hover { border-color: #00cc00; } QRadioButton::indicator { border-radius: 9px; }
+QLabel { color: #00cc00; }
+QTableWidget { background-color: #030e03; color: #00cc00; gridline-color: #0a1e0a; selection-background-color: #0a2010; selection-color: #00ff00; alternate-background-color: #050f05; }
+QGroupBox { background-color: #050f05; border: 1px solid #005500; border-radius: 2px; margin-top: 8px; padding-top: 16px; }
+QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 6px; color: #005500; }
+QTextEdit { background-color: #050f05; color: #00cc00; border: 1px solid #005500; border-radius: 2px; }
+QScrollArea { background-color: #030e03; border: none; }
+QSplitter::handle { background-color: #005500; }
+QListWidget { background-color: #030e03; color: #00cc00; border: 1px solid #005500; }
+QListWidget::item { padding: 2px 4px; }
+QListWidget::item:selected { background-color: #0a2010; color: #00ff00; }
+QListWidget::item:hover { color: #00ff00; }
+QScrollBar:vertical { background-color: #030e03; width: 10px; margin: 0; border-radius: 5px; }
+QScrollBar::handle:vertical { background-color: #005500; border-radius: 5px; min-height: 20px; }
+QScrollBar::handle:vertical:hover { background-color: #00cc00; }
+QScrollBar:horizontal { background-color: #030e03; height: 10px; margin: 0; border-radius: 5px; }
+QScrollBar::handle:horizontal { background-color: #005500; border-radius: 5px; min-width: 20px; }
+QScrollBar::handle:horizontal:hover { background-color: #00cc00; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; background: none; border: none; }
+QToolTip { background-color: #071407; color: #00ff00; border: 1px solid #00cc00; border-radius: 2px; padding: 4px 8px; }
+QTabWidget::pane { border: 1px solid #005500; background-color: #030e03; }
+QTabBar::tab { background-color: #050f05; color: #009900; border: 1px solid #003300; border-bottom: none; padding: 4px 12px; margin-right: 2px; }
+QTabBar::tab:selected { background-color: #0a2010; color: #00ff00; border-color: #005500; border-bottom: 2px solid #00cc00; }
+QTabBar::tab:hover:!selected { background-color: #071407; color: #00cc00; }
+QDockWidget { color: #009900; }
+QDockWidget::title { background-color: #071407; color: #005500; border-bottom: 1px solid #005500; padding: 4px 8px; }
+"""
+
 THEMES["High Contrast"] = """
 /* High Contrast — WCAG AAA, ≥7:1 contrast ratio throughout.
    Yellow focus ring follows Windows High Contrast accessibility convention. */
@@ -810,6 +937,8 @@ class ThemeManager:
             "One Dark": QCoreApplication.translate("ThemeManager", "Atom editor inspired, muted blue accents"),
             "Solarized Light": QCoreApplication.translate("ThemeManager", "Low-contrast light, warm cream — complement to Solarized Dark"),
             "Sepia": QCoreApplication.translate("ThemeManager", "Warm cream light theme, easy on eyes for long sessions"),
+            "Starfield": QCoreApplication.translate("ThemeManager", "Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets"),
+            "Starfield Terminal": QCoreApplication.translate("ThemeManager", "Green-on-black terminal/computer screen aesthetic from the game"),
             "High Contrast": QCoreApplication.translate("ThemeManager", "WCAG AAA black/white/cyan theme for visually impaired users"),
         }
         desc = descriptions.get(name)
