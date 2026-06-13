@@ -604,6 +604,25 @@ class QualityChecker:
         trans_len = len(translated.strip())
         ratio = trans_len / orig_len
 
+        # Very short sources (≤ 8 chars) are typically abbreviations or acronyms.
+        # Expanding them to full words/phrases is correct localization practice
+        # (e.g. "Амф" → "Амфетамін", "КНР" → "Китайська Народна Республіка"),
+        # so ratio-based SUSPICIOUSLY_LONG and LENGTH_INCREASE don't apply.
+        if orig_len <= 8:
+            # Still check for suspicious shortening (e.g. model truncated output)
+            if ratio < 0.20:
+                report.issues.append(
+                    QualityIssue(
+                        severity=SEVERITY_WARNING,
+                        code="SUSPICIOUSLY_SHORT",
+                        message=(
+                            f"Translation is much shorter than original "
+                            f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                        ),
+                    )
+                )
+            return
+
         if ratio < 0.20:
             report.issues.append(
                 QualityIssue(
@@ -1579,14 +1598,26 @@ class QualityChecker:
         tgt = self.target_language.lower()
 
         # Case 1: Cyrillic-source text returned unchanged (RU→UK etc.)
+        # Many short words are identical in Russian and Ukrainian (e.g. "Лоб", "Люк",
+        # "Рот", "Марк I").  Only flag when there is unambiguous evidence of
+        # untranslation: the source contains Russian-exclusive letters (ы/э/ё/ъ) that
+        # are still present in the translation, OR the text is long enough (≥ 4 alpha
+        # words) that an identical translation cannot be a coincidental shared word.
         if any("Ѐ" <= c <= "ӿ" for c in orig_s):
-            report.issues.append(
-                QualityIssue(
-                    severity=SEVERITY_ERROR,
-                    code="UNTRANSLATED",
-                    message="Translation is identical to the original — text was not translated",
+            _RU_EXCLUSIVE = frozenset("ыэёъЫЭЁЪ")
+            has_ru_chars = any(c in _RU_EXCLUSIVE for c in orig_s)
+            alpha_words = [
+                w for w in orig_s.split()
+                if any(c.isalpha() for c in w)
+            ]
+            if has_ru_chars or len(alpha_words) >= 4:
+                report.issues.append(
+                    QualityIssue(
+                        severity=SEVERITY_ERROR,
+                        code="UNTRANSLATED",
+                        message="Translation is identical to the original — text was not translated",
+                    )
                 )
-            )
             return
 
         # Case 2: English source → non-English target: flag when there are enough
