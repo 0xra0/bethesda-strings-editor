@@ -636,12 +636,20 @@ class OllamaWorker(QObject):
         # No think_disabled: Gemma 3 has no thinking mode.
         "mamaylm": {
             "temperature": 0.1,
-            "num_predict": 4096,
-            "num_ctx": 16384,
+            # Game strings are short; 512 tokens is enough and avoids the model
+            # generating padding that eats into the per-request timeout budget.
+            "num_predict": 512,
+            # Halved from 16384 to reduce KV-cache pressure on GPU.
+            "num_ctx": 8192,
             "top_k": 64,
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
+            # 12B model — GPU inference is serialised; >3 concurrent workers just
+            # adds queue wait time and causes the 300s session timeout to fire.
+            "max_concurrent": 3,
+            # Allow more wall-clock time than the 300s session default.
+            "timeout": 480,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
@@ -1818,8 +1826,9 @@ class OllamaWorker(QObject):
             return translated if translated else None
 
         except requests.exceptions.Timeout:
+            used_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
             raise Exception(
-                f"Request timeout (>{self._session.timeout}s). Ollama is taking too long to respond."  # pyright: ignore[reportAttributeAccessIssue]
+                f"Request timeout (>{used_timeout}s). Ollama is taking too long to respond."
             )
         except requests.exceptions.ConnectionError:
             with QMutexLocker(self._mutex):
