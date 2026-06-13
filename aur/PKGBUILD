@@ -13,7 +13,7 @@
 #   updpkgsums   (from the pkgbuild-introspection package)
 
 pkgname=bethesda-strings-editor-bin
-pkgver=0.1.0
+pkgver=0.2.2
 pkgrel=1
 pkgdesc="AI-assisted localization editor for Bethesda Starfield (.strings/.dlstrings/.ilstrings/ESP/ESM)"
 arch=('x86_64')
