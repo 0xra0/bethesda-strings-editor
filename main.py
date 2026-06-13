@@ -87,7 +87,7 @@ def main():
 
     app = QApplication(sys.argv)
     app.setApplicationName("Bethesda Strings AI Translator")
-    app.setApplicationVersion("0.2.1")
+    app.setApplicationVersion("0.2.2")
     app.setOrganizationName("BethesdaModTools")
 
     # Load settings (JSON config > QSettings > defaults) with env overrides

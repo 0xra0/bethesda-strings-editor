@@ -533,6 +533,9 @@ class MainWindow(QMainWindow):
         self._tray_icon = self._create_tray_icon()
         self._setup_whats_this()
         QTimer.singleShot(500, self._show_first_run_tips)
+        self._update_checker = None   # holds UpdateChecker reference to prevent GC
+        if self.settings.check_updates_on_startup:
+            QTimer.singleShot(8000, self._check_for_updates_silent)
 
         # Crash recovery
         self._recovery_manager = CrashRecoveryManager(get_config_dir())
@@ -1633,6 +1636,13 @@ class MainWindow(QMainWindow):
         shortcuts_action.setShortcut(QKeySequence("F1"))
         shortcuts_action.triggered.connect(self._show_shortcuts_dialog)
         help_menu.addAction(shortcuts_action)
+
+        help_menu.addSeparator()
+
+        check_update_action = QAction(self.tr("Check for &Updates…"), self)
+        check_update_action.setIcon(QIcon.fromTheme("system-software-update"))
+        check_update_action.triggered.connect(self._check_for_updates)
+        help_menu.addAction(check_update_action)
 
         help_menu.addSeparator()
 
@@ -6280,6 +6290,60 @@ class MainWindow(QMainWindow):
         dlg.exec()
 
     @Slot()
+    # ── Update system ──────────────────────────────────────────────────────────
+
+    def _current_version(self) -> str:
+        return QApplication.instance().applicationVersion() or "dev"
+
+    def _check_for_updates_silent(self) -> None:
+        """Startup silent check — shows dialog only if a new version is found
+        and it hasn't been shown before for this version."""
+        ver = self._current_version()
+        if ver == "dev":
+            return
+        from gui.updater import UpdateChecker
+        self._update_checker = UpdateChecker(ver, self)
+        self._update_checker.update_available.connect(self._on_update_available_silent)
+        self._update_checker.start()
+
+    def _check_for_updates(self) -> None:
+        """Manual check triggered from Help menu — always shows a result."""
+        ver = self._current_version()
+        from gui.updater import UpdateChecker
+        self._update_checker = UpdateChecker(ver, self)
+        self._update_checker.update_available.connect(self._on_update_available)
+        self._update_checker.no_update.connect(
+            lambda: QMessageBox.information(
+                self,
+                self.tr("Up to Date"),
+                self.tr(f"You are already running the latest version ({ver})."),
+            )
+        )
+        self._update_checker.check_failed.connect(
+            lambda msg: QMessageBox.warning(
+                self,
+                self.tr("Update Check Failed"),
+                self.tr("Could not reach the update server:\n") + msg,
+            )
+        )
+        self._update_checker.start()
+
+    @Slot(str, str, list)
+    def _on_update_available_silent(self, version: str, changelog: str, assets: list) -> None:
+        """Silent check result — skip if we already notified about this version."""
+        if version == self.settings.last_known_update:
+            return
+        self._on_update_available(version, changelog, assets)
+
+    @Slot(str, str, list)
+    def _on_update_available(self, version: str, changelog: str, assets: list) -> None:
+        self.settings.last_known_update = version
+        from gui.app_settings import save_settings
+        save_settings(self.settings)
+        from gui.update_dialog import UpdateDialog
+        dlg = UpdateDialog(self._current_version(), version, changelog, assets, self)
+        dlg.exec()
+
     def _show_about_dialog(self):
         """Show About dialog."""
         QMessageBox.about(

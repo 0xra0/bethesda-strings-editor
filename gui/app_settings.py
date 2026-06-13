@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 30  # Increment when schema changes
+CONFIG_VERSION = 31  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -87,6 +87,10 @@ class AppSettings:
     background_path: str = ""
     background_opacity: float = 0.30   # 0.0–1.0
     background_fit_mode: str = "cover"  # cover | contain | stretch | tile | center
+
+    # ── Updates ──────────────────────────────────────────────────────────────
+    check_updates_on_startup: bool = True
+    last_known_update: str = ""     # last version seen in update notification (avoids re-notifying)
 
     # ── Security ─────────────────────────────────────────────────────
     encrypt_cache: bool = False     # AES-256-GCM at-rest encryption for translation cache

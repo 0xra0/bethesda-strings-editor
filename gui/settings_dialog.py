@@ -617,6 +617,33 @@ class SettingsDialog(QDialog):
         storage_group.setLayout(storage_layout)
         layout.addWidget(storage_group)
 
+        # Updates
+        update_group = QGroupBox(self.tr("Updates"))
+        update_layout = QFormLayout()
+
+        self.chk_update_on_startup = QCheckBox(
+            self.tr("Check for updates automatically on startup")
+        )
+        self.chk_update_on_startup.setChecked(self._settings.check_updates_on_startup)
+        self.chk_update_on_startup.setToolTip(
+            self.tr(
+                "Silently checks the GitHub releases page 8 seconds after launch.\n"
+                "Shows a dialog only when a new version is found.\n"
+                "No personal data is transmitted — only a GET request to the GitHub API."
+            )
+        )
+        update_layout.addRow(self.chk_update_on_startup)
+
+        btn_check_now = QPushButton(self.tr("Check Now…"))
+        btn_check_now.setFixedWidth(120)
+        btn_check_now.clicked.connect(
+            lambda: self.parent()._check_for_updates() if self.parent() and hasattr(self.parent(), "_check_for_updates") else None
+        )
+        update_layout.addRow(btn_check_now)
+
+        update_group.setLayout(update_layout)
+        layout.addWidget(update_group)
+
         # Security Settings
         sec_group = QGroupBox(self.tr("Security"))
         sec_layout = QFormLayout()
@@ -1238,6 +1265,7 @@ class SettingsDialog(QDialog):
         settings.piper_model = self.piper_model_edit.text().strip()
         settings.audio_dir = self.audio_dir_edit.text().strip()
         settings.tts_auto_preview = self.chk_tts_auto_preview.isChecked()
+        settings.check_updates_on_startup = self.chk_update_on_startup.isChecked()
         settings.background_enabled = self.chk_bg_enabled.isChecked()
         settings.background_path = self.bg_path_edit.text().strip()
         settings.background_opacity = self.slider_bg_opacity.value() / 100.0
