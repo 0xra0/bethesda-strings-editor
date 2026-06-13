@@ -618,11 +618,14 @@ class QualityChecker:
         trans_len = len(translated.strip())
         ratio = trans_len / orig_len
 
-        # Very short sources (≤ 8 chars) are typically abbreviations or acronyms.
-        # Expanding them to full words/phrases is correct localization practice
-        # (e.g. "Амф" → "Амфетамін", "КНР" → "Китайська Народна Республіка"),
-        # so ratio-based SUSPICIOUSLY_LONG and LENGTH_INCREASE don't apply.
-        if orig_len <= 8:
+        # Very short Cyrillic sources (≤ 8 chars) are typically abbreviations or
+        # acronyms; expanding them is correct localization practice
+        # (e.g. "Амф" → "Амфетамін", "КНР" → "Китайська Народна Республіка").
+        # Latin short sources ("Hi", "OK") are not abbreviations in this sense and
+        # must still be checked — a huge expansion there is a translation error.
+        orig_stripped = original.strip()
+        is_short_cyrillic = orig_len <= 8 and any("Ѐ" <= c <= "ӿ" for c in orig_stripped)
+        if is_short_cyrillic:
             # Still check for suspicious shortening (e.g. model truncated output)
             if ratio < 0.20:
                 report.issues.append(
@@ -1615,7 +1618,7 @@ class QualityChecker:
         # Many short words are identical in Russian and Ukrainian (e.g. "Лоб", "Люк",
         # "Рот", "Марк I").  Only flag when there is unambiguous evidence of
         # untranslation: the source contains Russian-exclusive letters (ы/э/ё/ъ) that
-        # are still present in the translation, OR the text is long enough (≥ 4 alpha
+        # are still present in the translation, OR the text is long enough (≥ 3 alpha
         # words) that an identical translation cannot be a coincidental shared word.
         if any("Ѐ" <= c <= "ӿ" for c in orig_s):
             _RU_EXCLUSIVE = frozenset("ыэёъЫЭЁЪ")
@@ -1624,7 +1627,7 @@ class QualityChecker:
                 w for w in orig_s.split()
                 if any(c.isalpha() for c in w)
             ]
-            if has_ru_chars or len(alpha_words) >= 4:
+            if has_ru_chars or len(alpha_words) >= 3:
                 report.issues.append(
                     QualityIssue(
                         severity=SEVERITY_ERROR,
