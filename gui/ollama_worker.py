@@ -393,6 +393,7 @@ class TranslationRequest:
     term_protector: Optional[TermProtector] = None
     glossary_snippet: str = ""
     retry_hint: str = ""  # Quality feedback from a prior failed attempt
+    fix_translation: str = ""  # Existing bad translation to fix (AI-fix mode)
     model_override: str = ""  # Use a different model for this request (QA fixes)
     context_note: str = ""  # NLDT developer context note from ESP (explains variables)
     lore_snippet: str = ""  # Lore RAG context retrieved from local lore database
@@ -410,8 +411,21 @@ class TranslationRequest:
         variation.
         """
         content = text if text is not None else self.original_text
+        src_name = _LANG_DISPLAY.get(self.source_lang, self.source_lang)
         tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
         lore_prefix = f"Lore context: {self.lore_snippet}\n\n" if self.lore_snippet else ""
+
+        if self.fix_translation:
+            # AI-fix mode: ask the model to correct specific issues in the existing translation.
+            issues_block = self.retry_hint.strip() if self.retry_hint else "General quality issues."
+            return (
+                f"{lore_prefix}"
+                f"Original ({src_name}):\n{content}\n\n"
+                f"Flawed {tgt_name} translation:\n{self.fix_translation}\n\n"
+                f"Issues to fix:\n{issues_block}\n\n"
+                f"Fixed {tgt_name} translation:"
+            )
+
         if self.retry_hint:
             return f"To {tgt_name}:\n{self.retry_hint}\n\n{lore_prefix}Text to translate:\n{content}"
         return f"To {tgt_name}:\n{lore_prefix}{content}"
@@ -423,9 +437,36 @@ class TranslationRequest:
         1. A universal header + rules (token preservation, punctuation, …).
         2. A target-language style rule (register, script, terminology).
         3. Optional source-language / pair-specific notes + examples.
+
+        When fix_translation is set (AI-fix mode), a proofreader persona
+        replaces the translator persona so the model edits rather than
+        retranslates from scratch.
         """
         src_name = _LANG_DISPLAY.get(self.source_lang, self.source_lang)
         tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
+
+        if self.fix_translation:
+            style_rule = _TARGET_STYLE.get(
+                self.target_lang,
+                f"Write natural, polished {tgt_name} appropriate to Starfield's NASApunk sci-fi setting.",
+            )
+            fix_base = (
+                f"You are a professional Bethesda Starfield game localization proofreader.\n"
+                f"You will receive a {src_name} source string, a flawed {tgt_name} translation, "
+                f"and a list of specific issues. "
+                f"Fix ONLY those issues. Preserve every other part of the existing translation unchanged.\n"
+                f"Output ONLY the corrected {tgt_name} translation — no labels, no commentary.\n\n"
+                f"Rules:\n"
+                f"1. {style_rule}\n"
+                "2. Preserve ALL formatting tokens unchanged: <Alias=…>, <font>, "
+                "[[TK_…]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]], "
+                "\\n, \\t, %s, %d, %f, %.1f, %.2f, %.3f, %g, %e, %i, %u, %x, %%, %1$s, %2$d, #IDs.\n"
+                "3. Keep brackets [] exactly as in the source unless the issue specifically requires fixing them.\n"
+                "4. Do NOT change any correctly translated parts — edit as little as possible.\n"
+            )
+            if self.glossary_snippet:
+                fix_base += "\nGlossary (use these exact translations):\n" + self.glossary_snippet
+            return fix_base
 
         style_rule = _TARGET_STYLE.get(
             self.target_lang,
@@ -850,7 +891,7 @@ class OllamaWorker(QObject):
                 self.progress.emit(completed_count, total)
                 continue
 
-            is_retry = bool(req.retry_hint)
+            is_retry = bool(req.retry_hint) or bool(req.fix_translation)
 
             # Exact TM lookup (O(1) dict reads — no fuzzy here to keep pre-flight fast)
             if not is_retry and self.translation_memory:
@@ -1245,8 +1286,10 @@ class OllamaWorker(QObject):
         # (ы/э/ё/ъ), it is already Ukrainian — the AI cannot usefully "translate" it
         # and will return empty or a refusal.  Return SKIP_SIGNAL so the string keeps
         # its current translation and mechanical fixes (newlines, whitespace) are used.
-        is_retry = bool(req.retry_hint)
-        if is_retry and req.target_lang.lower() == "ukrainian":
+        is_retry = bool(req.retry_hint) or bool(req.fix_translation)
+        # In fix mode the source is always the original English — skip the
+        # "already Ukrainian" guard that would short-circuit the request.
+        if is_retry and not req.fix_translation and req.target_lang.lower() == "ukrainian":
             if self._UK_SPECIFIC_RE.search(stripped) and not self._RU_SPECIFIC_RE.search(stripped):
                 logger.info(
                     "String %s: source already in Ukrainian — skipping AI retranslation "

@@ -483,6 +483,8 @@ class QualityDialog(FadeInMixin, QDialog):
 
         # Rows the user wants to retranslate: list of (row_index, retry_hint)
         self.pending_retranslations: List[Tuple[int, str]] = []
+        # Rows queued for AI-fix: list of (row_index, bad_translation, retry_hint)
+        self.pending_ai_fixes: List[Tuple[int, str, str]] = []
 
         self._setup_ui()
         self._populate()
@@ -607,6 +609,17 @@ class QualityDialog(FadeInMixin, QDialog):
         self.btn_autofix.setEnabled(False)
         self.btn_autofix.clicked.connect(self._auto_fix_selected)
         action_bar.addWidget(self.btn_autofix)
+
+        self.btn_ai_fix = QPushButton(self.tr("AI Fix Selected"))
+        self.btn_ai_fix.setToolTip(self.tr(
+            "Send the flawed translation to the AI model to fix specific issues.\n"
+            "Unlike retranslation, the model sees the existing translation and\n"
+            "edits only what the QC check flagged — preserving correct parts.\n"
+            "Fix starts after you close this dialog."
+        ))
+        self.btn_ai_fix.setEnabled(False)
+        self.btn_ai_fix.clicked.connect(self._queue_ai_fix)
+        action_bar.addWidget(self.btn_ai_fix)
 
         self.btn_queue_retrans = QPushButton(self.tr("Queue Retranslation"))
         self.btn_queue_retrans.setToolTip(self.tr(
@@ -748,6 +761,7 @@ class QualityDialog(FadeInMixin, QDialog):
         selected = self._selected_report_indices()
         n_fixable = 0
         n_retranslatable = 0
+        n_ai_fixable = 0
         for row in selected:
             if row >= len(self._shown_reports):
                 continue
@@ -756,12 +770,21 @@ class QualityDialog(FadeInMixin, QDialog):
                 n_fixable += 1
             if any(QualityChecker.issue_needs_retranslation(i.code) for i in report.issues):
                 n_retranslatable += 1
+            # AI fix is available for any string that has a non-empty translation with issues
+            if report.translated and report.translated.strip() and report.issues:
+                n_ai_fixable += 1
 
         can_fix = n_fixable > 0 and self._table_model is not None and self._checker is not None
         self.btn_autofix.setEnabled(can_fix)
         self.btn_autofix.setText(
             self.tr("Auto-Fix Selected ({n})").format(n=n_fixable)
             if n_fixable else self.tr("Auto-Fix Selected")
+        )
+
+        self.btn_ai_fix.setEnabled(n_ai_fixable > 0)
+        self.btn_ai_fix.setText(
+            self.tr("AI Fix Selected ({n})").format(n=n_ai_fixable)
+            if n_ai_fixable else self.tr("AI Fix Selected")
         )
 
         self.btn_queue_retrans.setEnabled(n_retranslatable > 0)
@@ -829,6 +852,51 @@ class QualityDialog(FadeInMixin, QDialog):
                 self.tr("Auto-Fix"),
                 self.tr("No automatically fixable issues found in the selected strings."),
             )
+
+    # ── AI-fix queuing ────────────────────────────────────────────────────────
+
+    @Slot()
+    def _queue_ai_fix(self) -> None:
+        """Queue selected strings for AI-fix: model corrects the existing translation."""
+        selected = self._selected_report_indices()
+        existing = {ri for ri, _, _ in self.pending_ai_fixes}
+        added = 0
+        for row in selected:
+            if row >= len(self._shown_reports):
+                continue
+            report = self._shown_reports[row]
+            if not report.translated or not report.translated.strip():
+                continue
+            if not report.issues:
+                continue
+            if report.row_index in existing:
+                continue
+            hint = QualityChecker.build_retry_hint(report.issues)
+            self.pending_ai_fixes.append((report.row_index, report.translated, hint))
+            existing.add(report.row_index)
+            added += 1
+
+        if added == 0:
+            QMessageBox.information(
+                self,
+                self.tr("AI Fix Queue"),
+                self.tr("All selected strings are already in the AI fix queue."),
+            )
+            return
+
+        total = len(self.pending_ai_fixes)
+        self.lbl_queue_status.setText(
+            self.tr("{total} string(s) queued for AI fix").format(total=total)
+        )
+        QMessageBox.information(
+            self,
+            self.tr("Queued for AI Fix"),
+            self.tr(
+                "{added} string(s) added to AI fix queue.\n"
+                "Total queued: {total}\n\n"
+                "Close this dialog to start AI fixing."
+            ).format(added=added, total=total),
+        )
 
     # ── Retranslation queuing ──────────────────────────────────────────────────
 

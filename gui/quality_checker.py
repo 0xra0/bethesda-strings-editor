@@ -1869,6 +1869,23 @@ class QualityChecker:
                     "(e.g. '-Costs' must translate as '-Вартість', not 'Вартість'). "
                     "Preserve the '-' at the start of such lines."
                 )
+            elif code == "UNCLOSED_GUILLEMET":
+                hints.append(
+                    "Your previous translation opened a «guillemet quotation mark but did not close it with ». "
+                    "Every opening « must be followed by a matching closing »."
+                )
+            elif code == "UNMATCHED_BRACKET":
+                hints.append(
+                    "Your previous translation dropped the opening '[' before a closing ']'. "
+                    "Every closing ] must have a matching opening [ before it."
+                )
+            elif code == "ENCODING_ERROR":
+                hints.append(
+                    "Your previous translation produced characters that cannot be encoded in the target encoding. "
+                    "Use only standard target-language characters."
+                )
+            else:
+                hints.append(f"Issue detected: {issue.message or code}. Please correct it in the translation.")
 
         if not hints:
             return ""

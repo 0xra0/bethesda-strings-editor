@@ -3886,6 +3886,8 @@ class MainWindow(QMainWindow):
         dialog.jump_to_row.connect(self._jump_to_row)
         dialog.exec()
 
+        if dialog.pending_ai_fixes:
+            self._ai_fix_with_hints(dialog.pending_ai_fixes)
         if dialog.pending_retranslations:
             self._retranslate_with_hints(dialog.pending_retranslations)
 
@@ -4036,6 +4038,8 @@ class MainWindow(QMainWindow):
             )
 
         dialog.exec()
+        if dialog.pending_ai_fixes:
+            self._ai_fix_with_hints(dialog.pending_ai_fixes)
         if dialog.pending_retranslations:
             self._retranslate_with_hints(dialog.pending_retranslations)
 
@@ -4248,6 +4252,75 @@ class MainWindow(QMainWindow):
         self.progress_bar.setValue(0)
         self.lbl_progress.setText(
             self.tr("Retranslating {current}/{total}…").format(current=0, total=n)
+        )
+        self._set_ui_enabled(False)
+        self._eta_start_time = time.monotonic()
+        self._eta_batch_total = len(requests)
+        self.translation_requested.emit(requests)
+
+    def _ai_fix_with_hints(self, fix_list: list) -> None:
+        """Send flawed translations to Ollama for targeted AI fixing.
+
+        Unlike retranslation (which re-translates from the original source text),
+        AI fix passes the existing bad translation alongside QC feedback so the
+        model can correct only the specific issues without touching correct parts.
+
+        fix_list: list of (row_index, bad_translation, retry_hint) tuples.
+        """
+        if not fix_list or not self.ollama_worker:
+            return
+
+        source_lang = self.combo_source_lang.currentData()
+        target_lang = self.combo_target_lang.currentData()
+        quality = self.spin_quality.value()
+
+        protect_english = self.settings.protect_english_text
+        if source_lang == "en":
+            protect_english = False
+
+        requests = []
+        for row_index, bad_translation, retry_hint in fix_list:
+            if row_index >= len(self.table_model._data):
+                continue
+            row = self.table_model._data[row_index]
+            original = row.get("original", "")
+            if not original.strip():
+                continue
+
+            glossary_snippet = ""
+            if self._glossary_manager:
+                glossary_snippet = self._glossary_manager.build_prompt_snippet(original)
+
+            requests.append(
+                TranslationRequest(
+                    index=row_index,
+                    original_text=original,
+                    string_id=row.get("id", 0),
+                    source_lang=source_lang,
+                    target_lang=target_lang,
+                    quality_level=quality,
+                    protected_terms_enabled=self.settings.enable_term_protection,
+                    protect_english_text=protect_english,
+                    glossary_snippet=glossary_snippet,
+                    retry_hint=retry_hint,
+                    fix_translation=bad_translation,
+                )
+            )
+
+        if not requests:
+            return
+
+        n = len(requests)
+        logger.info(f"AI-fixing {n} string(s) with quality feedback")
+        self.statusBar().showMessage(
+            self.tr("AI-fixing {n} string(s)…").format(n=n),
+            0,
+        )
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setRange(0, n)
+        self.progress_bar.setValue(0)
+        self.lbl_progress.setText(
+            self.tr("AI Fix {current}/{total}…").format(current=0, total=n)
         )
         self._set_ui_enabled(False)
         self._eta_start_time = time.monotonic()
