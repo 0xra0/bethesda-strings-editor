@@ -1,31 +1,5 @@
 # Starfield Protected Terms
-# Total terms: 23
-# Format: Term,Category
-# Only token names / abbreviations that must not be translated in any locale.
-
-# === UI TOKENS (20) ===
-AI,ui
-AP,ui
-CEO,ui
-Contraband,ui
-Cutter,ui
-DLC,ui
-Digipick,ui
-FX,ui
-HP,ui
-HQ,ui
-HUD,ui
-NG+,ui
-NPC,ui
-REV-8,ui
-Scanner,ui
-UC,ui
-VFX,ui
-VIP,ui
-Wanted,ui
-XP,ui
-
-# === GAME-SYSTEM ACRONYMS (3) ===
-MAST,lore
-SPECIAL,lore
-V.A.T.S.,lore
+# Total terms: 0
+# All Starfield terms (company names, factions, UI tokens, acronyms) are
+# translatable and handled by the AI. Add entries here only if a specific
+# term must be preserved verbatim in every locale.
