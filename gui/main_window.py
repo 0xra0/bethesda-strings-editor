@@ -511,12 +511,24 @@ class MainWindow(QMainWindow):
         # Vim macro recorder (shared across macro dialog opens)
         self.macro_recorder = MacroRecorder()
 
+        # Background / wallpaper manager
+        from gui.background_manager import BackgroundManager
+        self.bg_manager = BackgroundManager(self)
+
         # Setup UI and signals
         self._setup_ui()
         self._connect_signals()
         self._register_actions()
         self.keyboard_manager.apply_all_custom_shortcuts()
         self._update_ui_state()
+
+        # Apply background after UI is built
+        self.bg_manager.apply(
+            self.settings.background_enabled,
+            self.settings.background_path,
+            self.settings.background_opacity,
+            self.settings.background_fit_mode,
+        )
 
         self._tray_icon = self._create_tray_icon()
         self._setup_whats_this()
@@ -2146,6 +2158,8 @@ class MainWindow(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self, "_drop_overlay"):
             self._drop_overlay.setGeometry(self.rect())
+        if hasattr(self, "bg_manager"):
+            self.bg_manager.resize()
 
     def dragEnterEvent(self, event) -> None:
         try:
@@ -4692,6 +4706,14 @@ class MainWindow(QMainWindow):
             self._apply_audio_settings()
             self._audio_panel.setVisible(self.settings.enable_audio_preview)
             self.audio_panel_action.setChecked(self.settings.enable_audio_preview)
+
+            # Apply background / wallpaper
+            self.bg_manager.apply(
+                self.settings.background_enabled,
+                self.settings.background_path,
+                self.settings.background_opacity,
+                self.settings.background_fit_mode,
+            )
 
             self.statusBar().showMessage("Settings updated")
 

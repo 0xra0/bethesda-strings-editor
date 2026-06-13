@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 29  # Increment when schema changes
+CONFIG_VERSION = 30  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -81,6 +81,12 @@ class AppSettings:
     ui_language: str = "en"  # BCP-47 locale code, e.g. "en", "uk_UA", "de_DE"
     font_size: int = 0          # 0 = follow OS default; 8-24 = explicit pt size
     color_blind_mode: bool = False  # replace red/green with blue/orange in status column
+
+    # ── Background / Wallpaper ────────────────────────────────────
+    background_enabled: bool = False
+    background_path: str = ""
+    background_opacity: float = 0.30   # 0.0–1.0
+    background_fit_mode: str = "cover"  # cover | contain | stretch | tile | center
 
     # ── Security ─────────────────────────────────────────────────────
     encrypt_cache: bool = False     # AES-256-GCM at-rest encryption for translation cache

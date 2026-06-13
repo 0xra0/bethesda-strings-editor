@@ -311,6 +311,68 @@ class SettingsDialog(QDialog):
             theme_group.setLayout(theme_layout)
             layout.addWidget(theme_group)
 
+        # Background / Wallpaper
+        bg_group = QGroupBox(self.tr("Background / Wallpaper"))
+        bg_layout = QFormLayout()
+
+        self.chk_bg_enabled = QCheckBox(self.tr("Enable custom background"))
+        self.chk_bg_enabled.setChecked(self._settings.background_enabled)
+        bg_layout.addRow(self.chk_bg_enabled)
+
+        # File path + browse
+        bg_path_row = QHBoxLayout()
+        self.bg_path_edit = QLineEdit(self._settings.background_path)
+        self.bg_path_edit.setPlaceholderText(self.tr("Path to image or video file…"))
+        bg_path_row.addWidget(self.bg_path_edit)
+        self.btn_bg_browse = QPushButton(self.tr("Browse…"))
+        self.btn_bg_browse.clicked.connect(self._browse_background)
+        bg_path_row.addWidget(self.btn_bg_browse)
+        bg_layout.addRow(self.tr("File:"), bg_path_row)
+
+        # Fit mode
+        self.combo_bg_fit = QComboBox()
+        for label, data in [
+            (self.tr("Cover  (fill, crop edges)"), "cover"),
+            (self.tr("Contain  (fit inside, letterbox)"), "contain"),
+            (self.tr("Stretch  (distort to fill)"), "stretch"),
+            (self.tr("Tile  (repeat)"), "tile"),
+            (self.tr("Center  (original size, centered)"), "center"),
+        ]:
+            self.combo_bg_fit.addItem(label, data)
+        fit_idx = self.combo_bg_fit.findData(self._settings.background_fit_mode)
+        self.combo_bg_fit.setCurrentIndex(max(0, fit_idx))
+        bg_layout.addRow(self.tr("Fit mode:"), self.combo_bg_fit)
+
+        # Opacity slider
+        self.slider_bg_opacity = QSlider(Qt.Horizontal)
+        self.slider_bg_opacity.setRange(0, 100)
+        self.slider_bg_opacity.setValue(int(self._settings.background_opacity * 100))
+        self.slider_bg_opacity.setTickInterval(10)
+        self.slider_bg_opacity.setTickPosition(QSlider.TicksBelow)
+        self._lbl_bg_opacity = QLabel(f"{int(self._settings.background_opacity * 100)}%")
+        self._lbl_bg_opacity.setFixedWidth(36)
+        self.slider_bg_opacity.valueChanged.connect(
+            lambda v: self._lbl_bg_opacity.setText(f"{v}%")
+        )
+        opacity_row = QHBoxLayout()
+        opacity_row.addWidget(self.slider_bg_opacity)
+        opacity_row.addWidget(self._lbl_bg_opacity)
+        bg_layout.addRow(self.tr("Opacity:"), opacity_row)
+
+        bg_note = QLabel(
+            self.tr(
+                "Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)\n"
+                "Video: MP4, AVI, MKV, WEBM, MOV, WMV and more\n"
+                "(Video requires PySide6-Multimedia and GStreamer plugins)"
+            )
+        )
+        bg_note.setWordWrap(True)
+        bg_note.setStyleSheet("color: palette(mid); font-style: italic; font-size: 11px;")
+        bg_layout.addRow(bg_note)
+
+        bg_group.setLayout(bg_layout)
+        layout.addWidget(bg_group)
+
         # Translation Preferences
         trans_group = QGroupBox(self.tr("Translation Preferences"))
         trans_layout = QFormLayout()
@@ -942,6 +1004,25 @@ class SettingsDialog(QDialog):
         self._lbl_cache_dir_restart.setVisible(changed)
 
     @Slot()
+    def _browse_background(self):
+        """Browse for a background image or video file."""
+        from gui.background_manager import IMAGE_EXTS, ANIMATED_EXTS, VIDEO_EXTS
+        img_exts = " ".join(f"*{e}" for e in sorted(IMAGE_EXTS | ANIMATED_EXTS))
+        vid_exts = " ".join(f"*{e}" for e in sorted(VIDEO_EXTS))
+        all_exts = " ".join(f"*{e}" for e in sorted(IMAGE_EXTS | ANIMATED_EXTS | VIDEO_EXTS))
+        filters = (
+            f"{self.tr('All supported')} ({all_exts});;"
+            f"{self.tr('Images')} ({img_exts});;"
+            f"{self.tr('Video')} ({vid_exts});;"
+            f"{self.tr('All files')} (*)"
+        )
+        current = self.bg_path_edit.text().strip()
+        start = str(Path(current).parent) if current else str(Path.home())
+        path, _ = QFileDialog.getOpenFileName(self, self.tr("Select Background"), start, filters)
+        if path:
+            self.bg_path_edit.setText(path)
+
+    @Slot()
     def _browse_terms_file(self):
         """Browse for custom protected terms file."""
         file_path, _ = get_open_filename(
@@ -1157,6 +1238,10 @@ class SettingsDialog(QDialog):
         settings.piper_model = self.piper_model_edit.text().strip()
         settings.audio_dir = self.audio_dir_edit.text().strip()
         settings.tts_auto_preview = self.chk_tts_auto_preview.isChecked()
+        settings.background_enabled = self.chk_bg_enabled.isChecked()
+        settings.background_path = self.bg_path_edit.text().strip()
+        settings.background_opacity = self.slider_bg_opacity.value() / 100.0
+        settings.background_fit_mode = self.combo_bg_fit.currentData()
         if self._keyboard_manager is not None:
             settings.custom_shortcuts = self.get_custom_shortcuts()
         # Config/cache dir overrides are stored in bootstrap files, not in AppSettings
