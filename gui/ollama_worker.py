@@ -2,8 +2,10 @@
 Background worker for Ollama translation calls with term protection
 """
 
+import json as _json
 import logging
 import re
+import threading
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
@@ -762,6 +764,11 @@ class OllamaWorker(QObject):
         # under self._mutex.
         self._executor: Optional[ThreadPoolExecutor] = None
 
+        # Maps thread-id → active streaming requests.Response so stop() can
+        # close them to abort in-flight Ollama calls immediately.
+        self._active_responses: Dict[int, Any] = {}
+        self._responses_lock = threading.Lock()
+
         self._session = self._make_session()
 
         self.enable_term_protection = enable_term_protection
@@ -840,6 +847,79 @@ class OllamaWorker(QObject):
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         return session
+
+    def _stream_ollama(self, payload: Dict[str, Any], timeout: int) -> Optional[str]:
+        """POST *payload* to /api/generate in streaming mode and collect the full response.
+
+        Returns the stripped response text (empty string if model gave no output),
+        or None if the stop flag was set before or during generation.
+
+        Registers the live requests.Response in self._active_responses under the
+        calling thread's ID so stop() can close it to abort immediately.
+        """
+        url = f"{self.base_url}/api/generate"
+        stream_payload = {**payload, "stream": True}
+        # Remove any stale stream=False that the caller may have set.
+        stream_payload.pop("stream", None)
+        stream_payload["stream"] = True
+
+        with QMutexLocker(self._mutex):
+            if self._stop_flag:
+                return None
+
+        try:
+            response = self._session.post(
+                url, json=stream_payload, stream=True, timeout=(15, timeout)
+            )
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.ChunkedEncodingError,
+                OSError):
+            with QMutexLocker(self._mutex):
+                if self._stop_flag:
+                    return None
+            raise
+
+        if response.status_code == 404:
+            model_name = payload.get("model", self.model)
+            raise Exception(
+                f"Model '{model_name}' not found in Ollama. "
+                f"Install it with:\n  ollama create {model_name} -f Modelfile"
+            )
+        response.raise_for_status()
+
+        tid = threading.get_ident()
+        with self._responses_lock:
+            self._active_responses[tid] = response
+
+        try:
+            parts: list = []
+            for line in response.iter_lines():
+                with QMutexLocker(self._mutex):
+                    if self._stop_flag:
+                        return None
+                if not line:
+                    continue
+                try:
+                    chunk = _json.loads(line)
+                except ValueError:
+                    continue
+                parts.append(chunk.get("response", ""))
+                if chunk.get("done"):
+                    break
+            return "".join(parts).strip()
+        except OSError:
+            # Socket was closed by stop() from the main thread — normal shutdown.
+            with QMutexLocker(self._mutex):
+                if self._stop_flag:
+                    return None
+            raise
+        finally:
+            with self._responses_lock:
+                self._active_responses.pop(tid, None)
+            try:
+                response.close()
+            except Exception:
+                pass
 
     @Slot(list)
     def translate_batch(self, requests: list):
@@ -1015,6 +1095,10 @@ class OllamaWorker(QObject):
                         self.error.emit(f"Empty response for string {req.string_id}")
                         self.progress.emit(completed_count, total)
                 except Exception as e:
+                    # Suppress connection errors that are side-effects of stop().
+                    with QMutexLocker(self._mutex):
+                        if self._stop_flag:
+                            break
                     failed += 1 + len(req_followers)
                     completed_count += 1 + len(req_followers)
                     error_msg = f"Failed to translate string {req.string_id}: {e}"
@@ -1085,7 +1169,6 @@ class OllamaWorker(QObject):
         total_chunks: int,
     ) -> Optional[str]:
         """Send a single chunk to Ollama with a per-chunk timeout."""
-        url = f"{self.base_url}/api/generate"
         effective_model = req.model_override or self.model
         model_config = self._get_model_config(effective_model)
 
@@ -1136,7 +1219,6 @@ class OllamaWorker(QObject):
             "model":  effective_model,
             "prompt": effective_prompt,
             "system": effective_system,
-            "stream": False,
             "keep_alive": -1,
             "options": {
                 "temperature": model_config.get("temperature", 0.1)
@@ -1155,21 +1237,12 @@ class OllamaWorker(QObject):
         if self.ollama_num_thread > 0:
             payload["options"]["num_thread"] = self.ollama_num_thread
 
-        with QMutexLocker(self._mutex):
-            if self._stop_flag:
-                return None
-
         _chunk_timeout = self._CHUNK_TIMEOUT
         if model_config.get("think_disabled"):
             _chunk_timeout = max(_chunk_timeout, 300 + input_len // 20)
-        response = self._session.post(url, json=payload, timeout=_chunk_timeout)
-        if response.status_code == 404:
-            raise Exception(
-                f"Model '{self.model}' not found in Ollama. "
-                f"Install it with:\n  ollama create {self.model} -f Modelfile.{self.model}"
-            )
-        response.raise_for_status()
-        result = response.json().get("response", "").strip()
+        result = self._stream_ollama(payload, _chunk_timeout)
+        if result is None:
+            return None  # stopped
         # Strip any leaked chunk-marker the model might have echoed at the start
         # (e.g. "[Part 2/3 of a longer text]" or its Ukrainian equivalent).
         if total_chunks > 1 and result:
@@ -1533,7 +1606,6 @@ class OllamaWorker(QObject):
         # Call AI API
         try:
             input_len = len(protected_text)
-            url = f"{self.base_url}/api/generate"
             model_config = self._get_model_config(effective_model)
 
             # Adaptive num_predict: use input length as base, but never go below the
@@ -1591,7 +1663,6 @@ class OllamaWorker(QObject):
                 "model": effective_model,
                 "prompt": effective_prompt,
                 "system": effective_system,
-                "stream": False,
                 "keep_alive": -1,
                 "options": {
                     "temperature": (
@@ -1613,30 +1684,23 @@ class OllamaWorker(QObject):
             if self.ollama_num_thread > 0:
                 payload["options"]["num_thread"] = self.ollama_num_thread
 
-            # Last chance to bail before blocking on the network
-            with QMutexLocker(self._mutex):
-                if self._stop_flag:
-                    return None
+            translated = self._stream_ollama(payload, model_timeout)
+            if translated is None:
+                return None  # stopped
 
-            response = self._session.post(url, json=payload, timeout=model_timeout)
-            response.raise_for_status()
-            translated = response.json().get("response", "").strip()
             # Retry 1: higher temperature — Gemma at 0.1 sometimes emits <eos> immediately.
             if not translated:
                 logger.warning(
                     f"String {req.string_id}: Empty response from Ollama, "
                     f"retrying at temperature 0.3"
                 )
-                with QMutexLocker(self._mutex):
-                    if self._stop_flag:
-                        return None
                 payload["options"]["temperature"] = 0.3
                 payload["options"]["num_predict"] = min(
                     self.ollama_num_predict, max(200, input_len * 6)
                 )
-                response = self._session.post(url, json=payload, timeout=model_timeout)
-                response.raise_for_status()
-                translated = response.json().get("response", "").strip()
+                translated = self._stream_ollama(payload, model_timeout)
+                if translated is None:
+                    return None  # stopped
 
             # Retry 2: strip stop tokens entirely — in rare cases a stop token is the
             # very first output, making the model look silent even at T=0.3.
@@ -1645,17 +1709,14 @@ class OllamaWorker(QObject):
                     f"String {req.string_id}: Still empty after T=0.3 retry, "
                     f"removing stop tokens for final attempt"
                 )
-                with QMutexLocker(self._mutex):
-                    if self._stop_flag:
-                        return None
                 payload["options"].pop("stop", None)
                 payload["options"]["temperature"] = 0.5
                 payload["options"]["num_predict"] = min(
                     self.ollama_num_predict, max(400, input_len * 8)
                 )
-                response = self._session.post(url, json=payload, timeout=model_timeout)
-                response.raise_for_status()
-                translated = response.json().get("response", "").strip()
+                translated = self._stream_ollama(payload, model_timeout)
+                if translated is None:
+                    return None  # stopped
 
             if not translated:
                 logger.debug(
@@ -2756,7 +2817,6 @@ class OllamaWorker(QObject):
             "model": self.model,
             "prompt": prompt,
             "system": system,
-            "stream": False,
             "keep_alive": -1,
             "options": {
                 "temperature": temperature,
@@ -2775,18 +2835,7 @@ class OllamaWorker(QObject):
             payload["options"]["num_thread"] = self.ollama_num_thread
 
         model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
-        resp = self._session.post(
-            f"{self.base_url}/api/generate",
-            json=payload,
-            timeout=model_timeout,
-        )
-        if resp.status_code == 404:
-            raise Exception(
-                f"Model '{self.model}' not found in Ollama. "
-                f"Install it with:\n  ollama create {self.model} -f Modelfile.{self.model}"
-            )
-        resp.raise_for_status()
-        result = resp.json().get("response", "").strip()
+        result = self._stream_ollama(payload, model_timeout)
         return result or None
 
     def _needs_en_to_uk_retry(self, original_en: str, translated: str) -> bool:
@@ -3283,22 +3332,21 @@ class OllamaWorker(QObject):
             except Exception:
                 pass
 
+        # Abort all in-flight streaming requests by closing their responses.
+        # This immediately unblocks threads stuck in response.iter_lines() —
+        # closing the socket causes recv() to raise OSError, which _stream_ollama
+        # catches and converts to a None return (→ no translation_ready emitted).
+        with self._responses_lock:
+            active = list(self._active_responses.values())
+            self._active_responses.clear()
+        for resp in active:
+            try:
+                resp.close()
+            except Exception:
+                pass
+
         # Silence urllib3 retry warnings from threads still winding down.
         logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
-
-        # Replace the adapter with max_retries=0 so new connections fail fast.
-        # (translate_batch restores max_retries=3 when the next session starts.)
-        try:
-            pool_size = max(20, self.max_workers + 5)
-            no_retry_adapter = requests.adapters.HTTPAdapter(  # pyright: ignore[reportAttributeAccessIssue]
-                pool_connections=pool_size,
-                pool_maxsize=pool_size,
-                max_retries=0,
-            )
-            self._session.mount("http://", no_retry_adapter)
-            self._session.mount("https://", no_retry_adapter)
-        except Exception:
-            pass
 
     def update_config(
         self,
