@@ -610,6 +610,15 @@ class QualityDialog(FadeInMixin, QDialog):
         self.btn_autofix.clicked.connect(self._auto_fix_selected)
         action_bar.addWidget(self.btn_autofix)
 
+        self.btn_autofix_all = QPushButton(self.tr("Auto-Fix All"))
+        self.btn_autofix_all.setToolTip(self.tr(
+            "Apply mechanical fixes to ALL strings with auto-fixable issues\n"
+            "(no selection needed — fixes everything in one click)"
+        ))
+        self.btn_autofix_all.setEnabled(False)
+        self.btn_autofix_all.clicked.connect(self._auto_fix_all)
+        action_bar.addWidget(self.btn_autofix_all)
+
         self.btn_ai_fix = QPushButton(self.tr("AI Fix Selected"))
         self.btn_ai_fix.setToolTip(self.tr(
             "Send the flawed translation to the AI model to fix specific issues.\n"
@@ -781,6 +790,17 @@ class QualityDialog(FadeInMixin, QDialog):
             if n_fixable else self.tr("Auto-Fix Selected")
         )
 
+        # Auto-Fix All: count all auto-fixable rows across the full report list
+        n_all_fixable = sum(
+            1 for r in self._all_reports
+            if any(QualityChecker.issue_can_autofix(i.code) for i in r.issues)
+        ) if self._table_model and self._checker else 0
+        self.btn_autofix_all.setEnabled(n_all_fixable > 0)
+        self.btn_autofix_all.setText(
+            self.tr("Auto-Fix All ({n})").format(n=n_all_fixable)
+            if n_all_fixable else self.tr("Auto-Fix All")
+        )
+
         self.btn_ai_fix.setEnabled(n_ai_fixable > 0)
         self.btn_ai_fix.setText(
             self.tr("AI Fix Selected ({n})").format(n=n_ai_fixable)
@@ -851,6 +871,48 @@ class QualityDialog(FadeInMixin, QDialog):
                 self,
                 self.tr("Auto-Fix"),
                 self.tr("No automatically fixable issues found in the selected strings."),
+            )
+
+    @Slot()
+    def _auto_fix_all(self) -> None:
+        """Apply mechanical fixes to every string with auto-fixable issues."""
+        table_model = self._table_model
+        checker = self._checker
+        if not table_model or not checker:
+            return
+        fix_log: List[str] = []
+
+        for report in self._all_reports:
+            if not any(QualityChecker.issue_can_autofix(i.code) for i in report.issues):
+                continue
+            if not (0 <= report.row_index < len(table_model._data)):
+                continue
+            current_translated = table_model._data[report.row_index].get(
+                "translated", report.translated
+            )
+            fixed, applied = checker.auto_fix(report.original, current_translated, report)
+            if applied:
+                table_model.set_translated_text(report.row_index, fixed)
+                fix_log.append(
+                    f"  Row {report.row_index}: " + "; ".join(applied)
+                )
+
+        if fix_log:
+            self._refresh_reports()
+            QMessageBox.information(
+                self,
+                self.tr("Auto-Fix All Applied"),
+                self.tr("Fixed {n} string(s):\n{log}").format(
+                    n=len(fix_log),
+                    log="\n".join(fix_log[:50])
+                    + ("\n…" if len(fix_log) > 50 else ""),
+                ),
+            )
+        else:
+            QMessageBox.information(
+                self,
+                self.tr("Auto-Fix All"),
+                self.tr("No automatically fixable issues found."),
             )
 
     # ── AI-fix queuing ────────────────────────────────────────────────────────

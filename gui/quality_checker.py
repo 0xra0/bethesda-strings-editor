@@ -62,6 +62,9 @@ AUTOFIX_CODES: frozenset = frozenset({
     "UNCLOSED_GUILLEMET",
     # Closing ] present but opening [ was dropped by the model
     "UNMATCHED_BRACKET",
+    # Model hallucinated multiple strings in one response; source has no newlines
+    # but translation has many → truncate to first meaningful line
+    "SUSPICIOUSLY_LONG",
 })
 
 # Codes that require AI retranslation to properly fix.
@@ -499,6 +502,17 @@ class QualityChecker:
             if fixed != text:
                 text = fixed
                 applied.append("restored leading '-' on header lines")
+
+        if "SUSPICIOUSLY_LONG" in codes:
+            # Model hallucinated content for subsequent strings; source has no
+            # newlines but translation has many → keep only the first real line.
+            if "\n" not in original and "\n" in text:
+                first_line = next(
+                    (ln.strip() for ln in text.split("\n") if ln.strip()), text
+                )
+                if first_line != text:
+                    text = first_line
+                    applied.append("truncated hallucinated multi-string output to first line")
 
         return text, applied
 
