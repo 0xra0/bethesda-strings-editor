@@ -10,25 +10,22 @@ Designed around the real localization workflow: integrates with xTranslator XML 
 [*]Download the zip for your platform from the [b]Files[/b] tab
 [*]Extract anywhere — no Python or Qt install needed, fully self-contained
 [*]Install [url=https://ollama.com]Ollama[/url] and start it:[code]ollama serve[/code]
-[*]Pull the translation model (only needed once):[code]ollama pull 0xra/bethesda-translate
-ollama cp 0xra/bethesda-translate translategemma3-st[/code]
 [*]Run [b]bethesda-strings-editor[/b] (Linux) or [b]bethesda-strings-editor.exe[/b] (Windows)
 [/list]
 
 [b]Arch Linux (AUR):[/b][code]yay -S bethesda-strings-editor-bin[/code]
 
-[b]Optional — AI quality checker model:[/b][code]ollama pull 0xra/bethesda-qc
+[b]Optional — AI quality checker model (hub):[/b][code]ollama pull 0xra/bethesda-qc
 ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 
 [b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU required.
 
 [heading]Ollama Models[/heading]
 
-Both models are published on the Ollama hub and can be pulled directly — no local GGUF file needed.
+The QC model is published on the Ollama hub. Translation models are built from local GGUF files using the included Modelfiles.
 
 [list]
-[*][url=https://ollama.com/0xra/bethesda-translate][b]0xra/bethesda-translate[/b][/url] — Gemma 3 12B fine-tuned for Bethesda/Starfield game string translation. Preserves all game format tokens ([b]<Alias=...>[/b], [b][MALE][/b], [b]%s[/b], [b]{var}[/b]) and writes distinctly Ukrainian output.
-[*][url=https://ollama.com/0xra/bethesda-qc][b]0xra/bethesda-qc[/b][/url] — Gemma 4 E4B fine-tuned for quality checking. Detects 16 issue codes and returns structured VERDICT blocks with AUTOFIX/RETRANSLATE recommendations.
+[*][url=https://ollama.com/0xra/bethesda-qc][b]0xra/bethesda-qc[/b][/url] — Gemma 4 E4B fine-tuned specifically for Bethesda string quality checking. Detects 16 issue codes and returns structured VERDICT blocks with AUTOFIX/RETRANSLATE recommendations.
 [/list]
 
 [heading]Features[/heading]

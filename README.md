@@ -12,27 +12,20 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 
 | Model | Purpose | Hub |
 |-------|---------|-----|
-| `translategemma3-st` | Game string translation — Gemma 3 12B fine-tune (6.5 GB) | [0xra/bethesda-translate](https://ollama.com/0xra/bethesda-translate) |
-| `translategemma3-st-2` | Same fine-tune, reduced context (8 k) for GPU inference | [0xra/bethesda-translate](https://ollama.com/0xra/bethesda-translate) |
+| `translategemma3-st` | Game string translation — Gemma 3 12B fine-tune (6.5 GB) | local GGUF |
+| `translategemma3-st-2` | Same fine-tune, reduced context (8 k) for GPU inference | local GGUF |
 | `mamaylm` | MamayLM Gemma 3 12B IT v2.0 — INSAIT Ukrainian fine-tune | local GGUF |
 | `gemma4-opus48-st` | Gemma 4 12B IT fine-tuned on Claude Opus reasoning data | local GGUF |
 | `qcgemma4-st` | Translation quality checking — Gemma 4 E4B fine-tune (16 issue codes) | [0xra/bethesda-qc](https://ollama.com/0xra/bethesda-qc) |
 
-Pull the translation and QC models from the hub:
+Pull the QC model from the hub:
 
 ```bash
-ollama pull 0xra/bethesda-translate
 ollama pull 0xra/bethesda-qc
-```
-
-Register them under the names the app expects:
-
-```bash
-ollama cp 0xra/bethesda-translate translategemma3-st
 ollama cp 0xra/bethesda-qc qcgemma4-st
 ```
 
-For local GGUF builds, edit `Modelfile` / `Modelfile.qc` / `Modelfile.gemma4-opus48` to set the correct `FROM` path, then:
+For translation models, edit `Modelfile` / `Modelfile.qc` / `Modelfile.gemma4-opus48` to set the correct `FROM` path to your local GGUF, then:
 
 ```bash
 ollama create translategemma3-st -f Modelfile
