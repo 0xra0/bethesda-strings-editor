@@ -636,19 +636,15 @@ class OllamaWorker(QObject):
         # No think_disabled: Gemma 3 has no thinking mode.
         "mamaylm": {
             "temperature": 0.1,
-            # Game strings are short; 512 tokens is enough and avoids the model
-            # generating padding that eats into the per-request timeout budget.
-            "num_predict": 512,
-            # Halved from 16384 to reduce KV-cache pressure on GPU.
-            "num_ctx": 8192,
+            "num_predict": 4096,
+            "num_ctx": 16384,
             "top_k": 64,
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # 12B model — GPU inference is serialised; >3 concurrent workers just
-            # adds queue wait time and causes the 300s session timeout to fire.
-            "max_concurrent": 3,
-            # Allow more wall-clock time than the 300s session default.
+            # The 300s session default is too short when requests queue at Ollama.
+            # translategemma3-st (same 12B size) needs no timeout override because
+            # its fine-tune produces very concise output; mamaylm is more verbose.
             "timeout": 480,
             "stops": [
                 "<end_of_turn>",
