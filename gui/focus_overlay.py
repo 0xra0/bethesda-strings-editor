@@ -348,8 +348,12 @@ class FocusModeOverlay(QDialog):
     def _go_next_untranslated(self) -> None:
         """Advance to the next pending string without saving."""
         data = self._model._data
-        start = self._current_row + 1
-        for i in range(start, len(data)):
+        n = len(data)
+        if n == 0:
+            self._skip_btn.setEnabled(False)
+            return
+        start = min(self._current_row + 1, n)
+        for i in range(start, n):
             if data[i].get("status") == "pending":
                 self._load_row(i)
                 return
