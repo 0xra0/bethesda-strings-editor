@@ -60,6 +60,8 @@ AUTOFIX_CODES: frozenset = frozenset({
     "LINE_PREFIX_DROPPED",
     # Opening «guillemet without matching closing »
     "UNCLOSED_GUILLEMET",
+    # Closing ] present but opening [ was dropped by the model
+    "UNMATCHED_BRACKET",
 })
 
 # Codes that require AI retranslation to properly fix.
@@ -347,6 +349,7 @@ class QualityChecker:
         self._check_whitespace_frame(original, translated, report)
         self._check_spurious_quotes(original, translated, report)
         self._check_unclosed_guillemets(original, translated, report)
+        self._check_unmatched_brackets(original, translated, report)
         self._check_spelling(original, translated, report)
 
         return report
@@ -443,6 +446,11 @@ class QualityChecker:
 
         if "UNCLOSED_GUILLEMET" in codes:
             text, msg = self._fix_unclosed_guillemets(text)
+            if msg:
+                applied.append(msg)
+
+        if "UNMATCHED_BRACKET" in codes:
+            text, msg = self._fix_unmatched_brackets(original, text)
             if msg:
                 applied.append(msg)
 
@@ -1195,6 +1203,63 @@ class QualityChecker:
         result = "\n".join(fixed_lines)
         if total_fixed:
             return result, f"closed {total_fixed} unclosed guillemet(s)"
+        return translated, ""
+
+    def _check_unmatched_brackets(
+        self, original: str, _translated: str, report: QualityReport
+    ) -> None:
+        """Flag when the translation has more ] than [ (opening bracket was dropped)."""
+        # Only fire when the original itself has balanced brackets — otherwise the
+        # source already has a structural issue and we'd produce false positives.
+        orig_open = original.count("[")
+        orig_close = original.count("]")
+        if orig_open != orig_close:
+            return
+        trans_open = _translated.count("[")
+        trans_close = _translated.count("]")
+        if trans_close > trans_open:
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_WARNING,
+                    code="UNMATCHED_BRACKET",
+                    message=(
+                        f"Translation has {trans_close} closing ] but only "
+                        f"{trans_open} opening [ (model dropped opening bracket)"
+                    ),
+                )
+            )
+
+    @staticmethod
+    def _fix_unmatched_brackets(original: str, translated: str) -> Tuple[str, str]:
+        """Prepend missing [ brackets that the model dropped.
+
+        Strategy: for each line where ] count exceeds [ count, prepend
+        the missing [ at the start of the line (mirroring the original
+        line's structure where possible).
+        """
+        orig_lines = original.split("\n")
+        trans_lines = translated.split("\n")
+        fixed_lines = []
+        total_fixed = 0
+        for i, line in enumerate(trans_lines):
+            missing = line.count("]") - line.count("[")
+            if missing > 0:
+                # Use the original line's leading content to decide where to prepend.
+                # If the original line at the same position starts with '[', prepend there.
+                orig_line = orig_lines[i] if i < len(orig_lines) else ""
+                prefix = "[" * missing
+                if orig_line.lstrip().startswith("["):
+                    # Preserve any leading whitespace
+                    stripped = line.lstrip()
+                    indent = line[: len(line) - len(stripped)]
+                    line = indent + prefix + stripped
+                else:
+                    line = prefix + line
+                total_fixed += missing
+            fixed_lines.append(line)
+        result = "\n".join(fixed_lines)
+        if total_fixed:
+            return result, f"restored {total_fixed} missing opening bracket(s)"
         return translated, ""
 
     # ── Auto-fix helpers ───────────────────────────────────────────────────────

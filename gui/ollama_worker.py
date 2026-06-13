@@ -1211,6 +1211,7 @@ class OllamaWorker(QObject):
             result = self._restore_dropped_tags(result, req.original_text)
             result = self._restore_size_spacers(result, req.original_text)
             result = self._restore_unclosed_guillemets(result)
+            result = self._restore_dropped_opening_brackets(result, req.original_text)
             result = self._restore_missing_format_specs(result, req.original_text)
             result = self._restore_missing_newlines(result, req.original_text)
 
@@ -1758,6 +1759,7 @@ class OllamaWorker(QObject):
                 translated = self._restore_dropped_tags(translated, req.original_text)
                 translated = self._restore_size_spacers(translated, req.original_text)
                 translated = self._restore_unclosed_guillemets(translated)
+                translated = self._restore_dropped_opening_brackets(translated, req.original_text)
                 translated = self._restore_missing_format_specs(translated, req.original_text)
                 translated = self._restore_missing_newlines(translated, req.original_text)
 
@@ -1873,6 +1875,26 @@ class OllamaWorker(QObject):
                     line = line[:m.start()] + "»" * missing + line[m.start():]
                 else:
                     line = line.rstrip() + "»" * missing
+            fixed.append(line)
+        return "\n".join(fixed)
+
+    @staticmethod
+    def _restore_dropped_opening_brackets(translated: str, original: str) -> str:
+        """Prepend missing [ when the model kept ] but dropped the opening [."""
+        orig_lines = original.split("\n")
+        trans_lines = translated.split("\n")
+        fixed = []
+        for i, line in enumerate(trans_lines):
+            missing = line.count("]") - line.count("[")
+            if missing > 0:
+                orig_line = orig_lines[i] if i < len(orig_lines) else ""
+                prefix = "[" * missing
+                if orig_line.lstrip().startswith("["):
+                    stripped = line.lstrip()
+                    indent = line[: len(line) - len(stripped)]
+                    line = indent + prefix + stripped
+                else:
+                    line = prefix + line
             fixed.append(line)
         return "\n".join(fixed)
 

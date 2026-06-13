@@ -35,6 +35,26 @@ def _close_unclosed_guillemets(text: str) -> str:
     return "\n".join(fixed)
 
 
+def _restore_dropped_opening_brackets(translated: str, original: str) -> str:
+    """Prepend missing [ when the model kept ] but dropped the opening [."""
+    orig_lines = original.split("\n")
+    trans_lines = translated.split("\n")
+    fixed = []
+    for i, line in enumerate(trans_lines):
+        missing = line.count("]") - line.count("[")
+        if missing > 0:
+            orig_line = orig_lines[i] if i < len(orig_lines) else ""
+            prefix = "[" * missing
+            if orig_line.lstrip().startswith("["):
+                stripped = line.lstrip()
+                indent = line[: len(line) - len(stripped)]
+                line = indent + prefix + stripped
+            else:
+                line = prefix + line
+        fixed.append(line)
+    return "\n".join(fixed)
+
+
 class ClaudeTranslationWorker(QObject):
     """
     Translates game strings using the Claude API.
@@ -211,6 +231,8 @@ class ClaudeTranslationWorker(QObject):
 
             # Close any unclosed «guillemets left open by the model
             result = _close_unclosed_guillemets(result)
+            # Restore [ dropped by the model when ] was kept
+            result = _restore_dropped_opening_brackets(result, req.original_text)
 
             # Store in cache
             if cache_key and self.translation_cache:
