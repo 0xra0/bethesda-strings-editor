@@ -1255,6 +1255,7 @@ class OllamaWorker(QObject):
             result = self._restore_dropped_opening_brackets(result, req.original_text)
             result = self._restore_missing_format_specs(result, req.original_text)
             result = self._restore_missing_newlines(result, req.original_text)
+            result = self._fix_case_and_line_prefix(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1805,6 +1806,7 @@ class OllamaWorker(QObject):
                 translated = self._restore_dropped_opening_brackets(translated, req.original_text)
                 translated = self._restore_missing_format_specs(translated, req.original_text)
                 translated = self._restore_missing_newlines(translated, req.original_text)
+                translated = self._fix_case_and_line_prefix(translated, req.original_text)
 
             # Restore separator lines that were stripped before sending to model
             if translated and (leading_seps or trailing_seps):
@@ -2055,6 +2057,45 @@ class OllamaWorker(QObject):
             return translated
         for pos, token, skip in sorted(insertions, key=lambda x: x[0], reverse=True):
             translated = translated[:pos] + token + translated[pos + skip:]
+        return translated
+
+    @staticmethod
+    def _fix_case_and_line_prefix(translated: str, original: str) -> str:
+        """Fix two systematic model errors that are deterministic from the source:
+
+        1. First-character case: if source starts with an uppercase letter and
+           translation starts with a lowercase letter (or vice-versa), match it.
+        2. Line prefix: if a source line starts with '-' and the corresponding
+           translation line dropped it, restore it.
+        """
+        if not translated or not original:
+            return translated
+
+        # Fix first-character case
+        orig_first = next((c for c in original if c.isalpha()), None)
+        trans_first = next((c for c in translated if c.isalpha()), None)
+        if orig_first and trans_first:
+            if orig_first.isupper() and trans_first.islower():
+                idx = next(i for i, c in enumerate(translated) if c.isalpha())
+                translated = translated[:idx] + translated[idx].upper() + translated[idx + 1:]
+            elif orig_first.islower() and trans_first.isupper():
+                idx = next(i for i, c in enumerate(translated) if c.isalpha())
+                translated = translated[:idx] + translated[idx].lower() + translated[idx + 1:]
+
+        # Restore leading '-' stripped from header lines
+        orig_lines = original.split("\n")
+        trans_lines = translated.split("\n")
+        if len(orig_lines) == len(trans_lines):
+            fixed = []
+            changed = False
+            for o_line, t_line in zip(orig_lines, trans_lines):
+                if o_line.startswith("-") and t_line and not t_line.startswith("-"):
+                    t_line = "-" + t_line
+                    changed = True
+                fixed.append(t_line)
+            if changed:
+                translated = "\n".join(fixed)
+
         return translated
 
     def _clean_translation(
