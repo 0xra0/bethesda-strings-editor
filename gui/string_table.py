@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
 
 from bethesda_strings import BethesdaStringFile, EncodingConverter
 from bethesda_strings.esp_handler import EspFile
+from bethesda_strings.txt_handler import TxtStringFile
 from gui.string_type_detector import (
     StringType,
     classify as _classify_string,
@@ -47,6 +48,8 @@ class StringTableModel(QAbstractTableModel):
 
     # Column header overrides for ESP/ESM mode (indices shifted +1 after "Kind")
     _ESP_HEADERS = {0: "FormID", 4: "EDID", 5: "Type"}
+    # Column header overrides for Starfield interface TXT mode
+    _TXT_HEADERS = {0: "Key", 4: "Length", 5: "Line"}
 
     # Emitted when the user manually edits a row that was already AI-translated.
     # Carries (row_index, original_source_text) so the estimator can learn.
@@ -57,7 +60,7 @@ class StringTableModel(QAbstractTableModel):
         self._data: List[dict] = []
         self._encoding = "utf-8"
         self._locale = None
-        self._mode = "strings"  # "strings" or "esp"
+        self._mode = "strings"  # "strings", "esp", or "txt"
         self._file_ref: Optional[BethesdaStringFile] = None
         self._file_ext: str = ""              # "strings" / "dlstrings" / "ilstrings" / "esp"
         self._diff_data: Dict[int, str] = {}
@@ -133,6 +136,45 @@ class StringTableModel(QAbstractTableModel):
             trans = row.get("translated", "")
             if trans and row["status"] == "translated":
                 entry.translation = trans
+
+    def load_from_txt_file(self, txt: TxtStringFile) -> None:
+        """Populate model from a Starfield interface TXT file."""
+        self.beginResetModel()
+        self._mode = "txt"
+        self._file_ref = None
+        self._file_ext = "txt"
+        self._encoding = "utf-16"
+        self._locale = None
+        self._data.clear()
+        self._diff_data.clear()
+        self._quality_data.clear()
+        self._pre_est_data.clear()
+        self._type_cache.clear()
+
+        for entry in txt.strings:
+            self._data.append({
+                "id": entry.key,
+                "original": entry.text,
+                "translated": "",
+                "length": len(entry.text),
+                "offset": entry.line_number,
+                "status": "pending",
+                "_txt_entry": entry,
+                "_encoding_used": "utf-16",
+            })
+
+        self.endResetModel()
+        logger.info("Loaded %d strings from TXT (mode=txt)", len(self._data))
+
+    def apply_changes_to_txt_file(self, txt: TxtStringFile) -> None:
+        """Write translated text back into TxtStringEntry objects."""
+        for row in self._data:
+            entry = row.get("_txt_entry")
+            if entry is None:
+                continue
+            trans = row.get("translated", "")
+            if trans and row["status"] == "translated":
+                entry.text = trans
 
     def load_from_bethesda_file(
         self,
@@ -419,6 +461,8 @@ class StringTableModel(QAbstractTableModel):
             if 0 <= section < len(self.COLUMNS):
                 if self._mode == "esp" and section in self._ESP_HEADERS:
                     return self._ESP_HEADERS[section]
+                if self._mode == "txt" and section in self._TXT_HEADERS:
+                    return self._TXT_HEADERS[section]
                 col_name = self.COLUMNS[section]
                 return QApplication.translate("StringTableModel", col_name)
         return None
@@ -459,6 +503,8 @@ class StringTableModel(QAbstractTableModel):
 
         if role in [Qt.DisplayRole, Qt.EditRole]:
             if col_name == "ID":
+                if self._mode == "txt":
+                    return str(row_data["id"])
                 if self._mode == "esp":
                     return f"{row_data['id']:08X}"
                 return f"0x{row_data['id']:08X}"
@@ -477,8 +523,8 @@ class StringTableModel(QAbstractTableModel):
                     return str(row_data["length"])  # EDID string
                 return str(row_data["length"])
             elif col_name == "Offset":
-                if self._mode == "esp":
-                    return str(row_data["offset"])  # "ACTI FULL"
+                if self._mode in ("esp", "txt"):
+                    return str(row_data["offset"])  # type/line number
                 return f"0x{row_data['offset']:X}"
             elif col_name == "Status":
                 status_map = {"pending": "⏳", "translated": "✓", "error": "✗"}

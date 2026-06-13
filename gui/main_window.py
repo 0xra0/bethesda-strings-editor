@@ -55,6 +55,7 @@ from PySide6.QtWidgets import (
 from bethesda_strings import BethesdaStringFile, EncodingConverter, XMLHandler
 from bethesda_strings.ba2_handler import BA2File
 from bethesda_strings.esp_handler import EspFile
+from bethesda_strings.txt_handler import TxtStringFile
 from gui.app_settings import (
     AppSettings,
     get_cache_dir,
@@ -84,6 +85,7 @@ _VALID_DROP_EXTS = frozenset({
     ".strings", ".dlstrings", ".ilstrings",
     ".esp", ".esm", ".esl",
     ".ba2",
+    ".txt",
 })
 
 
@@ -204,7 +206,7 @@ class _WelcomeWidget(QWidget):
         card_layout.addWidget(lbl_drop)
 
         # Supported formats
-        lbl_fmt = QLabel(".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2")
+        lbl_fmt = QLabel(".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2  ·  .txt")
         lbl_fmt.setAlignment(Qt.AlignCenter)
         lbl_fmt.setStyleSheet("font-size: 11px; opacity: 0.28; letter-spacing: 0.5px;")
         card_layout.addWidget(lbl_fmt)
@@ -301,7 +303,7 @@ class _DropOverlay(QWidget):
         box_lay.addWidget(self._headline)
 
         self._sub_lbl = QLabel(
-            ".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2"
+            ".strings  ·  .dlstrings  ·  .ilstrings  ·  .esp  ·  .esm  ·  .esl  ·  .ba2  ·  .txt"
         )
         self._sub_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         box_lay.addWidget(self._sub_lbl)
@@ -1796,7 +1798,7 @@ class MainWindow(QMainWindow):
             self.font_checker_action.setEnabled(has_file)
         if hasattr(self, "btn_encoding_change"):
             self.btn_encoding_change.setEnabled(
-                has_file and not isinstance(self.current_file, EspFile)
+                has_file and not isinstance(self.current_file, (EspFile, TxtStringFile))
             )
         if hasattr(self, "glossary_quality_action"):
             self.glossary_quality_action.setEnabled(
@@ -2105,10 +2107,11 @@ class MainWindow(QMainWindow):
             self.tr("Open File"),
             "",
             self.tr(
-                "All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;"
+                "All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;"
                 "String Files (*.strings *.dlstrings *.ilstrings);;"
                 "Plugin Files (*.esp *.esm *.esl);;"
                 "BA2 Archives (*.ba2 *.BA2);;"
+                "Interface TXT Files (*.txt *.TXT);;"
                 "All Files (*)"
             ),
         )
@@ -2124,6 +2127,18 @@ class MainWindow(QMainWindow):
             self._open_esp_file(file_path)
         elif ext == ".ba2":
             self._open_ba2_file(file_path)
+        elif ext == ".txt":
+            if TxtStringFile.is_starfield_txt(file_path):
+                self._open_txt_file(file_path)
+            else:
+                QMessageBox.warning(
+                    self,
+                    self.tr("Unsupported File"),
+                    self.tr(
+                        "This .txt file does not appear to be a Starfield interface translation file.\n"
+                        "Expected format: $KEY<TAB>VALUE lines encoded as UTF-16."
+                    ),
+                )
         else:
             self._open_strings_file(file_path)
 
@@ -2349,6 +2364,51 @@ class MainWindow(QMainWindow):
         finally:
             self._update_ui_state()
 
+    def _open_txt_file(self, file_path: str) -> None:
+        """Load a Starfield interface TXT translation file (translate_en.txt, etc.)."""
+        self._close_current_ba2()
+        try:
+            p = Path(file_path)
+            self.statusBar().showMessage(
+                self.tr("Loading {filename}...").format(filename=p.name)
+            )
+            txt = TxtStringFile()
+            txt.load(p)
+
+            self.current_file = txt
+            self.current_path = p
+
+            self.lbl_file_info.setText(f"📄 {p.name}")
+            self.lbl_encoding.setText(self.tr("Encoding: utf-16"))
+            self.lbl_string_count.setText(
+                self.tr("Strings: {count}").format(count=len(txt))
+            )
+
+            self.table_model.load_from_txt_file(txt)
+
+            self.file_loaded.emit(file_path)
+            self._add_to_recent(file_path)
+            self.statusBar().showMessage(
+                self.tr("Loaded {count} strings from {name}").format(
+                    count=len(txt), name=p.name
+                )
+            )
+            if self._glossary_manager:
+                self._glossary_manager.load_project_glossary(self.current_path)
+            self._start_pre_estimation()
+            self._audit_log.file_opened(file_path, ".txt", len(txt))
+
+        except Exception as e:
+            logger.error(f"Failed to load TXT: {e}", exc_info=True)
+            QMessageBox.critical(
+                self,
+                self.tr("Error"),
+                self.tr("Failed to load TXT:\n{error}").format(error=e),
+            )
+            self.current_file = None
+        finally:
+            self._update_ui_state()
+
     def _close_current_ba2(self) -> None:
         """Close the currently open BA2 archive and clear BA2 state."""
         if self._current_ba2 is not None:
@@ -2454,7 +2514,11 @@ class MainWindow(QMainWindow):
             return self.save_file_as()
 
         try:
-            if isinstance(self.current_file, EspFile):
+            if isinstance(self.current_file, TxtStringFile):
+                self.table_model.apply_changes_to_txt_file(self.current_file)
+                self.current_file.save(self.current_path)
+                _count = len(self.current_file)
+            elif isinstance(self.current_file, EspFile):
                 target_lang = self.combo_target_lang.currentData()
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
                 self.table_model.apply_changes_to_esp_file(self.current_file, encoding)
@@ -2496,10 +2560,17 @@ class MainWindow(QMainWindow):
         if not self.current_file:
             return
 
+        is_txt = isinstance(self.current_file, TxtStringFile)
         is_esp = isinstance(self.current_file, EspFile)
         is_ba2 = self._current_ba2 is not None
 
-        if is_esp:
+        if is_txt:
+            default_name = (
+                f"{self.current_path.stem}_uk.txt"
+                if self.current_path else "translate_uk.txt"
+            )
+            file_filter = self.tr("Interface TXT Files (*.txt *.TXT);;All Files (*)")
+        elif is_esp:
             default_name = (
                 f"{self.current_path.stem}_translated{self.current_path.suffix}"
                 if self.current_path else "output.esp"
@@ -2530,7 +2601,12 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            if is_esp:
+            if is_txt:
+                assert isinstance(self.current_file, TxtStringFile)
+                self.table_model.apply_changes_to_txt_file(self.current_file)
+                self.current_file.save(file_path)
+                _count2 = len(self.current_file)
+            elif is_esp:
                 assert isinstance(self.current_file, EspFile)
                 target_lang = self.combo_target_lang.currentData()
                 encoding, _ = EncodingConverter.get_encodings_for_locale(target_lang)
@@ -3578,7 +3654,7 @@ class MainWindow(QMainWindow):
 
     def _update_encoding_label(self) -> None:
         """Refresh the encoding label from the current file's detected/overridden state."""
-        if not self.current_file or isinstance(self.current_file, EspFile):
+        if not self.current_file or isinstance(self.current_file, (EspFile, TxtStringFile)):
             self.lbl_encoding.setText(self.tr("Encoding: —"))
             self.btn_encoding_change.setEnabled(False)
             return
@@ -3603,7 +3679,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def _override_encoding(self) -> None:
         """Show a dialog to manually override the file encoding and re-decode strings."""
-        if not self.current_file or isinstance(self.current_file, EspFile):
+        if not self.current_file or isinstance(self.current_file, (EspFile, TxtStringFile)):
             return
 
         enc, conf, src, method = self.current_file.encoding_info()
