@@ -671,6 +671,8 @@ class StringTableModel(QAbstractTableModel):
             elif col_name == "ID":
                 if self._mode == "esp":
                     base_tooltip = f"FormID: {row_id:08X}  EDID: {row_data.get('length', '')}"
+                elif self._mode == "txt":
+                    base_tooltip = f"Key: {row_id}"
                 else:
                     base_tooltip = f"String ID: {row_id} (0x{row_id:08X})"
 
@@ -759,20 +761,19 @@ class StringEditDialog(QDialog):
 
     def __init__(self, row_data: dict, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(
-            self.tr("Edit String - ID: 0x{row_id:08X}").format(row_id=row_data["id"])
-        )
+        row_id = row_data["id"]
+        if isinstance(row_id, int):
+            id_display = f"0x{row_id:08X}"
+        else:
+            id_display = str(row_id)
+        self.setWindowTitle(self.tr("Edit String - ID: {id}").format(id=id_display))
         self.resize(800, 600)
 
         layout = QVBoxLayout(self)
 
         # ID Label
         layout.addWidget(
-            QLabel(
-                self.tr("<b>String ID:</b> 0x{row_id:08X} ({row_id})").format(
-                    row_id=row_data["id"]
-                )
-            )
+            QLabel(self.tr("<b>String ID:</b> {id}").format(id=id_display))
         )
 
         # Original Text
