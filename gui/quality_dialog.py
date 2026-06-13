@@ -485,6 +485,8 @@ class QualityDialog(FadeInMixin, QDialog):
         self.pending_retranslations: List[Tuple[int, str]] = []
         # Rows queued for AI-fix: list of (row_index, bad_translation, retry_hint)
         self.pending_ai_fixes: List[Tuple[int, str, str]] = []
+        # Issue codes the user has chosen to hide from the results table
+        self._hidden_codes: set = set()
 
         self._setup_ui()
         self._populate()
@@ -548,8 +550,19 @@ class QualityDialog(FadeInMixin, QDialog):
             "Only codes that appear in the current results are listed."
         ))
         self.combo_code_filter.currentIndexChanged.connect(self._apply_filter)
+        self.combo_code_filter.currentIndexChanged.connect(self._update_hide_button)
         filter_bar.addWidget(self.combo_code_filter)
         self._populate_code_filter()   # fill from reports
+
+        self.btn_hide_code = QPushButton(self.tr("Hide"))
+        self.btn_hide_code.setToolTip(self.tr(
+            "Hide all rows with the selected issue code.\n"
+            "Useful to suppress noise (e.g. hide EMPTY_TRANSLATION)\n"
+            "so you can focus on other issues."
+        ))
+        self.btn_hide_code.setEnabled(False)
+        self.btn_hide_code.clicked.connect(self._hide_current_code)
+        filter_bar.addWidget(self.btn_hide_code)
 
         filter_bar.addStretch()
 
@@ -565,6 +578,19 @@ class QualityDialog(FadeInMixin, QDialog):
         btn_export.clicked.connect(self._export_report)
         filter_bar.addWidget(btn_export)
         root.addLayout(filter_bar)
+
+        # ── Hidden-codes strip ─────────────────────────────────────────────────
+        self.hidden_strip = QHBoxLayout()
+        self.lbl_hidden_codes = QLabel("")
+        self.lbl_hidden_codes.setStyleSheet("color: #6b7280; font-style: italic;")
+        self.hidden_strip.addWidget(self.lbl_hidden_codes)
+        self.btn_unhide_all = QPushButton(self.tr("Show all codes"))
+        self.btn_unhide_all.setToolTip(self.tr("Remove all hidden-code filters"))
+        self.btn_unhide_all.setVisible(False)
+        self.btn_unhide_all.clicked.connect(self._unhide_all_codes)
+        self.hidden_strip.addWidget(self.btn_unhide_all)
+        self.hidden_strip.addStretch()
+        root.addLayout(self.hidden_strip)
 
         # ── Action bar ─────────────────────────────────────────────────────────
         action_bar = QHBoxLayout()
@@ -1079,6 +1105,43 @@ class QualityDialog(FadeInMixin, QDialog):
         self.combo_code_filter.blockSignals(False)
 
     @Slot()
+    def _update_hide_button(self) -> None:
+        code_val = self.combo_code_filter.currentData()
+        self.btn_hide_code.setEnabled(
+            code_val not in (None, "all")
+            and code_val not in self._hidden_codes
+        )
+
+    @Slot()
+    def _hide_current_code(self) -> None:
+        code_val = self.combo_code_filter.currentData()
+        if not code_val or code_val == "all":
+            return
+        self._hidden_codes.add(code_val)
+        # Reset code combo to "All codes" so the hidden code isn't still selected
+        self.combo_code_filter.setCurrentIndex(0)
+        self._update_hidden_strip()
+        self._apply_filter()
+
+    @Slot()
+    def _unhide_all_codes(self) -> None:
+        self._hidden_codes.clear()
+        self._update_hidden_strip()
+        self._apply_filter()
+
+    def _update_hidden_strip(self) -> None:
+        if self._hidden_codes:
+            codes_str = ",  ".join(sorted(self._hidden_codes))
+            self.lbl_hidden_codes.setText(
+                self.tr("Hidden: {codes}").format(codes=codes_str)
+            )
+            self.btn_unhide_all.setVisible(True)
+        else:
+            self.lbl_hidden_codes.setText("")
+            self.btn_unhide_all.setVisible(False)
+        self._update_hide_button()
+
+    @Slot()
     def _apply_filter(self) -> None:
         sev_val = self.combo_filter.currentData()
         code_val = self.combo_code_filter.currentData()
@@ -1088,6 +1151,11 @@ class QualityDialog(FadeInMixin, QDialog):
                 return False
             if code_val != "all":
                 if not any(i.code == code_val for i in report.issues):
+                    return False
+            # Exclude reports where EVERY issue code is hidden
+            if self._hidden_codes:
+                visible = [i for i in report.issues if i.code not in self._hidden_codes]
+                if not visible:
                     return False
             return True
 
