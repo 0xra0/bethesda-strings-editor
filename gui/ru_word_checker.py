@@ -53,6 +53,20 @@ _UK_EXCLUSION: frozenset = frozenset({
     "завершена", "стояв", "стояла", "стояло", "стоять",
     "була", "було", "були",
     "того",
+    # Infinitives that differ from Russian (-ти vs -ть)
+    "спати", "знати", "мати", "бути", "йти", "жити", "пити", "вести",
+    "брати", "стати", "дати", "взяти", "зробити", "сказати",
+    "піти", "прийти", "почати", "стояти", "сидіти", "бачити",
+    # Adverbs / prepositions that are Ukrainian-specific or differ in meaning
+    "поруч", "поряд", "навколо", "вздовж", "попереду",
+    "позаду", "посеред", "назад", "вперед", "вниз", "вгору",
+    # Nouns whose forms diverge from Russian equivalents
+    "вороги", "ворога", "ворогів", "ворогу",
+    "можете",  # identical form in both; appears frequently in valid Ukrainian
+    "коли",    # Ukrainian "when"; also archaic Russian but primarily Ukrainian usage
+    # Common Ukrainian-only verb conjugations ending in -ають/-ують/-ять
+    "перебувають", "залишають", "отримують", "виконують",
+    "говорять", "кажуть", "знають", "думають", "хочуть",
 })
 
 # ---------------------------------------------------------------------------

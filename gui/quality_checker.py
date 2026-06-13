@@ -213,7 +213,9 @@ _CJK_TARGETS: frozenset = frozenset({"ja", "japanese", "zhhans", "chinese", "zh"
 _HANGUL_TARGETS: frozenset = frozenset({"ko", "korean"})
 
 # ── Standalone numbers (2+ digits, not embedded in IDs/paths/tags) ─────────────
-_STANDALONE_NUM_RE = re.compile(r"(?<![/#:\w])\d{2,}(?![/:\w])")
+# (?!0{2,}(?!\d)) excludes pure-zero groups like "000" that arise from
+# thousands-separator spacing in "10 000" and are never meaningful standalone.
+_STANDALONE_NUM_RE = re.compile(r"(?<![/#:\w])(?!0{2,}(?!\d))\d{2,}(?![/:\w])")
 
 # ── URL / email detector ────────────────────────────────────────────────────────
 _URL_RE = re.compile(
@@ -342,7 +344,7 @@ class QualityChecker:
         self._check_latin_coverage(translated, report)
         self._check_script_coverage(translated, report)
         self._check_english_leak(original, translated, report)
-        self._check_repetition(translated, report)
+        self._check_repetition(original, translated, report)
         self._check_ai_artifacts(original, translated, report)
         self._check_size_spacer_structure(original, translated, report)
         self._check_line_prefix(original, translated, report)
@@ -1092,9 +1094,14 @@ class QualityChecker:
             )
         )
 
-    def _check_repetition(self, translated: str, report: QualityReport) -> None:
+    def _check_repetition(self, original: str, translated: str, report: QualityReport) -> None:
         gram = _find_repeated_ngram(translated)
         if gram:
+            # Don't flag structured list content: if the source itself is also
+            # repetitive (mine assignments, status grids, etc.), the translation
+            # repeating phrases is expected, not a hallucination.
+            if _find_repeated_ngram(original):
+                return
             report.issues.append(
                 QualityIssue(
                     severity=SEVERITY_WARNING,
