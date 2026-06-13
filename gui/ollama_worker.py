@@ -265,7 +265,12 @@ _TARGET_STYLE: dict[str, str] = {
         "Use Ukrainian-specific vocabulary where it diverges from Russian "
         "(наразі not сейчас, завдяки not благодаря, але not однако). "
         "Technical readouts use present tense ('Системи в нормі'). "
-        "Avoid magic/fantasy vocabulary and archaic phrasing in a sci-fi context."
+        "Avoid magic/fantasy vocabulary and archaic phrasing in a sci-fi context. "
+        "Quotation marks: always use «» guillemets for Ukrainian (not \" or '). "
+        "ALWAYS close every opening « with a matching closing » — never leave « open. "
+        "Brand names already written in Cyrillic in the source (e.g. ТерраБрю, Чанкс, "
+        "Ксенофреш) MUST stay in Cyrillic in the translation — never switch them to their "
+        "English Latin-script spelling."
     ),
 }
 
@@ -301,7 +306,9 @@ _LANG_EXAMPLES: dict[tuple[str, str], str] = {
         "Склад оружия → Склад зброї\n"
         "Тюремная база Спейсеров → Тюремна база Спейсерів\n"
         "[Солгать] Я ничего не знаю. → [Збрехати] Я нічого не знаю.\n"
-        "Добыча ресурсов → Видобування ресурсів"
+        "Добыча ресурсов → Видобування ресурсів\n"
+        'Диалог сотрудников "ТерраБрю" → Діалоги працівників «ТерраБрю»\n'
+        'Диалог сотрудников "Чанкса" → Діалоги працівників «Чанкса»'
     ),
     ("en", "de"): (
         "I'm heading to New Atlantis to meet with Sarah. "
@@ -1203,6 +1210,7 @@ class OllamaWorker(QObject):
             result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
             result = self._restore_dropped_tags(result, req.original_text)
             result = self._restore_size_spacers(result, req.original_text)
+            result = self._restore_unclosed_guillemets(result)
             result = self._restore_missing_format_specs(result, req.original_text)
             result = self._restore_missing_newlines(result, req.original_text)
 
@@ -1749,6 +1757,7 @@ class OllamaWorker(QObject):
             if translated:
                 translated = self._restore_dropped_tags(translated, req.original_text)
                 translated = self._restore_size_spacers(translated, req.original_text)
+                translated = self._restore_unclosed_guillemets(translated)
                 translated = self._restore_missing_format_specs(translated, req.original_text)
                 translated = self._restore_missing_newlines(translated, req.original_text)
 
@@ -1850,6 +1859,22 @@ class OllamaWorker(QObject):
                     insert_pos += 1
                 translated = translated[:insert_pos] + " " + full + translated[insert_pos:]
         return translated
+
+    @staticmethod
+    def _restore_unclosed_guillemets(translated: str) -> str:
+        """Close any «guillemet left open without a matching » on the same line."""
+        lines = translated.split("\n")
+        fixed = []
+        for line in lines:
+            missing = line.count("«") - line.count("»")
+            if missing > 0:
+                m = re.search(r'([.!?…]+)\s*$', line)
+                if m:
+                    line = line[:m.start()] + "»" * missing + line[m.start():]
+                else:
+                    line = line.rstrip() + "»" * missing
+            fixed.append(line)
+        return "\n".join(fixed)
 
     @staticmethod
     def _restore_size_spacers(translated: str, original: str) -> str:

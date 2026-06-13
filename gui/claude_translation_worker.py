@@ -10,12 +10,29 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import re
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from typing import List
 
 from PySide6.QtCore import QMutex, QMutexLocker, QObject, Signal, Slot
 
 logger = logging.getLogger(__name__)
+
+
+def _close_unclosed_guillemets(text: str) -> str:
+    """Append a closing » for every unclosed « on each line."""
+    lines = text.split("\n")
+    fixed = []
+    for line in lines:
+        missing = line.count("«") - line.count("»")
+        if missing > 0:
+            m = re.search(r'([.!?…]+)\s*$', line)
+            if m:
+                line = line[:m.start()] + "»" * missing + line[m.start():]
+            else:
+                line = line.rstrip() + "»" * missing
+        fixed.append(line)
+    return "\n".join(fixed)
 
 
 class ClaudeTranslationWorker(QObject):
@@ -191,6 +208,9 @@ class ClaudeTranslationWorker(QObject):
                     result = self.term_protector.restore(result, token_map)
                 except Exception as exc:
                     logger.warning("Term restore failed: %s", exc)
+
+            # Close any unclosed «guillemets left open by the model
+            result = _close_unclosed_guillemets(result)
 
             # Store in cache
             if cache_key and self.translation_cache:
