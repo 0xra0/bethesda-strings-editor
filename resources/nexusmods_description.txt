@@ -1,6 +1,6 @@
-Desktop tool for translating Starfield localization files across 11 languages using a locally-running AI model or the Claude API.
+Desktop tool for translating Starfield localization files across 12 languages using a locally-running AI model or the Claude API.
 
-Reads the binary string formats used by the Creation Engine ([b].strings[/b], [b].dlstrings[/b], [b].ilstrings[/b], [b]BA2 archives[/b]) and non-localized ESP/ESM plugins, sends text to Ollama or Claude, and writes the translated files back in the original format — ready to drop into your mod or game data folder.
+Reads the binary string formats used by the Creation Engine ([b].strings[/b], [b].dlstrings[/b], [b].ilstrings[/b], [b]BA2 archives[/b], [b]ESP/ESM plugins[/b], and [b]Starfield interface TXT[/b] files), sends text to Ollama or Claude, and writes the translated files back in the original format — ready to drop into your mod or game data folder.
 
 Designed around the real localization workflow: integrates with xTranslator XML files, protects thousands of Starfield-specific proper nouns from mistranslation, remembers every string you've already approved, and flags quality issues automatically so you can review or re-translate them one by one.
 
@@ -17,7 +17,7 @@ Designed around the real localization workflow: integrates with xTranslator XML 
 cd bethesda-strings-editor/aur
 makepkg -si[/code]
 
-[b]Optional — AI quality checker model (hub):[/b][code]ollama pull 0xra/bethesda-qc
+[b]Optional — AI quality checker model (Ollama hub):[/b][code]ollama pull 0xra/bethesda-qc
 ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 
 [b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU required.
@@ -36,11 +36,18 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [list]
 [*][b]Parallel AI translation[/b] — configurable concurrency, 10 simultaneous requests by default
 [*][b]Claude API backend[/b] — use Haiku 4.5, Sonnet 4.6, or Opus 4.8 as a drop-in alternative to Ollama; no local GPU needed
+[*][b]AI-fix mode[/b] — instead of retranslating from scratch, sends the existing flawed translation + QC issue description to the model for targeted correction; faster and more precise than a full retranslation
 [*][b]Language-pair prompts[/b] — dedicated system prompt for every source→target combination with register rules, script conventions, and native examples
+[*][b]Pipeline post-processing[/b] — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline repair, guillemet close-quote enforcement
 [*][b]Translation memory[/b] — approved strings are never sent to the model again
 [*][b]Persistent cache[/b] — SHA-256 keyed, survives sessions, up to 50,000 entries
 [*][b]Term protector[/b] — 8,000+ Starfield names, places, and UI labels swapped to placeholders before the AI sees the text; proper nouns are never mistranslated
 [*][b]Glossary system[/b] — CSV/TBX/JSON import-export, in-app editor, automatic injection into AI prompts
+[*][b]Character Persona Profiling[/b] — assign a voice profile to any string or quest (Freestar Ranger, SysDef Officer, Crimson Fleet Pirate, House Va'ruun Zealot, UC Civilian, Robot/Automaton, Narrator, or custom); each profile overrides the AI system prompt and temperature
+[*][b]Lore RAG[/b] — local SQLite FTS5 lore database with built-in UESP downloader; relevant faction, location, and character articles injected into every AI prompt
+[*][b]Pre-translation estimator[/b] — scores each string 0–100 to predict translation difficulty before the AI runs
+[*][b]Skip string types[/b] — exclude Book, Note, or other categories from AI batch translation
+[*][b]Claude pre-flight cost estimator[/b] — shows token count and estimated USD cost before starting a batch
 [*][b]Named sessions[/b] — save and restore search/filter state across sittings ([b]Ctrl+Shift+N[/b] / [b]Ctrl+Shift+S[/b])
 [*][b]Macro recorder[/b] — record and replay sequences of edit operations ([b]Ctrl+M[/b])
 [/list]
@@ -51,6 +58,7 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b].dlstrings / .ilstrings[/b] — length-prefixed binary format
 [*][b]BA2 archives[/b] — read and write Starfield v2 and Fallout 4 v1 BA2 archives (GNRL/zlib); picker dialog for multi-entry archives
 [*][b]ESP/ESM plugins[/b] — extracts and writes back translatable fields from non-localized plugins directly
+[*][b]Starfield interface TXT[/b] — [b]translate_en.txt[/b] / [b]translate_ru.txt[/b] key=value interface string files
 [*][b]xTranslator SST XML[/b] — import/export compatible with existing xTranslator projects
 [*][b]Encoding detection[/b] — auto-detects UTF-8 BOM, UTF-8, CP1251, CP1252, CP1250 (Polish), GBK; per-file override
 [*][b]Drag-and-drop[/b] file loading with format validation
@@ -58,14 +66,27 @@ The QC model is published on the Ollama hub. Translation models are built from l
 
 [b]Quality Assurance[/b]
 [list]
-[*][b]Quality checker[/b] — 20+ automated checks across all 11 languages: missing/extra game tags, truncated AI output, suspicious length ratios, source-language leakage, English leak, newline mismatches, AI artifact prefixes, encoding failures, CJK script coverage, and glossary mismatches
-[*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations
+[*][b]Quality checker[/b] — 20+ automated checks: missing/extra game tags, empty or untranslated strings, source-language leakage, English leak, suspicious length ratios, newline mismatches, truncated AI output, AI artifact prefixes, encoding failures, unclosed guillemets, unmatched brackets, CJK script coverage, and glossary mismatches
+[*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations and chain-of-thought reasoning
+[*][b]Font & Glyph Checker[/b] — parses Scaleform SWF font atlases and TTF/OTF cmap tables; flags translation characters that will render as squares in-game and suggests auto-fixable substitutes
 [*][b]Hunspell spell-check[/b] — optional per-language spell checking using system dictionaries; install with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
-[*][b]One-click auto-fix[/b] for mechanically correctable issues; one-click re-translate with a per-string hint for AI issues
+[*][b]Auto-Fix All[/b] — one-click batch fix for all mechanically correctable issues (whitespace, capitalization, character substitution, missing newlines, unclosed guillemets)
+[*][b]Per-code hide filter[/b] — suppress specific QC issue codes from the results table for the current session
+[*][b]Retranslation queue[/b] — strings flagged by QC are queued and retranslated with a per-string hint describing what went wrong
 [*][b]Consistency checker[/b] — finds identical source strings translated differently; pick a canonical form and batch-replace ([b]Ctrl+Alt+K[/b])
-[*][b]Ukrainian gender checker[/b] — detects adjective/noun gender agreement mismatches using a Ukrainian noun gender dictionary ([b]Ctrl+Alt+G[/b])
+[*][b]Ukrainian gender checker[/b] — detects adjective/noun gender agreement mismatches ([b]Ctrl+Alt+G[/b])
 [*][b]ти/ви register checker[/b] — detects mixed formal/informal address within a file ([b]Ctrl+Alt+R[/b])
+[*][b]Plugin validator[/b] — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies
 [*][b]Version diff[/b] — compare two game versions and migrate unchanged translations; export CSV/HTML reports
+[/list]
+
+[b]Review Tools[/b]
+[list]
+[*][b]Visual Context Preview[/b] ([b]Ctrl+Shift+P[/b]) — dockable panel that renders the current string inside a faithful recreation of the Bethesda in-game UI using actual game fonts extracted from SWF assets; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI)
+[*][b]Dialogue Tree Visualizer[/b] — interactive Quest → Topic → Response node graph ([b]Ctrl+Alt+D[/b]) with Starfield dark-space visual theme; click any node to jump to that string in the table
+[*][b]Audio / TTS Preview[/b] ([b]Ctrl+Shift+A[/b]) — synthesizes a TTS read-out of the translation for timing comparison; eSpeak-NG and Piper backends; colour-coded timing bar
+[*][b]Diff viewer[/b] — side-by-side word-level or character-level diff of source vs. translation; editable right pane with live diff update; HTML export
+[*][b]Advanced search[/b] — regex and fuzzy search across source and translation columns; batch Find & Replace
 [/list]
 
 [b]NexusMods Integration[/b]
@@ -79,22 +100,25 @@ The QC model is published on the Ollama hub. Translation models are built from l
 
 [b]UI / Workflow[/b]
 [list]
-[*]Vim-style keyboard navigation, command palette ([b]Ctrl+K[/b]), customizable shortcuts
+[*][b]Zen / Focus Mode[/b] ([b]F11[/b]) — full-screen overlay showing one string at a time for distraction-free translation; pending-string counter and per-string status badge
+[*][b]Multi-monitor support[/b] — Translation Editor dock ([b]Ctrl+Shift+E[/b]) floats to any monitor; Pop Out String List ([b]Ctrl+Shift+L[/b]) opens a mirrored table window
+[*][b]Claude AI Assistant dock[/b] ([b]Ctrl+Shift+C[/b]) — chat about the current string and apply Claude's suggested translation with one click
+[*][b]Command palette[/b] ([b]Ctrl+K[/b]) and vim-style navigation (j/k, G)
+[*][b]Keyboard shortcuts editor[/b] — rebind any action
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
-[*]Dark / Light / Slate / custom QSS themes
-[*]Interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech (community WIP)
-[*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; color-coded green/yellow/red (AMD and NVIDIA)
+[*][b]16 built-in themes[/b] — Slate, Midnight, Nord, Dracula, Catppuccin, Light, Solarized Dark, Solarized Light, Gruvbox, Tokyo Night, Monokai, One Dark, Sepia, Starfield, Starfield Terminal, High Contrast; plus custom QSS file support
+[*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; colour-coded green/yellow/red (AMD and NVIDIA)
+[*][b]Interface translations[/b] — UI available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
+[*][b]Crash recovery[/b] — periodic auto-save; recovery dialog offered at startup if the previous session ended unexpectedly
+[*][b]Security audit log[/b] — append-only JSON-lines log of all file operations and translation batches; API keys stored in system keyring with AES-256-GCM file fallback
 [*]Status bar with live progress, translated count, and ETA during AI batches
-[*][b]Focus mode[/b] — full-screen overlay showing one string at a time for distraction-free translation
-[*][b]Dialogue tree viewer[/b] — visualizes Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree ([b]Ctrl+Alt+D[/b])
-[*][b]Lore RAG[/b] — import lore snippets that are injected into AI prompts for contextually accurate translation
 [/list]
 
 [heading]Requirements[/heading]
 
 [url=https://ollama.com]Ollama[/url] must be running locally when you use AI translation features ([b]localhost:11434[/b]). Alternatively, use the [b]Claude API[/b] backend — no local GPU required, just enter your Anthropic API key in Settings.
 
-[b]Minimum hardware:[/b] 8 GB VRAM recommended for the Gemma 3 12B Q4 translation model. The standalone builds include everything else (Python runtime, Qt libraries) — no separate install needed.
+[b]Minimum hardware:[/b] 8 GB VRAM recommended for a Gemma 3 12B Q4 translation model. The standalone builds include everything else (Python runtime, Qt libraries) — no separate install needed.
 
 [heading]Shout Outs[/heading]
 
