@@ -1,106 +1,9 @@
 # Starfield Protected Terms
-# Total terms: 163
+# Total terms: 23
 # Format: Term,Category
-# Generated from Starfield EN/UK string pairs.
+# Only token names / abbreviations that must not be translated in any locale.
 
-# === COMPANY (31) ===
-Amun Dunn,company
-Aphelion Realty,company
-Argos Extractors,company
-Chunks,company
-Construx,company
-Deep Core,company
-Enhance,company
-GalBank,company
-Generdyne,company
-Graviton Loop Array,company
-HopeTech,company
-Infinity LTD,company
-KORE Kinetics,company
-Nova Galactic,company
-Reliant Medical,company
-Repair n' Go,company
-Ryujin Industries,company
-SSNN,company
-Shinigami,company
-Slayton Aerospace,company
-Stroud Eklund,company
-Stroud-Eklund,company
-Taiyo,company
-Taiyo Astroneering,company
-Terrabrew,company
-Trade Authority,company
-Trident Luxury Lines,company
-UC Defense,company
-United Transport,company
-Vault-Tec,company
-Xenofresh,company
-
-# === FACTION (25) ===
-CeltCorp,faction
-Combatech,faction
-Constellation,faction
-Crimson Fleet,faction
-Cydonia Security,faction
-Dogstar,faction
-Ecliptic,faction
-Enlightened,faction
-Freestar Collective,faction
-Freestar Rangers,faction
-Horizon Defense,faction
-House Va'ruun,faction
-Light Scythe,faction
-Lunar Robotics,faction
-Nautilus,faction
-Sanctum Universum,faction
-Spacers,faction
-Trackers Alliance,faction
-UC Marines,faction
-UC Navy,faction
-UC Security,faction
-UC SysDef,faction
-UC Vanguard,faction
-United Colonies,faction
-Xiang,faction
-
-# === LORE (17) ===
-Artifact,lore
-Artifacts,lore
-MAST,lore
-New Game Plus,lore
-SPECIAL,lore
-Serpent's Embrace,lore
-Settled Systems,lore
-Shattered Space,lore
-Starborn,lore
-Starborn Temple,lore
-Starfield,lore
-The Great Serpent,lore
-The Unity,lore
-Unity,lore
-V.A.T.S.,lore
-Va'ruun'kai,lore
-Zero G,lore
-
-# === SHIP (16) ===
-Abyss Trekker,ship
-ECS Constant,ship
-Frontier,ship
-Haemosu,ship
-Kepler R,ship
-Kepler S,ship
-Narwhal,ship
-Polis II,ship
-Razorleaf,ship
-Siren of the Stars,ship
-Starborn Guardian,ship
-The Astraea,ship
-The Datura,ship
-The Scow,ship
-UC Vigilance,ship
-Wanderwell,ship
-
-# === UI (20) ===
+# === UI TOKENS (20) ===
 AI,ui
 AP,ui
 CEO,ui
@@ -122,59 +25,7 @@ VIP,ui
 Wanted,ui
 XP,ui
 
-# === PROPER NOUNS (54) ===
-Allied Armaments,proper_noun
-Apex Electronics,proper_noun
-Arc Might,proper_noun
-Argos Extractor,proper_noun
-Astral Lounge,proper_noun
-Butcher's Best,proper_noun
-Centauri Mills,proper_noun
-Consolidated Mining,proper_noun
-Deimos Belly,proper_noun
-Deimos Spine,proper_noun
-Deimos Staryards,proper_noun
-Deimos Wing,proper_noun
-Ebbside Strikers,proper_noun
-Filburn Agriculture,proper_noun
-GB Legacy Recording,proper_noun
-Hephaestus Mining Corporation,proper_noun
-Inception Technologies,proper_noun
-Interstellar Shipping,proper_noun
-Jane's Goods,proper_noun
-Jemison Mercantile,proper_noun
-Kryx's Legacy,proper_noun
-Laredo Firearms,proper_noun
-Midtown Minerals,proper_noun
-Mining Monthly,proper_noun
-Neon Security,proper_noun
-Neon Tactical,proper_noun
-Offworld Eats,proper_noun
-Oishii,proper_noun
-Paradiso Group,proper_noun
-Quantum Synergies,proper_noun
-Reladyne Nova,proper_noun
-Ryujin,proper_noun
-Six Sisters Mining,proper_noun
-Spacefarer's Guide,proper_noun
-Star Parcel,proper_noun
-Starfreight Logistics,proper_noun
-Stroud Cap,proper_noun
-Stroud Nose Cap,proper_noun
-Stroud Struct Cap,proper_noun
-Stroud-Eklund Staryard,proper_noun
-Taiyo Mid Cap,proper_noun
-Taiyo Slope Cap,proper_noun
-The Cyber Runner's Cipher,proper_noun
-The New Atlantian,proper_noun
-Tranquilitea,proper_noun
-Trident Corporate,proper_noun
-Tsukisasu,proper_noun
-UC Defense Manual,proper_noun
-UC Distribution,proper_noun
-UC Surplus,proper_noun
-UC System Defense,proper_noun
-Unified Transport,proper_noun
-Vae Victis,proper_noun
-Xenofresh Fisheries,proper_noun
-
+# === GAME-SYSTEM ACRONYMS (3) ===
+MAST,lore
+SPECIAL,lore
+V.A.T.S.,lore
