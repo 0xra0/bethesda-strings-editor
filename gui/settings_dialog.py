@@ -149,6 +149,8 @@ class SettingsDialog(QDialog):
         )
         ollama_layout.addRow(self.tr("Ollama CPU threads:"), self.spin_num_thread)
 
+        self.ollama_model.currentTextChanged.connect(self._update_model_hint)
+
         self.ollama_group.setLayout(ollama_layout)
         layout.addWidget(self.ollama_group)
 
@@ -891,11 +893,12 @@ class SettingsDialog(QDialog):
         if self._keyboard_manager is not None:
             layout.addWidget(self._build_shortcuts_section())
 
-        # Info note - translategemma3-st optimized
-        info = QLabel(self.tr("💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English Anchors: 'To Ukrainian:', 'To English:', etc."))
-        info.setWordWrap(True)
-        info.setStyleSheet("color: palette(mid); font-style: italic;")
-        layout.addWidget(info)
+        # Model-specific advice — updated live when the model combo changes
+        self._lbl_model_hint = QLabel()
+        self._lbl_model_hint.setWordWrap(True)
+        self._lbl_model_hint.setStyleSheet("color: palette(mid); font-style: italic;")
+        self._update_model_hint(self.ollama_model.currentText())
+        layout.addWidget(self._lbl_model_hint)
 
         layout.addStretch()
 
@@ -916,6 +919,33 @@ class SettingsDialog(QDialog):
         if current and current not in models:
             models.insert(0, current)
         return models
+
+    @Slot(str)
+    def _update_model_hint(self, model: str) -> None:
+        """Update the advice label based on the selected Ollama model."""
+        m = model.strip().lower()
+        if "translategemma3-st" in m:
+            text = self.tr(
+                "💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian "
+                "localization. Use English anchors: 'To Ukrainian:', 'To English:', etc."
+            )
+        elif "gemma4-opus48-st" in m or "gemma4" in m:
+            text = self.tr(
+                "💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. "
+                "Use English anchors: 'To Ukrainian:', 'To English:', etc."
+            )
+        elif "claude" in m:
+            text = self.tr(
+                "💡 Tip: Claude backend selected. Configure your API key in the Claude section below."
+            )
+        elif m:
+            text = self.tr(
+                "💡 Tip: Custom model selected. Ensure it supports your target language and follows "
+                "the system prompt configured above."
+            )
+        else:
+            text = ""
+        self._lbl_model_hint.setText(text)
 
     @Slot()
     def _refresh_ollama_models(self):
