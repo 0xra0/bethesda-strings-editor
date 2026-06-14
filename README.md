@@ -4,7 +4,13 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 
 ![NexusMods Header](resources/nexusmods_header.png)
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![PySide6](https://img.shields.io/badge/UI-PySide6-green) ![Ollama](https://img.shields.io/badge/AI-Ollama-orange) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![NexusMods](https://img.shields.io/badge/NexusMods-Starfield-D98F40?logo=nexusmods&logoColor=white)](https://www.nexusmods.com/starfield/mods/17158) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/0xra0/bethesda-strings-editor) [![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-8A2BE2?logo=anthropic&logoColor=white)](https://claude.ai)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![PySide6](https://img.shields.io/badge/UI-PySide6%20%2F%20Qt6-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://doc.qt.io/qtforpython)
+[![Ollama](https://img.shields.io/badge/AI-Ollama-0D0D0D?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
+[![Claude](https://img.shields.io/badge/AI-Claude%20API-7C3AED?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.ai)
+[![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](LICENSE)
+[![NexusMods](https://img.shields.io/badge/NexusMods-Starfield-D98F40?style=for-the-badge&logo=nexusmods&logoColor=white)](https://www.nexusmods.com/starfield/mods/17158)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/0xra0/bethesda-strings-editor)
 
 ---
 
