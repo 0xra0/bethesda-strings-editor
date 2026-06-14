@@ -523,7 +523,7 @@ class TranslationRequest:
             "and all similar single-action bindings.\n"
             "   c) PRESERVE unchanged — NPC name references and variable placeholders: "
             "[Andreja], [Vasco], [Hunter], [Sakharov], [Starborn], [Name], "
-            "[MALE], [FEMALE], [PLYR], [Firstname], [Secondname].\n"
+            "[MALE], [FEMALE], [PLYR].\n"
             "   d) TRANSLATE — ALL-CAPS status/document codes and sentence-case labels: "
             "[CANCELED], [CRITICAL], [DELETED], [DELIVERED], [EMPTIED], [OPTIMIZED], "
             "[PARTICULATES], [PINGED], [PING], [REDACTED], [VATS]; "

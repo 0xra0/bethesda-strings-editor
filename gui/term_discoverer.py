@@ -29,7 +29,7 @@ _SENT_END_RE = re.compile(r"[.!?…]\s*$")
 
 # Tags we should never treat as candidate terms
 _TAG_RE = re.compile(
-    r"^(?:<[^>]+>|\[(?:MALE|FEMALE|PLYR|Firstname|Secondname)\]"
+    r"^(?:<[^>]+>|\[(?:MALE|FEMALE|PLYR)\]"
     r"|%[sd]|\{\w+\}|\[\[.*?\]\])$",
     re.IGNORECASE,
 )
