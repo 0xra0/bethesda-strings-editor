@@ -2088,7 +2088,7 @@ class OllamaWorker(QObject):
         """Re-insert printf-style format specifiers the model dropped from inline positions."""
         if not original or not translated:
             return translated
-        _FS_RE = re.compile(r'%[-+0 #]*\d*(?:\.\d+)?[diouxXeEfFgGcsp]')
+        _FS_RE = re.compile(r'%[-+0#]*\d*(?:\.\d+)?[diouxXeEfFgGcsp]')
 
         def _fix_single(trans: str, orig: str) -> str:
             om = list(_FS_RE.finditer(orig))
