@@ -2295,6 +2295,15 @@ class OllamaWorker(QObject):
                 _parts.append(text[_prev:])
                 text = ''.join(_parts)
 
+        # Strip doubled-percent artifacts: "% % f" / "% %f" patterns where the model
+        # re-added a "%" before a restored "% for"-type token, yielding two consecutive
+        # percent signs separated by whitespace.  Pattern: % + whitespace + % + optional
+        # whitespace + format char → collapsed to just the first %.
+        # "%%f" (no space between percents) is left alone as it can be a valid "%%" escape.
+        # These space-separated doublings are never valid in Bethesda game strings.
+        if '%' in text:
+            text = re.sub(r'%\s+%\s*[sdfioxXeEgGcpn]', '%', text)
+
         # Strip prompt-echo preambles (case-insensitive, handles with/without trailing newline).
         # The model sometimes echoes the "To Ukrainian:" instruction from to_prompt() back
         # into its output — this regex catches all known variants in one pass.
