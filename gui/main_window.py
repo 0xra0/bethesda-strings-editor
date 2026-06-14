@@ -4743,19 +4743,20 @@ class MainWindow(QMainWindow):
             # Close open BA2 archive (file handle)
             self._close_current_ba2()
 
-            # Stop workers
+            # Stop workers: signal stop, close active HTTP responses, then wait
+            # for all executor threads to actually finish before touching the
+            # QThread.  close() blocks (wait=True) so the executor is fully
+            # drained here; otherwise terminate() orphans those threads and
+            # Python's atexit hangs trying to join them on exit.
             if self.ollama_worker:
                 self.ollama_worker.stop()
+                self.ollama_worker.close()
 
-            # Wait for threads to finish
+            # Wait for the QThread event loop to stop (should be quick now)
             if self.ollama_thread and self.ollama_thread.isRunning():
                 self.ollama_thread.quit()
-                if not self.ollama_thread.wait(2000):
+                if not self.ollama_thread.wait(5000):
                     logger.warning("Force terminating Ollama thread")
-                    # Explicitly release the HTTP session before terminate() kills the
-                    # thread, since terminate() skips Python finalizers (__del__).
-                    if self.ollama_worker:
-                        self.ollama_worker.close()
                     self.ollama_thread.terminate()
 
             # Save translation cache to disk
