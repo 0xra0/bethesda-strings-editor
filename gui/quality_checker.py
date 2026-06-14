@@ -158,7 +158,7 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     # xTranslator / toolkit tokens: [tk_Something]
     (r"\[tk_[A-Za-z0-9_]*\]",           "tk_tag"),
     # Printf format specifiers — full pattern including flags, width, precision (%.0f etc.)
-    (r"%[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]", "printf_var"),
+    (r"%[-+#0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]", "printf_var"),
     # Brace variables  {variable}
     (r"\{[^}]+\}",                       "brace_var"),
     # Escape sequences used as inline formatting
@@ -259,7 +259,7 @@ _SIZE_SPACER_RE = re.compile(
 _SENT_END_RE = re.compile(r"[.!?…]+")
 # Printf/format-spec pattern whose decimal point would be false-counted as a
 # sentence terminator (e.g. %.2f, %+08.3g, %d, %s).
-_FORMAT_SPEC_RE = re.compile(r"%[-+ #0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]")
+_FORMAT_SPEC_RE = re.compile(r"%[-+#0]*(?:\*|\d+)?(?:\.(?:\*|\d+))?[diouxXeEfFgGcsSp%]")
 
 
 def _count_sentences(text: str) -> int:
