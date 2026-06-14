@@ -2277,23 +2277,34 @@ class OllamaWorker(QObject):
                 if _a.lower() not in _orig_al:
                     text = text.replace(_a, '', 1)
 
-        # Extra printf format specifiers (%s, %d, %1$s, %%, …) beyond the original count.
-        # The model sometimes hallucinates these into translations.
-        # We remove the rightmost extras (model artifacts land at the end of output).
+        # Extra printf format specifiers beyond the original count.
+        # Matches full specs including precision (%.0f, %.2f) and flags.
+        # Uses per-spec multiset matching: remove any translation spec whose
+        # type/precision doesn't appear in the original set — hallucinated specs
+        # can be anywhere in the output, not just at the tail.
         if original_text and '%' in text:
-            _FMT_RE = re.compile(r'%(?:[1-9]\$)?[sdfioxXeEgGcpn%]')
-            _orig_fmt_n = len(_FMT_RE.findall(original_text))
-            _trans_fmt_m = list(_FMT_RE.finditer(text))
-            _extra_fmt = len(_trans_fmt_m) - _orig_fmt_n
-            if _extra_fmt > 0:
-                _remove_spans = [(m.start(), m.end()) for m in _trans_fmt_m[-_extra_fmt:]]
-                _parts: list = []
-                _prev = 0
-                for _s, _e in _remove_spans:
-                    _parts.append(text[_prev:_s])
-                    _prev = _e
-                _parts.append(text[_prev:])
-                text = ''.join(_parts)
+            _FMT_RE = re.compile(r'%(?:[1-9]\$)?[-+#0]*(?:\*|\d+)?(?:\.\d+)?[sdfioxXeEfFgGcpn%]')
+            _orig_specs = [m.group() for m in _FMT_RE.finditer(original_text)]
+            _trans_m = list(_FMT_RE.finditer(text))
+            if len(_trans_m) > len(_orig_specs):
+                _orig_cnt: dict = {}
+                for _sp in _orig_specs:
+                    _orig_cnt[_sp] = _orig_cnt.get(_sp, 0) + 1
+                _remove_spans = []
+                for _m in _trans_m:
+                    _sp = _m.group()
+                    if _orig_cnt.get(_sp, 0) > 0:
+                        _orig_cnt[_sp] -= 1
+                    else:
+                        _remove_spans.append((_m.start(), _m.end()))
+                if _remove_spans:
+                    _parts: list = []
+                    _prev = 0
+                    for _s, _e in _remove_spans:
+                        _parts.append(text[_prev:_s])
+                        _prev = _e
+                    _parts.append(text[_prev:])
+                    text = ''.join(_parts)
 
         # Strip doubled-percent artifacts: "% % f" / "% %f" patterns where the model
         # re-added a "%" before a restored "% for"-type token, yielding two consecutive
