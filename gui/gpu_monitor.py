@@ -37,7 +37,7 @@ class GpuStats:
 def _read_int(path: Path) -> Optional[int]:
     try:
         return int(path.read_text().strip())
-    except Exception:
+    except BaseException:
         return None
 
 
@@ -106,7 +106,7 @@ def _read_nvidia() -> Optional[GpuStats]:
             vram_total_mb=int(parts[2]),
             temperature=int(parts[3]),
         )
-    except Exception:
+    except BaseException:
         return None
 
 
