@@ -1727,6 +1727,28 @@ class OllamaWorker(QObject):
                 if translated is None:
                     return None  # stopped
 
+            if not translated and token_map and req.original_text:
+                # Token-protection fallback: all standard retries returned empty.
+                # Fine-tuned models (translategemma3-st) sometimes emit <eos> immediately
+                # when the prompt starts with [[TK_…]] tokens because their training data
+                # never included these placeholders.  Retry once with the original
+                # (unprotected) text so the model sees familiar Bethesda tag syntax;
+                # _restore_dropped_tags (called below) will re-insert any dropped tags.
+                logger.debug(
+                    f"String {req.string_id}: Protected-text retries all empty — "
+                    "falling back to unprotected original text"
+                )
+                _fb = self._call_ollama_rewrite(
+                    req.to_system_prompt(),
+                    req.to_prompt(req.original_text),
+                    len(req.original_text),
+                    0.2,
+                )
+                if _fb:
+                    translated = self._clean_translation(
+                        _fb, req.target_lang, req.original_text, req.string_id
+                    )
+
             if not translated:
                 logger.debug(
                     f"String {req.string_id}: Empty translation from Ollama after all retries"
