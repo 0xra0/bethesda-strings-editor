@@ -7204,4 +7204,4 @@ Cochez ceux à ajouter à la liste de protection. Modifiez la catégorie si néc
         <translation>ou glissez &amp; déposez des fichiers ici</translation>
     </message>
 </context>
-</TS>
+          </TS>
