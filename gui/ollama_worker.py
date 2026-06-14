@@ -1334,6 +1334,15 @@ class OllamaWorker(QObject):
             result = self._restore_missing_newlines(result, req.original_text)
             result = self._fix_case_and_line_prefix(result, req.original_text)
 
+            # Strip trailing newlines when original has none (same guard as single path).
+            if req.original_text:
+                _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
+                if not _orig_ends_nl:
+                    while result.endswith("\n"):
+                        result = result[:-1]
+                    while result.endswith("\\n"):
+                        result = result[:-2]
+
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
 
@@ -1877,6 +1886,16 @@ class OllamaWorker(QObject):
             if translated and (leading_seps or trailing_seps):
                 translated = leading_seps + translated + trailing_seps
 
+            # Strip trailing newlines the model appended when the original has none.
+            # Handles both actual \n and the two-character literal \n escape.
+            if translated and req.original_text:
+                _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
+                if not _orig_ends_nl:
+                    while translated.endswith("\n"):
+                        translated = translated[:-1]
+                    while translated.endswith("\\n"):
+                        translated = translated[:-2]
+
             if translated and cache_key and self.translation_cache is not None:
                 self.translation_cache.set(cache_key, translated)
 
@@ -2113,6 +2132,11 @@ class OllamaWorker(QObject):
                 pos += 1
                 while pos < trans_len and translated[pos] in ('"', "'", '»', ')'):
                     pos += 1
+            # Don't append a trailing newline — if the position mapped past the
+            # end of the translation the original's newline is a format artifact,
+            # not semantic content that should be forced onto the translation.
+            if pos >= trans_len:
+                continue
             if any(abs(pos - ep) <= 10 for ep in existing):
                 continue
             skip = 0
