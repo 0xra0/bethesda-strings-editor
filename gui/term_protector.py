@@ -61,10 +61,10 @@ class TermProtector:
 
     # ── Structural patterns that must ALWAYS be protected ──
     STRUCTURAL_PATTERNS = [
-        # Only protect single-word ASCII bracket tokens (game codes like [TK:…], [MALE], [FEMALE]).
+        # Only protect single-word ASCII bracket tokens (game codes like [Attack], [OPTIMIZED], [DataMenu]).
         # Cyrillic content ([Ложь], [Соврать]) is left unprotected so the AI translates it.
-        # Bracket spans that contain spaces (prose sentences) are also left unprotected so
-        # the AI translates the English text inside them.
+        # Bracket spans that contain spaces (prose sentences or dialogue choices) are also left
+        # unprotected so the AI translates the English text inside them.
         (r"\[[^\]\sЀ-ӿ]+\]", "bracket_id"),
         (r"\b[0-9A-Fa-f]{8}\b", "form_id"),
         (r"\{[^}]*\}", "brace_var"),
@@ -1079,7 +1079,7 @@ class TermProtector:
         def _fix_sgl(m: re.Match) -> str:
             strip_k, _ = self._norm_inner(m.group(1))
             # Only substitute when the normalised content matches a known token
-            # (prevents game bracket-tags like [MALE] from being mis-identified).
+            # (prevents game bracket-tags like [Attack] from being mis-identified).
             found = lookup.get(strip_k)
             return found if found is not None else m.group(0)
 

@@ -67,15 +67,13 @@ _RU_UK_FALSE_FRIENDS: Dict[str, str] = {
 _TAG_RE = re.compile(
     r"<[A-Za-z][^>]*>"          # opening tags: <Alias=…>, <font …>
     r"|</[A-Za-z][^>]*>"        # closing tags
-    r"|\[[A-Z][A-Za-z0-9_/]+\]" # bracket tags: [PLYR] [MALE] [FEMALE]
+    r"|\[[A-Z][A-Za-z0-9_/]+\]" # bracket tags: [ATTACK] [OPTIMIZED] [DataMenu]
     r"|%[sdfoxXceEgGpn%]"       # printf specifiers
     r"|\{[^}]+\}"               # brace variables
     r"|\\[nt\"]",               # escape sequences
     re.IGNORECASE,
 )
 
-# [MALE] / [FEMALE] / [MASC] / [FEMI] conditional blocks
-_CONDITIONAL_RE = re.compile(r"\[(MALE|FEMALE|MASC|FEMI|PLURAL|SINGULAR)\]", re.IGNORECASE)
 
 # Multiple printf vars that may change order in translation
 _PRINTF_RE = re.compile(r"%[sdfoxXceEgGpn]")
@@ -130,7 +128,6 @@ _CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 _DEFAULT_WEIGHTS: Dict[str, float] = {
     "length_chars":       1.0,
     "tag_density":        1.0,
-    "conditional_blocks": 1.0,
     "multi_printf":       1.0,
     "false_friends":      1.0,
     "idioms":             1.0,
@@ -272,7 +269,6 @@ class PreTranslationEstimator:
 
         _add("length_chars",       *self._check_length(stripped))
         _add("tag_density",        *self._check_tag_density(stripped))
-        _add("conditional_blocks", *self._check_conditionals(stripped))
         _add("multi_printf",       *self._check_multi_printf(stripped))
 
         ff_penalty, ff_found = self._check_false_friends(stripped, lang)
@@ -302,7 +298,6 @@ class PreTranslationEstimator:
         return {
             "length_chars":       len(text) > 200,
             "tag_density":        self._tag_density_ratio(text) > 0.25,
-            "conditional_blocks": bool(_CONDITIONAL_RE.search(text)),
             "multi_printf":       len(_PRINTF_RE.findall(text)) >= 2,
             "false_friends":      bool(self._check_false_friends(text, lang)[1]),
             "idioms":             lang == "english" and bool(_IDIOM_RE.search(text)),
@@ -360,18 +355,6 @@ class PreTranslationEstimator:
             severity=SEVERITY_WARNING,
             code="HIGH_TAG_DENSITY",
             message=f"High tag density ({count} tags, {ratio:.0%}) — AI likely to drop or corrupt tags",
-        )
-
-    @staticmethod
-    def _check_conditionals(text: str) -> Tuple[float, Optional[QualityIssue]]:
-        found = _CONDITIONAL_RE.findall(text)
-        if not found:
-            return 0, None
-        unique = sorted({m.upper() for m in found})
-        return 12, QualityIssue(
-            severity=SEVERITY_WARNING,
-            code="CONDITIONAL_BLOCKS",
-            message=f"Contains conditional blocks {unique} — gender/number agreement must be preserved exactly",
         )
 
     @staticmethod

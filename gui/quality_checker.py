@@ -2,7 +2,7 @@
 Post-translation quality checker for Bethesda/Starfield game strings.
 
 Detects issues that would break text in-game:
-  - Missing/extra game tags (<Alias=...>, <br>, [PLYR], %s, etc.)
+  - Missing/extra game tags (<Alias=...>, <br>, [Attack], %s, etc.)
   - Empty or untranslated strings
   - Encoding failures for the target file format
   - Suspicious length ratios (hallucination / truncation)
@@ -153,7 +153,7 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r"</font>",                         "font_close"),
     # xml_close excludes </font> (already counted by font_close above)
     (r"</(?!font>)[A-Za-z][A-Za-z0-9]*>", "xml_close"),
-    # Bethesda bracket tags: [MALE] [FEMALE] [M] [F] [N] etc. (* not + so single-char matches)
+    # Bethesda bracket tags: [Attack] [OPTIMIZED] [DataMenu] etc. (* not + so single-char matches)
     (r"\[[A-Z][A-Za-z0-9_/]*\]",        "bracket_tag"),
     # xTranslator / toolkit tokens: [tk_Something]
     (r"\[tk_[A-Za-z0-9_]*\]",           "tk_tag"),

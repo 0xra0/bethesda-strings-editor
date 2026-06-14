@@ -523,7 +523,7 @@ class TranslationRequest:
             "and all similar single-action bindings.\n"
             "   c) PRESERVE unchanged — NPC name references and variable placeholders: "
             "[Andreja], [Vasco], [Hunter], [Sakharov], [Starborn], [Name], "
-            "[MALE], [FEMALE], [PLYR].\n"
+            ".\n"
             "   d) TRANSLATE — ALL-CAPS status/document codes and sentence-case labels: "
             "[CANCELED], [CRITICAL], [DELETED], [DELIVERED], [EMPTIED], [OPTIMIZED], "
             "[PARTICULATES], [PINGED], [PING], [REDACTED], [VATS]; "
@@ -1799,7 +1799,7 @@ class OllamaWorker(QObject):
             #   1. Multi-paragraph book notes where STRUCT_BREAK tokens inside brackets
             #      made the model treat the whole span as an opaque formatting token.
             #   2. Single-line prose sentences in brackets that the model left untranslated.
-            # Skips short space-free codes like [MALE], [PLYR], [TK:000001].
+            # Skips short space-free codes like [Attack], [OPTIMIZED], [DataMenu].
             if translated and req.source_lang == "en":
                 _post_bk_re = re.compile(r'\[((?:[^\[\]]|\[\[[^\[\]]*\]\])*)\]', re.DOTALL)
 

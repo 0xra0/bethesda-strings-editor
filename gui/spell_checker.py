@@ -53,7 +53,7 @@ _DICT_SEARCH_PATHS: List[Path] = [
 # ── Strip game tokens before spell-checking ───────────────────────────────────
 _STRIP_RE = re.compile(
     r"<[^>]+>"                                       # <Alias=...>, <br/>, etc.
-    r"|\[[A-Z][A-Za-z0-9_/]*\]"                     # [PLYR], [MALE], [F]
+    r"|\[[A-Z][A-Za-z0-9_/]*\]"                     # [Attack], [OPTIMIZED], [DataMenu]
     r"|\[tk_[A-Za-z0-9_]*\]"                        # [tk_something]
     r"|%[-+0 #]*\d*(?:\.\d+)?[sdfoxXciuFeEgGp%]"   # printf: %s, %.0f, etc.
     r"|\{[^}]+\}"                                    # {variable}

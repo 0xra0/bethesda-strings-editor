@@ -283,7 +283,7 @@ class ClaudeClient:
             f"specializing in {src_name} → {tgt_name} translation. "
             f"Be concise and actionable. Focus on accuracy, natural game dialogue style, "
             f"Bethesda game terminology, and format-tag preservation "
-            f"(<Alias=…>, [PLYR], [MALE]/[FEMALE], %s, \\n, etc.)."
+            f"(<Alias=…>, [Attack], [OPTIMIZED], %s, \\n, etc.)."
         )
         user = (
             f"Original ({src_name}):\n{original}\n\n"
