@@ -135,7 +135,10 @@ _DEFAULT_WEIGHTS: Dict[str, float] = {
     "mixed_script":       1.0,
     "weird_format":       1.0,
     "multi_sentence":     1.0,
+    "conditional_blocks": 1.0,
 }
+
+_CONDITIONAL_TAG_RE = re.compile(r'\[(?:MALE|FEMALE|PLYR|PC|NPC)\]', re.IGNORECASE)
 
 
 # ── Data classes ───────────────────────────────────────────────────────────────
@@ -283,10 +286,11 @@ class PreTranslationEstimator:
         if lang == "english":
             _add("idioms", *self._check_idioms(stripped))
 
-        _add("ambiguous_pronoun", *self._check_pronoun_ambiguity(stripped, lang))
-        _add("mixed_script",      *self._check_mixed_script(stripped, lang))
-        _add("weird_format",      *self._check_weird_format(stripped))
-        _add("multi_sentence",    *self._check_multi_sentence(stripped))
+        _add("ambiguous_pronoun",  *self._check_pronoun_ambiguity(stripped, lang))
+        _add("mixed_script",       *self._check_mixed_script(stripped, lang))
+        _add("weird_format",       *self._check_weird_format(stripped))
+        _add("multi_sentence",     *self._check_multi_sentence(stripped))
+        _add("conditional_blocks", *self._check_conditional_blocks(stripped))
 
         score = max(0, min(100, 100 - int(penalty)))
         suggest = score < 60 or any(i.severity == SEVERITY_ERROR for i in issues)
@@ -308,8 +312,9 @@ class PreTranslationEstimator:
                     and re.search(r"[Ѐ-ӿ]", text)
                     and re.search(r"[A-Za-z]", text))
             ),
-            "weird_format":       bool(_REPEATED_CHAR_RE.search(text)),
-            "multi_sentence":     self._sentence_count(text) > 2,
+            "weird_format":        bool(_REPEATED_CHAR_RE.search(text)),
+            "multi_sentence":      self._sentence_count(text) > 2,
+            "conditional_blocks":  len(_CONDITIONAL_TAG_RE.findall(text)) >= 2,
         }
 
     # ── Individual checks ──────────────────────────────────────────────────────
@@ -473,6 +478,18 @@ class PreTranslationEstimator:
             severity=SEVERITY_WARNING,
             code="MANY_SENTENCES",
             message=f"Long multi-sentence string ({n} sentences)",
+        )
+
+    @staticmethod
+    def _check_conditional_blocks(text: str) -> Tuple[float, Optional[QualityIssue]]:
+        """Detect Bethesda gender/player conditional tags ([MALE]/[FEMALE]/[PLYR] etc.)."""
+        matches = _CONDITIONAL_TAG_RE.findall(text)
+        if len(matches) < 2:
+            return 0, None
+        return 12, QualityIssue(
+            severity=SEVERITY_WARNING,
+            code="CONDITIONAL_BLOCKS",
+            message=f"Contains gender/player conditional tags ({', '.join(dict.fromkeys(matches))}) — both branches must be translated",
         )
 
     # ── Weight persistence ─────────────────────────────────────────────────────
