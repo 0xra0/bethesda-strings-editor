@@ -2277,15 +2277,14 @@ class OllamaWorker(QObject):
                 if _a.lower() not in _orig_al:
                     text = text.replace(_a, '', 1)
 
-        # Extra printf format specifiers beyond the original count.
-        # Matches full specs including precision (%.0f, %.2f) and flags.
-        # Uses per-spec multiset matching: remove any translation spec whose
-        # type/precision doesn't appear in the original set — hallucinated specs
-        # can be anywhere in the output, not just at the tail.
+        # Printf format specifier correction: remove extras, then fix wrong types.
+        # Matches full specs including precision (%.0f, %.2f) and flags, no space flag.
         if original_text and '%' in text:
             _FMT_RE = re.compile(r'%(?:[1-9]\$)?[-+#0]*(?:\*|\d+)?(?:\.\d+)?[sdfioxXeEfFgGcpn%]')
             _orig_specs = [m.group() for m in _FMT_RE.finditer(original_text)]
             _trans_m = list(_FMT_RE.finditer(text))
+
+            # Step 1: remove hallucinated extras (wrong type or surplus copy).
             if len(_trans_m) > len(_orig_specs):
                 _orig_cnt: dict = {}
                 for _sp in _orig_specs:
@@ -2305,6 +2304,23 @@ class OllamaWorker(QObject):
                         _prev = _e
                     _parts.append(text[_prev:])
                     text = ''.join(_parts)
+                    _trans_m = list(_FMT_RE.finditer(text))
+
+            # Step 2: fix wrong spec types when counts match but types differ.
+            # Models often substitute %s/%d for %.0f; the game engine fills specs
+            # positionally so the type must match the original exactly.
+            _trans_specs = [m.group() for m in _trans_m]
+            if _orig_specs and len(_orig_specs) == len(_trans_specs) and _orig_specs != _trans_specs:
+                _parts2: list = []
+                _prev2 = 0
+                for _i, _m in enumerate(_trans_m):
+                    if _trans_specs[_i] != _orig_specs[_i]:
+                        _parts2.append(text[_prev2:_m.start()])
+                        _parts2.append(_orig_specs[_i])
+                        _prev2 = _m.end()
+                if _parts2:
+                    _parts2.append(text[_prev2:])
+                    text = ''.join(_parts2)
 
         # Strip doubled-percent artifacts: "% % f" / "% %f" patterns where the model
         # re-added a "%" before a restored "% for"-type token, yielding two consecutive
