@@ -144,6 +144,23 @@ class _DownloadWorker(QRunnable):
             self.signals.error.emit(str(exc))
 
 
+class _ModInfoWorker(QRunnable):
+    def __init__(self, client: NexusClient, domain: str, mod_id: int) -> None:
+        super().__init__()
+        self.setAutoDelete(True)
+        self._client = client
+        self._domain = domain
+        self._mod_id = mod_id
+        self.signals = _WorkerSignals()
+
+    def run(self) -> None:
+        try:
+            data = self._client.get_mod(self._domain, self._mod_id)
+            self.signals.finished.emit(data)
+        except Exception as exc:
+            self.signals.error.emit(str(exc))
+
+
 # ── Thumbnail loading ─────────────────────────────────────────────────────────
 
 class _ThumbnailSignals(QObject):
@@ -173,6 +190,37 @@ class _ThumbnailLoader(QRunnable):
                 cache_file.parent.mkdir(parents=True, exist_ok=True)
                 cache_file.write_bytes(data)
             self.signals.loaded.emit(self._card, data)
+        except Exception:
+            pass
+
+
+class _BannerSignals(QObject):
+    loaded = Signal(int, bytes)   # (mod_id, raw image bytes)
+
+
+class _BannerLoader(QRunnable):
+    def __init__(self, url: str, mod_id: int, cache_dir: Path) -> None:
+        super().__init__()
+        self.setAutoDelete(True)
+        self._url      = url
+        self._mod_id   = mod_id
+        self._cache_dir = cache_dir
+        self.signals   = _BannerSignals()
+
+    def run(self) -> None:
+        key        = hashlib.md5(self._url.encode()).hexdigest()
+        cache_file = self._cache_dir / "banner_cache" / key
+        try:
+            if cache_file.exists():
+                data = cache_file.read_bytes()
+            else:
+                resp = _requests.get(self._url, timeout=15)
+                if not resp.ok:
+                    return
+                data = resp.content
+                cache_file.parent.mkdir(parents=True, exist_ok=True)
+                cache_file.write_bytes(data)
+            self.signals.loaded.emit(self._mod_id, data)
         except Exception:
             pass
 
@@ -405,6 +453,7 @@ class NexusModsBrowserDialog(QDialog):
         self._active_download: Optional[_DownloadWorker] = None
         self._cards: List[_ModCard] = []
         self._selected_card: Optional[_ModCard] = None
+        self._banner_mod_id: int = -1
 
         if api_key:
             try:
@@ -500,6 +549,13 @@ class NexusModsBrowserDialog(QDialog):
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(4, 0, 0, 0)
         layout.setSpacing(6)
+
+        # Banner image — populated from the full mod info API when a card is clicked
+        self._banner_label = QLabel()
+        self._banner_label.setFixedHeight(180)
+        self._banner_label.setAlignment(Qt.AlignCenter)
+        self._banner_label.setStyleSheet("background: #0d0d1a; border-radius: 4px;")
+        layout.addWidget(self._banner_label)
 
         self._mod_name_label = QLabel(self.tr("(click a mod card)"))
         font = QFont()
@@ -695,6 +751,13 @@ class NexusModsBrowserDialog(QDialog):
         worker.signals.error.connect(lambda e: self._set_status(f"Files: {e}", error=True))
         QThreadPool.globalInstance().start(worker)
 
+        # Fetch full mod info for banner image + version field
+        self._banner_mod_id = result.mod_id
+        self._banner_label.clear()
+        info_worker = _ModInfoWorker(self._client, domain, result.mod_id)
+        info_worker.signals.finished.connect(self._on_mod_info_done)
+        QThreadPool.globalInstance().start(info_worker)
+
     def _show_mod_detail(self, r: NexusSearchResult) -> None:
         self._mod_name_label.setText(r.name)
         ts = datetime.fromtimestamp(r.updated_ts, tz=timezone.utc) if r.updated_ts else None
@@ -707,6 +770,48 @@ class NexusModsBrowserDialog(QDialog):
         meta_parts.append(f"updated {date_str}")
         self._mod_meta_label.setText("  ·  ".join(meta_parts))
         self._mod_summary.setPlainText(r.summary)
+
+    @Slot(object)
+    def _on_mod_info_done(self, data: dict) -> None:
+        if not self._current_mod:
+            return
+        # Discard results for a mod we've since moved away from
+        if data.get("mod_id") != self._banner_mod_id:
+            return
+        # Update meta label with version from the real mod info
+        version = data.get("version", "")
+        r = self._current_mod
+        ts = datetime.fromtimestamp(r.updated_ts, tz=timezone.utc) if r.updated_ts else None
+        date_str = ts.strftime("%Y-%m-%d") if ts else "—"
+        meta_parts = [f"by {r.author}"] if r.author else []
+        if version:
+            meta_parts.append(f"v{version}")
+        if r.downloads:
+            meta_parts.append(f"↓ {r.downloads:,}")
+        if r.endorsements:
+            meta_parts.append(f"★ {r.endorsements:,}")
+        meta_parts.append(f"updated {date_str}")
+        self._mod_meta_label.setText("  ·  ".join(meta_parts))
+        # Load the full banner image (picture_url is larger than thumbnail_url)
+        pic = data.get("picture_url", "")
+        if pic:
+            loader = _BannerLoader(pic, self._banner_mod_id, self._cache_dir)
+            loader.signals.loaded.connect(self._on_banner_loaded)
+            QThreadPool.globalInstance().start(loader)
+
+    @Slot(int, bytes)
+    def _on_banner_loaded(self, mod_id: int, data: bytes) -> None:
+        if mod_id != self._banner_mod_id:
+            return
+        px = QPixmap()
+        if not px.loadFromData(data):
+            return
+        w = self._banner_label.width() or 600
+        h = self._banner_label.height()
+        scaled = px.scaled(w, h, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        x = max(0, (scaled.width()  - w) // 2)
+        y = max(0, (scaled.height() - h) // 2)
+        self._banner_label.setPixmap(scaled.copy(x, y, w, h))
 
     @Slot(object)
     def _on_files_done(self, files) -> None:

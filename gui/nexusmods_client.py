@@ -366,6 +366,18 @@ class NexusClient:
             ))
         return results
 
+    # ── Mod info ──────────────────────────────────────────────────────────────
+
+    def get_mod(self, domain: str, mod_id: int) -> dict:
+        """Fetch full mod info from the REST API.  Returns the raw JSON dict."""
+        url = f"{_API_BASE}/games/{domain}/mods/{mod_id}.json"
+        try:
+            resp = self._session.get(url, timeout=_TIMEOUT)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.RequestException as exc:
+            raise NexusModsError(f"Mod info request failed: {exc}") from exc
+
     # ── Mod files ─────────────────────────────────────────────────────────────
 
     def mod_files(self, domain: str, mod_id: int) -> List[NexusModFile]:
