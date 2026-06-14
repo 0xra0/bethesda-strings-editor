@@ -3422,7 +3422,7 @@ class OllamaWorker(QObject):
             try:
                 # wait=True so we don't return until threads have exited.
                 executor.shutdown(wait=True, cancel_futures=True)
-            except Exception as exc:
+            except BaseException as exc:
                 logger.debug("executor shutdown during close(): %s", exc)
 
         try:

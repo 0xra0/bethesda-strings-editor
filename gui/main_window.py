@@ -4789,7 +4789,7 @@ class MainWindow(QMainWindow):
             self._audit_log.app_close()
             self._save_window_state()
             logger.info("Application closed")
-        except Exception as e:
+        except BaseException as e:
             logger.error(f"Error during close: {e}", exc_info=True)
         finally:
             event.accept()
