@@ -1926,9 +1926,11 @@ class OllamaWorker(QObject):
 
         except requests.exceptions.Timeout:
             used_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
-            raise Exception(
-                f"Request timeout (>{used_timeout}s). Ollama is taking too long to respond."
+            logger.warning(
+                "String %s: Ollama timed out after %ds — skipping",
+                req.string_id, used_timeout,
             )
+            return None
         except requests.exceptions.ConnectionError:
             with QMutexLocker(self._mutex):
                 if self._stop_flag:
