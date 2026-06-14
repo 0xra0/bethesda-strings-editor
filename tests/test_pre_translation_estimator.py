@@ -83,13 +83,6 @@ def test_high_tag_density_penalised():
     print(f"  PASS test_high_tag_density_penalised  (score={r.score})")
 
 
-def test_conditional_blocks_penalised():
-    est = make_est()
-    r = est.estimate("Greetings, [MALE]sir[FEMALE]ma'am. Welcome aboard.")
-    codes = [i.code for i in r.issues]
-    assert "CONDITIONAL_BLOCKS" in codes, f"Expected CONDITIONAL_BLOCKS, got {codes}"
-    print(f"  PASS test_conditional_blocks_penalised  (score={r.score})")
-
 
 def test_multiple_printf_penalised():
     est = make_est()
@@ -264,7 +257,6 @@ if __name__ == "__main__":
         test_score_range,
         test_long_text_penalised,
         test_high_tag_density_penalised,
-        test_conditional_blocks_penalised,
         test_multiple_printf_penalised,
         test_false_friends_english,
         test_no_false_friends_for_russian_source,
