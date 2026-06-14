@@ -644,10 +644,12 @@ class OllamaWorker(QObject):
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # The 300s session default is too short when requests queue at Ollama.
-            # translategemma3-st (same 12B size) needs no timeout override because
-            # its fine-tune produces very concise output; mamaylm is more verbose.
-            "timeout": 480,
+            # Ollama serialises GPU work, so 10 parallel requests (the default) each
+            # wait behind 9 others before the GPU starts — queue time alone can exceed
+            # 480s.  Cap at 4 to keep queue depth manageable, and raise timeout to 720s
+            # to cover both queue wait and generation time on slower hardware.
+            "timeout": 720,
+            "max_concurrent": 4,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
