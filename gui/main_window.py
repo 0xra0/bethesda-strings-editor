@@ -6347,18 +6347,95 @@ class MainWindow(QMainWindow):
 
     def _show_about_dialog(self):
         """Show About dialog."""
-        QMessageBox.about(
-            self,
-            self.tr("About Bethesda Strings AI Translator"),
-            self.tr(
-                "<b>Bethesda Strings AI Translator</b><br>"
-                "AI-assisted localization tool for Starfield and other Bethesda games.<br><br>"
-                "Supports .strings / .dlstrings / .ilstrings and ESP/ESM files.<br>"
-                "Translation via local Ollama models.<br><br>"
-                "<b>Keyboard Shortcuts:</b> F1<br>"
-                "<b>What's This?:</b> Shift+F1, then click any widget"
-            ),
+        try:
+            from _version import __version__
+        except ImportError:
+            __version__ = "dev"
+
+        import sys
+        from PySide6 import __version__ as pyside_version
+
+        dlg = QDialog(self)
+        dlg.setWindowTitle(self.tr("About Bethesda Strings AI Translator"))
+        dlg.setMinimumWidth(560)
+        dlg.setMaximumWidth(620)
+
+        layout = QVBoxLayout(dlg)
+        layout.setSpacing(12)
+        layout.setContentsMargins(24, 20, 24, 16)
+
+        # Title + version
+        title = QLabel(
+            f"<h2 style='margin:0'>Bethesda Strings AI Translator</h2>"
+            f"<p style='margin:2px 0 0 0; color:#888'>Version {__version__}</p>"
         )
+        title.setTextFormat(Qt.TextFormat.RichText)
+        layout.addWidget(title)
+
+        sep = QFrame()
+        sep.setFrameShape(QFrame.Shape.HLine)
+        sep.setStyleSheet("color: #444;")
+        layout.addWidget(sep)
+
+        # Description
+        desc = QLabel(self.tr(
+            "AI-assisted localization tool for Starfield and other Bethesda games.<br>"
+            "Designed for <b>Ukrainian</b> localization of Starfield string files."
+        ))
+        desc.setWordWrap(True)
+        desc.setTextFormat(Qt.TextFormat.RichText)
+        layout.addWidget(desc)
+
+        # Feature grid
+        features_html = (
+            "<table cellspacing='4' style='margin-top:4px'>"
+            "<tr><td style='color:#888'>File formats</td>"
+            "<td>.strings · .dlstrings · .ilstrings · ESP/ESM/ESL · BA2 · SST XML</td></tr>"
+            "<tr><td style='color:#888'>AI backends</td>"
+            "<td>Ollama (local) · Claude API (Haiku / Sonnet / Opus)</td></tr>"
+            "<tr><td style='color:#888'>QA tools</td>"
+            "<td>Tag checker · AI QC model · Spell checker · Gender/Register checker</td></tr>"
+            "<tr><td style='color:#888'>Glossary</td>"
+            "<td>CSV / TBX / JSON · 8000+ protected terms · Lore RAG</td></tr>"
+            "<tr><td style='color:#888'>Workflow</td>"
+            "<td>Translation Memory · Batch translate · Version diff · NexusMods browser</td></tr>"
+            "</table>"
+        )
+        features = QLabel(features_html)
+        features.setTextFormat(Qt.TextFormat.RichText)
+        layout.addWidget(features)
+
+        sep2 = QFrame()
+        sep2.setFrameShape(QFrame.Shape.HLine)
+        sep2.setStyleSheet("color: #333;")
+        layout.addWidget(sep2)
+
+        # Tech stack + links
+        tech = QLabel(
+            f"<p style='margin:0'>Built with <b>Python {sys.version.split()[0]}</b>"
+            f" · <b>PySide6 {pyside_version}</b></p>"
+            f"<p style='margin:4px 0 0 0'>"
+            f"<a href='https://github.com/0xra0/bethesda-strings-editor' style='color:#4a9eff'>"
+            f"github.com/0xra0/bethesda-strings-editor</a></p>"
+        )
+        tech.setTextFormat(Qt.TextFormat.RichText)
+        tech.setOpenExternalLinks(True)
+        layout.addWidget(tech)
+
+        # Keyboard shortcuts hint
+        hint = QLabel(self.tr(
+            "<span style='color:#666'>Press <b>F1</b> for all keyboard shortcuts · "
+            "<b>Shift+F1</b> then click any widget for context help</span>"
+        ))
+        hint.setTextFormat(Qt.TextFormat.RichText)
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
+
+        btns = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+        btns.accepted.connect(dlg.accept)
+        layout.addWidget(btns)
+
+        dlg.exec()
 
     def _show_first_run_tips(self):
         """Show a one-time tip dialog for first-time users."""
