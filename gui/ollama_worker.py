@@ -1795,21 +1795,22 @@ class OllamaWorker(QObject):
                     translated = translated.replace("\\" + "н", "\n")
 
             # Post-translation: sub-translate any bracket spans still in English.
-            # The model often preserves [multi-paragraph publisher/author notes] verbatim
-            # because STRUCT_BREAK tokens inside them look like formatting tokens (rule 2).
-            # After restore_text() the bracket inner content has actual terms (not [[TK_*]])
-            # so the sub-call's term protection and STRUCT_BREAK work correctly.
-            # Scoped to EN→UK; inner must have a newline (multi-paragraph) and no Cyrillic.
-            if translated and req.source_lang == "en" and req.target_lang.lower() in ("uk", "ukrainian"):
+            # Handles two cases:
+            #   1. Multi-paragraph book notes where STRUCT_BREAK tokens inside brackets
+            #      made the model treat the whole span as an opaque formatting token.
+            #   2. Single-line prose sentences in brackets that the model left untranslated.
+            # Skips short space-free codes like [MALE], [PLYR], [TK:000001].
+            if translated and req.source_lang == "en":
                 _post_bk_re = re.compile(r'\[((?:[^\[\]]|\[\[[^\[\]]*\]\])*)\]', re.DOTALL)
 
                 def _retranslate_if_english(m: re.Match) -> str:  # type: ignore[type-arg]
                     inner = m.group(1)
-                    if "\n" not in inner:
-                        return m.group(0)  # single-line bracket — leave it
+                    # Skip single-word game codes (no spaces, no newlines)
+                    if " " not in inner and "\n" not in inner:
+                        return m.group(0)
                     _cyr = sum(1 for c in inner if "Ѐ" <= c <= "ӿ")
                     _lat = sum(1 for c in inner if c.isalpha() and c.isascii())
-                    if _cyr > 0 or _lat < 20:
+                    if _cyr > 0 or _lat < 10:
                         return m.group(0)  # already translated or too short
                     from dataclasses import replace as _dc_replace_bk
                     _bk_req = _dc_replace_bk(

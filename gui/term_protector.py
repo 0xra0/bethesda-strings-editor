@@ -61,10 +61,11 @@ class TermProtector:
 
     # ── Structural patterns that must ALWAYS be protected ──
     STRUCTURAL_PATTERNS = [
-        # Only protect ASCII bracket tokens (game codes like [TK:…], [MALE], [FEMALE]).
-        # Cyrillic content ([Ложь], [Соврать]) is left unprotected so the AI
-        # translates it and keeps the brackets in its output.
-        (r"\[(?!(?:Firstname|Secondname|Thirdname|Fourthname)\])[^\]Ѐ-ӿ]+\]", "bracket_id"),
+        # Only protect single-word ASCII bracket tokens (game codes like [TK:…], [MALE], [FEMALE]).
+        # Cyrillic content ([Ложь], [Соврать]) is left unprotected so the AI translates it.
+        # Bracket spans that contain spaces (prose sentences) are also left unprotected so
+        # the AI translates the English text inside them.
+        (r"\[(?!(?:Firstname|Secondname|Thirdname|Fourthname)\])[^\]\sЀ-ӿ]+\]", "bracket_id"),
         (r"\b[0-9A-Fa-f]{8}\b", "form_id"),
         (r"\{[^}]*\}", "brace_var"),
         (r"%[-+0 #]*\d*(?:\.\d+)?[sdfoxXciuFeEgGp%]", "printf_var"),
