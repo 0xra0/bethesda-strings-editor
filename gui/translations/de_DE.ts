@@ -1169,58 +1169,58 @@ Zeichen ohne sicheren Ersatz bleiben unverändert.</translation>
     <message>
         <location filename="../gender_dialog.py" line="59"/>
         <source>Gender Agreement Check – Ukrainian</source>
-        <translation type="unfinished"></translation>
+        <translation>Genus-Kongruenzprüfung – Ukrainisch</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="74"/>
         <source>{n} adjective/noun gender mismatch(es) found — double-click a row to jump to the string.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} Genus-Abweichung(en) zwischen Adjektiv und Substantiv gefunden – Doppelklick auf eine Zeile springt zur Zeichenfolge.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="79"/>
         <source>No gender agreement issues found in the current translation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Probleme mit der Genus-Kongruenz in der aktuellen Übersetzung gefunden.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="86"/>
         <location filename="../gender_dialog.py" line="143"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="96"/>
         <source>Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="97"/>
         <source>String ID</source>
-        <translation type="unfinished">Zeichenketten-ID</translation>
+        <translation>Zeichenketten-ID</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="98"/>
         <source>Adjective</source>
-        <translation type="unfinished"></translation>
+        <translation>Adjektiv</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="99"/>
         <source>Adj gender</source>
-        <translation type="unfinished"></translation>
+        <translation>Adj.-Genus</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="100"/>
         <source>Noun</source>
-        <translation type="unfinished"></translation>
+        <translation>Substantiv</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="101"/>
         <source>Noun gender</source>
-        <translation type="unfinished"></translation>
+        <translation>Substantiv-Genus</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="138"/>
         <source>Jump to String in Table</source>
-        <translation type="unfinished">Zur Zeichenkette in der Tabelle springen</translation>
+        <translation>Zur Zeichenkette in der Tabelle springen</translation>
     </message>
 </context>
 <context>
@@ -2341,80 +2341,83 @@ Zusammen mit {loaded} laden, um ein vollständiges Wörterbuch zu erhalten?</tra
     <message>
         <location filename="../main_window.py" line="1403"/>
         <source>Check &amp;Register (ти/ви)…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Register prüfen (ти/ви)…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1408"/>
         <source>Detect NPC speakers whose translated lines mix informal (ти) and
 formal (ви) address when speaking to the player. (Ctrl+Alt+R)</source>
-        <translation type="unfinished"></translation>
+        <translation>NPC-Sprecher erkennen, deren übersetzte Zeilen beim Ansprechen des Spielers
+informelle (ти) und formelle (ви) Anrede mischen. (Ctrl+Alt+R)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1416"/>
         <source>Check &amp;Gender Agreement…</source>
-        <translation type="unfinished"></translation>
+        <translation>Genus-&amp;Kongruenz prüfen…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1421"/>
         <source>Scan translated strings for adjective/noun gender agreement
 errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
-        <translation type="unfinished"></translation>
+        <translation>Übersetzte Zeichenfolgen auf Fehler bei der Genus-Kongruenz von
+Adjektiv und Substantiv prüfen (ukrainische Grammatik). (Ctrl+Alt+G)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1429"/>
         <source>&amp;Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sit&amp;zungen</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1432"/>
         <source>&amp;New Session…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neue Sitzung…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1436"/>
         <source>Start a named work session that saves your search filter, cursor, and per-session translation count. (Ctrl+Shift+N)</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine benannte Arbeitssitzung starten, die Ihren Suchfilter, die Cursorposition und den Übersetzungszähler pro Sitzung speichert. (Ctrl+Shift+N)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1443"/>
         <source>&amp;Save Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung &amp;speichern</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1451"/>
         <source>Save Session &amp;As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung speichern &amp;unter…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1460"/>
         <source>&amp;Manage Sessions…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungen &amp;verwalten…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1467"/>
         <source>Recent Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Sitzungen</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1650"/>
         <source>Check for &amp;Updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach &amp;Updates suchen…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2140"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle unterstützten Dateien (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;Zeichenfolgendateien (*.strings *.dlstrings *.ilstrings);;Plugin-Dateien (*.esp *.esm *.esl);;BA2-Archive (*.ba2 *.BA2);;Interface-TXT-Dateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2166"/>
         <source>Unsupported File</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht unterstützte Datei</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2168"/>
         <source>This .txt file does not appear to be a Starfield interface translation file.
 Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese .txt-Datei scheint keine Starfield-Interface-Übersetzungsdatei zu sein.
+Erwartetes Format: $KEY&lt;TAB&gt;WERT-Zeilen, kodiert als UTF-16.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2276"/>
@@ -2471,13 +2474,14 @@ Sein Text ist in begleitenden .strings/.dlstrings/.ilstrings Dateien gespeichert
     <message>
         <location filename="../main_window.py" line="2414"/>
         <source>Encoding: utf-16</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodierung: utf-16</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2438"/>
         <source>Failed to load TXT:
 {error}</source>
-        <translation type="unfinished"></translation>
+        <translation>TXT konnte nicht geladen werden:
+{error}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2574"/>
@@ -2487,7 +2491,7 @@ Sein Text ist in begleitenden .strings/.dlstrings/.ilstrings Dateien gespeichert
     <message>
         <location filename="../main_window.py" line="2576"/>
         <source>Saved ✓  {name}</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeichert ✓  {name}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2586"/>
@@ -2500,7 +2504,7 @@ Sein Text ist in begleitenden .strings/.dlstrings/.ilstrings Dateien gespeichert
     <message>
         <location filename="../main_window.py" line="2604"/>
         <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Interface-TXT-Dateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2610"/>
@@ -2669,12 +2673,12 @@ Sein Text ist in begleitenden .strings/.dlstrings/.ilstrings Dateien gespeichert
     <message>
         <location filename="../main_window.py" line="3192"/>
         <source>{n} strings translated</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} Zeichenfolgen übersetzt</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3199"/>
         <source>{ok} translated, {fail} failed</source>
-        <translation type="unfinished"></translation>
+        <translation>{ok} übersetzt, {fail} fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3240"/>
@@ -2801,12 +2805,12 @@ Alle mit Qualitäts-Feedback-Hinweisen neu übersetzen?</translation>
     <message>
         <location filename="../main_window.py" line="4536"/>
         <source>AI-fixing {n} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-Korrektur von {n} Zeichenfolge(n)…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4543"/>
         <source>AI Fix {current}/{total}…</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-Korrektur {current}/{total}…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4682"/>
@@ -2949,12 +2953,12 @@ Konfigurationspfad: {path}</translation>
     <message>
         <location filename="../main_window.py" line="6579"/>
         <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-gestütztes Lokalisierungswerkzeug für Starfield und andere Bethesda-Spiele.&lt;br&gt;Entwickelt für die &lt;b&gt;ukrainische&lt;/b&gt; Lokalisierung von Starfield-Zeichenfolgendateien.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6624"/>
         <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&apos;color:#666&apos;&gt;&lt;b&gt;F1&lt;/b&gt; für alle Tastenkürzel · &lt;b&gt;Shift+F1&lt;/b&gt;, dann auf ein Widget klicken für Kontexthilfe&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3073"/>
@@ -4004,42 +4008,42 @@ Für einige Änderungen ist möglicherweise ein Neustart erforderlich.</translat
     <message>
         <location filename="../main_window.py" line="6034"/>
         <source>Register Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Register-Prüfung</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6057"/>
         <source>Gender Agreement Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Genus-Kongruenzprüfung</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6079"/>
         <source>(no sessions yet)</source>
-        <translation type="unfinished"></translation>
+        <translation>(noch keine Sitzungen)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6129"/>
         <source>Session “{name}” started.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung „{name}“ gestartet.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6140"/>
         <source>Session saved: {name}</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung gespeichert: {name}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6187"/>
         <source>Session Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung nicht gefunden</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6188"/>
         <source>Session “{name}” could not be loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung „{name}“ konnte nicht geladen werden.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6202"/>
         <source>Open Session File?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungsdatei öffnen?</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6204"/>
@@ -4047,12 +4051,15 @@ Für einige Änderungen ist möglicherweise ein Neustart erforderlich.</translat
 {path}
 
 Open that file now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung gilt für:
+{path}
+
+Diese Datei jetzt öffnen?</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6214"/>
         <source>File Not Found</source>
-        <translation type="unfinished">Datei nicht gefunden</translation>
+        <translation>Datei nicht gefunden</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6216"/>
@@ -4060,12 +4067,15 @@ Open that file now?</source>
 {path}
 
 You can still use the session context, but the file will need to be opened manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Sitzungsdatei existiert nicht mehr:
+{path}
+
+Sie können den Sitzungskontext weiterhin verwenden, die Datei muss jedoch manuell geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6239"/>
         <source>Session “{name}” resumed — {n} strings translated in session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung „{name}“ fortgesetzt – {n} Zeichenfolgen in der Sitzung übersetzt.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6372"/>
@@ -4117,23 +4127,24 @@ You can still use the session context, but the file will need to be opened manua
     <message>
         <location filename="../main_window.py" line="6516"/>
         <source>Up to Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6517"/>
         <source>You are already running the latest version ({ver}).</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie verwenden bereits die neueste Version ({ver}).</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6523"/>
         <source>Update Check Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Update-Prüfung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6524"/>
         <source>Could not reach the update server:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Der Update-Server konnte nicht erreicht werden:
+</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6556"/>
@@ -4238,37 +4249,37 @@ Ziehen Sie eine Datei hierher, um sie zu öffnen.</translation>
     <message>
         <location filename="../session_dialog.py" line="255"/>
         <source>New Translation Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Übersetzungssitzung</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="267"/>
         <source>e.g., Barrett Dialogue</source>
-        <translation type="unfinished"></translation>
+        <translation>z. B. Barrett-Dialog</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="269"/>
         <source>Session name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungsname:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="272"/>
         <source>Optional description…</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionale Beschreibung…</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="273"/>
         <source>Note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweis:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="295"/>
         <source>Name cannot be empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Name darf nicht leer sein.</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="298"/>
         <source>A session with this name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Sitzung mit diesem Namen existiert bereits.</translation>
     </message>
 </context>
 <context>
@@ -4325,7 +4336,7 @@ Ziehen Sie eine Datei hierher, um sie zu öffnen.</translation>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="560"/>
         <source>(click a mod card)</source>
-        <translation type="unfinished"></translation>
+        <translation>(auf eine Mod-Karte klicken)</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="583"/>
@@ -4360,13 +4371,14 @@ Ziehen Sie eine Datei hierher, um sie zu öffnen.</translation>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="606"/>
         <source>⬇  Download &amp; Open in Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>⬇  Herunterladen und im Editor öffnen</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="609"/>
         <source>Download the selected .esp/.esm/.esl file (or zip containing one)
 and open it automatically in the editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte .esp-/.esm-/.esl-Datei (oder eine sie enthaltende ZIP-Datei) herunterladen
+und automatisch im Editor öffnen.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="616"/>
@@ -4410,47 +4422,47 @@ in die aktuell geöffnete Datei. Vorhandene Übersetzungen bleiben erhalten.</tr
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="693"/>
         <source>0 results</source>
-        <translation type="unfinished"></translation>
+        <translation>0 Ergebnisse</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="697"/>
         <source>{n} result{&apos;s&apos; if n != 1 else &apos;&apos;}</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} Ergebnis{&apos;se&apos; if n != 1 else &apos;&apos;}</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="918"/>
         <source>⚠  Free-user download requires &lt;b&gt;curl-cffi&lt;/b&gt;.  Run &lt;code&gt;pip install curl-cffi&lt;/code&gt; then restart the app.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Der Download als kostenloser Benutzer erfordert &lt;b&gt;curl-cffi&lt;/b&gt;.  Führen Sie &lt;code&gt;pip install curl-cffi&lt;/code&gt; aus und starten Sie die App neu.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="926"/>
         <source>⚠  No NexusMods session found in Firefox or Chromium.  Log in to NexusMods in your browser, then retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Keine NexusMods-Sitzung in Firefox oder Chromium gefunden.  Melden Sie sich in Ihrem Browser bei NexusMods an und versuchen Sie es dann erneut.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="934"/>
         <source>⚠  NexusMods session expired.  Log in again in your browser, then retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  NexusMods-Sitzung abgelaufen.  Melden Sie sich erneut in Ihrem Browser an und versuchen Sie es dann erneut.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="942"/>
         <source>⚠  Could not parse download tokens from NexusMods.  The site may have changed — please report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Download-Token von NexusMods konnten nicht ausgelesen werden.  Die Website hat sich möglicherweise geändert – bitte melden Sie dieses Problem.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="954"/>
         <source>No files found in the downloaded archive.</source>
-        <translation type="unfinished"></translation>
+        <translation>Im heruntergeladenen Archiv wurden keine Dateien gefunden.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="962"/>
         <source>No .esp/.esm/.esl found in {paths[0].name}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine .esp-/.esm-/.esl-Datei in {paths[0].name} gefunden.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="966"/>
         <source>✓  Opening {plugins[0].name} in editor…</source>
-        <translation type="unfinished"></translation>
+        <translation>✓  {plugins[0].name} wird im Editor geöffnet…</translation>
     </message>
     <message>
         <source>{len(results)} result(s)</source>
@@ -5157,14 +5169,16 @@ Es werden nur Codes aufgeführt, die in den aktuellen Ergebnissen vorkommen.</tr
     <message>
         <location filename="../quality_dialog.py" line="557"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausblenden</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="559"/>
         <source>Hide all rows with the selected issue code.
 Useful to suppress noise (e.g. hide EMPTY_TRANSLATION)
 so you can focus on other issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Zeilen mit dem ausgewählten Problemcode ausblenden.
+Nützlich, um Rauschen zu unterdrücken (z. B. EMPTY_TRANSLATION ausblenden),
+damit Sie sich auf andere Probleme konzentrieren können.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="569"/>
@@ -5203,12 +5217,12 @@ Wählen Sie das Format anhand der Dateiendung:
     <message>
         <location filename="../quality_dialog.py" line="587"/>
         <source>Show all codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Codes anzeigen</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="588"/>
         <source>Remove all hidden-code filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Filter für ausgeblendete Codes entfernen</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="599"/>
@@ -5268,19 +5282,20 @@ Wählen Sie das Format anhand der Dateiendung:
         <location filename="../quality_dialog.py" line="827"/>
         <location filename="../quality_dialog.py" line="940"/>
         <source>Auto-Fix All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle automatisch korrigieren</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="641"/>
         <source>Apply mechanical fixes to ALL strings with auto-fixable issues
 (no selection needed — fixes everything in one click)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mechanische Korrekturen auf ALLE Zeichenfolgen mit automatisch behebbaren Problemen anwenden
+(keine Auswahl nötig – behebt alles mit einem Klick)</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="648"/>
         <location filename="../quality_dialog.py" line="833"/>
         <source>AI Fix Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-Korrektur (Auswahl)</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="650"/>
@@ -5288,7 +5303,10 @@ Wählen Sie das Format anhand der Dateiendung:
 Unlike retranslation, the model sees the existing translation and
 edits only what the QC check flagged — preserving correct parts.
 Fix starts after you close this dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die fehlerhafte Übersetzung zur Behebung bestimmter Probleme an das KI-Modell senden.
+Anders als bei der Neuübersetzung sieht das Modell die vorhandene Übersetzung und
+korrigiert nur das, was die QC-Prüfung markiert hat – korrekte Teile bleiben erhalten.
+Die Korrektur beginnt, nachdem Sie diesen Dialog schließen.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="659"/>
@@ -5363,12 +5381,12 @@ Die Neuübersetzung startet nach dem Schließen dieses Dialogs.</translation>
     <message>
         <location filename="../quality_dialog.py" line="826"/>
         <source>Auto-Fix All ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle automatisch korrigieren ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="832"/>
         <source>AI Fix Selected ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-Korrektur (Auswahl) ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="838"/>
@@ -5401,32 +5419,32 @@ Die Neuübersetzung startet nach dem Schließen dieses Dialogs.</translation>
     <message>
         <location filename="../quality_dialog.py" line="930"/>
         <source>Auto-Fix All Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle automatischen Korrekturen angewendet</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="941"/>
         <source>No automatically fixable issues found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine automatisch behebbaren Probleme gefunden.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="970"/>
         <source>AI Fix Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>KI-Korrektur-Warteschlange</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="971"/>
         <source>All selected strings are already in the AI fix queue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle ausgewählten Zeichenfolgen befinden sich bereits in der KI-Korrektur-Warteschlange.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="977"/>
         <source>{total} string(s) queued for AI fix</source>
-        <translation type="unfinished"></translation>
+        <translation>{total} Zeichenfolge(n) für KI-Korrektur eingereiht</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="981"/>
         <source>Queued for AI Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Für KI-Korrektur eingereiht</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="983"/>
@@ -5434,7 +5452,10 @@ Die Neuübersetzung startet nach dem Schließen dieses Dialogs.</translation>
 Total queued: {total}
 
 Close this dialog to start AI fixing.</source>
-        <translation type="unfinished"></translation>
+        <translation>{added} Zeichenfolge(n) zur KI-Korrektur-Warteschlange hinzugefügt.
+Gesamt in Warteschlange: {total}
+
+Schließen Sie diesen Dialog, um die KI-Korrektur zu starten.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1026"/>
@@ -5475,7 +5496,7 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
     <message>
         <location filename="../quality_dialog.py" line="1136"/>
         <source>Hidden: {codes}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgeblendet: {codes}</translation>
     </message>
     <message>
         <source>{added} string(s) added to retranslation queue.
@@ -5541,73 +5562,73 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
     <message>
         <location filename="../register_dialog.py" line="53"/>
         <source>Register Consistency – ти/ви</source>
-        <translation type="unfinished"></translation>
+        <translation>Register-Konsistenz – ти/ви</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="71"/>
         <source>{n} speaker(s) with mixed ти/ви register — select a row to inspect.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} Sprecher mit gemischtem ти/ви-Register – Zeile zum Prüfen auswählen.</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="75"/>
         <source>No register inconsistency found. All translated strings use a consistent address form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Register-Inkonsistenz gefunden. Alle übersetzten Zeichenfolgen verwenden eine einheitliche Anredeform.</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="83"/>
         <location filename="../register_dialog.py" line="134"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="93"/>
         <source>Speaker / EDID prefix</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprecher / EDID-Präfix</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="94"/>
         <source>ти-form</source>
-        <translation type="unfinished"></translation>
+        <translation>ти-Form</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="95"/>
         <source>ви-form</source>
-        <translation type="unfinished"></translation>
+        <translation>ви-Form</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="117"/>
         <source>ти-form strings (informal)</source>
-        <translation type="unfinished"></translation>
+        <translation>ти-Form-Zeichenfolgen (informell)</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="119"/>
         <source>ви-form strings (formal/plural)</source>
-        <translation type="unfinished"></translation>
+        <translation>ви-Form-Zeichenfolgen (formell/Plural)</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="129"/>
         <source>Jump to String in Table</source>
-        <translation type="unfinished">Zur Zeichenkette in der Tabelle springen</translation>
+        <translation>Zur Zeichenkette in der Tabelle springen</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>Translation preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Übersetzungsvorschau</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="185"/>
         <source>(unknown speaker)</source>
-        <translation type="unfinished"></translation>
+        <translation>(unbekannter Sprecher)</translation>
     </message>
 </context>
 <context>
@@ -5615,12 +5636,12 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
     <message>
         <location filename="../session_dialog.py" line="315"/>
         <source>Rename Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung umbenennen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="324"/>
         <source>New name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuer Name:</translation>
     </message>
 </context>
 <context>
@@ -5628,88 +5649,88 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
     <message>
         <location filename="../session_dialog.py" line="63"/>
         <source>Translation Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Übersetzungssitzungen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="79"/>
         <source>Sessions let you save and resume named work contexts — search filter, cursor position, and per-session translation count.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Sitzungen können Sie benannte Arbeitskontexte speichern und fortsetzen – Suchfilter, Cursorposition und Übersetzungszähler pro Sitzung.</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="88"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="89"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="90"/>
         <source>Translated in session</source>
-        <translation type="unfinished"></translation>
+        <translation>In Sitzung übersetzt</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="91"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuletzt geändert</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="111"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Details</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="118"/>
         <source>File:</source>
-        <translation type="unfinished">Datei:</translation>
+        <translation>Datei:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="119"/>
         <source>Filter:</source>
-        <translation type="unfinished">Filter:</translation>
+        <translation>Filter:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="120"/>
         <source>Note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweis:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="126"/>
         <source>Resume Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung fortsetzen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="131"/>
         <source>Rename…</source>
-        <translation type="unfinished"></translation>
+        <translation>Umbenennen…</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="135"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="144"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="197"/>
         <location filename="../session_dialog.py" line="198"/>
         <source>(none)</source>
-        <translation type="unfinished">(keine)</translation>
+        <translation>(keine)</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="227"/>
         <source>Delete Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung löschen</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="228"/>
         <source>Delete session &quot;{name}&quot;? This cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzung „{name}“ löschen? Dies kann nicht rückgängig gemacht werden.</translation>
     </message>
 </context>
 <context>
@@ -5934,64 +5955,66 @@ Statussymbole (✓ ⚠ ✗) vermitteln den Zustand immer unabhängig von der Far
     <message>
         <location filename="../settings_dialog.py" line="378"/>
         <source>Background / Wallpaper</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund / Hintergrundbild</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="381"/>
         <source>Enable custom background</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefinierten Hintergrund aktivieren</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="388"/>
         <source>Path to image or video file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad zur Bild- oder Videodatei…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="393"/>
         <source>File:</source>
-        <translation type="unfinished">Datei:</translation>
+        <translation>Datei:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="398"/>
         <source>Cover  (fill, crop edges)</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllen  (füllen, Ränder beschneiden)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="399"/>
         <source>Contain  (fit inside, letterbox)</source>
-        <translation type="unfinished"></translation>
+        <translation>Einpassen  (innen einpassen, Letterbox)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="400"/>
         <source>Stretch  (distort to fill)</source>
-        <translation type="unfinished"></translation>
+        <translation>Strecken  (zum Füllen verzerren)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="401"/>
         <source>Tile  (repeat)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kacheln  (wiederholen)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="402"/>
         <source>Center  (original size, centered)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentriert  (Originalgröße, zentriert)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="407"/>
         <source>Fit mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anpassungsmodus:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="423"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="427"/>
         <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
 Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
 (Video requires PySide6-Multimedia and GStreamer plugins)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animiert)
+Video: MP4, AVI, MKV, WEBM, MOV, WMV und mehr
+(Video erfordert PySide6-Multimedia und GStreamer-Plugins)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="440"/>
@@ -6111,43 +6134,44 @@ Wird nach einem Neustart der Anwendung wirksam.</translation>
     <message>
         <location filename="../settings_dialog.py" line="826"/>
         <source>NexusMods</source>
-        <translation type="unfinished"></translation>
+        <translation>NexusMods</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="831"/>
         <source>Paste your NexusMods API key here</source>
-        <translation type="unfinished"></translation>
+        <translation>Fügen Sie hier Ihren NexusMods-API-Schlüssel ein</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="834"/>
         <source>Personal API key from nexusmods.com → Settings → API Keys.
 Required for uploading mod files and browsing download links.</source>
-        <translation type="unfinished"></translation>
+        <translation>Persönlicher API-Schlüssel von nexusmods.com → Einstellungen → API Keys.
+Erforderlich zum Hochladen von Mod-Dateien und zum Durchsuchen von Download-Links.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="838"/>
         <source>Show</source>
-        <translation type="unfinished">Anzeigen</translation>
+        <translation>Anzeigen</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="847"/>
         <source>API Key:</source>
-        <translation type="unfinished"></translation>
+        <translation>API-Schlüssel:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="852"/>
         <source>Optional: NexusMods file group ID to attach uploaded files to an existing group.</source>
-        <translation type="unfinished"></translation>
+        <translation>Optional: NexusMods-Dateigruppen-ID, um hochgeladene Dateien an eine bestehende Gruppe anzuhängen.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="854"/>
         <source>File Group ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateigruppen-ID:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="858"/>
         <source>(auto-detect from Firefox / Chromium)</source>
-        <translation type="unfinished"></translation>
+        <translation>(automatisch aus Firefox / Chromium erkennen)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="860"/>
@@ -6155,12 +6179,15 @@ Required for uploading mod files and browsing download links.</source>
 Export steps: install the &apos;Cookie-Editor&apos; browser extension → visit nexusmods.com
 → open Cookie-Editor → Export → JSON → save the file → select it here.
 Leave blank to auto-detect cookies from Firefox or Chromium.</source>
-        <translation type="unfinished"></translation>
+        <translation>Optional: Pfad zu einem Cookie-Editor-JSON-Export für NexusMods-Downloads als kostenloser Benutzer.
+Export-Schritte: Browser-Erweiterung „Cookie-Editor“ installieren → nexusmods.com besuchen
+→ Cookie-Editor öffnen → Export → JSON → Datei speichern → hier auswählen.
+Leer lassen, um Cookies automatisch aus Firefox oder Chromium zu erkennen.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="870"/>
         <source>Cookies JSON:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cookies-JSON:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="390"/>
@@ -6228,24 +6255,26 @@ Wird nach einem Neustart der Anwendung wirksam.</translation>
     <message>
         <location filename="../settings_dialog.py" line="684"/>
         <source>Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Updates</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="688"/>
         <source>Check for updates automatically on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Start automatisch nach Updates suchen</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="693"/>
         <source>Silently checks the GitHub releases page 8 seconds after launch.
 Shows a dialog only when a new version is found.
 No personal data is transmitted — only a GET request to the GitHub API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüft 8 Sekunden nach dem Start im Hintergrund die GitHub-Releases-Seite.
+Zeigt nur dann einen Dialog an, wenn eine neue Version gefunden wird.
+Es werden keine personenbezogenen Daten übertragen – nur eine GET-Anfrage an die GitHub-API.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="700"/>
         <source>Check Now…</source>
-        <translation type="unfinished"></translation>
+        <translation>Jetzt prüfen…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="715"/>
@@ -6538,27 +6567,27 @@ die Synthese länger als 1 s dauert.</translation>
     <message>
         <location filename="../settings_dialog.py" line="990"/>
         <source>Next tip →</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächster Tipp →</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1021"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Tipp: Verwendet translategemma3-st (benutzerdefiniert angepasst), optimiert für die ukrainische Starfield-Lokalisierung. Verwenden Sie englische Anker: &apos;To Ukrainian:&apos;, &apos;To English:&apos; usw.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1026"/>
         <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Tipp: Verwendet Gemma 4 Opus 48B (Starfield-optimiert). Höchste Qualität, langsamer. Verwenden Sie englische Anker: &apos;To Ukrainian:&apos;, &apos;To English:&apos; usw.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1031"/>
         <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Tipp: Claude-Backend ausgewählt. Konfigurieren Sie Ihren API-Schlüssel im Claude-Abschnitt unten.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1035"/>
         <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Tipp: Benutzerdefiniertes Modell ausgewählt. Stellen Sie sicher, dass es Ihre Zielsprache unterstützt und dem oben konfigurierten System-Prompt folgt.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1075"/>
@@ -6676,7 +6705,7 @@ Stellen Sie sicher, dass Ollama läuft:
     <message>
         <location filename="../settings_dialog.py" line="1183"/>
         <source>Select Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund auswählen</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1191"/>
@@ -6691,12 +6720,12 @@ Stellen Sie sicher, dass Ollama läuft:
     <message>
         <location filename="../settings_dialog.py" line="1200"/>
         <source>Select Cookie-Editor JSON Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Cookie-Editor-JSON-Export auswählen</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1201"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
-        <translation type="unfinished">JSON-Dateien (*.json *.JSON);;Alle Dateien (*)</translation>
+        <translation>JSON-Dateien (*.json *.JSON);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1216"/>
@@ -6930,12 +6959,12 @@ Stellen Sie sicher, dass Ollama läuft:
     <message>
         <location filename="../string_table.py" line="769"/>
         <source>Edit String - ID: {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichenfolge bearbeiten – ID: {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="776"/>
         <source>&lt;b&gt;String ID:&lt;/b&gt; {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Zeichenfolgen-ID:&lt;/b&gt; {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="780"/>
@@ -7352,42 +7381,42 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_manager.py" line="934"/>
         <source>Warm retro dark with amber/orange accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Warmes Retro-Dunkel mit Bernstein-/Orangeakzenten</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="935"/>
         <source>Deep navy cyberpunk with blue highlights</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiefes Marineblau im Cyberpunk-Stil mit blauen Glanzlichtern</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="936"/>
         <source>Classic terminal dark with vibrant green accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Klassisches Terminal-Dunkel mit kräftigen grünen Akzenten</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="937"/>
         <source>Atom editor inspired, muted blue accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Vom Atom-Editor inspiriert, gedämpfte blaue Akzente</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="938"/>
         <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrastarmes Hell, warmes Creme – Ergänzung zu Solarized Dark</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="939"/>
         <source>Warm cream light theme, easy on eyes for long sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Warmes cremefarbenes helles Thema, augenschonend für lange Sitzungen</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="940"/>
         <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Spielgetreue dunkelblaue Oberfläche – Farben aus den Starfield-Interface-SWF/GFX-Assets</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="941"/>
         <source>Green-on-black terminal/computer screen aesthetic from the game</source>
-        <translation type="unfinished"></translation>
+        <translation>Grün-auf-Schwarz-Terminal-/Computerbildschirm-Ästhetik aus dem Spiel</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="942"/>
@@ -7517,57 +7546,57 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../update_dialog.py" line="65"/>
         <source>Update Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Update verfügbar</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="94"/>
         <source>What&apos;s new:</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuigkeiten:</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="97"/>
         <source>(no release notes provided)</source>
-        <translation type="unfinished"></translation>
+        <translation>(keine Versionshinweise vorhanden)</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="118"/>
         <source>Download  {self._new}  ({size_str})</source>
-        <translation type="unfinished"></translation>
+        <translation>Herunterladen  {self._new}  ({size_str})</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="123"/>
         <source>Open Releases Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Releases-Seite öffnen</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="129"/>
         <source>Open in Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Browser öffnen</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="135"/>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation>Später</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="153"/>
         <source>Downloading {asset[&apos;name&apos;]}…</source>
-        <translation type="unfinished"></translation>
+        <translation>{asset['name']} wird heruntergeladen…</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="164"/>
         <source>Download complete — saved to {path}</source>
-        <translation type="unfinished"></translation>
+        <translation>Download abgeschlossen – gespeichert unter {path}</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="166"/>
         <source>Open Downloads Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Download-Ordner öffnen</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="176"/>
         <source>Download failed: {msg}</source>
-        <translation type="unfinished">Download fehlgeschlagen: {msg}</translation>
+        <translation>Download fehlgeschlagen: {msg}</translation>
     </message>
 </context>
 <context>

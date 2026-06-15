@@ -68,17 +68,17 @@
     <message>
         <location filename="../advanced_search_dialog.py" line="39"/>
         <source>Advanced Search / Replace</source>
-        <translation type="unfinished">Розширений пошук і заміна</translation>
+        <translation>Розширений пошук / заміна</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="59"/>
         <source>Enter search text…</source>
-        <translation type="unfinished">Введіть текст для пошуку…</translation>
+        <translation>Введіть текст для пошуку…</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="61"/>
         <source>Find:</source>
-        <translation type="unfinished">Знайти:</translation>
+        <translation>Знайти:</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="69"/>
@@ -113,29 +113,29 @@
     <message>
         <location filename="../advanced_search_dialog.py" line="87"/>
         <source>Replace (Translated text only)</source>
-        <translation type="unfinished">Замінити (лише перекладений текст)</translation>
+        <translation>Замінити (лише перекладений текст)</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="92"/>
         <source>Replacement text (leave blank to delete matches)</source>
-        <translation type="unfinished">Текст для заміни (залиште порожнім, щоб видалити збіги)</translation>
+        <translation>Текст заміни (залиште порожнім, щоб видалити збіги)</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="94"/>
         <source>Replace with:</source>
-        <translation type="unfinished">Замінити на:</translation>
+        <translation>Замінити на:</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="97"/>
         <location filename="../advanced_search_dialog.py" line="295"/>
         <source>Replace All</source>
-        <translation type="unfinished">Замінити все</translation>
+        <translation>Замінити все</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="99"/>
         <source>Replace all occurrences in the Translated column
 for rows matching the current search criteria</source>
-        <translation type="unfinished">Замінити всі збіги у стовпці «Переклад»
+        <translation>Замінити всі входження у стовпці «Переклад»
 для рядків, що відповідають поточним критеріям пошуку</translation>
     </message>
     <message>
@@ -173,44 +173,44 @@ for rows matching the current search criteria</source>
     <message>
         <location filename="../advanced_search_dialog.py" line="257"/>
         <source>Replace</source>
-        <translation type="unfinished">Замінити</translation>
+        <translation>Замінити</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="257"/>
         <source>Enter search text first.</source>
-        <translation type="unfinished">Спершу введіть текст для пошуку.</translation>
+        <translation>Спочатку введіть текст для пошуку.</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="267"/>
         <source>Invalid Pattern</source>
-        <translation type="unfinished">Недійсний шаблон</translation>
+        <translation>Недійсний шаблон</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="268"/>
         <source>Regular expression error:
 {error}</source>
-        <translation type="unfinished">Помилка регулярного виразу:
+        <translation>Помилка регулярного виразу:
 {error}</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="287"/>
         <source>No matches found</source>
-        <translation type="unfinished">Збігів не знайдено</translation>
+        <translation>Збігів не знайдено</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="296"/>
         <source>Replace in {n} row(s)?</source>
-        <translation type="unfinished">Замінити в {n} рядку(ах)?</translation>
+        <translation>Замінити в {n} рядках?</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="323"/>
         <source>Replaced {subs} occurrence(s) in {rows} row(s)</source>
-        <translation type="unfinished">Замінено {subs} збіг(ів) у {rows} рядку(ах)</translation>
+        <translation>Замінено {subs} входжень у {rows} рядках</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="329"/>
         <source>No replacements made</source>
-        <translation type="unfinished">Заміни не виконано</translation>
+        <translation>Замін не виконано</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="367"/>
@@ -223,28 +223,28 @@ for rows matching the current search criteria</source>
     <message>
         <location filename="../audio_preview_panel.py" line="255"/>
         <source>Audio Preview</source>
-        <translation type="unfinished">Попереднє прослуховування аудіо</translation>
+        <translation>Попереднє прослуховування</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="300"/>
         <location filename="../audio_preview_panel.py" line="404"/>
         <source>(no string selected)</source>
-        <translation type="unfinished">(рядок не вибрано)</translation>
+        <translation>(рядок не вибрано)</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="312"/>
         <source>Original audio:</source>
-        <translation type="unfinished">Оригінальне аудіо:</translation>
+        <translation>Оригінальний звук:</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="316"/>
         <source>Path to .wav / .mp3 …</source>
-        <translation type="unfinished">Шлях до .wav / .mp3 …</translation>
+        <translation>Шлях до .wav / .mp3 …</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="321"/>
         <source>Browse for audio file</source>
-        <translation type="unfinished">Огляд для вибору аудіофайлу</translation>
+        <translation>Огляд аудіофайлу</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="327"/>
@@ -252,43 +252,43 @@ for rows matching the current search criteria</source>
         <location filename="../audio_preview_panel.py" line="475"/>
         <location filename="../audio_preview_panel.py" line="521"/>
         <source>▶ Play</source>
-        <translation type="unfinished">▶ Відтворити</translation>
+        <translation>▶ Відтворити</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="340"/>
         <source>TTS preview:</source>
-        <translation type="unfinished">Попередній перегляд TTS:</translation>
+        <translation>Попередній перегляд TTS:</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="343"/>
         <source>⟳ Synthesize</source>
-        <translation type="unfinished">⟳ Синтезувати</translation>
+        <translation>⟳ Синтезувати</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="445"/>
         <source>Select original audio file</source>
-        <translation type="unfinished">Вибрати оригінальний аудіофайл</translation>
+        <translation>Виберіть оригінальний аудіофайл</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="447"/>
         <source>Audio files (*.wav *.mp3 *.ogg *.flac *.xwm);;All files (*)</source>
-        <translation type="unfinished">Аудіофайли (*.wav *.mp3 *.ogg *.flac *.xwm);;Усі файли (*)</translation>
+        <translation>Аудіофайли (*.wav *.mp3 *.ogg *.flac *.xwm);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="475"/>
         <location filename="../audio_preview_panel.py" line="521"/>
         <source>⏸ Pause</source>
-        <translation type="unfinished">⏸ Пауза</translation>
+        <translation>⏸ Пауза</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="485"/>
         <source>Synthesizing…</source>
-        <translation type="unfinished">Синтез…</translation>
+        <translation>Синтезування…</translation>
     </message>
     <message>
         <location filename="../audio_preview_panel.py" line="503"/>
         <source>Synthesis failed</source>
-        <translation type="unfinished">Помилка синтезу</translation>
+        <translation>Не вдалося синтезувати</translation>
     </message>
 </context>
 <context>
@@ -648,9 +648,9 @@ Ask Claude to suggest a translation first.</source>
 &quot;{text}&quot;
 
 Proceed?</source>
-        <translation type="unfinished">Замінити {n} рядок(ів) на:
+        <translation>Замінити {n} рядків на:
 
-&quot;{text}&quot;
+«{text}»
 
 Продовжити?</translation>
     </message>
@@ -730,103 +730,103 @@ Discard — delete the snapshot and start fresh.</source>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="451"/>
         <source>Dialogue Tree Visualizer</source>
-        <translation type="unfinished">Візуалізатор дерева діалогів</translation>
+        <translation>Візуалізатор дерева діалогів</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="475"/>
         <source>No file loaded</source>
-        <translation type="unfinished">Файл не завантажено</translation>
+        <translation>Файл не завантажено</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="479"/>
         <source>Open ESP/ESM…</source>
-        <translation type="unfinished">Відкрити ESP/ESM…</translation>
+        <translation>Відкрити ESP/ESM…</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="485"/>
         <source>Filter quests / topics…</source>
-        <translation type="unfinished">Фільтр квестів / тем…</translation>
+        <translation>Фільтрувати квести / теми…</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="505"/>
         <source>Dialogue Structure</source>
-        <translation type="unfinished">Структура діалогу</translation>
+        <translation>Структура діалогу</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="537"/>
         <location filename="../dialogue_tree_dialog.py" line="785"/>
         <source>Select a topic from the tree</source>
-        <translation type="unfinished">Виберіть тему з дерева</translation>
+        <translation>Виберіть тему з дерева</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="548"/>
         <source>Selected Response</source>
-        <translation type="unfinished">Вибрана відповідь</translation>
+        <translation>Вибрана відповідь</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="582"/>
         <source>Jump to Player Line</source>
-        <translation type="unfinished">Перейти до репліки гравця</translation>
+        <translation>Перейти до репліки гравця</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="585"/>
         <source>Navigate the string table to the RNAM field of this INFO record.</source>
-        <translation type="unfinished">Перейти в таблиці рядків до поля RNAM цього запису INFO.</translation>
+        <translation>Перейти в таблиці рядків до поля RNAM цього запису INFO.</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="590"/>
         <source>Jump to NPC Line</source>
-        <translation type="unfinished">Перейти до репліки NPC</translation>
+        <translation>Перейти до репліки NPC</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="593"/>
         <source>Navigate the string table to the NAM1 field of this INFO record.</source>
-        <translation type="unfinished">Перейти в таблиці рядків до поля NAM1 цього запису INFO.</translation>
+        <translation>Перейти в таблиці рядків до поля NAM1 цього запису INFO.</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="618"/>
         <source>Loading {name}…</source>
-        <translation type="unfinished">Завантаження {name}…</translation>
+        <translation>Завантаження {name}…</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="641"/>
         <source>{name}  —  {q} quests · {t} topics · {r} responses</source>
-        <translation type="unfinished">{name}  —  {q} квестів · {t} тем · {r} відповідей</translation>
+        <translation>{name}  —  {q} квестів · {t} тем · {r} відповідей</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="653"/>
         <source>Load failed</source>
-        <translation type="unfinished">Помилка завантаження</translation>
+        <translation>Не вдалося завантажити</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="654"/>
         <source>Load Error</source>
-        <translation type="unfinished">Помилка завантаження</translation>
+        <translation>Помилка завантаження</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="676"/>
         <source>(No Quest / Unlinked)</source>
-        <translation type="unfinished">(Без квесту / не пов&apos;язано)</translation>
+        <translation>(Без квесту / не пов’язано)</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="845"/>
         <source>Open ESP/ESM File</source>
-        <translation type="unfinished">Відкрити файл ESP/ESM</translation>
+        <translation>Відкрити файл ESP/ESM</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="846"/>
         <source>Plugin Files (*.esp *.esm *.esl);;All Files (*)</source>
-        <translation type="unfinished">Файли плагінів (*.esp *.esm *.esl);;Всі файли (*)</translation>
+        <translation>Файли плагінів (*.esp *.esm *.esl);;Всі файли (*)</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="872"/>
         <source>Loading</source>
-        <translation type="unfinished">Завантаження</translation>
+        <translation>Завантаження</translation>
     </message>
     <message>
         <location filename="../dialogue_tree_dialog.py" line="873"/>
         <source>Please wait for the file to finish loading.</source>
-        <translation type="unfinished">Будь ласка, зачекайте, поки файл завантажиться.</translation>
+        <translation>Зачекайте, доки файл завершить завантаження.</translation>
     </message>
 </context>
 <context>
@@ -885,42 +885,42 @@ Discard — delete the snapshot and start fresh.</source>
     <message>
         <location filename="../focus_overlay.py" line="170"/>
         <source>Focus Mode</source>
-        <translation type="unfinished">Режим фокусування</translation>
+        <translation>Режим фокусування</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="222"/>
         <source>Exit Focus Mode  Esc</source>
-        <translation type="unfinished">Вийти з режиму фокусування  Esc</translation>
+        <translation>Вийти з режиму фокусування  Esc</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="236"/>
         <source>SOURCE</source>
-        <translation type="unfinished">ДЖЕРЕЛО</translation>
+        <translation>ДЖЕРЕЛО</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="256"/>
         <source>TRANSLATION</source>
-        <translation type="unfinished">ПЕРЕКЛАД</translation>
+        <translation>ПЕРЕКЛАД</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="274"/>
         <source>← Prev  Shift+F7</source>
-        <translation type="unfinished">← Попередній  Shift+F7</translation>
+        <translation>← Назад  Shift+F7</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="279"/>
         <source>Next Untranslated  F7</source>
-        <translation type="unfinished">Наступний неперекладений  F7</translation>
+        <translation>Наступний неперекладений  F7</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="286"/>
         <source>✓  Approve &amp; Next  Ctrl+Enter</source>
-        <translation type="unfinished">✓  Прийняти і далі  Ctrl+Enter</translation>
+        <translation>✓  Схвалити й далі  Ctrl+Enter</translation>
     </message>
     <message>
         <location filename="../focus_overlay.py" line="317"/>
         <source>String {row + 1} of {total}  ·  {pending} pending</source>
-        <translation type="unfinished">Рядок {row + 1} з {total}  ·  {pending} очікують</translation>
+        <translation>Рядок {row + 1} з {total}  ·  {pending} в очікуванні</translation>
     </message>
 </context>
 <context>
@@ -928,113 +928,113 @@ Discard — delete the snapshot and start fresh.</source>
     <message>
         <location filename="../font_checker_dialog.py" line="70"/>
         <source>Font &amp; Glyph Checker</source>
-        <translation type="unfinished">Перевірка шрифтів і гліфів</translation>
+        <translation>Перевірка шрифтів і гліфів</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="84"/>
         <source>Font Source</source>
-        <translation type="unfinished">Джерело шрифту</translation>
+        <translation>Джерело шрифту</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="90"/>
         <source>SWF font atlas:</source>
-        <translation type="unfinished">Атлас шрифтів SWF:</translation>
+        <translation>Атлас шрифтів SWF:</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="93"/>
         <source>Optional — e.g. Data/Interface/Fonts.swf</source>
-        <translation type="unfinished">Необов&apos;язково — напр. Data/Interface/Fonts.swf</translation>
+        <translation>Необов&apos;язково — напр. Data/Interface/Fonts.swf</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="97"/>
         <source>Browse for a Scaleform SWF font atlas</source>
-        <translation type="unfinished">Огляд для вибору атласу шрифтів Scaleform SWF</translation>
+        <translation>Огляд для вибору атласу шрифтів Scaleform SWF</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="106"/>
         <source>TTF / OTF font:</source>
-        <translation type="unfinished">Шрифт TTF / OTF:</translation>
+        <translation>Шрифт TTF / OTF:</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="109"/>
         <source>Optional — e.g. Data/Fonts/SomeFontUA.ttf</source>
-        <translation type="unfinished">Необов&apos;язково — напр. Data/Fonts/SomeFontUA.ttf</translation>
+        <translation>Необов&apos;язково — напр. Data/Fonts/SomeFontUA.ttf</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="113"/>
         <source>Browse for a TTF / OTF font file</source>
-        <translation type="unfinished">Огляд для вибору файлу шрифту TTF / OTF</translation>
+        <translation>Огляд для вибору файлу шрифту TTF / OTF</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="122"/>
         <source>Game Data dir:</source>
-        <translation type="unfinished">Тека Data гри:</translation>
+        <translation>Тека Data гри:</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="125"/>
         <source>Optional — auto-locates fontconfig.txt + SWF files</source>
-        <translation type="unfinished">Необов&apos;язково — автоматично знаходить fontconfig.txt і файли SWF</translation>
+        <translation>Необов&apos;язково — автоматично знаходить fontconfig.txt і файли SWF</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="129"/>
         <source>Browse for the game&apos;s Data directory</source>
-        <translation type="unfinished">Огляд для вибору теки Data гри</translation>
+        <translation>Огляд для вибору теки Data гри</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="138"/>
         <location filename="../font_checker_dialog.py" line="304"/>
         <source>No external font loaded — using built-in Starfield safe character set.</source>
-        <translation type="unfinished">Зовнішній шрифт не завантажено — використовується вбудований безпечний набір символів Starfield.</translation>
+        <translation>Зовнішній шрифт не завантажено — використовується вбудований безпечний набір символів Starfield.</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="150"/>
         <source>Scan Translations</source>
-        <translation type="unfinished">Сканувати переклади</translation>
+        <translation>Сканувати переклади</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="170"/>
         <source>Missing characters:</source>
-        <translation type="unfinished">Відсутні символи:</translation>
+        <translation>Відсутні символи:</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="173"/>
         <source>Char</source>
-        <translation type="unfinished">Символ</translation>
+        <translation>Символ</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="173"/>
         <source>U+</source>
-        <translation type="unfinished">U+</translation>
+        <translation>U+</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="173"/>
         <source>Strings</source>
-        <translation type="unfinished">Рядки</translation>
+        <translation>Рядки</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="173"/>
         <source>Suggested fix</source>
-        <translation type="unfinished">Запропоноване виправлення</translation>
+        <translation>Запропоноване виправлення</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="188"/>
         <source>Affected strings:</source>
-        <translation type="unfinished">Уражені рядки:</translation>
+        <translation>Уражені рядки:</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="191"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="191"/>
         <source>Translation (excerpt)</source>
-        <translation type="unfinished">Переклад (фрагмент)</translation>
+        <translation>Переклад (фрагмент)</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="191"/>
         <source>Missing</source>
-        <translation type="unfinished">Відсутній</translation>
+        <translation>Відсутній</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="191"/>
@@ -1044,124 +1044,124 @@ Discard — delete the snapshot and start fresh.</source>
     <message>
         <location filename="../font_checker_dialog.py" line="208"/>
         <source>Auto-fix All</source>
-        <translation type="unfinished">Автовиправити все</translation>
+        <translation>Автовиправити все</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="212"/>
         <source>Replace all unsupported characters that have a known safe substitute.
 Characters with no safe replacement are left unchanged.</source>
-        <translation type="unfinished">Замінити всі непідтримувані символи, для яких відомий безпечний відповідник.
+        <translation>Замінити всі непідтримувані символи, для яких відомий безпечний відповідник.
 Символи без безпечної заміни залишаються без змін.</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="218"/>
         <source>Export Report…</source>
-        <translation type="unfinished">Експортувати звіт…</translation>
+        <translation>Експортувати звіт…</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="225"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="235"/>
         <source>Open SWF Font Atlas</source>
-        <translation type="unfinished">Відкрити атлас шрифтів SWF</translation>
+        <translation>Відкрити атлас шрифтів SWF</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="237"/>
         <source>Scaleform SWF (*.swf);;All files (*)</source>
-        <translation type="unfinished">Scaleform SWF (*.swf);;Усі файли (*)</translation>
+        <translation>Scaleform SWF (*.swf);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="246"/>
         <source>Open TrueType / OpenType Font</source>
-        <translation type="unfinished">Відкрити шрифт TrueType / OpenType</translation>
+        <translation>Відкрити шрифт TrueType / OpenType</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="248"/>
         <source>Font files (*.ttf *.otf);;All files (*)</source>
-        <translation type="unfinished">Файли шрифтів (*.ttf *.otf);;Усі файли (*)</translation>
+        <translation>Файли шрифтів (*.ttf *.otf);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="257"/>
         <source>Select Game Data Directory</source>
-        <translation type="unfinished">Вибрати теку Data гри</translation>
+        <translation>Вибрати теку Data гри</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="273"/>
         <source>{n} font(s) from game directory</source>
-        <translation type="unfinished">{n} шрифт(ів) з теки гри</translation>
+        <translation>{n} шрифт(ів) з теки гри</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="275"/>
         <source>⚠ Game directory: no fonts found</source>
-        <translation type="unfinished">⚠ Тека гри: шрифтів не знайдено</translation>
+        <translation>⚠ Тека гри: шрифтів не знайдено</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="281"/>
         <source>{n} font(s) from SWF</source>
-        <translation type="unfinished">{n} шрифт(ів) з SWF</translation>
+        <translation>{n} шрифт(ів) з SWF</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="283"/>
         <source>⚠ SWF: no font records found</source>
-        <translation type="unfinished">⚠ SWF: записів шрифтів не знайдено</translation>
+        <translation>⚠ SWF: записів шрифтів не знайдено</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="290"/>
         <source>{name} ({cp} glyphs)</source>
-        <translation type="unfinished">{name} ({cp} гліфів)</translation>
+        <translation>{name} ({cp} гліфів)</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="296"/>
         <source>⚠ TTF/OTF: could not parse font</source>
-        <translation type="unfinished">⚠ TTF/OTF: не вдалося розпізнати шрифт</translation>
+        <translation>⚠ TTF/OTF: не вдалося розпізнати шрифт</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="300"/>
         <source>Loaded: {info}</source>
-        <translation type="unfinished">Завантажено: {info}</translation>
+        <translation>Завантажено: {info}</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="321"/>
         <source>Scanning…</source>
-        <translation type="unfinished">Сканування…</translation>
+        <translation>Сканування…</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="328"/>
         <source>Error during scan: {err}</source>
-        <translation type="unfinished">Помилка під час сканування: {err}</translation>
+        <translation>Помилка під час сканування: {err}</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="335"/>
         <source>✓ All {n} translated strings use supported characters.</source>
-        <translation type="unfinished">✓ Усі {n} перекладених рядків використовують підтримувані символи.</translation>
+        <translation>✓ Усі {n} перекладених рядків використовують підтримувані символи.</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="345"/>
         <source>{issues} string(s) contain {chars} unsupported character(s)</source>
-        <translation type="unfinished">{issues} рядок(ів) містять {chars} непідтримуван(ий/і) символ(и)</translation>
+        <translation>{issues} рядок(ів) містять {chars} непідтримуван(ий/і) символ(и)</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="376"/>
         <source>No safe replacement</source>
-        <translation type="unfinished">Безпечної заміни немає</translation>
+        <translation>Безпечної заміни немає</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="428"/>
         <source>Jump</source>
-        <translation type="unfinished">Перейти</translation>
+        <translation>Перейти</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="470"/>
         <source>Export Glyph Report</source>
-        <translation type="unfinished">Експортувати звіт про гліфи</translation>
+        <translation>Експортувати звіт про гліфи</translation>
     </message>
     <message>
         <location filename="../font_checker_dialog.py" line="472"/>
         <source>HTML report (*.html);;Text report (*.txt);;All files (*)</source>
-        <translation type="unfinished">Звіт HTML (*.html);;Текстовий звіт (*.txt);;Усі файли (*)</translation>
+        <translation>Звіт HTML (*.html);;Текстовий звіт (*.txt);;Усі файли (*)</translation>
     </message>
 </context>
 <context>
@@ -1169,58 +1169,58 @@ Characters with no safe replacement are left unchanged.</source>
     <message>
         <location filename="../gender_dialog.py" line="59"/>
         <source>Gender Agreement Check – Ukrainian</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка узгодження роду – українська</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="74"/>
         <source>{n} adjective/noun gender mismatch(es) found — double-click a row to jump to the string.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявлено {n} невідповідностей роду прикметника/іменника — двічі клацніть рядок, щоб перейти до рядка.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="79"/>
         <source>No gender agreement issues found in the current translation.</source>
-        <translation type="unfinished"></translation>
+        <translation>У поточному перекладі проблем з узгодженням роду не виявлено.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="86"/>
         <location filename="../gender_dialog.py" line="143"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="96"/>
         <source>Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="97"/>
         <source>String ID</source>
-        <translation type="unfinished">ID рядка</translation>
+        <translation>ID рядка</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="98"/>
         <source>Adjective</source>
-        <translation type="unfinished"></translation>
+        <translation>Прикметник</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="99"/>
         <source>Adj gender</source>
-        <translation type="unfinished"></translation>
+        <translation>Рід прикм.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="100"/>
         <source>Noun</source>
-        <translation type="unfinished"></translation>
+        <translation>Іменник</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="101"/>
         <source>Noun gender</source>
-        <translation type="unfinished"></translation>
+        <translation>Рід іменника</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="138"/>
         <source>Jump to String in Table</source>
-        <translation type="unfinished">Перейти до рядка в таблиці</translation>
+        <translation>Перейти до рядка в таблиці</translation>
     </message>
 </context>
 <context>
@@ -1484,91 +1484,91 @@ Characters with no safe replacement are left unchanged.</source>
     <message>
         <location filename="../lore_rag_dialog.py" line="233"/>
         <source>Lore RAG — Context Database</source>
-        <translation type="unfinished">Lore RAG — База контексту</translation>
+        <translation>Lore RAG — База контексту</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="246"/>
         <source>Index</source>
-        <translation type="unfinished">Індекс</translation>
+        <translation>Індекс</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="247"/>
         <source>Download (UESP)</source>
-        <translation type="unfinished">Завантажити (UESP)</translation>
+        <translation>Завантажити (UESP)</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="248"/>
         <source>Import (Local)</source>
-        <translation type="unfinished">Імпортувати (локально)</translation>
+        <translation>Імпортувати (локально)</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="270"/>
         <source>Index Statistics</source>
-        <translation type="unfinished">Статистика індексу</translation>
+        <translation>Статистика індексу</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="274"/>
         <source>Articles indexed:</source>
-        <translation type="unfinished">Проіндексовано статей:</translation>
+        <translation>Проіндексовано статей:</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="275"/>
         <source>Sources:</source>
-        <translation type="unfinished">Джерела:</translation>
+        <translation>Джерела:</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="279"/>
         <source>Search Preview</source>
-        <translation type="unfinished">Попередній перегляд пошуку</translation>
+        <translation>Попередній перегляд пошуку</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="284"/>
         <source>Type a term (e.g. House Va&apos;ruun, Akila City)…</source>
-        <translation type="unfinished">Введіть термін (напр. House Va&apos;ruun, Akila City)…</translation>
+        <translation>Введіть термін (напр. House Va&apos;ruun, Akila City)…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="288"/>
         <source>Search</source>
-        <translation type="unfinished">Пошук</translation>
+        <translation>Пошук</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="309"/>
         <source>Manage Index</source>
-        <translation type="unfinished">Керування індексом</translation>
+        <translation>Керування індексом</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="311"/>
         <source>Clear All Articles…</source>
-        <translation type="unfinished">Очистити всі статті…</translation>
+        <translation>Очистити всі статті…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="326"/>
         <source>Downloads lore articles from the UESP wiki (en.uesp.net) via its MediaWiki API.
 Select the categories you want to index, then click Download.</source>
-        <translation type="unfinished">Завантажує статті лору з вікі UESP (en.uesp.net) через його API MediaWiki.
+        <translation>Завантажує статті лору з вікі UESP (en.uesp.net) через його API MediaWiki.
 Виберіть категорії, які потрібно проіндексувати, і натисніть «Завантажити».</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="333"/>
         <source>Categories</source>
-        <translation type="unfinished">Категорії</translation>
+        <translation>Категорії</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="345"/>
         <source>Note: downloading all categories fetches several hundred articles.
 Internet access is required.  Rate-limited to be polite to UESP servers.</source>
-        <translation type="unfinished">Примітка: завантаження всіх категорій отримає кілька сотень статей.
+        <translation>Примітка: завантаження всіх категорій отримає кілька сотень статей.
 Потрібен доступ до інтернету.  Швидкість обмежена, щоб не перевантажувати сервери UESP.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="356"/>
         <source>Download Selected Categories</source>
-        <translation type="unfinished">Завантажити вибрані категорії</translation>
+        <translation>Завантажити вибрані категорії</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="359"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="376"/>
@@ -1578,7 +1578,7 @@ Expected format — a JSON array of objects:
   [{&quot;title&quot;: &quot;House Va&apos;ruun&quot;, &quot;content&quot;: &quot;…&quot;, &quot;source&quot;: &quot;manual&quot;, &quot;tags&quot;: &quot;faction,lore&quot;}, …]
 
 Alternatively, each entry may be a plain text string (first line = title).</source>
-        <translation type="unfinished">Імпортувати статті лору з локального файлу JSON.
+        <translation>Імпортувати статті лору з локального файлу JSON.
 
 Очікуваний формат — масив об&apos;єктів JSON:
   [{&quot;title&quot;: &quot;House Va&apos;ruun&quot;, &quot;content&quot;: &quot;…&quot;, &quot;source&quot;: &quot;manual&quot;, &quot;tags&quot;: &quot;faction,lore&quot;}, …]
@@ -1588,120 +1588,120 @@ Alternatively, each entry may be a plain text string (first line = title).</sour
     <message>
         <location filename="../lore_rag_dialog.py" line="387"/>
         <source>Import File</source>
-        <translation type="unfinished">Імпортувати файл</translation>
+        <translation>Імпортувати файл</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="391"/>
         <source>Path to JSON file…</source>
-        <translation type="unfinished">Шлях до файлу JSON…</translation>
+        <translation>Шлях до файлу JSON…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="393"/>
         <source>Browse…</source>
-        <translation type="unfinished">Огляд…</translation>
+        <translation>Огляд…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="396"/>
         <source>File:</source>
-        <translation type="unfinished">Файл:</translation>
+        <translation>Файл:</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="400"/>
         <source>Import</source>
-        <translation type="unfinished">Імпортувати</translation>
+        <translation>Імпортувати</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="419"/>
         <source>(none)</source>
-        <translation type="unfinished">(немає)</translation>
+        <translation>(немає)</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="436"/>
         <source>No results found.</source>
-        <translation type="unfinished">Результатів не знайдено.</translation>
+        <translation>Результатів не знайдено.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="452"/>
         <source>Index Empty</source>
-        <translation type="unfinished">Індекс порожній</translation>
+        <translation>Індекс порожній</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="452"/>
         <source>The index is already empty.</source>
-        <translation type="unfinished">Індекс уже порожній.</translation>
+        <translation>Індекс уже порожній.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="457"/>
         <source>Clear All Articles</source>
-        <translation type="unfinished">Очистити всі статті</translation>
+        <translation>Очистити всі статті</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="458"/>
         <source>Delete all {n} articles from the index?
 This cannot be undone.</source>
-        <translation type="unfinished">Видалити всі {n} статей з індексу?
+        <translation>Видалити всі {n} статей з індексу?
 Цю дію неможливо скасувати.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="465"/>
         <source>Deleted {n} articles.</source>
-        <translation type="unfinished">Видалено {n} статей.</translation>
+        <translation>Видалено {n} статей.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="474"/>
         <source>No Categories</source>
-        <translation type="unfinished">Немає категорій</translation>
+        <translation>Немає категорій</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="475"/>
         <source>Select at least one category to download.</source>
-        <translation type="unfinished">Виберіть хоча б одну категорію для завантаження.</translation>
+        <translation>Виберіть хоча б одну категорію для завантаження.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="488"/>
         <source>Select JSON File</source>
-        <translation type="unfinished">Вибрати файл JSON</translation>
+        <translation>Вибрати файл JSON</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="499"/>
         <source>File Not Found</source>
-        <translation type="unfinished">Файл не знайдено</translation>
+        <translation>Файл не знайдено</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="500"/>
         <source>Please select a valid JSON file to import.</source>
-        <translation type="unfinished">Будь ласка, виберіть дійсний файл JSON для імпорту.</translation>
+        <translation>Будь ласка, виберіть дійсний файл JSON для імпорту.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="517"/>
         <source>Working…</source>
-        <translation type="unfinished">Виконується…</translation>
+        <translation>Виконується…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="524"/>
         <source>Fetching: {title} ({done}/{total})</source>
-        <translation type="unfinished">Отримання: {title} ({done}/{total})</translation>
+        <translation>Отримання: {title} ({done}/{total})</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="539"/>
         <source>Download Error</source>
-        <translation type="unfinished">Помилка завантаження</translation>
+        <translation>Помилка завантаження</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="540"/>
         <location filename="../lore_rag_dialog.py" line="542"/>
         <source>Error: {error}</source>
-        <translation type="unfinished">Помилка: {error}</translation>
+        <translation>Помилка: {error}</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="545"/>
         <source>Done. {count} articles added/updated.</source>
-        <translation type="unfinished">Готово. Додано/оновлено {count} статей.</translation>
+        <translation>Готово. Додано/оновлено {count} статей.</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="552"/>
         <source>Cancelling…</source>
-        <translation type="unfinished">Скасування…</translation>
+        <translation>Скасування…</translation>
     </message>
 </context>
 <context>
@@ -1709,159 +1709,159 @@ This cannot be undone.</source>
     <message>
         <location filename="../macro_dialog.py" line="143"/>
         <source>Macro Editor</source>
-        <translation type="unfinished">Редактор макросів</translation>
+        <translation>Редактор макросів</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="155"/>
         <source>Steps (applied top to bottom to each row):</source>
-        <translation type="unfinished">Кроки (застосовуються до кожного рядка зверху вниз):</translation>
+        <translation>Кроки (застосовуються згори донизу до кожного рядка):</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="166"/>
         <source>Add Regex Replace…</source>
-        <translation type="unfinished">Додати заміну за регулярним виразом…</translation>
+        <translation>Додати заміну regex…</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="170"/>
         <source>Add Approve</source>
-        <translation type="unfinished">Додати «Прийняти»</translation>
+        <translation>Додати «Схвалити»</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="171"/>
         <source>Mark each matched row as translated</source>
-        <translation type="unfinished">Позначити кожен відповідний рядок як перекладений</translation>
+        <translation>Позначити кожен відповідний рядок як перекладений</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="177"/>
         <source>Add Reject</source>
-        <translation type="unfinished">Додати «Відхилити»</translation>
+        <translation>Додати «Відхилити»</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="179"/>
         <source>Clear translation and mark each row as pending</source>
-        <translation type="unfinished">Очистити переклад і позначити кожен рядок як очікуваний</translation>
+        <translation>Очистити переклад і позначити кожен рядок як очікуваний</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="188"/>
         <source>Edit…</source>
-        <translation type="unfinished">Редагувати…</translation>
+        <translation>Редагувати…</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="192"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="196"/>
         <source>▲ Up</source>
-        <translation type="unfinished">▲ Вгору</translation>
+        <translation>▲ Вгору</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="200"/>
         <source>▼ Down</source>
-        <translation type="unfinished">▼ Вниз</translation>
+        <translation>▼ Вниз</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="205"/>
         <source>Clear All</source>
-        <translation type="unfinished">Очистити все</translation>
+        <translation>Очистити все</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="213"/>
         <source>Apply to</source>
-        <translation type="unfinished">Застосувати до</translation>
+        <translation>Застосувати до</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="216"/>
         <source>Scope:</source>
-        <translation type="unfinished">Область:</translation>
+        <translation>Діапазон:</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="219"/>
         <source>All rows</source>
-        <translation type="unfinished">Усі рядки</translation>
+        <translation>Усі рядки</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="220"/>
         <source>Translated rows only</source>
-        <translation type="unfinished">Тільки перекладені рядки</translation>
+        <translation>Лише перекладені рядки</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="221"/>
         <source>Pending rows only</source>
-        <translation type="unfinished">Тільки очікувані рядки</translation>
+        <translation>Лише рядки в очікуванні</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="222"/>
         <source>Selected rows ({n})</source>
-        <translation type="unfinished">Вибрані рядки ({n})</translation>
+        <translation>Вибрані рядки ({n})</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="236"/>
         <source>▶  Play</source>
-        <translation type="unfinished">▶  Виконати</translation>
+        <translation>▶  Відтворити</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="348"/>
         <source>Define at least one step, then click Play.</source>
-        <translation type="unfinished">Визначте принаймні один крок, а потім натисніть «Виконати».</translation>
+        <translation>Визначте принаймні один крок, потім натисніть «Відтворити».</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="353"/>
         <source>{m} of {total} rows would be modified.</source>
-        <translation type="unfinished">Буде змінено {m} з {total} рядків.</translation>
+        <translation>Буде змінено {m} з {total} рядків.</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="391"/>
         <source>Invalid Pattern</source>
-        <translation type="unfinished">Недійсний шаблон</translation>
+        <translation>Недійсний шаблон</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="392"/>
         <source>Step &apos;{s}&apos; has an invalid regex:
 {e}</source>
-        <translation type="unfinished">Крок «{s}» містить недійсний регулярний вираз:
+        <translation>Крок «{s}» має недійсний регулярний вираз:
 {e}</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="402"/>
         <source>Nothing to Do</source>
-        <translation type="unfinished">Немає що виконувати</translation>
+        <translation>Немає що робити</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="403"/>
         <source>No rows match the selected scope.</source>
-        <translation type="unfinished">Немає рядків, що відповідають вибраній області.</translation>
+        <translation>Жоден рядок не відповідає вибраному діапазону.</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="408"/>
         <source>Applying macro…</source>
-        <translation type="unfinished">Застосування макросу…</translation>
+        <translation>Застосування макросу…</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="408"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="430"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Скасовано</translation>
+        <translation>Скасовано</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="431"/>
         <source>Macro cancelled. {n} row(s) modified before stopping.</source>
-        <translation type="unfinished">Макрос скасовано. Змінено {n} рядок(ів) до зупинки.</translation>
+        <translation>Макрос скасовано. До зупинки змінено {n} рядків.</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="438"/>
         <source>Done</source>
-        <translation type="unfinished">Готово</translation>
+        <translation>Готово</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="439"/>
         <source>Macro applied: {n} of {total} row(s) modified.</source>
-        <translation type="unfinished">Макрос застосовано: змінено {n} з {total} рядків.</translation>
+        <translation>Макрос застосовано: змінено {n} з {total} рядків.</translation>
     </message>
 </context>
 <context>
@@ -2000,7 +2000,7 @@ Updates live as translations complete.</source>
     <message>
         <location filename="../main_window.py" line="1060"/>
         <source>&amp;Browse NexusMods for Translations…</source>
-        <translation type="unfinished">&amp;Огляд перекладів на NexusMods…</translation>
+        <translation>&amp;Огляд перекладів на NexusMods…</translation>
     </message>
     <message>
         <source>&amp;Weblate Community Sync…</source>
@@ -2079,19 +2079,19 @@ Updates live as translations complete.</source>
     <message>
         <location filename="../main_window.py" line="1168"/>
         <source>Dialogue &amp;Tree Visualizer…</source>
-        <translation type="unfinished">&amp;Візуалізатор дерева діалогів…</translation>
+        <translation>&amp;Візуалізатор дерева діалогів…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1172"/>
         <source>Visualise the Quest → Topic → Response dialogue tree from an ESP/ESM file.
 Shows conversation flow as a node graph so translators can see context.</source>
-        <translation type="unfinished">Візуалізувати дерево діалогів Квест → Тема → Відповідь з файлу ESP/ESM.
+        <translation>Візуалізувати дерево діалогів Квест → Тема → Відповідь з файлу ESP/ESM.
 Показує перебіг розмови у вигляді графа вузлів, щоб перекладачі бачили контекст.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1179"/>
         <source>Lore &amp;RAG Context…</source>
-        <translation type="unfinished">&amp;Контекст Lore RAG…</translation>
+        <translation>&amp;Контекст Lore RAG…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1182"/>
@@ -2099,7 +2099,7 @@ Shows conversation flow as a node graph so translators can see context.</source>
 Download articles from UESP or import a local JSON file to give the AI
 accurate lore context when translating strings mentioning factions, places,
 or characters (e.g. House Va&apos;ruun, Akila City, Freestar Collective).</source>
-        <translation type="unfinished">Керувати локальною базою лору, що використовується для генерації з доповненим пошуком (RAG).
+        <translation>Керувати локальною базою лору, що використовується для генерації з доповненим пошуком (RAG).
 Завантажуйте статті з UESP або імпортуйте локальний файл JSON, щоб надати ШІ
 точний контекст лору під час перекладу рядків, що згадують фракції, місця,
 або персонажів (напр. House Va&apos;ruun, Akila City, Freestar Collective).</translation>
@@ -2107,28 +2107,28 @@ or characters (e.g. House Va&apos;ruun, Akila City, Freestar Collective).</sourc
     <message>
         <location filename="../main_window.py" line="1190"/>
         <source>&amp;Character Profiles…</source>
-        <translation type="unfinished">&amp;Профілі персонажів…</translation>
+        <translation>&amp;Профілі персонажів…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1193"/>
         <source>Create and manage character personas (Freestar Ranger, SysDef Officer, …).
 Assign profiles to strings via right-click; the AI will adapt its register,
 tone, and temperature to match the character&apos;s voice.</source>
-        <translation type="unfinished">Створюйте та керуйте образами персонажів (Freestar Ranger, SysDef Officer, …).
+        <translation>Створюйте та керуйте образами персонажів (Freestar Ranger, SysDef Officer, …).
 Призначайте профілі рядкам через контекстне меню; ШІ адаптує свій регістр,
 тон і температуру відповідно до голосу персонажа.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1200"/>
         <source>Font &amp;Glyph Checker…</source>
-        <translation type="unfinished">Перевірка &amp;шрифтів і гліфів…</translation>
+        <translation>Перевірка &amp;шрифтів і гліфів…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1203"/>
         <source>Scan translated strings for characters that will render as missing
 glyphs (tofu □) in-game due to incomplete font atlas coverage.
 Supports Scaleform SWF font atlases and TTF/OTF fonts.</source>
-        <translation type="unfinished">Сканувати перекладені рядки на символи, які відображатимуться як відсутні
+        <translation>Сканувати перекладені рядки на символи, які відображатимуться як відсутні
 гліфи (тофу □) у грі через неповне покриття атласу шрифтів.
 Підтримує атласи шрифтів Scaleform SWF та шрифти TTF/OTF.</translation>
     </message>
@@ -2236,13 +2236,13 @@ auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings.<
     <message>
         <location filename="../main_window.py" line="1315"/>
         <source>&amp;Macro Editor… (q)</source>
-        <translation type="unfinished">&amp;Редактор макросів… (q)</translation>
+        <translation>&amp;Редактор макросів… (q)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1320"/>
         <source>Open the macro editor to define regex-replace steps and apply
 them to thousands of strings in one batch. (Ctrl+M or &apos;q&apos; in table)</source>
-        <translation type="unfinished">Відкрити редактор макросів, щоб визначити кроки заміни за регулярними виразами
+        <translation>Відкрити редактор макросів, щоб визначити кроки заміни за регулярними виразами
 і застосувати їх до тисяч рядків за один пакет. (Ctrl+M або «q» у таблиці)</translation>
     </message>
     <message>
@@ -2317,59 +2317,61 @@ differently and let you pick a canonical translation for each group.</source>
     <message>
         <location filename="../main_window.py" line="1403"/>
         <source>Check &amp;Register (ти/ви)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірити &amp;регістр (ти/ви)…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1408"/>
         <source>Detect NPC speakers whose translated lines mix informal (ти) and
 formal (ви) address when speaking to the player. (Ctrl+Alt+R)</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявляти мовців-NPC, чиї перекладені репліки змішують неформальне (ти) та
+формальне (ви) звертання до гравця. (Ctrl+Alt+R)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1416"/>
         <source>Check &amp;Gender Agreement…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірити &amp;узгодження роду…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1421"/>
         <source>Scan translated strings for adjective/noun gender agreement
 errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканувати перекладені рядки на помилки узгодження роду
+прикметника й іменника (українська граматика). (Ctrl+Alt+G)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1429"/>
         <source>&amp;Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сеанси</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1432"/>
         <source>&amp;New Session…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Новий сеанс…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1436"/>
         <source>Start a named work session that saves your search filter, cursor, and per-session translation count. (Ctrl+Shift+N)</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпочати іменований робочий сеанс, що зберігає ваш фільтр пошуку, курсор і кількість перекладів за сеанс. (Ctrl+Shift+N)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1443"/>
         <source>&amp;Save Session</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Зберегти сеанс</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1451"/>
         <source>Save Session &amp;As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти сеанс &amp;як…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1460"/>
         <source>&amp;Manage Sessions…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Керування сеансами…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1467"/>
         <source>Recent Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Нещодавні сеанси</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1471"/>
@@ -2404,28 +2406,29 @@ errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
     <message>
         <location filename="../main_window.py" line="1503"/>
         <source>Show/hide the Claude AI chat assistant panel (Ctrl+Shift+C)</source>
-        <translation type="unfinished">Показати/сховати панель чат-асистента Claude AI (Ctrl+Shift+C)</translation>
+        <translation>Показати/сховати панель чат-асистента Claude AI (Ctrl+Shift+C)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1650"/>
         <source>Check for &amp;Updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірити &amp;оновлення…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2140"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі підтримувані файли (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;Файли рядків (*.strings *.dlstrings *.ilstrings);;Файли плагінів (*.esp *.esm *.esl);;Архіви BA2 (*.ba2 *.BA2);;Файли TXT інтерфейсу (*.txt *.TXT);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2166"/>
         <source>Unsupported File</source>
-        <translation type="unfinished"></translation>
+        <translation>Непідтримуваний файл</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2168"/>
         <source>This .txt file does not appear to be a Starfield interface translation file.
 Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей файл .txt не схожий на файл перекладу інтерфейсу Starfield.
+Очікуваний формат: рядки $KEY&lt;TAB&gt;VALUE у кодуванні UTF-16.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2301"/>
@@ -2433,7 +2436,7 @@ Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
 {names}
 
 Load them together with {loaded} for a complete dictionary?</source>
-        <translation type="unfinished">Знайдено супутні файли рядків:
+        <translation>Знайдено супутні файли рядків:
 {names}
 
 Завантажити їх разом з {loaded} для повного словника?</translation>
@@ -2446,7 +2449,7 @@ Load them together with {loaded} for a complete dictionary?</source>
   • {clean} without quality errors
 
 Export which set?</source>
-        <translation type="unfinished">Готово до експорту:
+        <translation>Готово до експорту:
 
   • Всього перекладених рядків: {total}
   • Без помилок якості: {clean}
@@ -2458,26 +2461,26 @@ Export which set?</source>
         <source>Found {n} string(s) with quality issues ({e} error(s), {w} warning(s)).
 
 Retranslate them all with quality feedback hints?</source>
-        <translation type="unfinished">Знайдено {n} рядок(ів) з проблемами якості ({e} помилок, {w} попереджень).
+        <translation>Знайдено {n} рядок(ів) з проблемами якості ({e} помилок, {w} попереджень).
 
 Перекласти їх усі з підказками зворотного зв&apos;язку щодо якості?</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4536"/>
         <source>AI-fixing {n} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>AI-виправлення {n} рядків…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4543"/>
         <source>AI Fix {current}/{total}…</source>
-        <translation type="unfinished"></translation>
+        <translation>AI-виправлення {current}/{total}…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5308"/>
         <source>
 
 (Skipped {count} untranslated entries)</source>
-        <translation type="unfinished">
+        <translation>
 
 (Пропущено {count} неперекладених записів)</translation>
     </message>
@@ -2486,7 +2489,7 @@ Retranslate them all with quality feedback hints?</source>
         <source>Config file does not exist yet. Settings will be saved on first use.
 
 Config path: {path}</source>
-        <translation type="unfinished">Файл конфігурації ще не існує. Налаштування буде збережено під час першого використання.
+        <translation>Файл конфігурації ще не існує. Налаштування буде збережено під час першого використання.
 
 Шлях до конфігурації: {path}</translation>
     </message>
@@ -2495,7 +2498,7 @@ Config path: {path}</source>
         <source>
 
 Import anyway?</source>
-        <translation type="unfinished">
+        <translation>
 
 Все одно імпортувати?</translation>
     </message>
@@ -2505,7 +2508,7 @@ Import anyway?</source>
 {path}
 
 Restart may be required for some changes to take effect.</source>
-        <translation type="unfinished">Налаштування імпортовано з:
+        <translation>Налаштування імпортовано з:
 {path}
 
 Для деяких змін може знадобитися перезапуск.</translation>
@@ -2537,57 +2540,57 @@ Restart may be required for some changes to take effect.</source>
     <message>
         <location filename="../main_window.py" line="1537"/>
         <source>&amp;View</source>
-        <translation type="unfinished">&amp;Вигляд</translation>
+        <translation>&amp;Вигляд</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1539"/>
         <source>&amp;Zen / Focus Mode</source>
-        <translation type="unfinished">&amp;Zen / Режим фокусування</translation>
+        <translation>&amp;Zen / Режим фокусування</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1544"/>
         <source>Hide all panels and enter a distraction-free single-string editor (F11)</source>
-        <translation type="unfinished">Сховати всі панелі та перейти в редактор одного рядка без відволікань (F11)</translation>
+        <translation>Сховати всі панелі та перейти в редактор одного рядка без відволікань (F11)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1551"/>
         <source>&amp;Editor Pane</source>
-        <translation type="unfinished">Панель &amp;редактора</translation>
+        <translation>Панель &amp;редактора</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1556"/>
         <source>Show/hide the Translation Editor pane — a larger editing area that can be dragged to a second monitor (Ctrl+Shift+E)</source>
-        <translation type="unfinished">Показати/сховати панель редактора перекладу — більшу область редагування, яку можна перемістити на другий монітор (Ctrl+Shift+E)</translation>
+        <translation>Показати/сховати панель редактора перекладу — більшу область редагування, яку можна перемістити на другий монітор (Ctrl+Shift+E)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1562"/>
         <source>&amp;Pop Out String List</source>
-        <translation type="unfinished">&amp;Винести список рядків</translation>
+        <translation>&amp;Винести список рядків</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1567"/>
         <source>Open the string list in a separate window — ideal for placing on a second monitor (Ctrl+Shift+L)</source>
-        <translation type="unfinished">Відкрити список рядків в окремому вікні — ідеально для розміщення на другому моніторі (Ctrl+Shift+L)</translation>
+        <translation>Відкрити список рядків в окремому вікні — ідеально для розміщення на другому моніторі (Ctrl+Shift+L)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1575"/>
         <source>&amp;Audio Preview</source>
-        <translation type="unfinished">&amp;Попереднє прослуховування аудіо</translation>
+        <translation>&amp;Попереднє прослуховування аудіо</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1581"/>
         <source>Show/hide the Audio Preview panel (Ctrl+Shift+A)</source>
-        <translation type="unfinished">Показати/сховати панель попереднього прослуховування аудіо (Ctrl+Shift+A)</translation>
+        <translation>Показати/сховати панель попереднього прослуховування аудіо (Ctrl+Shift+A)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1586"/>
         <source>&amp;Visual Context Preview</source>
-        <translation type="unfinished">&amp;Попередній перегляд візуального контексту</translation>
+        <translation>&amp;Попередній перегляд візуального контексту</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1593"/>
         <source>Show/hide the Visual Context Preview panel — renders the current string in a faithful Bethesda UI box using the actual game fonts (Ctrl+Shift+P)</source>
-        <translation type="unfinished">Показати/сховати панель попереднього перегляду візуального контексту — відображає поточний рядок у точній копії інтерфейсу Bethesda з використанням справжніх шрифтів гри (Ctrl+Shift+P)</translation>
+        <translation>Показати/сховати панель попереднього перегляду візуального контексту — відображає поточний рядок у точній копії інтерфейсу Bethesda з використанням справжніх шрифтів гри (Ctrl+Shift+P)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1602"/>
@@ -2688,12 +2691,12 @@ Restart may be required for some changes to take effect.</source>
     <message>
         <location filename="../main_window.py" line="1910"/>
         <source>(none)</source>
-        <translation type="unfinished">(немає)</translation>
+        <translation>(немає)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1912"/>
         <source>Profile &apos;{name}&apos; assigned to {n} string(s)</source>
-        <translation type="unfinished">Профіль «{name}» призначено {n} рядку(ам)</translation>
+        <translation>Профіль «{name}» призначено {n} рядку(ам)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2029"/>
@@ -2770,7 +2773,7 @@ Restart may be required for some changes to take effect.</source>
         <location filename="../main_window.py" line="2262"/>
         <location filename="../main_window.py" line="3389"/>
         <source>String List</source>
-        <translation type="unfinished">Список рядків</translation>
+        <translation>Список рядків</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2276"/>
@@ -2845,13 +2848,14 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2414"/>
         <source>Encoding: utf-16</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодування: utf-16</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2438"/>
         <source>Failed to load TXT:
 {error}</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося завантажити TXT:
+{error}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2460"/>
@@ -2895,7 +2899,7 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2576"/>
         <source>Saved ✓  {name}</source>
-        <translation type="unfinished"></translation>
+        <translation>Збережено ✓  {name}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2586"/>
@@ -2908,7 +2912,7 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2604"/>
         <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файли TXT інтерфейсу (*.txt *.TXT);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2610"/>
@@ -2980,52 +2984,52 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2848"/>
         <source>Pre-flight Cost Estimate</source>
-        <translation type="unfinished">Попередня оцінка вартості</translation>
+        <translation>Попередня оцінка вартості</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2852"/>
         <source>&lt;b&gt;Claude API — estimated cost for this batch&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;Claude API — орієнтовна вартість цього пакету&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Claude API — орієнтовна вартість цього пакету&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2863"/>
         <source>Model:</source>
-        <translation type="unfinished">Модель:</translation>
+        <translation>Модель:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2864"/>
         <source>Strings to translate:</source>
-        <translation type="unfinished">Рядків для перекладу:</translation>
+        <translation>Рядків для перекладу:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2874"/>
         <source>Est. input tokens:</source>
-        <translation type="unfinished">Орієнтовно вхідних токенів:</translation>
+        <translation>Орієнтовно вхідних токенів:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2875"/>
         <source>Est. output tokens:</source>
-        <translation type="unfinished">Орієнтовно вихідних токенів:</translation>
+        <translation>Орієнтовно вихідних токенів:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2891"/>
         <source>Est. cost (USD):</source>
-        <translation type="unfinished">Орієнтовна вартість (USD):</translation>
+        <translation>Орієнтовна вартість (USD):</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2893"/>
         <source>Cache savings:</source>
-        <translation type="unfinished">Економія завдяки кешу:</translation>
+        <translation>Економія завдяки кешу:</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2894"/>
         <source>~{pct:.0f}% via prompt caching</source>
-        <translation type="unfinished">~{pct:.0f}% завдяки кешуванню запитів</translation>
+        <translation>~{pct:.0f}% завдяки кешуванню запитів</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2899"/>
         <source>&lt;i&gt;Estimates use ~3.5 chars/token. Actual cost depends on prompt caching state and output length.&lt;/i&gt;</source>
-        <translation type="unfinished">&lt;i&gt;Оцінки використовують ~3,5 символи/токен. Фактична вартість залежить від стану кешування запитів і довжини відповіді.&lt;/i&gt;</translation>
+        <translation>&lt;i&gt;Оцінки використовують ~3,5 символи/токен. Фактична вартість залежить від стану кешування запитів і довжини відповіді.&lt;/i&gt;</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2921"/>
@@ -3110,12 +3114,12 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="3192"/>
         <source>{n} strings translated</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} рядків перекладено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3199"/>
         <source>{ok} translated, {fail} failed</source>
-        <translation type="unfinished"></translation>
+        <translation>{ok} перекладено, {fail} не вдалося</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3211"/>
@@ -3313,22 +3317,22 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="4092"/>
         <source>Quality check passed — no issues found</source>
-        <translation type="unfinished">Перевірку якості пройдено — проблем не знайдено</translation>
+        <translation>Перевірку якості пройдено — проблем не знайдено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4128"/>
         <source>Running AI quality check ({n} strings)…</source>
-        <translation type="unfinished">Виконується перевірка якості ШІ ({n} рядків)…</translation>
+        <translation>Виконується перевірка якості ШІ ({n} рядків)…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4129"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4134"/>
         <source>AI Quality Check</source>
-        <translation type="unfinished">Перевірка якості ШІ</translation>
+        <translation>Перевірка якості ШІ</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4180"/>
@@ -3381,12 +3385,12 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="6579"/>
         <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент локалізації з підтримкою ШІ для Starfield та інших ігор Bethesda.&lt;br&gt;Розроблено для &lt;b&gt;української&lt;/b&gt; локалізації файлів рядків Starfield.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6624"/>
         <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&apos;color:#666&apos;&gt;Натисніть &lt;b&gt;F1&lt;/b&gt; для всіх клавіатурних скорочень · &lt;b&gt;Shift+F1&lt;/b&gt;, потім клацніть будь-який віджет для контекстної довідки&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Ready to export:
@@ -3490,12 +3494,12 @@ Retranslate them all with quality feedback hints?</source>
     <message>
         <location filename="../main_window.py" line="4682"/>
         <source>Macro applied to row {n}.</source>
-        <translation type="unfinished">Макрос застосовано до рядка {n}.</translation>
+        <translation>Макрос застосовано до рядка {n}.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4684"/>
         <source>Macro: no changes on row {n}.</source>
-        <translation type="unfinished">Макрос: без змін у рядку {n}.</translation>
+        <translation>Макрос: без змін у рядку {n}.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4696"/>
@@ -3611,7 +3615,7 @@ Retranslate them all with quality feedback hints?</source>
     <message>
         <location filename="../main_window.py" line="4803"/>
         <source>Open macro editor for batch regex-replace</source>
-        <translation type="unfinished">Відкрити редактор макросів для пакетної заміни за регулярним виразом</translation>
+        <translation>Відкрити редактор макросів для пакетної заміни за регулярним виразом</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5015"/>
@@ -3870,47 +3874,47 @@ Differences are highlighted in yellow.</source>
     <message>
         <location filename="../main_window.py" line="5654"/>
         <source>NexusMods TM loaded ({label}): {n} entries, {applied} applied</source>
-        <translation type="unfinished">Завантажено пам&apos;ять перекладів NexusMods ({label}): {n} записів, застосовано {applied}</translation>
+        <translation>Завантажено пам&apos;ять перекладів NexusMods ({label}): {n} записів, застосовано {applied}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5666"/>
         <source>NexusMods merge: {applied} translation(s) applied.</source>
-        <translation type="unfinished">Об&apos;єднання NexusMods: застосовано {applied} переклад(ів).</translation>
+        <translation>Об&apos;єднання NexusMods: застосовано {applied} переклад(ів).</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5695"/>
         <source>Lore RAG Unavailable</source>
-        <translation type="unfinished">Lore RAG недоступний</translation>
+        <translation>Lore RAG недоступний</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5696"/>
         <source>Failed to open the lore database. Check the log for details.</source>
-        <translation type="unfinished">Не вдалося відкрити базу даних лору. Перевірте журнал для деталей.</translation>
+        <translation>Не вдалося відкрити базу даних лору. Перевірте журнал для деталей.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5721"/>
         <source>Font auto-fix applied to {n} string(s)</source>
-        <translation type="unfinished">Автовиправлення шрифту застосовано до {n} рядка(ів)</translation>
+        <translation>Автовиправлення шрифту застосовано до {n} рядка(ів)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5742"/>
         <source>Not in ESP Mode</source>
-        <translation type="unfinished">Не в режимі ESP</translation>
+        <translation>Не в режимі ESP</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5743"/>
         <source>Open the ESP/ESM file in the main table first.</source>
-        <translation type="unfinished">Спочатку відкрийте файл ESP/ESM в основній таблиці.</translation>
+        <translation>Спочатку відкрийте файл ESP/ESM в основній таблиці.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5753"/>
         <source>Not Found</source>
-        <translation type="unfinished">Не знайдено</translation>
+        <translation>Не знайдено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5754"/>
         <source>0x{fid:08X} / {fs} not found in the current file.</source>
-        <translation type="unfinished">0x{fid:08X} / {fs} не знайдено в поточному файлі.</translation>
+        <translation>0x{fid:08X} / {fs} не знайдено в поточному файлі.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5770"/>
@@ -4032,42 +4036,42 @@ Restart may be required for some changes to take effect.</source>
     <message>
         <location filename="../main_window.py" line="6034"/>
         <source>Register Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка регістру</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6057"/>
         <source>Gender Agreement Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка узгодження роду</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6079"/>
         <source>(no sessions yet)</source>
-        <translation type="unfinished"></translation>
+        <translation>(сеансів ще немає)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6129"/>
         <source>Session “{name}” started.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс «{name}» розпочато.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6140"/>
         <source>Session saved: {name}</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс збережено: {name}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6187"/>
         <source>Session Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс не знайдено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6188"/>
         <source>Session “{name}” could not be loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося завантажити сеанс «{name}».</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6202"/>
         <source>Open Session File?</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити файл сеансу?</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6204"/>
@@ -4075,12 +4079,15 @@ Restart may be required for some changes to take effect.</source>
 {path}
 
 Open that file now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс призначено для:
+{path}
+
+Відкрити цей файл зараз?</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6214"/>
         <source>File Not Found</source>
-        <translation type="unfinished">Файл не знайдено</translation>
+        <translation>Файл не знайдено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6216"/>
@@ -4088,12 +4095,15 @@ Open that file now?</source>
 {path}
 
 You can still use the session context, but the file will need to be opened manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл сеансу більше не існує:
+{path}
+
+Ви все ще можете використовувати контекст сеансу, але файл доведеться відкрити вручну.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6239"/>
         <source>Session “{name}” resumed — {n} strings translated in session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс «{name}» відновлено — {n} рядків перекладено за сеанс.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6372"/>
@@ -4145,23 +4155,24 @@ You can still use the session context, but the file will need to be opened manua
     <message>
         <location filename="../main_window.py" line="6516"/>
         <source>Up to Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Актуальна версія</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6517"/>
         <source>You are already running the latest version ({ver}).</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви вже використовуєте найновішу версію ({ver}).</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6523"/>
         <source>Update Check Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося перевірити оновлення</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6524"/>
         <source>Could not reach the update server:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося зв’язатися із сервером оновлень:
+</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6556"/>
@@ -4241,37 +4252,37 @@ Drag-and-drop a file here to open it.</source>
     <message>
         <location filename="../session_dialog.py" line="255"/>
         <source>New Translation Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий сеанс перекладу</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="267"/>
         <source>e.g., Barrett Dialogue</source>
-        <translation type="unfinished"></translation>
+        <translation>напр., Діалог Барретта</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="269"/>
         <source>Session name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва сеансу:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="272"/>
         <source>Optional description…</source>
-        <translation type="unfinished"></translation>
+        <translation>Необов’язковий опис…</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="273"/>
         <source>Note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Примітка:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="295"/>
         <source>Name cannot be empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва не може бути порожньою.</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="298"/>
         <source>A session with this name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс із такою назвою вже існує.</translation>
     </message>
 </context>
 <context>
@@ -4279,27 +4290,27 @@ Drag-and-drop a file here to open it.</source>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="444"/>
         <source>NexusMods Translation Browser</source>
-        <translation type="unfinished">Браузер перекладів NexusMods</translation>
+        <translation>Браузер перекладів NexusMods</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="467"/>
         <source>⚠  No NexusMods API key configured — go to Settings → NexusMods to add one.</source>
-        <translation type="unfinished">⚠  Ключ API NexusMods не налаштовано — перейдіть у Налаштування → NexusMods, щоб додати його.</translation>
+        <translation>⚠  Ключ API NexusMods не налаштовано — перейдіть у Налаштування → NexusMods, щоб додати його.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="507"/>
         <source>Game:</source>
-        <translation type="unfinished">Гра:</translation>
+        <translation>Гра:</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="518"/>
         <source>Search: e.g. &quot;Ukrainian translation&quot;</source>
-        <translation type="unfinished">Пошук: напр. «Ukrainian translation»</translation>
+        <translation>Пошук: напр. «Ukrainian translation»</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="521"/>
         <source>🔍  Search</source>
-        <translation type="unfinished">🔍  Пошук</translation>
+        <translation>🔍  Пошук</translation>
     </message>
     <message>
         <source>Mod Name</source>
@@ -4328,132 +4339,133 @@ Drag-and-drop a file here to open it.</source>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="560"/>
         <source>(click a mod card)</source>
-        <translation type="unfinished"></translation>
+        <translation>(клацніть картку моду)</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="583"/>
         <source>Files:</source>
-        <translation type="unfinished">Файли:</translation>
+        <translation>Файли:</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>File name</source>
-        <translation type="unfinished">Назва файлу</translation>
+        <translation>Назва файлу</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Version</source>
-        <translation type="unfinished">Версія</translation>
+        <translation>Версія</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Size</source>
-        <translation type="unfinished">Розмір</translation>
+        <translation>Розмір</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Category</source>
-        <translation type="unfinished">Категорія</translation>
+        <translation>Категорія</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="601"/>
         <source>🌐  Open mod page in browser</source>
-        <translation type="unfinished">🌐  Відкрити сторінку моду в браузері</translation>
+        <translation>🌐  Відкрити сторінку моду в браузері</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="606"/>
         <source>⬇  Download &amp; Open in Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>⬇  Завантажити та відкрити в редакторі</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="609"/>
         <source>Download the selected .esp/.esm/.esl file (or zip containing one)
 and open it automatically in the editor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити вибраний файл .esp/.esm/.esl (або zip, що його містить)
+та автоматично відкрити в редакторі.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="616"/>
         <source>⬇  Download &amp; Import as TM</source>
-        <translation type="unfinished">⬇  Завантажити та імпортувати як пам&apos;ять перекладів</translation>
+        <translation>⬇  Завантажити та імпортувати як пам&apos;ять перекладів</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="619"/>
         <source>Download the selected file and load it as a Translation Memory.
 Known strings will be pre-filled and not retranslated by AI.</source>
-        <translation type="unfinished">Завантажити вибраний файл і завантажити його як пам&apos;ять перекладів.
+        <translation>Завантажити вибраний файл і завантажити його як пам&apos;ять перекладів.
 Відомі рядки будуть заповнені попередньо й не перекладатимуться ШІ повторно.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="625"/>
         <source>⬇  Download &amp; Merge into Current</source>
-        <translation type="unfinished">⬇  Завантажити та об&apos;єднати з поточним</translation>
+        <translation>⬇  Завантажити та об&apos;єднати з поточним</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="628"/>
         <source>Download the selected file and apply any matching translations
 to the currently open file.  Existing translations are preserved.</source>
-        <translation type="unfinished">Завантажити вибраний файл і застосувати всі відповідні переклади
+        <translation>Завантажити вибраний файл і застосувати всі відповідні переклади
 до поточного відкритого файлу.  Наявні переклади зберігаються.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="635"/>
         <source>✕  Cancel download</source>
-        <translation type="unfinished">✕  Скасувати завантаження</translation>
+        <translation>✕  Скасувати завантаження</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="681"/>
         <source>Searching…</source>
-        <translation type="unfinished">Пошук…</translation>
+        <translation>Пошук…</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="692"/>
         <source>No results found.</source>
-        <translation type="unfinished">Результатів не знайдено.</translation>
+        <translation>Результатів не знайдено.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="693"/>
         <source>0 results</source>
-        <translation type="unfinished"></translation>
+        <translation>0 результатів</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="697"/>
         <source>{n} result{&apos;s&apos; if n != 1 else &apos;&apos;}</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} результат{&apos;и&apos; if n != 1 else &apos;&apos;}</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="918"/>
         <source>⚠  Free-user download requires &lt;b&gt;curl-cffi&lt;/b&gt;.  Run &lt;code&gt;pip install curl-cffi&lt;/code&gt; then restart the app.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Завантаження безкоштовним користувачем потребує &lt;b&gt;curl-cffi&lt;/b&gt;.  Виконайте &lt;code&gt;pip install curl-cffi&lt;/code&gt;, потім перезапустіть програму.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="926"/>
         <source>⚠  No NexusMods session found in Firefox or Chromium.  Log in to NexusMods in your browser, then retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Сеанс NexusMods не знайдено у Firefox або Chromium.  Увійдіть у NexusMods у браузері, потім повторіть спробу.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="934"/>
         <source>⚠  NexusMods session expired.  Log in again in your browser, then retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Сеанс NexusMods завершився.  Увійдіть знову у браузері, потім повторіть спробу.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="942"/>
         <source>⚠  Could not parse download tokens from NexusMods.  The site may have changed — please report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>⚠  Не вдалося розібрати токени завантаження з NexusMods.  Можливо, сайт змінився — повідомте про цю проблему.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="954"/>
         <source>No files found in the downloaded archive.</source>
-        <translation type="unfinished"></translation>
+        <translation>У завантаженому архіві файлів не знайдено.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="962"/>
         <source>No .esp/.esm/.esl found in {paths[0].name}.</source>
-        <translation type="unfinished"></translation>
+        <translation>У {paths[0].name} не знайдено .esp/.esm/.esl.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="966"/>
         <source>✓  Opening {plugins[0].name} in editor…</source>
-        <translation type="unfinished"></translation>
+        <translation>✓  Відкривається {plugins[0].name} в редакторі…</translation>
     </message>
     <message>
         <source>{len(results)} result(s)</source>
@@ -4462,27 +4474,27 @@ to the currently open file.  Existing translations are preserved.</source>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="703"/>
         <source>Search failed: {msg}</source>
-        <translation type="unfinished">Помилка пошуку: {msg}</translation>
+        <translation>Помилка пошуку: {msg}</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="831"/>
         <source>{len(files)} file(s) — translation-related files shown in green</source>
-        <translation type="unfinished">{len(files)} файл(ів) — файли, пов&apos;язані з перекладом, показані зеленим</translation>
+        <translation>{len(files)} файл(ів) — файли, пов&apos;язані з перекладом, показані зеленим</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="873"/>
         <source>Downloading {nf.file_name}…</source>
-        <translation type="unfinished">Завантаження {nf.file_name}…</translation>
+        <translation>Завантаження {nf.file_name}…</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="899"/>
         <source>Download cancelled.</source>
-        <translation type="unfinished">Завантаження скасовано.</translation>
+        <translation>Завантаження скасовано.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="908"/>
         <source>Downloading… {mb_done:.1f} / {mb_total:.1f} MB</source>
-        <translation type="unfinished">Завантаження… {mb_done:.1f} / {mb_total:.1f} МБ</translation>
+        <translation>Завантаження… {mb_done:.1f} / {mb_total:.1f} МБ</translation>
     </message>
     <message>
         <source>⚠  Direct download requires NexusMods Premium.  The mod page has been opened in your browser — download manually and use &lt;b&gt;Translation → Load Translation Memory…&lt;/b&gt;.</source>
@@ -4491,7 +4503,7 @@ to the currently open file.  Existing translations are preserved.</source>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="948"/>
         <source>Download failed: {msg}</source>
-        <translation type="unfinished">Помилка завантаження: {msg}</translation>
+        <translation>Помилка завантаження: {msg}</translation>
     </message>
     <message>
         <source>No .strings files found in the downloaded archive.</source>
@@ -4500,22 +4512,22 @@ to the currently open file.  Existing translations are preserved.</source>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="973"/>
         <source>Downloaded: {paths[0].name} — open it in the editor via File → Open to browse its contents.</source>
-        <translation type="unfinished">Завантажено: {paths[0].name} — відкрийте його в редакторі через Файл → Відкрити, щоб переглянути вміст.</translation>
+        <translation>Завантажено: {paths[0].name} — відкрийте його в редакторі через Файл → Відкрити, щоб переглянути вміст.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="986"/>
         <source>Could not read {p.name}: {exc}</source>
-        <translation type="unfinished">Не вдалося прочитати {p.name}: {exc}</translation>
+        <translation>Не вдалося прочитати {p.name}: {exc}</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="993"/>
         <source>✓  TM imported: {loaded} string(s) from {len(paths)} file(s).  Known strings will be skipped during AI translation.</source>
-        <translation type="unfinished">✓  Пам&apos;ять перекладів імпортовано: {loaded} рядк(и/ів) з {len(paths)} файл(ів).  Відомі рядки будуть пропущені під час перекладу ШІ.</translation>
+        <translation>✓  Пам&apos;ять перекладів імпортовано: {loaded} рядк(и/ів) з {len(paths)} файл(ів).  Відомі рядки будуть пропущені під час перекладу ШІ.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="999"/>
         <source>✓  Merge requested: {loaded} string(s) from {len(paths)} file(s).</source>
-        <translation type="unfinished">✓  Запит на об&apos;єднання: {loaded} рядк(и/ів) з {len(paths)} файл(ів).</translation>
+        <translation>✓  Запит на об&apos;єднання: {loaded} рядк(и/ів) з {len(paths)} файл(ів).</translation>
     </message>
 </context>
 <context>
@@ -4618,11 +4630,11 @@ A backup will be saved as:
 {bak}
 
 Set the Localized flag and continue?</source>
-        <translation type="unfinished">Це змінить файл плагіна на місці:
+        <translation>Це змінить файл плагіна на місці:
 
 {path}
 
-Резервна копія буде збережена як:
+Резервну копію буде збережено як:
 {bak}
 
 Встановити прапорець Localized і продовжити?</translation>
@@ -4633,7 +4645,7 @@ Set the Localized flag and continue?</source>
 
 Backup saved to:
 {bak}</source>
-        <translation type="unfinished">Прапорець Localized успішно встановлено.
+        <translation>Прапорець Localized успішно встановлено.
 
 Резервну копію збережено до:
 {bak}</translation>
@@ -4685,42 +4697,42 @@ Backup saved to:
     <message>
         <location filename="../profile_assign_dialog.py" line="42"/>
         <source>Assign Character Profile</source>
-        <translation type="unfinished">Призначити профіль персонажа</translation>
+        <translation>Призначити профіль персонажа</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="49"/>
         <source>Apply to {n} selected string(s):</source>
-        <translation type="unfinished">Застосувати до {n} вибраних рядків:</translation>
+        <translation>Застосувати до {n} вибраних рядків:</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="51"/>
         <source>Apply to 1 selected string:</source>
-        <translation type="unfinished">Застосувати до 1 вибраного рядка:</translation>
+        <translation>Застосувати до 1 вибраного рядка:</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="61"/>
         <source>— No profile (clear assignment) —</source>
-        <translation type="unfinished">— Без профілю (зняти призначення) —</translation>
+        <translation>— Без профілю (зняти призначення) —</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="85"/>
         <source>Assign</source>
-        <translation type="unfinished">Призначити</translation>
+        <translation>Призначити</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="90"/>
         <source>Clear</source>
-        <translation type="unfinished">Очистити</translation>
+        <translation>Очистити</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="91"/>
         <source>Remove profile assignment from selected strings</source>
-        <translation type="unfinished">Видалити призначення профілю для вибраних рядків</translation>
+        <translation>Зняти призначення профілю з вибраних рядків</translation>
     </message>
     <message>
         <location filename="../profile_assign_dialog.py" line="95"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
 </context>
 <context>
@@ -4728,198 +4740,198 @@ Backup saved to:
     <message>
         <location filename="../profile_editor_dialog.py" line="56"/>
         <source>Character Profiles</source>
-        <translation type="unfinished">Профілі персонажів</translation>
+        <translation>Профілі персонажів</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="78"/>
         <source>Profiles:</source>
-        <translation type="unfinished">Профілі:</translation>
+        <translation>Профілі:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="86"/>
         <source>＋ Add</source>
-        <translation type="unfinished">＋ Додати</translation>
+        <translation>＋ Додати</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="87"/>
         <source>Create a new blank profile</source>
-        <translation type="unfinished">Створити новий порожній профіль</translation>
+        <translation>Створити новий порожній профіль</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="91"/>
         <source>⊞ Duplicate</source>
-        <translation type="unfinished">⊞ Дублювати</translation>
+        <translation>⊞ Дублювати</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="92"/>
         <source>Duplicate the selected profile</source>
-        <translation type="unfinished">Дублювати вибраний профіль</translation>
+        <translation>Дублювати вибраний профіль</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="96"/>
         <source>✕ Delete</source>
-        <translation type="unfinished">✕ Видалити</translation>
+        <translation>✕ Видалити</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="97"/>
         <source>Delete the selected profile (built-in profiles cannot be deleted)</source>
-        <translation type="unfinished">Видалити вибраний профіль (вбудовані профілі видалити неможливо)</translation>
+        <translation>Видалити вибраний профіль (вбудовані профілі видалити неможливо)</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="109"/>
         <source>ℹ This is a built-in profile.  Name and color are read-only; you can freely edit the AI addendum.</source>
-        <translation type="unfinished">ℹ Це вбудований профіль.  Назва та колір доступні лише для читання; ви можете вільно редагувати доповнення для ШІ.</translation>
+        <translation>ℹ Це вбудований профіль.  Назва та колір доступні лише для читання; ви можете вільно редагувати доповнення для ШІ.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="117"/>
         <source>Profile</source>
-        <translation type="unfinished">Профіль</translation>
+        <translation>Профіль</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="122"/>
         <source>e.g. Freestar Ranger</source>
-        <translation type="unfinished">напр. Freestar Ranger</translation>
+        <translation>напр. Freestar Ranger</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="124"/>
         <source>Name:</source>
-        <translation type="unfinished">Назва:</translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="127"/>
         <source>One-line description shown in the assign picker</source>
-        <translation type="unfinished">Однорядковий опис, що показується у вікні призначення</translation>
+        <translation>Однорядковий опис, що показується у вікні призначення</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="129"/>
         <source>Description:</source>
-        <translation type="unfinished">Опис:</translation>
+        <translation>Опис:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="144"/>
         <source>Pick…</source>
-        <translation type="unfinished">Вибрати…</translation>
+        <translation>Вибрати…</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="148"/>
         <source>Color:</source>
-        <translation type="unfinished">Колір:</translation>
+        <translation>Колір:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="153"/>
         <source>AI Settings</source>
-        <translation type="unfinished">Налаштування ШІ</translation>
+        <translation>Налаштування ШІ</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="161"/>
         <source>Formality:</source>
-        <translation type="unfinished">Формальність:</translation>
+        <translation>Формальність:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="170"/>
         <source>(worker default)</source>
-        <translation type="unfinished">(типове значення воркера)</translation>
+        <translation>(типове значення воркера)</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="172"/>
         <source>0.00 = use the worker&apos;s default temperature.
 Higher values increase creativity/variation;
 lower values produce more deterministic output.</source>
-        <translation type="unfinished">0.00 = використовувати типову температуру воркера.
+        <translation>0.00 = використовувати типову температуру воркера.
 Вищі значення підвищують креативність/різноманітність;
 нижчі значення дають більш детермінований результат.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="178"/>
         <source>(0.00 = worker default)</source>
-        <translation type="unfinished">(0.00 = типове значення воркера)</translation>
+        <translation>(0.00 = типове значення воркера)</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="180"/>
         <source>Temperature:</source>
-        <translation type="unfinished">Температура:</translation>
+        <translation>Температура:</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="182"/>
         <source>Allow contractions</source>
-        <translation type="unfinished">Дозволити скорочені форми</translation>
+        <translation>Дозволити скорочені форми</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="189"/>
         <source>System Prompt Addendum</source>
-        <translation type="unfinished">Доповнення системного промпту</translation>
+        <translation>Доповнення системного промпту</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="192"/>
         <source>This text is appended to the AI system prompt when translating strings assigned to this profile.  Edit freely or regenerate from the fields above.</source>
-        <translation type="unfinished">Цей текст додається до системного промпту ШІ під час перекладу рядків, призначених цьому профілю.  Редагуйте вільно або згенеруйте знову з полів вище.</translation>
+        <translation>Цей текст додається до системного промпту ШІ під час перекладу рядків, призначених цьому профілю.  Редагуйте вільно або згенеруйте знову з полів вище.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="197"/>
         <source>e.g. Character: Freestar Ranger (casual register)
 Use informal language. Contractions are natural…</source>
-        <translation type="unfinished">напр. Персонаж: Freestar Ranger (розмовний регістр)
+        <translation>напр. Персонаж: Freestar Ranger (розмовний регістр)
 Використовуйте неформальну мову. Скорочені форми є природними…</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="204"/>
         <source>⟲ Regenerate from structured fields</source>
-        <translation type="unfinished">⟲ Згенерувати знову зі структурованих полів</translation>
+        <translation>⟲ Згенерувати знову зі структурованих полів</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="205"/>
         <source>Overwrite the addendum with text generated from Name + Formality + Contractions fields</source>
-        <translation type="unfinished">Перезаписати доповнення текстом, згенерованим з полів «Назва», «Формальність» і «Скорочення»</translation>
+        <translation>Перезаписати доповнення текстом, згенерованим з полів «Назва», «Формальність» і «Скорочення»</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="212"/>
         <source>Save Changes</source>
-        <translation type="unfinished">Зберегти зміни</translation>
+        <translation>Зберегти зміни</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="216"/>
         <source>Discard</source>
-        <translation type="unfinished">Відхилити</translation>
+        <translation>Відхилити</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="221"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="289"/>
         <source>Cannot Delete</source>
-        <translation type="unfinished">Неможливо видалити</translation>
+        <translation>Неможливо видалити</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="290"/>
         <source>Built-in profiles cannot be deleted.</source>
-        <translation type="unfinished">Вбудовані профілі неможливо видалити.</translation>
+        <translation>Вбудовані профілі неможливо видалити.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="295"/>
         <source>Delete Profile</source>
-        <translation type="unfinished">Видалити профіль</translation>
+        <translation>Видалити профіль</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="296"/>
         <source>Delete profile &apos;{name}&apos;? This cannot be undone.</source>
-        <translation type="unfinished">Видалити профіль «{name}»? Цю дію неможливо скасувати.</translation>
+        <translation>Видалити профіль «{name}»? Цю дію неможливо скасувати.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="442"/>
         <source>Pick Profile Color</source>
-        <translation type="unfinished">Вибрати колір профілю</translation>
+        <translation>Вибрати колір профілю</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="465"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished">Незбережені зміни</translation>
+        <translation>Незбережені зміни</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="466"/>
         <source>Save changes to &apos;{name}&apos;?</source>
-        <translation type="unfinished">Зберегти зміни в «{name}»?</translation>
+        <translation>Зберегти зміни в «{name}»?</translation>
     </message>
 </context>
 <context>
@@ -5127,51 +5139,53 @@ Use informal language. Contractions are natural…</source>
     <message>
         <location filename="../quality_dialog.py" line="533"/>
         <source>Severity:</source>
-        <translation type="unfinished">Серйозність:</translation>
+        <translation>Рівень:</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="536"/>
         <source>All</source>
-        <translation type="unfinished">Усі</translation>
+        <translation>Усі</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="537"/>
         <source>Errors</source>
-        <translation type="unfinished">Помилки</translation>
+        <translation>Помилки</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="538"/>
         <source>Warnings</source>
-        <translation type="unfinished">Попередження</translation>
+        <translation>Попередження</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="539"/>
         <source>Info</source>
-        <translation type="unfinished">Інформація</translation>
+        <translation>Інформація</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="544"/>
         <source>Error code:</source>
-        <translation type="unfinished">Код помилки:</translation>
+        <translation>Код помилки:</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="549"/>
         <source>Filter rows by a specific issue code.
 Only codes that appear in the current results are listed.</source>
-        <translation type="unfinished">Фільтрувати рядки за конкретним кодом проблеми.
-У списку лише коди, наявні в поточних результатах.</translation>
+        <translation>Фільтрувати рядки за конкретним кодом проблеми.
+Перелічено лише коди, що трапляються в поточних результатах.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="557"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="559"/>
         <source>Hide all rows with the selected issue code.
 Useful to suppress noise (e.g. hide EMPTY_TRANSLATION)
 so you can focus on other issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати всі рядки з вибраним кодом проблеми.
+Корисно, щоб прибрати шум (напр., приховати EMPTY_TRANSLATION)
+і зосередитися на інших проблемах.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="569"/>
@@ -5196,12 +5210,12 @@ Choose format by file extension:
     <message>
         <location filename="../quality_dialog.py" line="587"/>
         <source>Show all codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати всі коди</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="588"/>
         <source>Remove all hidden-code filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Зняти всі фільтри прихованих кодів</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="599"/>
@@ -5261,19 +5275,20 @@ Choose format by file extension:
         <location filename="../quality_dialog.py" line="827"/>
         <location filename="../quality_dialog.py" line="940"/>
         <source>Auto-Fix All</source>
-        <translation type="unfinished"></translation>
+        <translation>Автовиправити все</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="641"/>
         <source>Apply mechanical fixes to ALL strings with auto-fixable issues
 (no selection needed — fixes everything in one click)</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосувати механічні виправлення до ВСІХ рядків з проблемами, які можна виправити автоматично
+(вибір не потрібен — виправляє все одним клацанням)</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="648"/>
         <location filename="../quality_dialog.py" line="833"/>
         <source>AI Fix Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>AI-виправлення вибраних</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="650"/>
@@ -5281,7 +5296,10 @@ Choose format by file extension:
 Unlike retranslation, the model sees the existing translation and
 edits only what the QC check flagged — preserving correct parts.
 Fix starts after you close this dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>Надіслати хибний переклад до AI-моделі для виправлення конкретних проблем.
+На відміну від повторного перекладу, модель бачить наявний переклад і
+виправляє лише те, що позначила перевірка якості, зберігаючи правильні частини.
+Виправлення почнеться після закриття цього діалогу.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="659"/>
@@ -5356,12 +5374,12 @@ Retranslation starts after you close this dialog.</source>
     <message>
         <location filename="../quality_dialog.py" line="826"/>
         <source>Auto-Fix All ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>Автовиправити все ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="832"/>
         <source>AI Fix Selected ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>AI-виправлення вибраних ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="838"/>
@@ -5394,32 +5412,32 @@ Retranslation starts after you close this dialog.</source>
     <message>
         <location filename="../quality_dialog.py" line="930"/>
         <source>Auto-Fix All Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі автовиправлення застосовано</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="941"/>
         <source>No automatically fixable issues found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Проблем, які можна виправити автоматично, не знайдено.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="970"/>
         <source>AI Fix Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Черга AI-виправлень</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="971"/>
         <source>All selected strings are already in the AI fix queue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі вибрані рядки вже в черзі AI-виправлень.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="977"/>
         <source>{total} string(s) queued for AI fix</source>
-        <translation type="unfinished"></translation>
+        <translation>{total} рядків у черзі на AI-виправлення</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="981"/>
         <source>Queued for AI Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>У черзі на AI-виправлення</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="983"/>
@@ -5427,7 +5445,10 @@ Retranslation starts after you close this dialog.</source>
 Total queued: {total}
 
 Close this dialog to start AI fixing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Додано {added} рядків до черги AI-виправлень.
+Усього в черзі: {total}
+
+Закрийте цей діалог, щоб почати AI-виправлення.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1026"/>
@@ -5463,12 +5484,12 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../quality_dialog.py" line="1099"/>
         <source>All codes</source>
-        <translation type="unfinished">Усі коди</translation>
+        <translation>Усі коди</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1136"/>
         <source>Hidden: {codes}</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховано: {codes}</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1175"/>
@@ -5526,73 +5547,73 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../register_dialog.py" line="53"/>
         <source>Register Consistency – ти/ви</source>
-        <translation type="unfinished"></translation>
+        <translation>Узгодженість регістру – ти/ви</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="71"/>
         <source>{n} speaker(s) with mixed ти/ви register — select a row to inspect.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} мовців зі змішаним регістром ти/ви — виберіть рядок для перегляду.</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="75"/>
         <source>No register inconsistency found. All translated strings use a consistent address form.</source>
-        <translation type="unfinished"></translation>
+        <translation>Непослідовності регістру не виявлено. Усі перекладені рядки використовують однакову форму звертання.</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="83"/>
         <location filename="../register_dialog.py" line="134"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="93"/>
         <source>Speaker / EDID prefix</source>
-        <translation type="unfinished"></translation>
+        <translation>Мовець / префікс EDID</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="94"/>
         <source>ти-form</source>
-        <translation type="unfinished"></translation>
+        <translation>форма ти</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="95"/>
         <source>ви-form</source>
-        <translation type="unfinished"></translation>
+        <translation>форма ви</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="117"/>
         <source>ти-form strings (informal)</source>
-        <translation type="unfinished"></translation>
+        <translation>рядки у формі ти (неформальна)</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="119"/>
         <source>ви-form strings (formal/plural)</source>
-        <translation type="unfinished"></translation>
+        <translation>рядки у формі ви (формальна/множина)</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="129"/>
         <source>Jump to String in Table</source>
-        <translation type="unfinished">Перейти до рядка в таблиці</translation>
+        <translation>Перейти до рядка в таблиці</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Рядок</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>ID</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="162"/>
         <source>Translation preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній перегляд перекладу</translation>
     </message>
     <message>
         <location filename="../register_dialog.py" line="185"/>
         <source>(unknown speaker)</source>
-        <translation type="unfinished"></translation>
+        <translation>(невідомий мовець)</translation>
     </message>
 </context>
 <context>
@@ -5600,12 +5621,12 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../session_dialog.py" line="315"/>
         <source>Rename Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати сеанс</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="324"/>
         <source>New name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова назва:</translation>
     </message>
 </context>
 <context>
@@ -5613,88 +5634,88 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../session_dialog.py" line="63"/>
         <source>Translation Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанси перекладу</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="79"/>
         <source>Sessions let you save and resume named work contexts — search filter, cursor position, and per-session translation count.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанси дають змогу зберігати й відновлювати іменовані робочі контексти — фільтр пошуку, позицію курсора та кількість перекладів за сеанс.</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="88"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="89"/>
         <source>File</source>
-        <translation type="unfinished">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="90"/>
         <source>Translated in session</source>
-        <translation type="unfinished"></translation>
+        <translation>Перекладено за сеанс</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="91"/>
         <source>Last modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Востаннє змінено</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="111"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Подробиці</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="118"/>
         <source>File:</source>
-        <translation type="unfinished">Файл:</translation>
+        <translation>Файл:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="119"/>
         <source>Filter:</source>
-        <translation type="unfinished">Фільтр:</translation>
+        <translation>Фільтр:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="120"/>
         <source>Note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Примітка:</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="126"/>
         <source>Resume Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновити сеанс</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="131"/>
         <source>Rename…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати…</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="135"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="144"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="197"/>
         <location filename="../session_dialog.py" line="198"/>
         <source>(none)</source>
-        <translation type="unfinished">(немає)</translation>
+        <translation>(немає)</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="227"/>
         <source>Delete Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити сеанс</translation>
     </message>
     <message>
         <location filename="../session_dialog.py" line="228"/>
         <source>Delete session &quot;{name}&quot;? This cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити сеанс «{name}»? Цю дію не можна скасувати.</translation>
     </message>
 </context>
 <context>
@@ -5832,24 +5853,24 @@ Note: This is automatically disabled when English is the source language.</sourc
         <location filename="../settings_dialog.py" line="179"/>
         <source>Type any Ollama model name or pick from the list.
 Click &apos;Refresh&apos; to load all installed models from the server.</source>
-        <translation type="unfinished">Введіть будь-яку назву моделі Ollama або виберіть зі списку.
+        <translation>Введіть будь-яку назву моделі Ollama або виберіть зі списку.
 Натисніть «Оновити», щоб завантажити всі встановлені моделі з сервера.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="185"/>
         <location filename="../settings_dialog.py" line="1087"/>
         <source>Refresh</source>
-        <translation type="unfinished">Оновити</translation>
+        <translation>Оновити</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="186"/>
         <source>Fetch installed models from the Ollama server</source>
-        <translation type="unfinished">Отримати встановлені моделі з сервера Ollama</translation>
+        <translation>Отримати встановлені моделі з сервера Ollama</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="250"/>
         <source>Protect proper nouns and lore terms (faction/company/ship/character names, resources, UI terms, loaded term file)</source>
-        <translation type="unfinished">Захищати власні назви та терміни лору (назви фракцій/компаній/кораблів/персонажів, ресурси, терміни інтерфейсу, завантажений файл термінів)</translation>
+        <translation>Захищати власні назви та терміни лору (назви фракцій/компаній/кораблів/персонажів, ресурси, терміни інтерфейсу, завантажений файл термінів)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="256"/>
@@ -5859,7 +5880,7 @@ are replaced with placeholder tokens so the AI cannot modify them.
 
 When disabled (default), the AI is free to translate these names — useful when you want
 localised faction/location names (e.g. «Об&apos;єднані колонії» instead of «United Colonies»).</source>
-        <translation type="unfinished">Якщо увімкнено, назви фракцій (Freestar Collective, UC…), назви компаній, кораблів, персонажів,
+        <translation>Якщо увімкнено, назви фракцій (Freestar Collective, UC…), назви компаній, кораблів, персонажів,
 назви істот/ресурсів, абревіатури інтерфейсу (HUD, GPS…) та терміни, завантажені з файлу власних термінів,
 замінюються токенами-заповнювачами, щоб ШІ не міг їх змінити.
 
@@ -5869,7 +5890,7 @@ localised faction/location names (e.g. «Об&apos;єднані колонії»
     <message>
         <location filename="../settings_dialog.py" line="285"/>
         <source>ℹ️ Format tags, game IDs, XML/alias tokens, and user-added custom terms are always protected regardless of the setting above.</source>
-        <translation type="unfinished">ℹ️ Теги форматування, ідентифікатори гри, токени XML/псевдонімів та власні терміни користувача завжди захищені незалежно від налаштування вище.</translation>
+        <translation>ℹ️ Теги форматування, ідентифікатори гри, токени XML/псевдонімів та власні терміни користувача завжди захищені незалежно від налаштування вище.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="295"/>
@@ -5948,64 +5969,66 @@ Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
     <message>
         <location filename="../settings_dialog.py" line="378"/>
         <source>Background / Wallpaper</source>
-        <translation type="unfinished"></translation>
+        <translation>Тло / Шпалери</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="381"/>
         <source>Enable custom background</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути власне тло</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="388"/>
         <source>Path to image or video file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Шлях до файлу зображення або відео…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="393"/>
         <source>File:</source>
-        <translation type="unfinished">Файл:</translation>
+        <translation>Файл:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="398"/>
         <source>Cover  (fill, crop edges)</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнити  (заповнити, обрізати краї)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="399"/>
         <source>Contain  (fit inside, letterbox)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вмістити  (вписати всередину, letterbox)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="400"/>
         <source>Stretch  (distort to fill)</source>
-        <translation type="unfinished"></translation>
+        <translation>Розтягнути  (спотворити для заповнення)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="401"/>
         <source>Tile  (repeat)</source>
-        <translation type="unfinished"></translation>
+        <translation>Плиткою  (повторювати)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="402"/>
         <source>Center  (original size, centered)</source>
-        <translation type="unfinished"></translation>
+        <translation>По центру  (оригінальний розмір, центровано)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="407"/>
         <source>Fit mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим припасування:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="423"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="427"/>
         <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
 Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
 (Video requires PySide6-Multimedia and GStreamer plugins)</source>
-        <translation type="unfinished"></translation>
+        <translation>Зображення: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (анімований)
+Відео: MP4, AVI, MKV, WEBM, MOV, WMV та інші
+(Відео потребує PySide6-Multimedia та плагінів GStreamer)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="440"/>
@@ -6071,49 +6094,49 @@ Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
     <message>
         <location filename="../settings_dialog.py" line="504"/>
         <source>Books</source>
-        <translation type="unfinished">Книги</translation>
+        <translation>Книги</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="505"/>
         <source>Notes</source>
-        <translation type="unfinished">Записки</translation>
+        <translation>Записки</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="506"/>
         <source>Terminals</source>
-        <translation type="unfinished">Термінали</translation>
+        <translation>Термінали</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="507"/>
         <source>Dialogue</source>
-        <translation type="unfinished">Діалоги</translation>
+        <translation>Діалоги</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="508"/>
         <source>Quests</source>
-        <translation type="unfinished">Квести</translation>
+        <translation>Квести</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="509"/>
         <source>UI</source>
-        <translation type="unfinished">Інтерфейс</translation>
+        <translation>Інтерфейс</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="510"/>
         <source>System</source>
-        <translation type="unfinished">Система</translation>
+        <translation>Система</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="519"/>
         <source>String types to skip during AI batch translation.
 Skipped strings are left untranslated (marked as pending).</source>
-        <translation type="unfinished">Типи рядків, які пропускати під час пакетного перекладу ШІ.
+        <translation>Типи рядків, які пропускати під час пакетного перекладу ШІ.
 Пропущені рядки залишаються неперекладеними (позначені як очікувані).</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="522"/>
         <source>Skip Types:</source>
-        <translation type="unfinished">Пропускати типи:</translation>
+        <translation>Пропускати типи:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="524"/>
@@ -6178,67 +6201,68 @@ Higher = stricter (fewer but more accurate matches).
     <message>
         <location filename="../settings_dialog.py" line="598"/>
         <source>Storage</source>
-        <translation type="unfinished">Зберігання</translation>
+        <translation>Зберігання</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="605"/>
         <source>Active config dir:</source>
-        <translation type="unfinished">Активна тека конфігурації:</translation>
+        <translation>Активна тека конфігурації:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="609"/>
         <source>(default: ~/.config/BethesdaModTools)</source>
-        <translation type="unfinished">(за замовчуванням: ~/.config/BethesdaModTools)</translation>
+        <translation>(за замовчуванням: ~/.config/BethesdaModTools)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="611"/>
         <source>Override the directory where config.json and other app data are stored.
 Leave blank to use the default location.
 Takes effect after restarting the application.</source>
-        <translation type="unfinished">Перевизначити теку, де зберігаються config.json та інші дані програми.
+        <translation>Перевизначити теку, де зберігаються config.json та інші дані програми.
 Залиште порожнім, щоб використовувати типове розташування.
 Набуває чинності після перезапуску програми.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="826"/>
         <source>NexusMods</source>
-        <translation type="unfinished"></translation>
+        <translation>NexusMods</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="831"/>
         <source>Paste your NexusMods API key here</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставте сюди свій ключ API NexusMods</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="834"/>
         <source>Personal API key from nexusmods.com → Settings → API Keys.
 Required for uploading mod files and browsing download links.</source>
-        <translation type="unfinished"></translation>
+        <translation>Особистий ключ API з nexusmods.com → Settings → API Keys.
+Потрібен для завантаження файлів модів і перегляду посилань на завантаження.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="838"/>
         <source>Show</source>
-        <translation type="unfinished">Показати</translation>
+        <translation>Показати</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="847"/>
         <source>API Key:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ API:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="852"/>
         <source>Optional: NexusMods file group ID to attach uploaded files to an existing group.</source>
-        <translation type="unfinished"></translation>
+        <translation>Необов’язково: ID групи файлів NexusMods, щоб додати завантажені файли до наявної групи.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="854"/>
         <source>File Group ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID групи файлів:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="858"/>
         <source>(auto-detect from Firefox / Chromium)</source>
-        <translation type="unfinished"></translation>
+        <translation>(автовизначення з Firefox / Chromium)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="860"/>
@@ -6246,37 +6270,40 @@ Required for uploading mod files and browsing download links.</source>
 Export steps: install the &apos;Cookie-Editor&apos; browser extension → visit nexusmods.com
 → open Cookie-Editor → Export → JSON → save the file → select it here.
 Leave blank to auto-detect cookies from Firefox or Chromium.</source>
-        <translation type="unfinished"></translation>
+        <translation>Необов’язково: шлях до експорту JSON з Cookie-Editor для завантажень NexusMods безкоштовним користувачем.
+Кроки експорту: встановіть розширення браузера «Cookie-Editor» → відвідайте nexusmods.com
+→ відкрийте Cookie-Editor → Export → JSON → збережіть файл → виберіть його тут.
+Залиште порожнім для автовизначення cookie з Firefox або Chromium.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="870"/>
         <source>Cookies JSON:</source>
-        <translation type="unfinished"></translation>
+        <translation>JSON cookie:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="990"/>
         <source>Next tip →</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступна порада →</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1021"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Порада: використовує translategemma3-st (власна модифікація), оптимізовану під українську локалізацію Starfield. Використовуйте англійські якорі: &apos;To Ukrainian:&apos;, &apos;To English:&apos; тощо.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1026"/>
         <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Порада: використовує Gemma 4 Opus 48B (налаштовано під Starfield). Найвища якість, повільніше. Використовуйте англійські якорі: &apos;To Ukrainian:&apos;, &apos;To English:&apos; тощо.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1031"/>
         <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Порада: вибрано бекенд Claude. Налаштуйте свій ключ API в розділі Claude нижче.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1035"/>
         <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 Порада: вибрано власну модель. Переконайтеся, що вона підтримує вашу цільову мову й дотримується системного промпту, налаштованого вище.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="390"/>
@@ -6284,84 +6311,86 @@ Leave blank to auto-detect cookies from Firefox or Chromium.</source>
         <location filename="../settings_dialog.py" line="657"/>
         <location filename="../settings_dialog.py" line="866"/>
         <source>Browse…</source>
-        <translation type="unfinished">Огляд…</translation>
+        <translation>Огляд…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="619"/>
         <location filename="../settings_dialog.py" line="659"/>
         <source>Reset</source>
-        <translation type="unfinished">Скинути</translation>
+        <translation>Скинути</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="620"/>
         <source>Clear override and use the default config directory</source>
-        <translation type="unfinished">Скинути перевизначення та використовувати типову теку конфігурації</translation>
+        <translation>Скинути перевизначення та використовувати типову теку конфігурації</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="627"/>
         <source>Config directory:</source>
-        <translation type="unfinished">Тека конфігурації:</translation>
+        <translation>Тека конфігурації:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="630"/>
         <source>⚠  Restart the application to use the new config directory.</source>
-        <translation type="unfinished">⚠  Перезапустіть програму, щоб використовувати нову теку конфігурації.</translation>
+        <translation>⚠  Перезапустіть програму, щоб використовувати нову теку конфігурації.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="645"/>
         <source>Active cache dir:</source>
-        <translation type="unfinished">Активна тека кешу:</translation>
+        <translation>Активна тека кешу:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="649"/>
         <source>(default: SSD if mounted, else config dir)</source>
-        <translation type="unfinished">(за замовчуванням: SSD, якщо підключений, інакше тека конфігурації)</translation>
+        <translation>(за замовчуванням: SSD, якщо підключений, інакше тека конфігурації)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="651"/>
         <source>Override the directory for the translation cache and other large data files.
 Leave blank to auto-select: /mnt/ssd/… when the SSD is mounted, otherwise the config dir.
 Takes effect after restarting the application.</source>
-        <translation type="unfinished">Перевизначити теку для кешу перекладів та інших великих файлів даних.
+        <translation>Перевизначити теку для кешу перекладів та інших великих файлів даних.
 Залиште порожнім для автовибору: /mnt/ssd/…, якщо SSD підключений, інакше тека конфігурації.
 Набуває чинності після перезапуску програми.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="660"/>
         <source>Clear override and use the default cache directory</source>
-        <translation type="unfinished">Скинути перевизначення та використовувати типову теку кешу</translation>
+        <translation>Скинути перевизначення та використовувати типову теку кешу</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="667"/>
         <source>Cache directory:</source>
-        <translation type="unfinished">Тека кешу:</translation>
+        <translation>Тека кешу:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="670"/>
         <source>⚠  Restart the application to use the new cache directory.</source>
-        <translation type="unfinished">⚠  Перезапустіть програму, щоб використовувати нову теку кешу.</translation>
+        <translation>⚠  Перезапустіть програму, щоб використовувати нову теку кешу.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="684"/>
         <source>Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="688"/>
         <source>Check for updates automatically on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматично перевіряти оновлення під час запуску</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="693"/>
         <source>Silently checks the GitHub releases page 8 seconds after launch.
 Shows a dialog only when a new version is found.
 No personal data is transmitted — only a GET request to the GitHub API.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тихо перевіряє сторінку випусків GitHub через 8 секунд після запуску.
+Показує діалог лише тоді, коли знайдено нову версію.
+Жодні особисті дані не передаються — лише GET-запит до GitHub API.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="700"/>
         <source>Check Now…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірити зараз…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="715"/>
@@ -6409,31 +6438,31 @@ No translated text is ever recorded.</source>
     <message>
         <location filename="../settings_dialog.py" line="754"/>
         <source>AI Quality Check</source>
-        <translation type="unfinished">Перевірка якості ШІ</translation>
+        <translation>Перевірка якості ШІ</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="757"/>
         <source>Enable AI quality check after rule-based QC</source>
-        <translation type="unfinished">Увімкнути перевірку якості ШІ після перевірки за правилами</translation>
+        <translation>Увімкнути перевірку якості ШІ після перевірки за правилами</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="761"/>
         <source>Run the fine-tuned qcgemma4-st Ollama model on each translated string
 after the rule-based quality check. Slower but catches issues the rules miss.
 Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</source>
-        <translation type="unfinished">Запускає донавчену модель Ollama qcgemma4-st для кожного перекладеного рядка
+        <translation>Запускає донавчену модель Ollama qcgemma4-st для кожного перекладеного рядка
 після перевірки якості за правилами. Повільніше, але виявляє проблеми, які пропускають правила.
 Потребує реєстрації моделі: ollama create qcgemma4-st -f Modelfile.qc</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="769"/>
         <source>Ollama model name for AI quality checks</source>
-        <translation type="unfinished">Назва моделі Ollama для перевірки якості ШІ</translation>
+        <translation>Назва моделі Ollama для перевірки якості ШІ</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="770"/>
         <source>AI QC model:</source>
-        <translation type="unfinished">Модель перевірки якості ШІ:</translation>
+        <translation>Модель перевірки якості ШІ:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="773"/>
@@ -6457,12 +6486,12 @@ left untouched. Ends with a single summary message.</source>
     <message>
         <location filename="../settings_dialog.py" line="793"/>
         <source>Lore RAG (Context Retrieval)</source>
-        <translation type="unfinished">Lore RAG (отримання контексту)</translation>
+        <translation>Lore RAG (отримання контексту)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="797"/>
         <source>Inject lore context into translation prompts</source>
-        <translation type="unfinished">Додавати контекст лору в промпти перекладу</translation>
+        <translation>Додавати контекст лору в промпти перекладу</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="802"/>
@@ -6470,7 +6499,7 @@ left untouched. Ends with a single summary message.</source>
 retrieved from the local lore database and prepended to each translation
 prompt so the AI uses accurate Starfield terminology.
 Use Translation → Lore RAG Context… to download articles from UESP.</source>
-        <translation type="unfinished">Якщо увімкнено, відповідні статті лору (фракції, місця, персонажі)
+        <translation>Якщо увімкнено, відповідні статті лору (фракції, місця, персонажі)
 отримуються з локальної бази лору й додаються на початок кожного промпту
 перекладу, щоб ШІ використовував точну термінологію Starfield.
 Скористайтеся Переклад → Контекст Lore RAG…, щоб завантажити статті з UESP.</translation>
@@ -6479,13 +6508,13 @@ Use Translation → Lore RAG Context… to download articles from UESP.</source>
         <location filename="../settings_dialog.py" line="817"/>
         <source>Maximum characters of lore context injected per prompt.
 Higher values give more context but consume more tokens.</source>
-        <translation type="unfinished">Максимальна кількість символів контексту лору, що додається до промпту.
+        <translation>Максимальна кількість символів контексту лору, що додається до промпту.
 Вищі значення дають більше контексту, але споживають більше токенів.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="820"/>
         <source>Max context chars:</source>
-        <translation type="unfinished">Макс. символів контексту:</translation>
+        <translation>Макс. символів контексту:</translation>
     </message>
     <message>
         <source>Weblate Community Translation Sync</source>
@@ -6530,68 +6559,68 @@ Higher values give more context but consume more tokens.</source>
     <message>
         <location filename="../settings_dialog.py" line="876"/>
         <source>Audio / TTS Preview</source>
-        <translation type="unfinished">Попереднє прослуховування аудіо / TTS</translation>
+        <translation>Попереднє прослуховування аудіо / TTS</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="879"/>
         <source>Enable Audio Preview panel</source>
-        <translation type="unfinished">Увімкнути панель попереднього прослуховування аудіо</translation>
+        <translation>Увімкнути панель попереднього прослуховування аудіо</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="884"/>
         <source>Show the Audio Preview dock so you can play the original game audio
 and synthesize a TTS read-out of your translation for timing comparison.</source>
-        <translation type="unfinished">Показати панель попереднього прослуховування аудіо, щоб відтворювати оригінальне аудіо гри
+        <translation>Показати панель попереднього прослуховування аудіо, щоб відтворювати оригінальне аудіо гри
 та синтезувати озвучення TTS вашого перекладу для порівняння тривалості.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="891"/>
         <source>eSpeak-NG (built-in)</source>
-        <translation type="unfinished">eSpeak-NG (вбудований)</translation>
+        <translation>eSpeak-NG (вбудований)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="892"/>
         <source>Piper (neural, external binary)</source>
-        <translation type="unfinished">Piper (нейронний, зовнішній бінарний файл)</translation>
+        <translation>Piper (нейронний, зовнішній бінарний файл)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="893"/>
         <source>None (duration estimate only)</source>
-        <translation type="unfinished">Немає (лише оцінка тривалості)</translation>
+        <translation>Немає (лише оцінка тривалості)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="900"/>
         <source>TTS engine:</source>
-        <translation type="unfinished">Рушій TTS:</translation>
+        <translation>Рушій TTS:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="905"/>
         <source>eSpeak-NG voice code, e.g. uk, ru, de, fr, en-us.
 Run `espeak-ng --voices` for the full list.</source>
-        <translation type="unfinished">Код голосу eSpeak-NG, напр. uk, ru, de, fr, en-us.
+        <translation>Код голосу eSpeak-NG, напр. uk, ru, de, fr, en-us.
 Запустіть `espeak-ng --voices`, щоб отримати повний список.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="908"/>
         <source>eSpeak voice:</source>
-        <translation type="unfinished">Голос eSpeak:</translation>
+        <translation>Голос eSpeak:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="914"/>
         <source>eSpeak-NG words-per-minute rate (default 130 — slower than natural
 speech to better match game dialogue cadence).</source>
-        <translation type="unfinished">Швидкість eSpeak-NG у словах за хвилину (за замовчуванням 130 — повільніше за природне
+        <translation>Швидкість eSpeak-NG у словах за хвилину (за замовчуванням 130 — повільніше за природне
 мовлення, щоб краще відповідати темпу ігрових діалогів).</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="917"/>
         <source>eSpeak speed (WPM):</source>
-        <translation type="unfinished">Швидкість eSpeak (слів/хв):</translation>
+        <translation>Швидкість eSpeak (слів/хв):</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="922"/>
         <source>Path to the Piper binary, or just &apos;piper&apos; if on PATH.</source>
-        <translation type="unfinished">Шлях до бінарного файлу Piper, або просто «piper», якщо він у PATH.</translation>
+        <translation>Шлях до бінарного файлу Piper, або просто «piper», якщо він у PATH.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="924"/>
@@ -6599,55 +6628,55 @@ speech to better match game dialogue cadence).</source>
         <location filename="../settings_dialog.py" line="949"/>
         <location filename="../settings_dialog.py" line="1058"/>
         <source>…</source>
-        <translation type="unfinished">…</translation>
+        <translation>…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="928"/>
         <source>Piper binary:</source>
-        <translation type="unfinished">Бінарний файл Piper:</translation>
+        <translation>Бінарний файл Piper:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="932"/>
         <source>path/to/model.onnx</source>
-        <translation type="unfinished">шлях/до/моделі.onnx</translation>
+        <translation>шлях/до/моделі.onnx</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="933"/>
         <source>Path to the Piper .onnx voice model file.</source>
-        <translation type="unfinished">Шлях до файлу голосової моделі Piper .onnx.</translation>
+        <translation>Шлях до файлу голосової моделі Piper .onnx.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="939"/>
         <source>Piper model:</source>
-        <translation type="unfinished">Модель Piper:</translation>
+        <translation>Модель Piper:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="943"/>
         <source>Root dir of extracted game audio files</source>
-        <translation type="unfinished">Коренева тека видобутих аудіофайлів гри</translation>
+        <translation>Коренева тека видобутих аудіофайлів гри</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="945"/>
         <source>Directory containing extracted Starfield/Fallout/Skyrim audio files.
 The panel will try to auto-locate files by form ID from the filename.</source>
-        <translation type="unfinished">Тека, що містить видобуті аудіофайли Starfield/Fallout/Skyrim.
+        <translation>Тека, що містить видобуті аудіофайли Starfield/Fallout/Skyrim.
 Панель намагатиметься автоматично знайти файли за ідентифікатором форми з назви файлу.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="953"/>
         <source>Audio directory:</source>
-        <translation type="unfinished">Тека аудіо:</translation>
+        <translation>Тека аудіо:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="956"/>
         <source>Auto-synthesize TTS on string selection</source>
-        <translation type="unfinished">Автоматично синтезувати TTS під час вибору рядка</translation>
+        <translation>Автоматично синтезувати TTS під час вибору рядка</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="962"/>
         <source>Automatically synthesize the TTS read-out whenever you select
 a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
-        <translation type="unfinished">Автоматично синтезувати озвучення TTS щоразу, коли ви вибираєте
+        <translation>Автоматично синтезувати озвучення TTS щоразу, коли ви вибираєте
 новий рядок. Може сповільнити навігацію, якщо синтез триває &gt; 1 с.</translation>
     </message>
     <message>
@@ -6657,23 +6686,23 @@ a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
     <message>
         <location filename="../settings_dialog.py" line="1075"/>
         <source>● {n} model(s) loaded</source>
-        <translation type="unfinished">● Завантажено {n} модел(ей/і)</translation>
+        <translation>● Завантажено {n} модел(ей/і)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1079"/>
         <source>● Refresh failed</source>
-        <translation type="unfinished">● Помилка оновлення</translation>
+        <translation>● Помилка оновлення</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1082"/>
         <source>Refresh Failed</source>
-        <translation type="unfinished">Помилка оновлення</translation>
+        <translation>Помилка оновлення</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1083"/>
         <source>Could not load models from {url}:
 {error}</source>
-        <translation type="unfinished">Не вдалося завантажити моделі з {url}:
+        <translation>Не вдалося завантажити моделі з {url}:
 {error}</translation>
     </message>
     <message>
@@ -6697,7 +6726,7 @@ a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
 
 Available models:
 </source>
-        <translation type="unfinished">Модель «{model}» не встановлена.
+        <translation>Модель «{model}» не встановлена.
 
 Доступні моделі:
 </translation>
@@ -6707,7 +6736,7 @@ Available models:
         <source>
 
 Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</source>
-        <translation type="unfinished">
+        <translation>
 
 Встановіть за допомогою: ollama create &lt;назва-моделі&gt; -f Modelfile.&lt;назва-моделі&gt;</translation>
     </message>
@@ -6718,7 +6747,7 @@ Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</
 Make sure Ollama is running:
   • Start with: ollama serve
   • Default URL: http://localhost:11434</source>
-        <translation type="unfinished">Не вдалося підключитися до Ollama за адресою {url}
+        <translation>Не вдалося підключитися до Ollama за адресою {url}
 
 Переконайтеся, що Ollama запущена:
   • Запустіть: ollama serve
@@ -6793,17 +6822,17 @@ Make sure Ollama is running:
     <message>
         <location filename="../settings_dialog.py" line="1143"/>
         <source>Select Config Directory</source>
-        <translation type="unfinished">Вибрати теку конфігурації</translation>
+        <translation>Вибрати теку конфігурації</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1158"/>
         <source>Select Cache Directory</source>
-        <translation type="unfinished">Вибрати теку кешу</translation>
+        <translation>Вибрати теку кешу</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1183"/>
         <source>Select Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати тло</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1191"/>
@@ -6818,37 +6847,37 @@ Make sure Ollama is running:
     <message>
         <location filename="../settings_dialog.py" line="1200"/>
         <source>Select Cookie-Editor JSON Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати експорт JSON з Cookie-Editor</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1201"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
-        <translation type="unfinished">Файли JSON (*.json);;Всі файли (*)</translation>
+        <translation>Файли JSON (*.json);;Всі файли (*)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1216"/>
         <source>Select Piper Binary</source>
-        <translation type="unfinished">Вибрати бінарний файл Piper</translation>
+        <translation>Вибрати бінарний файл Piper</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1216"/>
         <source>Executable (*);;All Files (*)</source>
-        <translation type="unfinished">Виконуваний файл (*);;Усі файли (*)</translation>
+        <translation>Виконуваний файл (*);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1224"/>
         <source>Select Piper Voice Model</source>
-        <translation type="unfinished">Вибрати голосову модель Piper</translation>
+        <translation>Вибрати голосову модель Piper</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1225"/>
         <source>ONNX model (*.onnx);;All Files (*)</source>
-        <translation type="unfinished">Модель ONNX (*.onnx);;Усі файли (*)</translation>
+        <translation>Модель ONNX (*.onnx);;Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1234"/>
         <source>Select audio files directory</source>
-        <translation type="unfinished">Вибрати теку аудіофайлів</translation>
+        <translation>Вибрати теку аудіофайлів</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1248"/>
@@ -6858,13 +6887,13 @@ Make sure Ollama is running:
     <message>
         <location filename="../settings_dialog.py" line="1303"/>
         <source>Unsaved Changes</source>
-        <translation type="unfinished">Незбережені зміни</translation>
+        <translation>Незбережені зміни</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1304"/>
         <source>You have unsaved changes.
 Discard them and close?</source>
-        <translation type="unfinished">У вас є незбережені зміни.
+        <translation>У вас є незбережені зміни.
 Відхилити їх і закрити?</translation>
     </message>
     <message>
@@ -6914,12 +6943,12 @@ This cannot be undone.</source>
     <message>
         <location filename="../string_table.py" line="769"/>
         <source>Edit String - ID: {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати рядок — ID: {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="776"/>
         <source>&lt;b&gt;String ID:&lt;/b&gt; {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;ID рядка:&lt;/b&gt; {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="780"/>
@@ -7020,7 +7049,7 @@ This cannot be undone.</source>
     <message>
         <location filename="../string_table.py" line="1051"/>
         <source>Assign Character Profile…</source>
-        <translation type="unfinished">Призначити профіль персонажа…</translation>
+        <translation>Призначити профіль персонажа…</translation>
     </message>
 </context>
 <context>
@@ -7336,42 +7365,42 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_manager.py" line="934"/>
         <source>Warm retro dark with amber/orange accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Тепла ретро-темна тема з бурштиново-помаранчевими акцентами</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="935"/>
         <source>Deep navy cyberpunk with blue highlights</source>
-        <translation type="unfinished"></translation>
+        <translation>Глибокий темно-синій кіберпанк із синіми відблисками</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="936"/>
         <source>Classic terminal dark with vibrant green accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Класичний темний термінал із яскравими зеленими акцентами</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="937"/>
         <source>Atom editor inspired, muted blue accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Натхненний редактором Atom, приглушені сині акценти</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="938"/>
         <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Світла тема з низьким контрастом, тепла кремова — доповнення до Solarized Dark</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="939"/>
         <source>Warm cream light theme, easy on eyes for long sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Тепла кремова світла тема, не втомлює очі під час тривалої роботи</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="940"/>
         <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Точний як у грі темно-синій інтерфейс — кольори з ресурсів SWF/GFX інтерфейсу Starfield</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="941"/>
         <source>Green-on-black terminal/computer screen aesthetic from the game</source>
-        <translation type="unfinished"></translation>
+        <translation>Естетика зеленого на чорному екрана термінала/комп’ютера з гри</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="942"/>
@@ -7458,42 +7487,42 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../translation_editor_pane.py" line="35"/>
         <source>Translation Editor</source>
-        <translation type="unfinished">Редактор перекладу</translation>
+        <translation>Редактор перекладу</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="68"/>
         <source>Source</source>
-        <translation type="unfinished">Джерело</translation>
+        <translation>Джерело</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="74"/>
         <source>(select a string in the table)</source>
-        <translation type="unfinished">(виберіть рядок у таблиці)</translation>
+        <translation>(виберіть рядок у таблиці)</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="80"/>
         <source>Translation</source>
-        <translation type="unfinished">Переклад</translation>
+        <translation>Переклад</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="85"/>
         <source>Enter translation here…</source>
-        <translation type="unfinished">Введіть переклад тут…</translation>
+        <translation>Введіть переклад тут…</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="93"/>
         <source>Revert</source>
-        <translation type="unfinished">Відновити</translation>
+        <translation>Повернути</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="94"/>
         <source>Discard edits and restore the stored translation</source>
-        <translation type="unfinished">Відхилити зміни та відновити збережений переклад</translation>
+        <translation>Відхилити зміни та відновити збережений переклад</translation>
     </message>
     <message>
         <location filename="../translation_editor_pane.py" line="101"/>
         <source>✓  Approve  Ctrl+Enter</source>
-        <translation type="unfinished">✓  Прийняти  Ctrl+Enter</translation>
+        <translation>✓  Схвалити  Ctrl+Enter</translation>
     </message>
 </context>
 <context>
@@ -7501,57 +7530,57 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../update_dialog.py" line="65"/>
         <source>Update Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступне оновлення</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="94"/>
         <source>What&apos;s new:</source>
-        <translation type="unfinished"></translation>
+        <translation>Що нового:</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="97"/>
         <source>(no release notes provided)</source>
-        <translation type="unfinished"></translation>
+        <translation>(приміток до випуску не надано)</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="118"/>
         <source>Download  {self._new}  ({size_str})</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити  {self._new}  ({size_str})</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="123"/>
         <source>Open Releases Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити сторінку випусків</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="129"/>
         <source>Open in Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити у браузері</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="135"/>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation>Пізніше</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="153"/>
         <source>Downloading {asset[&apos;name&apos;]}…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження {asset['name']}…</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="164"/>
         <source>Download complete — saved to {path}</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження завершено — збережено до {path}</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="166"/>
         <source>Open Downloads Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити теку завантажень</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="176"/>
         <source>Download failed: {msg}</source>
-        <translation type="unfinished">Помилка завантаження: {msg}</translation>
+        <translation>Помилка завантаження: {msg}</translation>
     </message>
 </context>
 <context>
@@ -7876,71 +7905,71 @@ This will only update strings that are currently untranslated or marked as pendi
     <message>
         <location filename="../visual_context_preview.py" line="544"/>
         <source>Visual Context Preview</source>
-        <translation type="unfinished">Попередній перегляд візуального контексту</translation>
+        <translation>Візуальний попередній перегляд контексту</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="566"/>
         <source>Context:</source>
-        <translation type="unfinished">Контекст:</translation>
+        <translation>Контекст:</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="569"/>
         <source>Override the auto-detected UI context for this string</source>
-        <translation type="unfinished">Перевизначити автоматично визначений контекст інтерфейсу для цього рядка</translation>
+        <translation>Перевизначити автоматично визначений контекст інтерфейсу для цього рядка</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="571"/>
         <source>Auto-detect</source>
-        <translation type="unfinished">Автовизначення</translation>
+        <translation>Автовизначення</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="578"/>
         <source>View:</source>
-        <translation type="unfinished">Вигляд:</translation>
+        <translation>Вигляд:</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="581"/>
         <location filename="../visual_context_preview.py" line="682"/>
         <location filename="../visual_context_preview.py" line="700"/>
         <source>Source</source>
-        <translation type="unfinished">Джерело</translation>
+        <translation>Джерело</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="586"/>
         <location filename="../visual_context_preview.py" line="686"/>
         <location filename="../visual_context_preview.py" line="706"/>
         <source>Translation</source>
-        <translation type="unfinished">Переклад</translation>
+        <translation>Переклад</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="591"/>
         <source>Both</source>
-        <translation type="unfinished">Обидва</translation>
+        <translation>Обидва</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="717"/>
         <source>Src: {s}  Trl: {t} ({r}%)</source>
-        <translation type="unfinished">Джер: {s}  Пер: {t} ({r}%)</translation>
+        <translation>Дж.: {s}  Пер.: {t} ({r}%)</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="723"/>
         <source>Chars: {n}</source>
-        <translation type="unfinished">Символів: {n}</translation>
+        <translation>Символів: {n}</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="727"/>
         <source>Lines: {n}/{m}</source>
-        <translation type="unfinished">Рядків: {n}/{m}</translation>
+        <translation>Рядків: {n}/{m}</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="730"/>
         <source>OVERFLOW</source>
-        <translation type="unfinished">ПЕРЕПОВНЕННЯ</translation>
+        <translation>ПЕРЕПОВНЕННЯ</translation>
     </message>
     <message>
         <location filename="../visual_context_preview.py" line="732"/>
         <source>✓ Fits</source>
-        <translation type="unfinished">✓ Підходить</translation>
+        <translation>✓ Вміщається</translation>
     </message>
 </context>
 <context>
@@ -8103,77 +8132,77 @@ Community translators will see these strings on the web interface.</source>
     <message>
         <location filename="../macro_dialog.py" line="39"/>
         <source>Edit Regex Replace</source>
-        <translation type="unfinished">Редагувати заміну за регулярним виразом</translation>
+        <translation>Редагувати заміну regex</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="39"/>
         <source>Add Regex Replace</source>
-        <translation type="unfinished">Додати заміну за регулярним виразом</translation>
+        <translation>Додати заміну regex</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="45"/>
         <source>Pattern (Python regex):</source>
-        <translation type="unfinished">Шаблон (регулярний вираз Python):</translation>
+        <translation>Шаблон (regex Python):</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="47"/>
         <source>e.g.  \s+$  or  (?&lt;=\w)\s{2,}(?=\w)</source>
-        <translation type="unfinished">напр.  \s+$  або  (?&lt;=\w)\s{2,}(?=\w)</translation>
+        <translation>напр.  \s+$  або  (?&lt;=\w)\s{2,}(?=\w)</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="52"/>
         <source>Replacement (leave blank to delete matches):</source>
-        <translation type="unfinished">Заміна (залиште порожнім, щоб видалити збіги):</translation>
+        <translation>Заміна (залиште порожнім, щоб видалити збіги):</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="54"/>
         <source>e.g.  &apos; &apos;  or  \1  (empty → delete)</source>
-        <translation type="unfinished">напр.  &apos; &apos;  або  \1  (порожньо → видалити)</translation>
+        <translation>напр.  &apos; &apos;  або  \1  (порожнє → видалити)</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="60"/>
         <source>Field:</source>
-        <translation type="unfinished">Поле:</translation>
+        <translation>Поле:</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="62"/>
         <source>Translated</source>
-        <translation type="unfinished">Перекладено</translation>
+        <translation>Перекладено</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="62"/>
         <source>Original</source>
-        <translation type="unfinished">Оригінал</translation>
+        <translation>Оригінал</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="67"/>
         <source>Ignore case</source>
-        <translation type="unfinished">Без урахування регістру</translation>
+        <translation>Ігнорувати регістр</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="92"/>
         <source>✓ Valid pattern</source>
-        <translation type="unfinished">✓ Дійсний шаблон</translation>
+        <translation>✓ Дійсний шаблон</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="95"/>
         <source>✗ {e}</source>
-        <translation type="unfinished">✗ {e}</translation>
+        <translation>✗ {e}</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="101"/>
         <source>No Pattern</source>
-        <translation type="unfinished">Немає шаблону</translation>
+        <translation>Немає шаблону</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="101"/>
         <source>Pattern cannot be empty.</source>
-        <translation type="unfinished">Шаблон не може бути порожнім.</translation>
+        <translation>Шаблон не може бути порожнім.</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="106"/>
         <source>Invalid Pattern</source>
-        <translation type="unfinished">Недійсний шаблон</translation>
+        <translation>Недійсний шаблон</translation>
     </message>
 </context>
 <context>

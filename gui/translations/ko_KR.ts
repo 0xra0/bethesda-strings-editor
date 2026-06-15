@@ -2512,7 +2512,7 @@ errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
     <message>
         <location filename="../main_window.py" line="1650"/>
         <source>Check for &amp;Updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;업데이트 확인…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="1657"/>
@@ -2618,18 +2618,19 @@ errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
     <message>
         <location filename="../main_window.py" line="2140"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되는 모든 파일 (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;문자열 파일 (*.strings *.dlstrings *.ilstrings);;플러그인 파일 (*.esp *.esm *.esl);;BA2 아카이브 (*.ba2 *.BA2);;인터페이스 TXT 파일 (*.txt *.TXT);;모든 파일 (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2166"/>
         <source>Unsupported File</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되지 않는 파일</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2168"/>
         <source>This .txt file does not appear to be a Starfield interface translation file.
 Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 .txt 파일은 Starfield 인터페이스 번역 파일이 아닌 것 같습니다.
+예상 형식: UTF-16으로 인코딩된 $KEY&lt;TAB&gt;VALUE 줄.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2219"/>
@@ -2739,13 +2740,14 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2414"/>
         <source>Encoding: utf-16</source>
-        <translation type="unfinished"></translation>
+        <translation>인코딩: utf-16</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2438"/>
         <source>Failed to load TXT:
 {error}</source>
-        <translation type="unfinished"></translation>
+        <translation>TXT 불러오기 실패:
+{error}</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2460"/>
@@ -2802,7 +2804,7 @@ Open those files instead to translate them.</source>
     <message>
         <location filename="../main_window.py" line="2604"/>
         <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>인터페이스 TXT 파일 (*.txt *.TXT);;모든 파일 (*)</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="2610"/>
@@ -3358,12 +3360,12 @@ Retranslate them all with quality feedback hints?</source>
     <message>
         <location filename="../main_window.py" line="4536"/>
         <source>AI-fixing {n} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>문자열 {n}개 AI 수정 중…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4543"/>
         <source>AI Fix {current}/{total}…</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 수정 {current}/{total}…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4609"/>
@@ -4062,23 +4064,24 @@ You can still use the session context, but the file will need to be opened manua
     <message>
         <location filename="../main_window.py" line="6516"/>
         <source>Up to Date</source>
-        <translation type="unfinished"></translation>
+        <translation>최신 상태</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6517"/>
         <source>You are already running the latest version ({ver}).</source>
-        <translation type="unfinished"></translation>
+        <translation>이미 최신 버전({ver})을 사용하고 있습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6523"/>
         <source>Update Check Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 확인 실패</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6524"/>
         <source>Could not reach the update server:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 서버에 연결할 수 없습니다:
+</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6556"/>
@@ -4088,12 +4091,12 @@ You can still use the session context, but the file will need to be opened manua
     <message>
         <location filename="../main_window.py" line="6579"/>
         <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Starfield 및 기타 Bethesda 게임을 위한 AI 지원 현지화 도구입니다.&lt;br&gt;Starfield 문자열 파일의 &lt;b&gt;우크라이나어&lt;/b&gt; 현지화를 위해 설계되었습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="6624"/>
         <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&apos;color:#666&apos;&gt;모든 키보드 단축키는 &lt;b&gt;F1&lt;/b&gt; · &lt;b&gt;Shift+F1&lt;/b&gt;을 누른 뒤 위젯을 클릭하면 상황별 도움말&lt;/span&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;&lt;br&gt;Supports .strings / .dlstrings / .ilstrings and ESP/ESM files.&lt;br&gt;Translation via local Ollama models.&lt;br&gt;&lt;br&gt;&lt;b&gt;Keyboard Shortcuts:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;What&apos;s This?:&lt;/b&gt; Shift+F1, then click any widget</source>
@@ -5012,14 +5015,16 @@ Only codes that appear in the current results are listed.</source>
     <message>
         <location filename="../quality_dialog.py" line="557"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>숨기기</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="559"/>
         <source>Hide all rows with the selected issue code.
 Useful to suppress noise (e.g. hide EMPTY_TRANSLATION)
 so you can focus on other issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 문제 코드가 있는 모든 행을 숨깁니다.
+잡음을 줄여(예: EMPTY_TRANSLATION 숨김)
+다른 문제에 집중할 때 유용합니다.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="569"/>
@@ -5044,12 +5049,12 @@ Choose format by file extension:
     <message>
         <location filename="../quality_dialog.py" line="587"/>
         <source>Show all codes</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 코드 표시</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="588"/>
         <source>Remove all hidden-code filters</source>
-        <translation type="unfinished"></translation>
+        <translation>숨긴 코드 필터 모두 제거</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="599"/>
@@ -5107,19 +5112,20 @@ Choose format by file extension:
         <location filename="../quality_dialog.py" line="827"/>
         <location filename="../quality_dialog.py" line="940"/>
         <source>Auto-Fix All</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 자동 수정</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="641"/>
         <source>Apply mechanical fixes to ALL strings with auto-fixable issues
 (no selection needed — fixes everything in one click)</source>
-        <translation type="unfinished"></translation>
+        <translation>자동 수정 가능한 문제가 있는 모든 문자열에 기계적 수정 적용
+(선택 불필요 — 한 번에 모두 수정)</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="648"/>
         <location filename="../quality_dialog.py" line="833"/>
         <source>AI Fix Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 항목 AI 수정</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="650"/>
@@ -5127,7 +5133,10 @@ Choose format by file extension:
 Unlike retranslation, the model sees the existing translation and
 edits only what the QC check flagged — preserving correct parts.
 Fix starts after you close this dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>결함 있는 번역을 AI 모델에 보내 특정 문제를 수정합니다.
+재번역과 달리 모델이 기존 번역을 보고
+품질 검사가 표시한 부분만 수정하여 올바른 부분은 보존합니다.
+이 대화 상자를 닫으면 수정이 시작됩니다.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="659"/>
@@ -5202,12 +5211,12 @@ Retranslation starts after you close this dialog.</source>
     <message>
         <location filename="../quality_dialog.py" line="826"/>
         <source>Auto-Fix All ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 자동 수정 ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="832"/>
         <source>AI Fix Selected ({n})</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 항목 AI 수정 ({n})</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="838"/>
@@ -5240,32 +5249,32 @@ Retranslation starts after you close this dialog.</source>
     <message>
         <location filename="../quality_dialog.py" line="930"/>
         <source>Auto-Fix All Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 자동 수정 적용됨</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="941"/>
         <source>No automatically fixable issues found.</source>
-        <translation type="unfinished"></translation>
+        <translation>자동으로 수정 가능한 문제를 찾지 못했습니다.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="970"/>
         <source>AI Fix Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 수정 대기열</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="971"/>
         <source>All selected strings are already in the AI fix queue.</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 모든 문자열이 이미 AI 수정 대기열에 있습니다.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="977"/>
         <source>{total} string(s) queued for AI fix</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 수정 대기 중인 문자열 {total}개</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="981"/>
         <source>Queued for AI Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 수정 대기열에 추가됨</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="983"/>
@@ -5273,7 +5282,10 @@ Retranslation starts after you close this dialog.</source>
 Total queued: {total}
 
 Close this dialog to start AI fixing.</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 수정 대기열에 문자열 {added}개를 추가했습니다.
+대기열 총계: {total}
+
+이 대화 상자를 닫으면 AI 수정이 시작됩니다.</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1026"/>
@@ -5314,7 +5326,7 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../quality_dialog.py" line="1136"/>
         <source>Hidden: {codes}</source>
-        <translation type="unfinished"></translation>
+        <translation>숨김: {codes}</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="1175"/>
@@ -5783,64 +5795,66 @@ Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
     <message>
         <location filename="../settings_dialog.py" line="378"/>
         <source>Background / Wallpaper</source>
-        <translation type="unfinished"></translation>
+        <translation>배경 / 배경화면</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="381"/>
         <source>Enable custom background</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 지정 배경 사용</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="388"/>
         <source>Path to image or video file…</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 또는 동영상 파일 경로…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="393"/>
         <source>File:</source>
-        <translation type="unfinished">파일:</translation>
+        <translation>파일:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="398"/>
         <source>Cover  (fill, crop edges)</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기  (채우고 가장자리 자르기)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="399"/>
         <source>Contain  (fit inside, letterbox)</source>
-        <translation type="unfinished"></translation>
+        <translation>맞춤  (안쪽에 맞춤, 레터박스)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="400"/>
         <source>Stretch  (distort to fill)</source>
-        <translation type="unfinished"></translation>
+        <translation>늘이기  (채우기 위해 왜곡)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="401"/>
         <source>Tile  (repeat)</source>
-        <translation type="unfinished"></translation>
+        <translation>바둑판식  (반복)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="402"/>
         <source>Center  (original size, centered)</source>
-        <translation type="unfinished"></translation>
+        <translation>가운데  (원본 크기, 가운데 정렬)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="407"/>
         <source>Fit mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>맞춤 모드:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="423"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도:</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="427"/>
         <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
 Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
 (Video requires PySide6-Multimedia and GStreamer plugins)</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF(애니메이션)
+동영상: MP4, AVI, MKV, WEBM, MOV, WMV 등
+(동영상에는 PySide6-Multimedia 및 GStreamer 플러그인이 필요합니다)</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="440"/>
@@ -6037,27 +6051,27 @@ Takes effect after restarting the application.</source>
     <message>
         <location filename="../settings_dialog.py" line="990"/>
         <source>Next tip →</source>
-        <translation type="unfinished"></translation>
+        <translation>다음 팁 →</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1021"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 팁: Starfield 우크라이나어 현지화에 최적화된 translategemma3-st(맞춤 수정)를 사용합니다. 영어 앵커를 사용하세요: &apos;To Ukrainian:&apos;, &apos;To English:&apos; 등.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1026"/>
         <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 팁: Gemma 4 Opus 48B(Starfield 튜닝)를 사용합니다. 최고 품질, 느림. 영어 앵커를 사용하세요: &apos;To Ukrainian:&apos;, &apos;To English:&apos; 등.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1031"/>
         <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 팁: Claude 백엔드가 선택되었습니다. 아래 Claude 섹션에서 API 키를 설정하세요.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1035"/>
         <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
-        <translation type="unfinished"></translation>
+        <translation>💡 팁: 사용자 지정 모델이 선택되었습니다. 대상 언어를 지원하고 위에서 구성한 시스템 프롬프트를 따르는지 확인하세요.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="390"/>
@@ -6125,24 +6139,26 @@ SSD가 마운트된 경우 /mnt/ssd/…를, 그렇지 않으면 설정 디렉토
     <message>
         <location filename="../settings_dialog.py" line="684"/>
         <source>Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="688"/>
         <source>Check for updates automatically on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>시작 시 자동으로 업데이트 확인</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="693"/>
         <source>Silently checks the GitHub releases page 8 seconds after launch.
 Shows a dialog only when a new version is found.
 No personal data is transmitted — only a GET request to the GitHub API.</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 8초 후 GitHub 릴리스 페이지를 조용히 확인합니다.
+새 버전이 발견될 때만 대화 상자를 표시합니다.
+개인 데이터는 전송되지 않으며 GitHub API에 대한 GET 요청만 보냅니다.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="700"/>
         <source>Check Now…</source>
-        <translation type="unfinished"></translation>
+        <translation>지금 확인…</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="715"/>
@@ -6577,7 +6593,7 @@ Ollama가 실행 중인지 확인하세요:
     <message>
         <location filename="../settings_dialog.py" line="1183"/>
         <source>Select Background</source>
-        <translation type="unfinished"></translation>
+        <translation>배경 선택</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="1191"/>
@@ -6688,12 +6704,12 @@ This cannot be undone.</source>
     <message>
         <location filename="../string_table.py" line="769"/>
         <source>Edit String - ID: {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>문자열 편집 - ID: {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="776"/>
         <source>&lt;b&gt;String ID:&lt;/b&gt; {id}</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;문자열 ID:&lt;/b&gt; {id}</translation>
     </message>
     <message>
         <location filename="../string_table.py" line="780"/>
@@ -7110,42 +7126,42 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_manager.py" line="934"/>
         <source>Warm retro dark with amber/orange accents</source>
-        <translation type="unfinished"></translation>
+        <translation>호박색/주황색 강조가 있는 따뜻한 레트로 다크</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="935"/>
         <source>Deep navy cyberpunk with blue highlights</source>
-        <translation type="unfinished"></translation>
+        <translation>파란색 하이라이트의 짙은 네이비 사이버펑크</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="936"/>
         <source>Classic terminal dark with vibrant green accents</source>
-        <translation type="unfinished"></translation>
+        <translation>선명한 녹색 강조가 있는 클래식 터미널 다크</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="937"/>
         <source>Atom editor inspired, muted blue accents</source>
-        <translation type="unfinished"></translation>
+        <translation>Atom 편집기에서 영감을 받은 차분한 파란색 강조</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="938"/>
         <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>저대비 라이트, 따뜻한 크림색 — Solarized Dark의 보완</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="939"/>
         <source>Warm cream light theme, easy on eyes for long sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>장시간 작업에도 눈이 편한 따뜻한 크림색 라이트 테마</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="940"/>
         <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
-        <translation type="unfinished"></translation>
+        <translation>게임과 동일한 짙은 네이비 UI — Starfield 인터페이스 SWF/GFX 에셋의 색상</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="941"/>
         <source>Green-on-black terminal/computer screen aesthetic from the game</source>
-        <translation type="unfinished"></translation>
+        <translation>게임 속 검은 배경에 녹색 글자 터미널/컴퓨터 화면 미학</translation>
     </message>
     <message>
         <location filename="../theme_manager.py" line="942"/>
@@ -7275,57 +7291,57 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../update_dialog.py" line="65"/>
         <source>Update Available</source>
-        <translation type="unfinished"></translation>
+        <translation>업데이트 가능</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="94"/>
         <source>What&apos;s new:</source>
-        <translation type="unfinished"></translation>
+        <translation>새로운 점:</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="97"/>
         <source>(no release notes provided)</source>
-        <translation type="unfinished"></translation>
+        <translation>(릴리스 노트 없음)</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="118"/>
         <source>Download  {self._new}  ({size_str})</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드  {self._new}  ({size_str})</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="123"/>
         <source>Open Releases Page</source>
-        <translation type="unfinished"></translation>
+        <translation>릴리스 페이지 열기</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="129"/>
         <source>Open in Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>브라우저에서 열기</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="135"/>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation>나중에</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="153"/>
         <source>Downloading {asset[&apos;name&apos;]}…</source>
-        <translation type="unfinished"></translation>
+        <translation>{asset['name']} 다운로드 중…</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="164"/>
         <source>Download complete — saved to {path}</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 완료 — {path}에 저장됨</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="166"/>
         <source>Open Downloads Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 폴더 열기</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="176"/>
         <source>Download failed: {msg}</source>
-        <translation type="unfinished">다운로드 실패: {msg}</translation>
+        <translation>다운로드 실패: {msg}</translation>
     </message>
 </context>
 <context>
