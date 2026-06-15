@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 31  # Increment when schema changes
+CONFIG_VERSION = 32  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -136,6 +136,11 @@ class AppSettings:
     # ── AI Quality Check ──────────────────────────────────────────────────────
     enable_ai_qc: bool = False
     ai_qc_model: str = "qcgemma4-st"
+
+    # Automatic post-translation self-review: after each batch, silently auto-fix
+    # every mechanically-fixable issue and AI-retranslate any string left with a
+    # critical (non-visual) issue, then show one summary. No user interaction.
+    auto_self_review: bool = True
 
     # ── String-type skipping ──────────────────────────────────────────────────
     # List of StringType names (e.g. ["BOOK", "NOTE"]) to skip during AI
@@ -379,6 +384,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("protect_named_entities", False)
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v23: added protect_named_entities setting")
+
+    if from_version < 32:
+        data.setdefault("auto_self_review", True)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v32: added auto_self_review setting")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

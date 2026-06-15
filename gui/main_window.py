@@ -502,6 +502,14 @@ class MainWindow(QMainWindow):
         self._translatable_items = []
         self._txt_target_path = None
 
+        # Automatic post-translation self-review state (see _self_review_*).
+        self._self_review_active = False
+        self._self_review_pass = 0
+        self._self_review_prev_failing = None
+        self._self_review_mechanical = 0
+        self._self_review_retranslated = 0
+        self._self_review_initial = (0, 0)
+
         self._init_translation_worker()
 
         # Keyboard shortcut registry
@@ -3158,6 +3166,24 @@ class MainWindow(QMainWindow):
         self._eta_start_time = 0.0
         self._eta_lbl.setVisible(False)
         self._refresh_stats()
+        self._set_ui_enabled(True)
+
+        if self.settings.enable_cache and successful > 0:
+            self.translation_cache.save()
+
+        # A self-review retranslation pass just finished: continue the automatic
+        # fix/recheck loop without showing the normal per-batch completion popups.
+        if self._self_review_active:
+            self.progress_bar.setVisible(False)
+            if self._translation_stopping:
+                # User stopped mid-review — end the loop and report what we have.
+                self._self_review_finish(
+                    remaining=len(self._self_review_prev_failing or ())
+                )
+            else:
+                self._self_review_run_pass()
+            return
+
         from gui.micro_animations import flash_progress_bar_success, show_toast
         if failed == 0 and successful > 0:
             flash_progress_bar_success(self.progress_bar)
@@ -3177,10 +3203,6 @@ class MainWindow(QMainWindow):
             )
         else:
             self.progress_bar.setVisible(False)
-        self._set_ui_enabled(True)
-
-        if self.settings.enable_cache and successful > 0:
-            self.translation_cache.save()
 
         self._audit_log.translation_complete(
             total=successful + failed, translated=successful, errors=failed
@@ -3191,30 +3213,40 @@ class MainWindow(QMainWindow):
             msg += self.tr(", {count} failed").format(count=failed)
         self.statusBar().showMessage(msg, 10000)
 
+        self.translation_complete.emit(successful, failed)
+
+        # ── Automatic post-translation self-review ───────────────────────────
+        # Check the quality report and fix every critical (non-visual) issue with
+        # no user intervention, ending with one consolidated summary.  Falls back
+        # to the old behaviour (announce + silent QC) when disabled or N/A.
+        if (
+            successful > 0
+            and self.current_file
+            and not self._translation_stopping
+            and getattr(self.settings, "auto_self_review", True)
+        ):
+            self._self_review_begin(successful, failed)
+            return
+
+        self._announce_batch_complete(successful, failed, msg)
+        if successful > 0:
+            self._run_quality_check_silent()
+
+    def _announce_batch_complete(self, successful: int, failed: int, msg: str) -> None:
+        """Show the end-of-batch message box and desktop notification."""
         if failed > 0:
             QMessageBox.warning(
                 self,
                 self.tr("Complete"),
                 self.tr("{msg}\nCheck log for details.").format(msg=msg),
             )
-            send_notification(
-                self.tr("Translation complete"),
-                msg,
-                tray_icon=self._tray_icon,
-            )
         else:
             QMessageBox.information(self, self.tr("Success"), msg)
-            send_notification(
-                self.tr("Translation complete"),
-                msg,
-                tray_icon=self._tray_icon,
-            )
-
-        self.translation_complete.emit(successful, failed)
-
-        # Auto quality check — updates row colours in the table silently
-        if successful > 0:
-            self._run_quality_check_silent()
+        send_notification(
+            self.tr("Translation complete"),
+            msg,
+            tray_icon=self._tray_icon,
+        )
 
     # ── Live stats ────────────────────────────────────────────────────────────
 
@@ -3815,6 +3847,165 @@ class MainWindow(QMainWindow):
                 15000,
             )
 
+    # ── Automatic self-review ────────────────────────────────────────────────
+    #
+    # After a translation batch finishes, this loop repeatedly (a) applies the
+    # mechanical auto-fixer to every fixable issue, then (b) AI-retranslates any
+    # string still carrying a *critical* (non-visual) issue, re-checking after
+    # each pass.  Cosmetic/visual issues (UI overflow, added quotes, whitespace,
+    # newline drift …) are intentionally left alone.  Bounded by a pass cap and a
+    # no-progress guard so it always terminates, and it ends with one summary
+    # message — the whole thing runs with zero user interaction.
+    _SELF_REVIEW_MAX_PASSES = 2
+
+    def _self_review_begin(self, initial_successful: int, initial_failed: int) -> None:
+        """Start an automatic self-review cycle for the just-finished batch."""
+        self._self_review_active = True
+        self._self_review_pass = 0
+        self._self_review_prev_failing = None
+        self._self_review_mechanical = 0
+        self._self_review_retranslated = 0
+        self._self_review_initial = (initial_successful, initial_failed)
+        self.statusBar().showMessage(
+            self.tr("Self-review: checking translation quality…"), 0
+        )
+        self._self_review_run_pass()
+
+    def _self_review_run_pass(self) -> None:
+        """One iteration: mechanical fix → re-check → retranslate if needed."""
+        from gui.quality_checker import QualityChecker
+
+        if not self.current_file:
+            self._self_review_finish(remaining=0)
+            return
+
+        # 1. Mechanical auto-fix of every fixable issue (cheap, deterministic).
+        reports, _, checker = self._build_quality_map()
+        mech_updates: list = []
+        for row_index, fixed_text, _applied in checker.fix_all(
+            self.table_model._data, reports
+        ):
+            mech_updates.append((row_index, fixed_text))
+        if mech_updates:
+            self.table_model.set_translated_text_batch(mech_updates)
+            self._self_review_mechanical += len(mech_updates)
+
+        # 2. Re-check after the mechanical fixes and refresh row colours.
+        reports2, quality_map, _ = self._build_quality_map()
+        self.table_model.set_quality_data(quality_map)
+
+        # 3. Collect rows that still carry a critical (non-visual) issue.
+        critical: list = []
+        for report in reports2:
+            if not (0 <= report.row_index < len(self.table_model._data)):
+                continue
+            crit_issues = report.critical_issues()
+            if crit_issues:
+                critical.append(
+                    (report.row_index, QualityChecker.build_retry_hint(crit_issues))
+                )
+        critical_rows = {ri for ri, _ in critical}
+
+        # 4. Termination checks.
+        if not critical_rows:
+            self._self_review_finish(remaining=0)
+            return
+        if self._self_review_pass >= self._SELF_REVIEW_MAX_PASSES:
+            self._self_review_finish(remaining=len(critical_rows))
+            return
+        if (
+            self._self_review_prev_failing is not None
+            and critical_rows == self._self_review_prev_failing
+        ):
+            # Retranslating produced no change in the failing set — stop early.
+            self._self_review_finish(remaining=len(critical_rows), stalled=True)
+            return
+
+        # 5. Retranslate the critical rows; _on_ollama_finished re-enters here.
+        self._self_review_prev_failing = critical_rows
+        self._self_review_pass += 1
+        self._self_review_retranslated += len(critical)
+        self.statusBar().showMessage(
+            self.tr("Self-review pass {n}: retranslating {c} string(s)…").format(
+                n=self._self_review_pass, c=len(critical)
+            ),
+            0,
+        )
+        started = self._retranslate_with_hints(critical)
+        if not started:
+            # No batch was started (e.g. all rows had empty source) — finish now.
+            self._self_review_finish(remaining=len(critical_rows))
+
+    def _self_review_finish(self, remaining: int, stalled: bool = False) -> None:
+        """End the self-review cycle and announce a single consolidated result."""
+        self._self_review_active = False
+        self.progress_bar.setVisible(False)
+        self._set_ui_enabled(True)
+
+        init_ok, _init_fail = self._self_review_initial
+        mech = self._self_review_mechanical
+        retr = self._self_review_retranslated
+
+        parts: list = [self.tr("{n} string(s) translated.").format(n=init_ok)]
+        if mech:
+            parts.append(
+                self.tr("Auto-fixed {n} issue(s) mechanically.").format(n=mech)
+            )
+        if retr:
+            parts.append(
+                self.tr("Retranslated {n} string(s) across {p} review pass(es).")
+                .format(n=retr, p=self._self_review_pass)
+            )
+
+        if remaining == 0:
+            parts.append(
+                self.tr("All critical issues were resolved automatically — "
+                        "no manual review needed.")
+            )
+            ok = True
+        else:
+            if stalled:
+                parts.append(
+                    self.tr("{n} string(s) could not be fixed automatically "
+                            "(no further progress) and need manual review.")
+                    .format(n=remaining)
+                )
+            else:
+                parts.append(
+                    self.tr("{n} string(s) still need manual review.")
+                    .format(n=remaining)
+                )
+            parts.append(
+                self.tr("Open Translation → Quality Check for details. "
+                        "Cosmetic/visual issues were left unchanged.")
+            )
+            ok = False
+
+        summary = "\n".join(parts)
+        self.statusBar().showMessage(summary.replace("\n", "  "), 15000)
+
+        from gui.micro_animations import show_toast
+        if ok:
+            show_toast(
+                self,
+                self.tr("Self-review complete — all critical issues fixed"),
+                kind="success",
+            )
+            QMessageBox.information(self, self.tr("Self-Review Complete"), summary)
+        else:
+            show_toast(
+                self,
+                self.tr("Self-review done — {n} need manual review").format(n=remaining),
+                kind="warning",
+            )
+            QMessageBox.warning(self, self.tr("Self-Review Complete"), summary)
+
+        send_notification(
+            self.tr("Translation + self-review complete"),
+            summary,
+            tray_icon=self._tray_icon,
+        )
+
     @Slot()
     def _open_batch_translate_dialog(self) -> None:
         """Open the Batch Translate Folder dialog."""
@@ -4220,10 +4411,14 @@ class MainWindow(QMainWindow):
         if result == QMessageBox.StandardButton.Yes:
             self._retranslate_with_hints(retranslation_list)
 
-    def _retranslate_with_hints(self, retranslation_list: list) -> None:
-        """Start a targeted retranslation batch with quality-feedback retry hints."""
+    def _retranslate_with_hints(self, retranslation_list: list) -> bool:
+        """Start a targeted retranslation batch with quality-feedback retry hints.
+
+        Returns True if a batch was actually started (so a ``finished`` signal
+        will follow), False if there was nothing to do.
+        """
         if not retranslation_list or not self.ollama_worker:
-            return
+            return False
 
         source_lang = self.combo_source_lang.currentData()
         target_lang = self.combo_target_lang.currentData()
@@ -4263,7 +4458,7 @@ class MainWindow(QMainWindow):
             )
 
         if not requests:
-            return
+            return False
 
         n = len(requests)
         logger.info(f"Retranslating {n} string(s) with quality feedback hints")
@@ -4281,6 +4476,7 @@ class MainWindow(QMainWindow):
         self._eta_start_time = time.monotonic()
         self._eta_batch_total = len(requests)
         self.translation_requested.emit(requests)
+        return True
 
     def _ai_fix_with_hints(self, fix_list: list) -> None:
         """Send flawed translations to Ollama for targeted AI fixing.

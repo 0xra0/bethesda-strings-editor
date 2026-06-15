@@ -91,6 +91,25 @@ RETRANSLATE_CODES: frozenset = frozenset({
     "UI_OVERFLOW",
 })
 
+# Cosmetic / "visual" issue codes.  These affect only how text *looks* in the
+# UI — they never break the game, change meaning, or leave text untranslated.
+# The automatic post-translation self-review fixes everything EXCEPT these: the
+# mechanical auto-fixer still cleans them up when it can, but on their own they
+# never trigger a (slow, GPU-bound) AI retranslation pass.  Anything NOT listed
+# here is treated as a "critical" issue that the self-review must resolve.
+VISUAL_ONLY_CODES: frozenset = frozenset({
+    "UI_OVERFLOW",                  # translation wider than the hardcoded box
+    "LENGTH_INCREASE",              # longer than source (info)
+    "CASE_MISMATCH",                # first-letter capitalisation
+    "SENTENCE_COUNT_MISMATCH",      # sentence-count drift (info)
+    "SPURIOUS_QUOTES",              # added «guillemets»
+    "NEWLINE_COUNT_MISMATCH",       # newline-count drift (info)
+    "LEADING_WHITESPACE_REMOVED",
+    "TRAILING_WHITESPACE_MISMATCH",
+    "LINE_PREFIX_DROPPED",          # leading "-" on header lines
+    "SIZE_TAG_RESTRUCTURED",        # <size>/<font> spacer layout
+})
+
 
 @dataclass
 class QualityIssue:
@@ -121,6 +140,15 @@ class QualityReport:
     @property
     def has_issues(self) -> bool:
         return bool(self.issues)
+
+    @property
+    def has_critical_issue(self) -> bool:
+        """True if any issue is not purely cosmetic/visual (see VISUAL_ONLY_CODES)."""
+        return any(i.code not in VISUAL_ONLY_CODES for i in self.issues)
+
+    def critical_issues(self) -> List["QualityIssue"]:
+        """Return only the non-visual issues — the ones the self-review must fix."""
+        return [i for i in self.issues if i.code not in VISUAL_ONLY_CODES]
 
 
 # ── Game tag patterns that must survive translation intact ─────────────────────
@@ -1791,6 +1819,11 @@ class QualityChecker:
     def issue_can_autofix(code: str) -> bool:
         """Return True if this issue code can be fixed mechanically without AI."""
         return code in AUTOFIX_CODES
+
+    @staticmethod
+    def issue_is_visual_only(code: str) -> bool:
+        """Return True if this issue is cosmetic and never warrants AI retranslation."""
+        return code in VISUAL_ONLY_CODES
 
     @staticmethod
     def build_retry_hint(issues: List[QualityIssue]) -> str:

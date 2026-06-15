@@ -769,6 +769,23 @@ class SettingsDialog(QDialog):
         self.ai_qc_model_edit.setToolTip(self.tr("Ollama model name for AI quality checks"))
         ai_qc_layout.addRow(self.tr("AI QC model:"), self.ai_qc_model_edit)
 
+        self.chk_auto_self_review = QCheckBox(
+            self.tr("Automatic self-review after translation")
+        )
+        self.chk_auto_self_review.setChecked(
+            getattr(self._settings, "auto_self_review", True)
+        )
+        self.chk_auto_self_review.setToolTip(
+            self.tr(
+                "After each translation batch, automatically run the quality check,\n"
+                "mechanically fix every fixable issue, and AI-retranslate any string\n"
+                "still left with a critical (non-visual) issue — with no prompts.\n"
+                "Cosmetic/visual issues (UI overflow, added quotes, whitespace) are\n"
+                "left untouched. Ends with a single summary message."
+            )
+        )
+        ai_qc_layout.addRow(self.chk_auto_self_review)
+
         ai_qc_group.setLayout(ai_qc_layout)
         layout.addWidget(ai_qc_group)
 
@@ -1370,6 +1387,7 @@ class SettingsDialog(QDialog):
         settings.audit_logging = self.chk_audit_log.isChecked()
         settings.enable_ai_qc = self.chk_enable_ai_qc.isChecked()
         settings.ai_qc_model = self.ai_qc_model_edit.text().strip() or "qcgemma4-st"
+        settings.auto_self_review = self.chk_auto_self_review.isChecked()
         settings.enable_lore_rag = self.chk_enable_lore_rag.isChecked()
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
         settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
