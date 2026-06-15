@@ -708,6 +708,7 @@ class OllamaWorker(QObject):
         r"^[\W\d.]*$"                        # only non-word chars, digits, dots  (e.g. "---", "42.0")
         r"|^\w.*[/\\].*\.\w+$"               # backslash/forward-slash paths with extension  (e.g. Data\Interface\x.dds)
         r"|^\[[^\]]+\]\w[^\n]*[/\\][^\n]*\.\w{1,4}$"  # [tag]path/file.ext  (e.g. [Default Ship]Crew/HomeShip.txt)
+        r"|^[A-Za-z0-9_.]+(?:\\[A-Za-z0-9_.]+){2,}\\?$"  # pure ASCII backslash path without ext  (e.g. Architecture\City\neon\)
         r"|^<[\w.]+(?:=[\w.]+)?/?>$"        # pure single-tag string  (e.g. <Global.PlayerName>)
         r"|^[A-Za-z\d]{3,}_[A-Za-z\d_]+$"  # VARIABLE_LIKE_NAMES  (e.g. NPC_Boss01, ACTOR_JOHNDOE)
         r"|^\w+[A-Z]+[_a-z\d]+[A-Z]+\w+$"  # CamelCase identifiers  (e.g. PlayerActorRef)
@@ -1337,7 +1338,7 @@ class OllamaWorker(QObject):
             result = self._restore_missing_newlines(result, req.original_text)
             result = self._fix_case_and_line_prefix(result, req.original_text)
 
-            # Strip trailing newlines when original has none (same guard as single path).
+            # Strip or restore trailing newlines to match the original.
             if req.original_text:
                 _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
                 if not _orig_ends_nl:
@@ -1345,6 +1346,8 @@ class OllamaWorker(QObject):
                         result = result[:-1]
                     while result.endswith("\\n"):
                         result = result[:-2]
+                elif not (result.endswith("\n") or result.endswith("\\n")):
+                    result += "\\n" if req.original_text.endswith("\\n") else "\n"
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1912,7 +1915,7 @@ class OllamaWorker(QObject):
             if translated and (leading_seps or trailing_seps):
                 translated = leading_seps + translated + trailing_seps
 
-            # Strip trailing newlines the model appended when the original has none.
+            # Strip or restore trailing newlines to match the original.
             # Handles both actual \n and the two-character literal \n escape.
             if translated and req.original_text:
                 _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
@@ -1921,6 +1924,8 @@ class OllamaWorker(QObject):
                         translated = translated[:-1]
                     while translated.endswith("\\n"):
                         translated = translated[:-2]
+                elif not (translated.endswith("\n") or translated.endswith("\\n")):
+                    translated += "\\n" if req.original_text.endswith("\\n") else "\n"
 
             if translated and cache_key and self.translation_cache is not None:
                 self.translation_cache.set(cache_key, translated)
@@ -2275,12 +2280,21 @@ class OllamaWorker(QObject):
                     break
                 text = text[:_last] + text[_last + 7:]
 
-        # Hallucinated <Alias=...> tags not present in the original
+        # Hallucinated <Alias=...> opening and stray </Alias> closing tags not in the original
         if original_text:
             _orig_al = {a.lower() for a in re.findall(r'<Alias=[^>]+>', original_text, re.IGNORECASE)}
             for _a in re.findall(r'<Alias=[^>]+>', text, re.IGNORECASE):
                 if _a.lower() not in _orig_al:
                     text = text.replace(_a, '', 1)
+            # Remove stray </Alias> close tags when original has no <Alias= opener at all
+            if not _orig_al:
+                text = re.sub(r'</Alias\s*>', '', text, flags=re.IGNORECASE)
+        # Extra <font ...> opening tags beyond what the original had
+        if original_text:
+            _orig_fo = len(re.findall(r'<font\b[^>]*>', original_text, re.IGNORECASE))
+            _trans_fo = re.findall(r'<font\b[^>]*>', text, re.IGNORECASE)
+            for _ft in _trans_fo[_orig_fo:]:
+                text = text.replace(_ft, '', 1)
 
         # Printf format specifier correction: remove extras, then fix wrong types.
         # Matches full specs including precision (%.0f, %.2f) and flags, no space flag.
