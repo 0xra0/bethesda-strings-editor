@@ -707,6 +707,7 @@ class OllamaWorker(QObject):
     _INPUT_NOTRANS_RE = re.compile(
         r"^[\W\d.]*$"                        # only non-word chars, digits, dots  (e.g. "---", "42.0")
         r"|^\w.*[/\\].*\.\w+$"               # backslash/forward-slash paths with extension  (e.g. Data\Interface\x.dds)
+        r"|^\[[^\]]+\]\w[^\n]*[/\\][^\n]*\.\w{1,4}$"  # [tag]path/file.ext  (e.g. [Default Ship]Crew/HomeShip.txt)
         r"|^<[\w.]+(?:=[\w.]+)?/?>$"        # pure single-tag string  (e.g. <Global.PlayerName>)
         r"|^[A-Za-z\d]{3,}_[A-Za-z\d_]+$"  # VARIABLE_LIKE_NAMES  (e.g. NPC_Boss01, ACTOR_JOHNDOE)
         r"|^\w+[A-Z]+[_a-z\d]+[A-Z]+\w+$"  # CamelCase identifiers  (e.g. PlayerActorRef)
@@ -2475,8 +2476,10 @@ class OllamaWorker(QObject):
         if original_text and len(original_text) > 3:
             orig_lower = original_text.lower().strip()
             temp_text = text.strip()
+            _echo_stripped = False
             if temp_text.lower().startswith(orig_lower):
                 text = temp_text[len(orig_lower) :].strip()
+                _echo_stripped = True
 
             # Handle common separators after echoed text
             separators = [": ", " - ", " — ", " → ", " | ", ":", "-", "—", "→", "|"]
@@ -2484,6 +2487,12 @@ class OllamaWorker(QObject):
                 if text.startswith(sep):
                     text = text[len(sep) :].strip()
                     break
+
+            # Guard: if the echo-strip consumed the entire text, the model output was
+            # a correct same-word translation (e.g. RU→UK "Брови"→"Брови", "Люди"→"Люди").
+            # Discarding it produces an empty translation — restore the original output.
+            if _echo_stripped and not text:
+                text = temp_text
 
         # Strip wrapping quotes (straight or guillemets)
         if (text.startswith('"') and text.endswith('"')) or (
