@@ -1002,6 +1002,7 @@ class OllamaWorker(QObject):
                 cached = self.translation_cache.get(cache_key)
                 if cached:
                     cached = self._restore_missing_newlines(cached, req.original_text)
+                    cached = self._apply_trailing_newline(cached, req.original_text)
                     self.translation_ready.emit(req.index, cached, req.string_id)
                     successful += 1
                     completed_count += 1
@@ -1346,8 +1347,8 @@ class OllamaWorker(QObject):
                         result = result[:-1]
                     while result.endswith("\\n"):
                         result = result[:-2]
-                elif not (result.endswith("\n") or result.endswith("\\n")):
-                    result += "\\n" if req.original_text.endswith("\\n") else "\n"
+                else:
+                    result = self._apply_trailing_newline(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1432,6 +1433,8 @@ class OllamaWorker(QObject):
                 cached = self.translation_cache.get(cache_key)
                 if cached is not None:
                     logger.debug(f"Cache hit for string {req.string_id}")
+                    cached = self._restore_missing_newlines(cached, req.original_text)
+                    cached = self._apply_trailing_newline(cached, req.original_text)
                     return cached
             else:
                 # Evict the stale (bad) entry so the fresh result replaces it.
@@ -1924,8 +1927,8 @@ class OllamaWorker(QObject):
                         translated = translated[:-1]
                     while translated.endswith("\\n"):
                         translated = translated[:-2]
-                elif not (translated.endswith("\n") or translated.endswith("\\n")):
-                    translated += "\\n" if req.original_text.endswith("\\n") else "\n"
+                else:
+                    translated = self._apply_trailing_newline(translated, req.original_text)
 
             if translated and cache_key and self.translation_cache is not None:
                 self.translation_cache.set(cache_key, translated)
@@ -2180,6 +2183,20 @@ class OllamaWorker(QObject):
             return translated
         for pos, token, skip in sorted(insertions, key=lambda x: x[0], reverse=True):
             translated = translated[:pos] + token + translated[pos + skip:]
+        return translated
+
+    @staticmethod
+    def _apply_trailing_newline(translated: str, original: str) -> str:
+        """Restore a trailing newline (actual \\n or literal \\\\n) that the model dropped.
+
+        Called both on fresh translations and on cache hits so that stale cache
+        entries produced before this fix was added are healed on first read.
+        """
+        if not translated or not original:
+            return translated
+        orig_ends_nl = original.endswith("\n") or original.endswith("\\n")
+        if orig_ends_nl and not (translated.endswith("\n") or translated.endswith("\\n")):
+            return translated + ("\\n" if original.endswith("\\n") else "\n")
         return translated
 
     @staticmethod
