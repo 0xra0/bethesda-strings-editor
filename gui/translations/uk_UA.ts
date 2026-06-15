@@ -3242,68 +3242,68 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="3870"/>
         <source>Self-review: checking translation quality…</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоперевірка: перевірка якості перекладу…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3929"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоперевірка, прохід {n}: повторний переклад {c} рядків…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3949"/>
         <source>{n} string(s) translated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перекладено {n} рядків.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3952"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
-        <translation type="unfinished"></translation>
+        <translation>Механічно виправлено {n} проблем.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3956"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторно перекладено {n} рядків за {p} проходів перевірки.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3962"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі критичні проблеми виправлено автоматично — ручна перевірка не потрібна.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3969"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} рядків не вдалося виправити автоматично (подальшого поступу немає) — потрібна ручна перевірка.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3975"/>
         <source>{n} string(s) still need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} рядків усе ще потребують ручної перевірки.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3979"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
-        <translation type="unfinished"></translation>
+        <translation>Докладніше: Переклад → Перевірка якості. Косметичні/візуальні проблеми залишено без змін.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3991"/>
         <source>Self-review complete — all critical issues fixed</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоперевірку завершено — усі критичні проблеми виправлено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3994"/>
         <location filename="../main_window.py" line="4001"/>
         <source>Self-Review Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоперевірку завершено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3998"/>
         <source>Self-review done — {n} need manual review</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоперевірку завершено — {n} потребують ручної перевірки</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4004"/>
         <source>Translation + self-review complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Переклад і самоперевірку завершено</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4072"/>
@@ -6438,7 +6438,7 @@ Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</
     <message>
         <location filename="../settings_dialog.py" line="773"/>
         <source>Automatic self-review after translation</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматична самоперевірка після перекладу</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="780"/>
@@ -6447,7 +6447,12 @@ mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
 Cosmetic/visual issues (UI overflow, added quotes, whitespace) are
 left untouched. Ends with a single summary message.</source>
-        <translation type="unfinished"></translation>
+        <translation>Після кожного пакета перекладу автоматично запускати перевірку якості,
+механічно виправляти всі придатні до виправлення проблеми та повторно
+перекладати штучним інтелектом рядки, що залишилися з критичними
+(невізуальними) проблемами — без жодних запитів.
+Косметичні/візуальні проблеми (переповнення інтерфейсу, додані лапки,
+пробіли) залишаються без змін. Завершується одним підсумковим повідомленням.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="793"/>

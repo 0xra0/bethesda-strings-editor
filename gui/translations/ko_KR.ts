@@ -3136,68 +3136,68 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="3870"/>
         <source>Self-review: checking translation quality…</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 검토: 번역 품질 확인 중…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3929"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 검토 {n}차: 문자열 {c}개 재번역 중…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3949"/>
         <source>{n} string(s) translated.</source>
-        <translation type="unfinished"></translation>
+        <translation>문자열 {n}개를 번역했습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3952"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
-        <translation type="unfinished"></translation>
+        <translation>문제 {n}개를 기계적으로 자동 수정했습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3956"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
-        <translation type="unfinished"></translation>
+        <translation>검토 {p}회에 걸쳐 문자열 {n}개를 재번역했습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3962"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 중요 문제가 자동으로 해결되었습니다 — 수동 검토가 필요하지 않습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3969"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>문자열 {n}개를 자동으로 수정할 수 없어(더 이상 진행 불가) 수동 검토가 필요합니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3975"/>
         <source>{n} string(s) still need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>문자열 {n}개는 아직 수동 검토가 필요합니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3979"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
-        <translation type="unfinished"></translation>
+        <translation>자세한 내용은 번역 → 품질 검사를 여세요. 미관/시각적 문제는 변경하지 않았습니다.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3991"/>
         <source>Self-review complete — all critical issues fixed</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 검토 완료 — 모든 중요 문제 수정됨</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3994"/>
         <location filename="../main_window.py" line="4001"/>
         <source>Self-Review Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 검토 완료</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3998"/>
         <source>Self-review done — {n} need manual review</source>
-        <translation type="unfinished"></translation>
+        <translation>자체 검토 완료 — {n}개는 수동 검토 필요</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4004"/>
         <source>Translation + self-review complete</source>
-        <translation type="unfinished"></translation>
+        <translation>번역 + 자체 검토 완료</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4072"/>
@@ -6219,7 +6219,7 @@ Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</
     <message>
         <location filename="../settings_dialog.py" line="773"/>
         <source>Automatic self-review after translation</source>
-        <translation type="unfinished"></translation>
+        <translation>번역 후 자동 자체 검토</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="780"/>
@@ -6228,7 +6228,11 @@ mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
 Cosmetic/visual issues (UI overflow, added quotes, whitespace) are
 left untouched. Ends with a single summary message.</source>
-        <translation type="unfinished"></translation>
+        <translation>각 번역 배치 후 품질 검사를 자동으로 실행하고, 수정 가능한 모든 문제를
+기계적으로 수정하며, 중요한(시각적이지 않은) 문제가 남은 문자열은 AI로
+다시 번역합니다 — 별도 확인 없이 진행됩니다.
+미관/시각적 문제(UI 넘침, 추가된 따옴표, 공백)는 그대로 둡니다.
+하나의 요약 메시지로 끝납니다.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="793"/>

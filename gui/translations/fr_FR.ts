@@ -2659,68 +2659,68 @@ Consultez le journal pour plus de détails.</translation>
     <message>
         <location filename="../main_window.py" line="3870"/>
         <source>Self-review: checking translation quality…</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision : vérification de la qualité de la traduction…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3929"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision, passe {n} : retraduction de {c} chaîne(s)…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3949"/>
         <source>{n} string(s) translated.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} chaîne(s) traduite(s).</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3952"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} problème(s) corrigé(s) mécaniquement.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3956"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} chaîne(s) retraduite(s) sur {p} passe(s) de révision.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3962"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tous les problèmes critiques ont été résolus automatiquement — aucune révision manuelle nécessaire.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3969"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} chaîne(s) n'ont pas pu être corrigées automatiquement (aucune progression supplémentaire) et nécessitent une révision manuelle.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3975"/>
         <source>{n} string(s) still need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} chaîne(s) nécessitent encore une révision manuelle.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3979"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrez Traduction → Vérification de la qualité pour plus de détails. Les problèmes cosmétiques/visuels ont été laissés inchangés.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3991"/>
         <source>Self-review complete — all critical issues fixed</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision terminée — tous les problèmes critiques corrigés</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3994"/>
         <location filename="../main_window.py" line="4001"/>
         <source>Self-Review Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision terminée</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3998"/>
         <source>Self-review done — {n} need manual review</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision terminée — {n} nécessitent une révision manuelle</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4004"/>
         <source>Translation + self-review complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Traduction + auto-révision terminées</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4092"/>
@@ -6201,7 +6201,7 @@ Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</
     <message>
         <location filename="../settings_dialog.py" line="773"/>
         <source>Automatic self-review after translation</source>
-        <translation type="unfinished"></translation>
+        <translation>Auto-révision automatique après la traduction</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="780"/>
@@ -6210,7 +6210,11 @@ mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
 Cosmetic/visual issues (UI overflow, added quotes, whitespace) are
 left untouched. Ends with a single summary message.</source>
-        <translation type="unfinished"></translation>
+        <translation>Après chaque lot de traduction, exécute automatiquement la vérification de la qualité,
+corrige mécaniquement chaque problème corrigible et retraduit par IA toute chaîne
+restée avec un problème critique (non visuel) — sans aucune invite.
+Les problèmes cosmétiques/visuels (débordement de l'interface, guillemets ajoutés,
+espaces) sont laissés intacts. Se termine par un seul message récapitulatif.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="793"/>

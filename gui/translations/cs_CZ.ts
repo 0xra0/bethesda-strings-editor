@@ -2659,68 +2659,68 @@ Podrobnosti naleznete v protokolu.</translation>
     <message>
         <location filename="../main_window.py" line="3870"/>
         <source>Self-review: checking translation quality…</source>
-        <translation type="unfinished"></translation>
+        <translation>Samokontrola: kontrola kvality překladu…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3929"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Samokontrola, průchod {n}: opětovný překlad {c} řetězců…</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3949"/>
         <source>{n} string(s) translated.</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeloženo {n} řetězců.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3952"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mechanicky opraveno {n} problémů.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3956"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
-        <translation type="unfinished"></translation>
+        <translation>Znovu přeloženo {n} řetězců během {p} průchodů kontroly.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3962"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny kritické problémy byly vyřešeny automaticky — ruční kontrola není potřeba.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3969"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} řetězců se nepodařilo opravit automaticky (žádný další pokrok) — vyžadují ruční kontrolu.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3975"/>
         <source>{n} string(s) still need manual review.</source>
-        <translation type="unfinished"></translation>
+        <translation>{n} řetězců stále vyžaduje ruční kontrolu.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3979"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti: Překlad → Kontrola kvality. Kosmetické/vizuální problémy zůstaly beze změny.</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3991"/>
         <source>Self-review complete — all critical issues fixed</source>
-        <translation type="unfinished"></translation>
+        <translation>Samokontrola dokončena — všechny kritické problémy opraveny</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3994"/>
         <location filename="../main_window.py" line="4001"/>
         <source>Self-Review Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Samokontrola dokončena</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="3998"/>
         <source>Self-review done — {n} need manual review</source>
-        <translation type="unfinished"></translation>
+        <translation>Samokontrola dokončena — {n} vyžaduje ruční kontrolu</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4004"/>
         <source>Translation + self-review complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Překlad a samokontrola dokončeny</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4092"/>
@@ -6201,7 +6201,7 @@ Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</
     <message>
         <location filename="../settings_dialog.py" line="773"/>
         <source>Automatic self-review after translation</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatická samokontrola po překladu</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="780"/>
@@ -6210,7 +6210,11 @@ mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
 Cosmetic/visual issues (UI overflow, added quotes, whitespace) are
 left untouched. Ends with a single summary message.</source>
-        <translation type="unfinished"></translation>
+        <translation>Po každé dávce překladu automaticky spustí kontrolu kvality, mechanicky opraví
+každý opravitelný problém a pomocí AI znovu přeloží každý řetězec, který zůstal
+s kritickým (nevizuálním) problémem — bez jakýchkoli dotazů.
+Kosmetické/vizuální problémy (přetečení rozhraní, přidané uvozovky, mezery)
+zůstanou nedotčené. Skončí jedinou souhrnnou zprávou.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="793"/>
