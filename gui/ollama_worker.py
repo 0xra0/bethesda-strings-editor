@@ -1644,10 +1644,15 @@ class OllamaWorker(QObject):
             # because the AMD GPU serialises requests — a queued string may wait several
             # minutes just for its GPU slot before generation even starts.
             model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
-            # Thinking models generate a reasoning chain before the translation output;
-            # scale timeout with text length so large strings don't time out mid-think.
-            if model_config.get("think_disabled"):
-                model_timeout += max(0, len(protected_text) // 20)
+            # Scale the timeout with text length for *every* model, not just thinking
+            # ones.  Generation time grows with output length (≈ input length), and
+            # because the GPU serialises requests a large string can sit behind several
+            # others in Ollama's queue before its first token even arrives.  The flat
+            # per-model timeout (e.g. mamaylm's 720s) only covers a *short* string's
+            # queue wait — without this length term a big book/document string
+            # reproducibly times out on slower GPUs.  Thinking models also emit a
+            # reasoning chain before the translation, which this same scaling covers.
+            model_timeout += max(0, len(protected_text) // 20)
 
             # Adaptive num_ctx: allocate only what this string needs.
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
@@ -1936,10 +1941,15 @@ class OllamaWorker(QObject):
             return translated if translated else None
 
         except requests.exceptions.Timeout:
-            used_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
+            # Report the *actual* (length-scaled) timeout that was applied, not the
+            # flat per-model base, so the log reflects how long we really waited.
+            used_timeout = locals().get("model_timeout") or int(
+                model_config.get("timeout") or self._session.timeout  # type: ignore[arg-type]
+            )
             logger.warning(
-                "String %s: Ollama timed out after %ds — skipping",
-                req.string_id, used_timeout,
+                "String %s: Ollama timed out after %ds (%d chars) — skipping. "
+                "Slow GPU? Lower max workers, raise the model timeout, or split the string.",
+                req.string_id, used_timeout, len(req.original_text or ""),
             )
             return None
         except requests.exceptions.ConnectionError:
@@ -2961,7 +2971,11 @@ class OllamaWorker(QObject):
         if self.ollama_num_thread > 0:
             payload["options"]["num_thread"] = self.ollama_num_thread
 
+        # Scale with length like the main translation path — the rewrite prompt holds
+        # the original *plus* the draft (≈2× input), so big strings need even more
+        # headroom before the first token arrives on a serialising GPU.
         model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
+        model_timeout += max(0, input_len // 10)
         result = self._stream_ollama(payload, model_timeout)
         return result or None
 
