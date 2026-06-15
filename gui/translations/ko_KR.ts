@@ -559,7 +559,7 @@ Ask Claude to suggest a translation first.</source>
 <context>
     <name>ClaudeTranslationWorker</name>
     <message>
-        <location filename="../claude_translation_worker.py" line="227"/>
+        <location filename="../claude_translation_worker.py" line="269"/>
         <source>Translation failed for string index {idx}</source>
         <translation>문자열 인덱스 {idx}의 번역 실패</translation>
     </message>
@@ -638,7 +638,7 @@ Ask Claude to suggest a translation first.</source>
 Proceed?</source>
         <translation>{n}개 행을 다음으로 바꾸시겠습니까:
 
-"{text}"
+&quot;{text}&quot;
 
 계속하시겠습니까?</translation>
     </message>
@@ -830,32 +830,32 @@ Discard — delete the snapshot and start fresh.</source>
 <context>
     <name>ExportModeDialog</name>
     <message>
-        <location filename="../main_window.py" line="6363"/>
+        <location filename="../main_window.py" line="6873"/>
         <source>Export Mode</source>
         <translation>내보내기 모드</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6373"/>
+        <location filename="../main_window.py" line="6883"/>
         <source>Select export mode:</source>
         <translation>내보내기 모드 선택:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6377"/>
+        <location filename="../main_window.py" line="6887"/>
         <source>All strings</source>
         <translation>모든 문자열</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6381"/>
+        <location filename="../main_window.py" line="6891"/>
         <source>Translated only</source>
         <translation>번역된 항목만</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6388"/>
+        <location filename="../main_window.py" line="6898"/>
         <source>OK</source>
         <translation>확인</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6392"/>
+        <location filename="../main_window.py" line="6902"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
@@ -1504,7 +1504,7 @@ Characters with no safe replacement are left unchanged.</source>
     <message>
         <location filename="../lore_rag_dialog.py" line="284"/>
         <source>Type a term (e.g. House Va&apos;ruun, Akila City)…</source>
-        <translation>용어를 입력하세요 (예: House Va'ruun, Akila City)…</translation>
+        <translation>용어를 입력하세요 (예: House Va&apos;ruun, Akila City)…</translation>
     </message>
     <message>
         <location filename="../lore_rag_dialog.py" line="288"/>
@@ -1561,7 +1561,7 @@ Alternatively, each entry may be a plain text string (first line = title).</sour
         <translation>로컬 JSON 파일에서 설정 문서를 가져옵니다.
 
 예상 형식 — 객체의 JSON 배열:
-  [{"title": "House Va'ruun", "content": "…", "source": "manual", "tags": "faction,lore"}, …]
+  [{&quot;title&quot;: &quot;House Va&apos;ruun&quot;, &quot;content&quot;: &quot;…&quot;, &quot;source&quot;: &quot;manual&quot;, &quot;tags&quot;: &quot;faction,lore&quot;}, …]
 
 또는 각 항목이 일반 텍스트 문자열일 수 있습니다 (첫 번째 줄 = 제목).</translation>
     </message>
@@ -1800,7 +1800,7 @@ This cannot be undone.</source>
         <location filename="../macro_dialog.py" line="392"/>
         <source>Step &apos;{s}&apos; has an invalid regex:
 {e}</source>
-        <translation>'{s}' 단계에 잘못된 정규식이 있습니다:
+        <translation>&apos;{s}&apos; 단계에 잘못된 정규식이 있습니다:
 {e}</translation>
     </message>
     <message>
@@ -1847,230 +1847,230 @@ This cannot be undone.</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="392"/>
-        <location filename="../main_window.py" line="617"/>
-        <location filename="../main_window.py" line="5946"/>
+        <location filename="../main_window.py" line="394"/>
+        <location filename="../main_window.py" line="642"/>
+        <location filename="../main_window.py" line="6324"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings AI Translator</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="604"/>
+        <location filename="../main_window.py" line="629"/>
         <source>Restored {n} translation(s) from crash recovery snapshot.</source>
         <translation>충돌 복구 스냅샷에서 {n}개 번역 복원됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="620"/>
+        <location filename="../main_window.py" line="645"/>
         <source>Show</source>
         <translation>표시</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="623"/>
+        <location filename="../main_window.py" line="648"/>
         <source>Quit</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="740"/>
+        <location filename="../main_window.py" line="765"/>
         <source>No file loaded</source>
         <translation>파일이 로드되지 않음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="752"/>
-        <location filename="../main_window.py" line="3582"/>
+        <location filename="../main_window.py" line="777"/>
+        <location filename="../main_window.py" line="3714"/>
         <source>Encoding: —</source>
         <translation>인코딩: —</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="755"/>
+        <location filename="../main_window.py" line="780"/>
         <source>Change…</source>
         <translation>변경…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="759"/>
+        <location filename="../main_window.py" line="784"/>
         <source>Override the auto-detected file encoding and re-decode all strings</source>
         <translation>자동 감지된 파일 인코딩을 재정의하고 모든 문자열 다시 디코딩</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="769"/>
+        <location filename="../main_window.py" line="794"/>
         <source>Strings: 0</source>
         <translation>문자열: 0</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="785"/>
+        <location filename="../main_window.py" line="810"/>
         <source>Source:</source>
         <translation>원본:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="799"/>
+        <location filename="../main_window.py" line="824"/>
         <source>Target:</source>
         <translation>대상:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="811"/>
+        <location filename="../main_window.py" line="836"/>
         <source>Quality:</source>
         <translation>품질:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="818"/>
+        <location filename="../main_window.py" line="843"/>
         <source>Quality 7-10 recommended</source>
         <translation>품질 7-10 권장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="915"/>
+        <location filename="../main_window.py" line="940"/>
         <source>Total strings · translated · remaining
 Updates live as translations complete.</source>
         <translation>전체 문자열 · 번역됨 · 남음
 번역이 완료되면 실시간으로 업데이트됩니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="925"/>
+        <location filename="../main_window.py" line="950"/>
         <source>Estimated time remaining for current translation batch</source>
         <translation>현재 번역 일괄 작업의 예상 남은 시간</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="942"/>
+        <location filename="../main_window.py" line="967"/>
         <source>Ready</source>
         <translation>준비 완료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="945"/>
+        <location filename="../main_window.py" line="970"/>
         <source>Glossary Suggestions</source>
         <translation>용어집 제안</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="954"/>
-        <location filename="../main_window.py" line="3419"/>
+        <location filename="../main_window.py" line="979"/>
+        <location filename="../main_window.py" line="3551"/>
         <source>Select a string to see glossary hints.</source>
         <translation>용어집 힌트를 보려면 문자열을 선택하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="959"/>
+        <location filename="../main_window.py" line="984"/>
         <source>Double-click to copy the target term to clipboard.</source>
         <translation>대상 용어를 클립보드에 복사하려면 더블 클릭하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1005"/>
+        <location filename="../main_window.py" line="1030"/>
         <source>&amp;File</source>
         <translation>파일(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1006"/>
+        <location filename="../main_window.py" line="1031"/>
         <source>&amp;Open...</source>
         <translation>열기(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1011"/>
+        <location filename="../main_window.py" line="1036"/>
         <source>Open &amp;Recent</source>
         <translation>최근 항목 열기(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1015"/>
+        <location filename="../main_window.py" line="1040"/>
         <source>&amp;Save</source>
         <translation>저장(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1022"/>
+        <location filename="../main_window.py" line="1047"/>
         <source>Save &amp;As...</source>
         <translation>다른 이름으로 저장(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1030"/>
+        <location filename="../main_window.py" line="1055"/>
         <source>Upload to &amp;NexusMods…</source>
         <translation>NexusMods에 업로드(&amp;N)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1035"/>
+        <location filename="../main_window.py" line="1060"/>
         <source>&amp;Browse NexusMods for Translations…</source>
         <translation>번역을 위해 NexusMods 탐색(&amp;B)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1041"/>
+        <location filename="../main_window.py" line="1066"/>
         <source>E&amp;xit</source>
         <translation>종료(&amp;X)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1047"/>
+        <location filename="../main_window.py" line="1072"/>
         <source>&amp;Edit</source>
         <translation>편집(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1049"/>
+        <location filename="../main_window.py" line="1074"/>
         <source>&amp;Advanced Search...</source>
         <translation>고급 검색(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1059"/>
+        <location filename="../main_window.py" line="1084"/>
         <source>Copy &amp;Original → Translated</source>
         <translation>원본 복사 → 번역(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1069"/>
+        <location filename="../main_window.py" line="1094"/>
         <source>&amp;Translation</source>
         <translation>번역(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1071"/>
+        <location filename="../main_window.py" line="1096"/>
         <source>Translate &amp;Selected</source>
         <translation>선택 항목 번역(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1079"/>
+        <location filename="../main_window.py" line="1104"/>
         <source>Translate &amp;All</source>
         <translation>모두 번역(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1088"/>
+        <location filename="../main_window.py" line="1113"/>
         <source>Stop Translation</source>
         <translation>번역 중지</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1097"/>
+        <location filename="../main_window.py" line="1122"/>
         <source>Import from &amp;TXT...</source>
         <translation>TXT에서 가져오기(&amp;T)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1105"/>
+        <location filename="../main_window.py" line="1130"/>
         <source>Export to &amp;TXT...</source>
         <translation>TXT로 내보내기(&amp;T)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1113"/>
+        <location filename="../main_window.py" line="1138"/>
         <source>Import from &amp;XML (SST)...</source>
         <translation>XML에서 가져오기(&amp;X) (SST)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1119"/>
+        <location filename="../main_window.py" line="1144"/>
         <source>Export to &amp;XML (SST)...</source>
         <translation>XML로 내보내기(&amp;X) (SST)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1127"/>
+        <location filename="../main_window.py" line="1152"/>
         <source>Compare with &amp;File...</source>
         <translation>파일과 비교(&amp;F)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1135"/>
+        <location filename="../main_window.py" line="1160"/>
         <source>String &amp;Diff Viewer...</source>
         <translation>문자열 차이 뷰어(&amp;D)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1143"/>
+        <location filename="../main_window.py" line="1168"/>
         <source>Dialogue &amp;Tree Visualizer…</source>
         <translation>대화 트리 시각화 도구(&amp;T)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1147"/>
+        <location filename="../main_window.py" line="1172"/>
         <source>Visualise the Quest → Topic → Response dialogue tree from an ESP/ESM file.
 Shows conversation flow as a node graph so translators can see context.</source>
         <translation>ESP/ESM 파일에서 퀘스트 → 주제 → 응답 대화 트리를 시각화합니다.
 번역자가 컨텍스트를 볼 수 있도록 대화 흐름을 노드 그래프로 표시합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1154"/>
+        <location filename="../main_window.py" line="1179"/>
         <source>Lore &amp;RAG Context…</source>
         <translation>설정 RAG 컨텍스트(&amp;R)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1157"/>
+        <location filename="../main_window.py" line="1182"/>
         <source>Manage the local lore database used for Retrieval-Augmented Generation.
 Download articles from UESP or import a local JSON file to give the AI
 accurate lore context when translating strings mentioning factions, places,
@@ -2078,15 +2078,15 @@ or characters (e.g. House Va&apos;ruun, Akila City, Freestar Collective).</sourc
         <translation>검색 증강 생성에 사용되는 로컬 설정 데이터베이스를 관리합니다.
 UESP에서 문서를 다운로드하거나 로컬 JSON 파일을 가져와서
 AI가 세력, 장소, 캐릭터가 언급된 문자열을 번역할 때
-정확한 설정 컨텍스트를 제공합니다 (예: House Va'ruun, Akila City, Freestar Collective).</translation>
+정확한 설정 컨텍스트를 제공합니다 (예: House Va&apos;ruun, Akila City, Freestar Collective).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1165"/>
+        <location filename="../main_window.py" line="1190"/>
         <source>&amp;Character Profiles…</source>
         <translation>캐릭터 프로필(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1168"/>
+        <location filename="../main_window.py" line="1193"/>
         <source>Create and manage character personas (Freestar Ranger, SysDef Officer, …).
 Assign profiles to strings via right-click; the AI will adapt its register,
 tone, and temperature to match the character&apos;s voice.</source>
@@ -2095,12 +2095,12 @@ tone, and temperature to match the character&apos;s voice.</source>
 맞게 어조와 말투를 조정합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1175"/>
+        <location filename="../main_window.py" line="1200"/>
         <source>Font &amp;Glyph Checker…</source>
         <translation>폰트 글리프 검사기(&amp;G)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1178"/>
+        <location filename="../main_window.py" line="1203"/>
         <source>Scan translated strings for characters that will render as missing
 glyphs (tofu □) in-game due to incomplete font atlas coverage.
 Supports Scaleform SWF font atlases and TTF/OTF fonts.</source>
@@ -2109,125 +2109,125 @@ Supports Scaleform SWF font atlases and TTF/OTF fonts.</source>
 Scaleform SWF 폰트 아틀라스 및 TTF/OTF 폰트를 지원합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1187"/>
+        <location filename="../main_window.py" line="1212"/>
         <source>Compare Game &amp;Versions…</source>
         <translation>게임 버전 비교(&amp;V)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1192"/>
+        <location filename="../main_window.py" line="1217"/>
         <source>Compare two game-version source files to see what strings were
 added, removed, or modified, and migrate unchanged translations.</source>
         <translation>두 게임 버전 원본 파일을 비교하여 추가, 삭제 또는 수정된
 문자열을 확인하고 변경되지 않은 번역을 마이그레이션합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1199"/>
+        <location filename="../main_window.py" line="1224"/>
         <source>Batch Compare Game &amp;Folders…</source>
         <translation>게임 폴더 일괄 비교(&amp;F)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1203"/>
+        <location filename="../main_window.py" line="1228"/>
         <source>Compare all .strings files across two game-version folders
 and generate a combined migration report.</source>
         <translation>두 게임 버전 폴더의 모든 .strings 파일을 비교하고
 통합 마이그레이션 보고서를 생성합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1211"/>
+        <location filename="../main_window.py" line="1236"/>
         <source>Translate Starfield Interface TXT...</source>
         <translation>Starfield 인터페이스 TXT 번역...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1218"/>
+        <location filename="../main_window.py" line="1243"/>
         <source>&amp;Approve Selected</source>
         <translation>선택 항목 승인(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1222"/>
+        <location filename="../main_window.py" line="1247"/>
         <source>Accept the current AI translation and advance to the next row (Ctrl+Enter)</source>
         <translation>현재 AI 번역을 수락하고 다음 행으로 이동 (Ctrl+Enter)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1228"/>
+        <location filename="../main_window.py" line="1253"/>
         <source>&amp;Reject Selected</source>
         <translation>선택 항목 거부(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1232"/>
+        <location filename="../main_window.py" line="1257"/>
         <source>Clear the translation for selected rows and mark them as pending (Ctrl+R)</source>
         <translation>선택된 행의 번역을 지우고 대기 중으로 표시 (Ctrl+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1239"/>
+        <location filename="../main_window.py" line="1264"/>
         <source>&amp;Next Untranslated</source>
         <translation>다음 미번역(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1243"/>
+        <location filename="../main_window.py" line="1268"/>
         <source>Jump to the next untranslated string (F7)</source>
         <translation>다음 미번역 문자열로 이동 (F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1249"/>
+        <location filename="../main_window.py" line="1274"/>
         <source>&amp;Previous Untranslated</source>
         <translation>이전 미번역(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1253"/>
+        <location filename="../main_window.py" line="1278"/>
         <source>Jump to the previous untranslated string (Shift+F7)</source>
         <translation>이전 미번역 문자열로 이동 (Shift+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1259"/>
+        <location filename="../main_window.py" line="1284"/>
         <source>&amp;Batch Translate Folder…</source>
         <translation>폴더 일괄 번역(&amp;B)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1262"/>
+        <location filename="../main_window.py" line="1287"/>
         <source>Scan a folder of binary string files (.strings/.dlstrings/.ilstrings),
 auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings.</source>
         <translation>바이너리 문자열 파일 폴더(.strings/.dlstrings/.ilstrings)를 스캔하고
 기계적 문제를 자동 수정하며 미번역/저품질 문자열을 AI로 번역합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1269"/>
+        <location filename="../main_window.py" line="1294"/>
         <source>&amp;Quality Check…</source>
         <translation>품질 검사(&amp;Q)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1272"/>
+        <location filename="../main_window.py" line="1297"/>
         <source>Run post-translation quality checks (Ctrl+F7)</source>
         <translation>번역 후 품질 검사 실행 (Ctrl+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1277"/>
+        <location filename="../main_window.py" line="1302"/>
         <source>Auto-Retranslate &amp;Issues…</source>
         <translation>문제 자동 재번역(&amp;I)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1282"/>
+        <location filename="../main_window.py" line="1307"/>
         <source>Run quality check and automatically retranslate all strings with errors or warnings, sending quality feedback to the AI model. (Ctrl+Shift+F7)</source>
         <translation>품질 검사를 실행하고 오류 또는 경고가 있는 모든 문자열을 자동으로 재번역하며 AI 모델에 품질 피드백을 전송합니다. (Ctrl+Shift+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1290"/>
+        <location filename="../main_window.py" line="1315"/>
         <source>&amp;Macro Editor… (q)</source>
         <translation>매크로 편집기(&amp;M)… (q)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1295"/>
+        <location filename="../main_window.py" line="1320"/>
         <source>Open the macro editor to define regex-replace steps and apply
 them to thousands of strings in one batch. (Ctrl+M or &apos;q&apos; in table)</source>
         <translation>매크로 편집기를 열어 정규식 바꾸기 단계를 정의하고
-수천 개의 문자열에 일괄 적용합니다. (Ctrl+M 또는 테이블에서 'q')</translation>
+수천 개의 문자열에 일괄 적용합니다. (Ctrl+M 또는 테이블에서 &apos;q&apos;)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1304"/>
+        <location filename="../main_window.py" line="1329"/>
         <source>&amp;Import Quality Report…</source>
         <translation>품질 보고서 가져오기(&amp;I)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1309"/>
+        <location filename="../main_window.py" line="1334"/>
         <source>Load a previously exported JSON quality report.
 Row positions are remapped to the current file automatically.
 Use this to restore quality check results after reloading the app.</source>
@@ -2236,442 +2236,465 @@ Use this to restore quality check results after reloading the app.</source>
 앱을 다시 로드한 후 품질 검사 결과를 복원하는 데 사용합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1320"/>
+        <location filename="../main_window.py" line="1345"/>
         <source>Export &amp;Training Data (JSONL)…</source>
         <translation>학습 데이터 내보내기(&amp;T) (JSONL)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1324"/>
+        <location filename="../main_window.py" line="1349"/>
         <source>Export approved translations as a JSONL fine-tuning dataset.
 Compatible with Unsloth, Axolotl, and LLaMA-Factory.
 Only rows with status &apos;translated&apos; are included.</source>
         <translation>승인된 번역을 JSONL 파인튜닝 데이터셋으로 내보냅니다.
 Unsloth, Axolotl, LLaMA-Factory와 호환됩니다.
-'번역됨' 상태의 행만 포함됩니다.</translation>
+&apos;번역됨&apos; 상태의 행만 포함됩니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1334"/>
+        <location filename="../main_window.py" line="1359"/>
         <source>Load Translation &amp;Memory...</source>
         <translation>번역 메모리 로드(&amp;M)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1341"/>
+        <location filename="../main_window.py" line="1366"/>
         <source>Export Translation Memory as TMX...</source>
         <translation>번역 메모리를 TMX로 내보내기...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1345"/>
+        <location filename="../main_window.py" line="1370"/>
         <source>Export the active translation memory (or current file&apos;s translations)
 as a TMX file compatible with OmegaT, SDL Trados, and Memsource.</source>
         <translation>활성 번역 메모리(또는 현재 파일의 번역)를
 OmegaT, SDL Trados, Memsource와 호환되는 TMX 파일로 내보냅니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1353"/>
+        <location filename="../main_window.py" line="1378"/>
         <source>&amp;Discover New Terms…</source>
         <translation>새 용어 발견(&amp;D)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1357"/>
+        <location filename="../main_window.py" line="1382"/>
         <source>Scan the loaded strings for candidate protected terms not yet in the
 protection list, then review and approve them before adding.</source>
         <translation>로드된 문자열에서 보호 목록에 아직 없는 보호 후보 용어를 스캔한 후
 추가하기 전에 검토하고 승인합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1365"/>
+        <location filename="../main_window.py" line="1390"/>
         <source>&amp;Check Consistency…</source>
         <translation>일관성 검사(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1370"/>
+        <location filename="../main_window.py" line="1395"/>
         <source>Scan all translated strings for the same source text rendered
 differently and let you pick a canonical translation for each group.</source>
         <translation>모든 번역된 문자열에서 동일한 원본 텍스트가 다르게 번역된 경우를 스캔하고
 각 그룹에 대한 표준 번역을 선택할 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1378"/>
+        <location filename="../main_window.py" line="1403"/>
         <source>Check &amp;Register (ти/ви)…</source>
         <translation>어체 검사(&amp;R) (ти/ви)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1383"/>
+        <location filename="../main_window.py" line="1408"/>
         <source>Detect NPC speakers whose translated lines mix informal (ти) and
 formal (ви) address when speaking to the player. (Ctrl+Alt+R)</source>
         <translation>플레이어에게 말할 때 비격식체(ти)와
 격식체(ви)를 혼용하는 NPC 화자를 감지합니다. (Ctrl+Alt+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1391"/>
+        <location filename="../main_window.py" line="1416"/>
         <source>Check &amp;Gender Agreement…</source>
         <translation>성별 일치 검사(&amp;G)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1396"/>
+        <location filename="../main_window.py" line="1421"/>
         <source>Scan translated strings for adjective/noun gender agreement
 errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
         <translation>번역된 문자열에서 형용사/명사 성별 일치
 오류(우크라이나어 문법)를 스캔합니다. (Ctrl+Alt+G)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1404"/>
+        <location filename="../main_window.py" line="1429"/>
         <source>&amp;Sessions</source>
         <translation>세션(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1407"/>
+        <location filename="../main_window.py" line="1432"/>
         <source>&amp;New Session…</source>
         <translation>새 세션(&amp;N)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1411"/>
+        <location filename="../main_window.py" line="1436"/>
         <source>Start a named work session that saves your search filter, cursor, and per-session translation count. (Ctrl+Shift+N)</source>
         <translation>검색 필터, 커서 및 세션당 번역 수를 저장하는 명명된 작업 세션을 시작합니다. (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1418"/>
+        <location filename="../main_window.py" line="1443"/>
         <source>&amp;Save Session</source>
         <translation>세션 저장(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1426"/>
+        <location filename="../main_window.py" line="1451"/>
         <source>Save Session &amp;As…</source>
         <translation>세션을 다른 이름으로 저장(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1435"/>
+        <location filename="../main_window.py" line="1460"/>
         <source>&amp;Manage Sessions…</source>
         <translation>세션 관리(&amp;M)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1442"/>
+        <location filename="../main_window.py" line="1467"/>
         <source>Recent Sessions</source>
         <translation>최근 세션</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1446"/>
+        <location filename="../main_window.py" line="1471"/>
         <source>&amp;Glossary</source>
         <translation>용어집(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1447"/>
+        <location filename="../main_window.py" line="1472"/>
         <source>&amp;Edit Glossary…</source>
         <translation>용어집 편집(&amp;E)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1453"/>
+        <location filename="../main_window.py" line="1478"/>
         <source>&amp;Show Suggestions Panel</source>
         <translation>제안 패널 표시(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1462"/>
+        <location filename="../main_window.py" line="1487"/>
         <source>Check &amp;Glossary Compliance…</source>
         <translation>용어집 준수 검사(&amp;G)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1470"/>
+        <location filename="../main_window.py" line="1495"/>
         <source>&amp;Claude AI</source>
         <translation>Claude AI(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1472"/>
+        <location filename="../main_window.py" line="1497"/>
         <source>Show &amp;AI Assistant</source>
         <translation>AI 어시스턴트 표시(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1478"/>
+        <location filename="../main_window.py" line="1503"/>
         <source>Show/hide the Claude AI chat assistant panel (Ctrl+Shift+C)</source>
         <translation>Claude AI 채팅 어시스턴트 패널 표시/숨기기 (Ctrl+Shift+C)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1485"/>
+        <location filename="../main_window.py" line="1510"/>
         <source>&amp;Review Current Translation</source>
         <translation>현재 번역 검토(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1490"/>
+        <location filename="../main_window.py" line="1515"/>
         <source>Ask Claude to review the selected string&apos;s translation for quality issues (Ctrl+Shift+R)</source>
         <translation>선택된 문자열의 번역을 품질 문제에 대해 Claude에게 검토 요청 (Ctrl+Shift+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1498"/>
+        <location filename="../main_window.py" line="1523"/>
         <source>&amp;Suggest Translation</source>
         <translation>번역 제안(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1503"/>
+        <location filename="../main_window.py" line="1528"/>
         <source>Ask Claude to translate the current string (result shown in AI Assistant panel) (Ctrl+Shift+T)</source>
         <translation>현재 문자열을 Claude에게 번역 요청 (결과가 AI 어시스턴트 패널에 표시됨) (Ctrl+Shift+T)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1512"/>
+        <location filename="../main_window.py" line="1537"/>
         <source>&amp;View</source>
         <translation>보기(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1514"/>
+        <location filename="../main_window.py" line="1539"/>
         <source>&amp;Zen / Focus Mode</source>
         <translation>집중 모드(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1519"/>
+        <location filename="../main_window.py" line="1544"/>
         <source>Hide all panels and enter a distraction-free single-string editor (F11)</source>
         <translation>모든 패널을 숨기고 방해 요소 없는 단일 문자열 편집기로 전환 (F11)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1526"/>
+        <location filename="../main_window.py" line="1551"/>
         <source>&amp;Editor Pane</source>
         <translation>편집기 창(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1531"/>
+        <location filename="../main_window.py" line="1556"/>
         <source>Show/hide the Translation Editor pane — a larger editing area that can be dragged to a second monitor (Ctrl+Shift+E)</source>
         <translation>번역 편집기 창 표시/숨기기 — 두 번째 모니터로 드래그할 수 있는 더 큰 편집 영역 (Ctrl+Shift+E)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1537"/>
+        <location filename="../main_window.py" line="1562"/>
         <source>&amp;Pop Out String List</source>
         <translation>문자열 목록 분리(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1542"/>
+        <location filename="../main_window.py" line="1567"/>
         <source>Open the string list in a separate window — ideal for placing on a second monitor (Ctrl+Shift+L)</source>
         <translation>문자열 목록을 별도 창에 열기 — 두 번째 모니터에 배치하기 이상적입니다 (Ctrl+Shift+L)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1550"/>
+        <location filename="../main_window.py" line="1575"/>
         <source>&amp;Audio Preview</source>
         <translation>오디오 미리보기(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1556"/>
+        <location filename="../main_window.py" line="1581"/>
         <source>Show/hide the Audio Preview panel (Ctrl+Shift+A)</source>
         <translation>오디오 미리보기 패널 표시/숨기기 (Ctrl+Shift+A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1561"/>
+        <location filename="../main_window.py" line="1586"/>
         <source>&amp;Visual Context Preview</source>
         <translation>시각적 컨텍스트 미리보기(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1568"/>
+        <location filename="../main_window.py" line="1593"/>
         <source>Show/hide the Visual Context Preview panel — renders the current string in a faithful Bethesda UI box using the actual game fonts (Ctrl+Shift+P)</source>
         <translation>시각적 컨텍스트 미리보기 패널 표시/숨기기 — 실제 게임 폰트를 사용하여 현재 문자열을 Bethesda UI 박스에 렌더링합니다 (Ctrl+Shift+P)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1577"/>
+        <location filename="../main_window.py" line="1602"/>
         <source>&amp;Settings</source>
         <translation>설정(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1578"/>
+        <location filename="../main_window.py" line="1603"/>
         <source>&amp;Command Palette…</source>
         <translation>명령 팔레트(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1582"/>
+        <location filename="../main_window.py" line="1607"/>
         <source>Open the searchable command palette (Ctrl+K)</source>
         <translation>검색 가능한 명령 팔레트 열기 (Ctrl+K)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1588"/>
+        <location filename="../main_window.py" line="1613"/>
         <source>&amp;Preferences...</source>
         <translation>환경 설정(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1594"/>
+        <location filename="../main_window.py" line="1619"/>
         <source>Open &amp;Config File...</source>
         <translation>구성 파일 열기(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1598"/>
+        <location filename="../main_window.py" line="1623"/>
         <source>Export Sett&amp;ings...</source>
         <translation>설정 내보내기(&amp;I)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1602"/>
+        <location filename="../main_window.py" line="1627"/>
         <source>Import Sett&amp;ings...</source>
         <translation>설정 가져오기(&amp;I)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1608"/>
+        <location filename="../main_window.py" line="1633"/>
         <source>&amp;Help</source>
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1611"/>
+        <location filename="../main_window.py" line="1636"/>
         <source>&amp;What&apos;s This?</source>
         <translation>이것은 무엇입니까?(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1617"/>
+        <location filename="../main_window.py" line="1642"/>
         <source>&amp;Keyboard Shortcuts…</source>
         <translation>키보드 단축키(&amp;K)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1625"/>
+        <location filename="../main_window.py" line="1650"/>
+        <source>Check for &amp;Updates…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1657"/>
         <source>&amp;About…</source>
         <translation>정보(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1632"/>
+        <location filename="../main_window.py" line="1664"/>
         <source>Main Toolbar</source>
         <translation>주 도구 모음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1638"/>
+        <location filename="../main_window.py" line="1670"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1641"/>
+        <location filename="../main_window.py" line="1673"/>
         <source>Save</source>
         <translation>저장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1646"/>
-        <location filename="../main_window.py" line="2800"/>
+        <location filename="../main_window.py" line="1678"/>
+        <location filename="../main_window.py" line="2908"/>
         <source>Translate</source>
         <translation>번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1650"/>
+        <location filename="../main_window.py" line="1682"/>
         <source>Stop</source>
         <translation>중지</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1654"/>
+        <location filename="../main_window.py" line="1686"/>
         <source>Search</source>
         <translation>검색</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1659"/>
+        <location filename="../main_window.py" line="1691"/>
         <source>Quality Check</source>
         <translation>품질 검사</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1665"/>
+        <location filename="../main_window.py" line="1697"/>
         <source>Settings</source>
         <translation>설정</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1878"/>
+        <location filename="../main_window.py" line="1910"/>
         <source>(none)</source>
         <translation>(없음)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1880"/>
+        <location filename="../main_window.py" line="1912"/>
         <source>Profile &apos;{name}&apos; assigned to {n} string(s)</source>
-        <translation>'{name}' 프로필이 {n}개 문자열에 할당됨</translation>
+        <translation>&apos;{name}&apos; 프로필이 {n}개 문자열에 할당됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1997"/>
+        <location filename="../main_window.py" line="2029"/>
         <source>Add Protected Terms</source>
         <translation>보호 용어 추가</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2004"/>
+        <location filename="../main_window.py" line="2036"/>
         <source>Detected potential company/faction names. Select and add to protection list:</source>
         <translation>잠재적 회사/세력 이름이 감지되었습니다. 선택하여 보호 목록에 추가하세요:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2020"/>
+        <location filename="../main_window.py" line="2052"/>
         <source>Category:</source>
         <translation>카테고리:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2031"/>
+        <location filename="../main_window.py" line="2063"/>
         <source>Add Selected</source>
         <translation>선택 항목 추가</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2037"/>
+        <location filename="../main_window.py" line="2069"/>
         <source>Skip</source>
         <translation>건너뜀</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2067"/>
+        <location filename="../main_window.py" line="2099"/>
         <source>(empty)</source>
         <translation>(비어 있음)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2083"/>
+        <location filename="../main_window.py" line="2115"/>
         <source>Clear Recent Files</source>
         <translation>최근 파일 지우기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2105"/>
-        <location filename="../main_window.py" line="4326"/>
+        <location filename="../main_window.py" line="2137"/>
+        <location filename="../main_window.py" line="4695"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2108"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;All Files (*)</source>
-        <translation>모든 지원 파일 (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;문자열 파일 (*.strings *.dlstrings *.ilstrings);;플러그인 파일 (*.esp *.esm *.esl);;BA2 아카이브 (*.ba2 *.BA2);;모든 파일 (*)</translation>
+        <translation type="vanished">모든 지원 파일 (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;문자열 파일 (*.strings *.dlstrings *.ilstrings);;플러그인 파일 (*.esp *.esm *.esl);;BA2 아카이브 (*.ba2 *.BA2);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2172"/>
+        <location filename="../main_window.py" line="2140"/>
+        <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2166"/>
+        <source>Unsupported File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2168"/>
+        <source>This .txt file does not appear to be a Starfield interface translation file.
+Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2219"/>
         <source>{n} files dropped — opened {name}. Open additional files one at a time.</source>
         <translation>{n}개 파일이 드롭됨 — {name}이(가) 열렸습니다. 추가 파일은 한 번에 하나씩 열어주세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2185"/>
-        <location filename="../main_window.py" line="2297"/>
+        <location filename="../main_window.py" line="2232"/>
+        <location filename="../main_window.py" line="2344"/>
+        <location filename="../main_window.py" line="2405"/>
         <source>Loading {filename}...</source>
         <translation>{filename} 로딩 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2194"/>
-        <location filename="../main_window.py" line="2288"/>
-        <location filename="../main_window.py" line="2324"/>
-        <location filename="../main_window.py" line="2429"/>
+        <location filename="../main_window.py" line="2241"/>
+        <location filename="../main_window.py" line="2335"/>
+        <location filename="../main_window.py" line="2371"/>
+        <location filename="../main_window.py" line="2416"/>
+        <location filename="../main_window.py" line="2521"/>
         <source>Strings: {count}</source>
         <translation>문자열: {count}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2206"/>
+        <location filename="../main_window.py" line="2253"/>
         <source>Loaded {count} strings from {name} ({enc})</source>
         <translation>{name} ({enc})에서 {count}개 문자열 로드됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2215"/>
-        <location filename="../main_window.py" line="3257"/>
+        <location filename="../main_window.py" line="2262"/>
+        <location filename="../main_window.py" line="3389"/>
         <source>String List</source>
         <translation>문자열 목록</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2229"/>
-        <location filename="../main_window.py" line="2345"/>
-        <location filename="../main_window.py" line="2376"/>
-        <location filename="../main_window.py" line="2413"/>
-        <location filename="../main_window.py" line="2489"/>
-        <location filename="../main_window.py" line="2566"/>
-        <location filename="../main_window.py" line="2929"/>
-        <location filename="../main_window.py" line="2977"/>
-        <location filename="../main_window.py" line="4727"/>
-        <location filename="../main_window.py" line="4942"/>
-        <location filename="../main_window.py" line="4999"/>
-        <location filename="../main_window.py" line="5062"/>
-        <location filename="../main_window.py" line="5143"/>
+        <location filename="../main_window.py" line="2276"/>
+        <location filename="../main_window.py" line="2392"/>
+        <location filename="../main_window.py" line="2437"/>
+        <location filename="../main_window.py" line="2468"/>
+        <location filename="../main_window.py" line="2505"/>
+        <location filename="../main_window.py" line="2585"/>
+        <location filename="../main_window.py" line="2674"/>
+        <location filename="../main_window.py" line="3037"/>
+        <location filename="../main_window.py" line="3085"/>
+        <location filename="../main_window.py" line="5105"/>
+        <location filename="../main_window.py" line="5320"/>
+        <location filename="../main_window.py" line="5377"/>
+        <location filename="../main_window.py" line="5440"/>
+        <location filename="../main_window.py" line="5521"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2230"/>
+        <location filename="../main_window.py" line="2277"/>
         <source>Failed to load:
 {error}</source>
         <translation>로드 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2252"/>
+        <location filename="../main_window.py" line="2299"/>
         <source>Load Companion Files</source>
         <translation>동반 파일 로드</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2254"/>
+        <location filename="../main_window.py" line="2301"/>
         <source>Found companion string file(s):
 {names}
 
@@ -2682,12 +2705,12 @@ Load them together with {loaded} for a complete dictionary?</source>
 완전한 사전을 위해 {loaded}와 함께 로드하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2307"/>
+        <location filename="../main_window.py" line="2354"/>
         <source>Localized Plugin</source>
         <translation>현지화된 플러그인</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2309"/>
+        <location filename="../main_window.py" line="2356"/>
         <source>{name} is a localized plugin.
 Its text is stored in companion .strings/.dlstrings/.ilstrings files.
 Open those files instead to translate them.</source>
@@ -2696,479 +2719,561 @@ Open those files instead to translate them.</source>
 번역하려면 해당 파일을 여세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2321"/>
+        <location filename="../main_window.py" line="2368"/>
         <source>Encoding: {encoding}</source>
         <translation>인코딩: {encoding}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2332"/>
+        <location filename="../main_window.py" line="2379"/>
+        <location filename="../main_window.py" line="2424"/>
         <source>Loaded {count} strings from {name}</source>
         <translation>{name}에서 {count}개 문자열 로드됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2346"/>
+        <location filename="../main_window.py" line="2393"/>
         <source>Failed to load plugin:
 {error}</source>
         <translation>플러그인 로드 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2368"/>
+        <location filename="../main_window.py" line="2414"/>
+        <source>Encoding: utf-16</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2438"/>
+        <source>Failed to load TXT:
+{error}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2460"/>
         <source>Opening archive {filename}...</source>
         <translation>아카이브 열기 중 {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2377"/>
+        <location filename="../main_window.py" line="2469"/>
         <source>Failed to open archive:
 {error}</source>
         <translation>아카이브 열기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2385"/>
+        <location filename="../main_window.py" line="2477"/>
         <source>No Strings Found</source>
         <translation>문자열 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2387"/>
+        <location filename="../main_window.py" line="2479"/>
         <source>{name} does not contain any .strings / .dlstrings / .ilstrings files.</source>
         <translation>{name}에 .strings / .dlstrings / .ilstrings 파일이 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2414"/>
+        <location filename="../main_window.py" line="2506"/>
         <source>Failed to extract strings file from archive:
 {error}</source>
         <translation>아카이브에서 문자열 파일 추출 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2438"/>
+        <location filename="../main_window.py" line="2530"/>
         <source>Loaded {count} strings from {entry} (in {archive})</source>
         <translation>{archive}의 {entry}에서 {count}개 문자열 로드됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2478"/>
+        <location filename="../main_window.py" line="2574"/>
         <source>Saved successfully ✓</source>
         <translation>성공적으로 저장됨 ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2480"/>
+        <location filename="../main_window.py" line="2576"/>
         <source>Saved ✓  {name}</source>
         <translation>저장됨 ✓  {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2490"/>
-        <location filename="../main_window.py" line="2567"/>
+        <location filename="../main_window.py" line="2586"/>
+        <location filename="../main_window.py" line="2675"/>
         <source>Failed to save:
 {error}</source>
         <translation>저장 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2507"/>
+        <location filename="../main_window.py" line="2604"/>
+        <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2610"/>
         <source>Plugin Files (*.esp *.esm *.esl);;All Files (*)</source>
         <translation>플러그인 파일 (*.esp *.esm *.esl);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2513"/>
+        <location filename="../main_window.py" line="2616"/>
         <source>BA2 Archives (*.ba2 *.BA2);;All Files (*)</source>
         <translation>BA2 아카이브 (*.ba2 *.BA2);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2520"/>
+        <location filename="../main_window.py" line="2623"/>
         <source>Bethesda String Files (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;All Files (*)</source>
         <translation>Bethesda 문자열 파일 (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2525"/>
+        <location filename="../main_window.py" line="2628"/>
         <source>Save As</source>
         <translation>다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2557"/>
+        <location filename="../main_window.py" line="2665"/>
         <source>Saved to {filename}</source>
         <translation>{filename}에 저장됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2579"/>
+        <location filename="../main_window.py" line="2687"/>
         <source>No Selection</source>
         <translation>선택 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2579"/>
+        <location filename="../main_window.py" line="2687"/>
         <source>Select strings first.</source>
         <translation>먼저 문자열을 선택하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2613"/>
+        <location filename="../main_window.py" line="2721"/>
         <source>Added {count} protected terms</source>
         <translation>{count}개 보호 용어 추가됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2639"/>
+        <location filename="../main_window.py" line="2747"/>
         <source>Same Language</source>
         <translation>동일한 언어</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2640"/>
+        <location filename="../main_window.py" line="2748"/>
         <source>Source and target languages are identical.</source>
         <translation>원본 언어와 대상 언어가 동일합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2684"/>
-        <location filename="../main_window.py" line="2904"/>
+        <location filename="../main_window.py" line="2792"/>
+        <location filename="../main_window.py" line="3012"/>
         <source>Nothing to Translate</source>
         <translation>번역할 항목 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2685"/>
+        <location filename="../main_window.py" line="2793"/>
         <source>All selected strings are already translated.</source>
         <translation>선택된 모든 문자열이 이미 번역되어 있습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2699"/>
-        <location filename="../main_window.py" line="2994"/>
+        <location filename="../main_window.py" line="2807"/>
+        <location filename="../main_window.py" line="3102"/>
         <source>Translating {current}/{total}...</source>
         <translation>번역 중 {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2740"/>
+        <location filename="../main_window.py" line="2848"/>
         <source>Pre-flight Cost Estimate</source>
         <translation>번역 전 비용 추정</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2744"/>
+        <location filename="../main_window.py" line="2852"/>
         <source>&lt;b&gt;Claude API — estimated cost for this batch&lt;/b&gt;</source>
         <translation>&lt;b&gt;Claude API — 이 배치의 예상 비용&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2755"/>
+        <location filename="../main_window.py" line="2863"/>
         <source>Model:</source>
         <translation>모델:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2756"/>
+        <location filename="../main_window.py" line="2864"/>
         <source>Strings to translate:</source>
         <translation>번역할 문자열:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2766"/>
+        <location filename="../main_window.py" line="2874"/>
         <source>Est. input tokens:</source>
         <translation>예상 입력 토큰:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2767"/>
+        <location filename="../main_window.py" line="2875"/>
         <source>Est. output tokens:</source>
         <translation>예상 출력 토큰:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2783"/>
+        <location filename="../main_window.py" line="2891"/>
         <source>Est. cost (USD):</source>
         <translation>예상 비용 (USD):</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2785"/>
+        <location filename="../main_window.py" line="2893"/>
         <source>Cache savings:</source>
         <translation>캐시 절약:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2786"/>
+        <location filename="../main_window.py" line="2894"/>
         <source>~{pct:.0f}% via prompt caching</source>
         <translation>프롬프트 캐싱으로 ~{pct:.0f}% 절약</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2791"/>
+        <location filename="../main_window.py" line="2899"/>
         <source>&lt;i&gt;Estimates use ~3.5 chars/token. Actual cost depends on prompt caching state and output length.&lt;/i&gt;</source>
         <translation>&lt;i&gt;추정값은 ~3.5자/토큰을 사용합니다. 실제 비용은 프롬프트 캐싱 상태 및 출력 길이에 따라 다릅니다.&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2813"/>
+        <location filename="../main_window.py" line="2921"/>
         <source>Open Starfield Interface TXT</source>
         <translation>Starfield 인터페이스 TXT 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2815"/>
-        <location filename="../main_window.py" line="2839"/>
-        <location filename="../main_window.py" line="4639"/>
-        <location filename="../main_window.py" line="4860"/>
+        <location filename="../main_window.py" line="2923"/>
+        <location filename="../main_window.py" line="2947"/>
+        <location filename="../main_window.py" line="5017"/>
+        <location filename="../main_window.py" line="5238"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>텍스트 파일 (*.txt *.TXT);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2837"/>
+        <location filename="../main_window.py" line="2945"/>
         <source>Save Translated TXT As</source>
         <translation>번역된 TXT 다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2905"/>
+        <location filename="../main_window.py" line="3013"/>
         <source>No translatable lines found in the TXT file.</source>
         <translation>TXT 파일에서 번역 가능한 줄을 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2916"/>
+        <location filename="../main_window.py" line="3024"/>
         <source>Translating TXT {current}/{total}...</source>
         <translation>TXT 번역 중 {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2930"/>
+        <location filename="../main_window.py" line="3038"/>
         <source>Failed to read TXT:
 {error}</source>
         <translation>TXT 읽기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2960"/>
+        <location filename="../main_window.py" line="3068"/>
         <source>TXT Translation Complete: {count} successful</source>
         <translation>TXT 번역 완료: {count}개 성공</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2964"/>
-        <location filename="../main_window.py" line="3091"/>
+        <location filename="../main_window.py" line="3072"/>
+        <location filename="../main_window.py" line="3213"/>
         <source>, {count} failed</source>
         <translation>, {count}개 실패</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2965"/>
-        <location filename="../main_window.py" line="3106"/>
+        <location filename="../main_window.py" line="3073"/>
+        <location filename="../main_window.py" line="3244"/>
         <source>Success</source>
         <translation>성공</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2968"/>
-        <location filename="../main_window.py" line="3101"/>
-        <location filename="../main_window.py" line="3108"/>
+        <location filename="../main_window.py" line="3076"/>
+        <location filename="../main_window.py" line="3246"/>
         <source>Translation complete</source>
         <translation>번역 완료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2978"/>
+        <location filename="../main_window.py" line="3086"/>
         <source>Failed to save translated TXT:
 {error}</source>
         <translation>번역된 TXT 저장 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3006"/>
+        <location filename="../main_window.py" line="3114"/>
         <source>ETA: {t}</source>
         <translation>예상 시간: {t}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3012"/>
+        <location filename="../main_window.py" line="3120"/>
         <source>Translating: {current}/{total}</source>
         <translation>번역 중: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3045"/>
+        <location filename="../main_window.py" line="3153"/>
         <source>Error: {error}</source>
         <translation>오류: {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3066"/>
+        <location filename="../main_window.py" line="3192"/>
         <source>{n} strings translated</source>
         <translation>{n}개 문자열 번역됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3073"/>
+        <location filename="../main_window.py" line="3199"/>
         <source>{ok} translated, {fail} failed</source>
         <translation>{ok}개 번역됨, {fail}개 실패</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3089"/>
+        <location filename="../main_window.py" line="3211"/>
         <source>Complete: {count} successful</source>
         <translation>완료: {count}개 성공</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3097"/>
+        <location filename="../main_window.py" line="3240"/>
         <source>Complete</source>
         <translation>완료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3098"/>
+        <location filename="../main_window.py" line="3241"/>
         <source>{msg}
 Check log for details.</source>
         <translation>{msg}
 자세한 내용은 로그를 확인하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3132"/>
+        <location filename="../main_window.py" line="3264"/>
         <source>Total: {total}  ·  Done: {done} ({pct})  ·  Left: {left}</source>
         <translation>전체: {total}  ·  완료: {done} ({pct})  ·  남음: {left}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3146"/>
+        <location filename="../main_window.py" line="3278"/>
         <source>Stopping translation...</source>
         <translation>번역 중지 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3433"/>
+        <location filename="../main_window.py" line="3565"/>
         <source>No glossary matches for this string.</source>
         <translation>이 문자열에 대한 용어집 일치 항목 없음.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3437"/>
+        <location filename="../main_window.py" line="3569"/>
         <source>{n} glossary match(es) — double-click to copy target term:</source>
         <translation>{n}개 용어집 일치 항목 — 대상 용어를 복사하려면 더블 클릭:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3479"/>
+        <location filename="../main_window.py" line="3611"/>
         <source>Copied &quot;{term}&quot; to clipboard.</source>
-        <translation>"{term}"이(가) 클립보드에 복사되었습니다.</translation>
+        <translation>&quot;{term}&quot;이(가) 클립보드에 복사되었습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3487"/>
+        <location filename="../main_window.py" line="3619"/>
         <source>Glossary Disabled</source>
         <translation>용어집 비활성화됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3488"/>
+        <location filename="../main_window.py" line="3620"/>
         <source>Enable the glossary in Settings → Preferences to use this feature.</source>
         <translation>이 기능을 사용하려면 설정 → 환경 설정에서 용어집을 활성화하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3520"/>
+        <location filename="../main_window.py" line="3652"/>
         <source>Glossary Compliance</source>
         <translation>용어집 준수</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3521"/>
+        <location filename="../main_window.py" line="3653"/>
         <source>All translated strings comply with the glossary.</source>
         <translation>모든 번역된 문자열이 용어집을 준수합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3534"/>
+        <location filename="../main_window.py" line="3666"/>
         <source>Glossary Compliance Issues</source>
         <translation>용어집 준수 문제</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3588"/>
+        <location filename="../main_window.py" line="3720"/>
         <source>Encoding: {enc} (manual override)</source>
         <translation>인코딩: {enc} (수동 재정의)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3589"/>
+        <location filename="../main_window.py" line="3721"/>
         <source>Manually overridden to {enc}</source>
         <translation>{enc}으로 수동 재정의됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3591"/>
+        <location filename="../main_window.py" line="3723"/>
         <source>Encoding: {enc} (auto, {conf}%)</source>
         <translation>인코딩: {enc} (자동, {conf}%)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3594"/>
+        <location filename="../main_window.py" line="3726"/>
         <source>Auto-detected: {method}</source>
         <translation>자동 감지됨: {method}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3596"/>
+        <location filename="../main_window.py" line="3728"/>
         <source>Encoding: {enc}</source>
         <translation>인코딩: {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3612"/>
+        <location filename="../main_window.py" line="3744"/>
         <source>Override File Encoding</source>
         <translation>파일 인코딩 재정의</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3620"/>
+        <location filename="../main_window.py" line="3752"/>
         <source>&lt;b&gt;Currently:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;Source:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;Method:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;Confidence:&lt;/b&gt; {conf}%</source>
         <translation>&lt;b&gt;현재:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;소스:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;방법:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;신뢰도:&lt;/b&gt; {conf}%</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3634"/>
+        <location filename="../main_window.py" line="3766"/>
         <source>Select encoding to apply:</source>
         <translation>적용할 인코딩 선택:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3649"/>
+        <location filename="../main_window.py" line="3781"/>
         <source>⚠ Changing encoding re-decodes all strings from their raw bytes. If the file is already UTF-8, choosing CP1251 will produce garbled text.</source>
         <translation>⚠ 인코딩을 변경하면 모든 문자열이 원시 바이트에서 다시 디코딩됩니다. 파일이 이미 UTF-8인 경우 CP1251을 선택하면 깨진 텍스트가 생성됩니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3679"/>
+        <location filename="../main_window.py" line="3811"/>
         <source>Re-decoded {count} strings as {enc}</source>
         <translation>{count}개 문자열을 {enc}으로 다시 디코딩함</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3712"/>
+        <location filename="../main_window.py" line="3844"/>
         <source>Quality: {errors} error(s), {warnings} warning(s) — open Translation → Quality Check for details</source>
         <translation>품질: {errors}개 오류, {warnings}개 경고 — 자세한 내용은 번역 → 품질 검사를 여세요</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3781"/>
+        <location filename="../main_window.py" line="3870"/>
+        <source>Self-review: checking translation quality…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3929"/>
+        <source>Self-review pass {n}: retranslating {c} string(s)…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3949"/>
+        <source>{n} string(s) translated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3952"/>
+        <source>Auto-fixed {n} issue(s) mechanically.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3956"/>
+        <source>Retranslated {n} string(s) across {p} review pass(es).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3962"/>
+        <source>All critical issues were resolved automatically — no manual review needed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3969"/>
+        <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3975"/>
+        <source>{n} string(s) still need manual review.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3979"/>
+        <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3991"/>
+        <source>Self-review complete — all critical issues fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3994"/>
+        <location filename="../main_window.py" line="4001"/>
+        <source>Self-Review Complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3998"/>
+        <source>Self-review done — {n} need manual review</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="4004"/>
+        <source>Translation + self-review complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="4072"/>
         <source>Claude translation applied to row {row}.</source>
         <translation>Claude 번역이 {row}행에 적용되었습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3801"/>
+        <location filename="../main_window.py" line="4092"/>
         <source>Quality check passed — no issues found</source>
         <translation>품질 검사 통과 — 문제 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3835"/>
+        <location filename="../main_window.py" line="4128"/>
         <source>Running AI quality check ({n} strings)…</source>
         <translation>AI 품질 검사 실행 중 ({n}개 문자열)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3836"/>
+        <location filename="../main_window.py" line="4129"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3841"/>
+        <location filename="../main_window.py" line="4134"/>
         <source>AI Quality Check</source>
         <translation>AI 품질 검사</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3887"/>
+        <location filename="../main_window.py" line="4180"/>
         <source>Import Quality Report</source>
         <translation>품질 보고서 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3890"/>
+        <location filename="../main_window.py" line="4183"/>
         <source>Quality Reports (*.json *.csv *);;JSON Quality Report (*.json);;CSV Quality Report (*.csv);;All Files (*)</source>
         <translation>품질 보고서 (*.json *.csv *);;JSON 품질 보고서 (*.json);;CSV 품질 보고서 (*.csv);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3927"/>
-        <location filename="../main_window.py" line="5442"/>
+        <location filename="../main_window.py" line="4220"/>
+        <location filename="../main_window.py" line="5820"/>
         <source>Import Failed</source>
         <translation>가져오기 실패</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3928"/>
+        <location filename="../main_window.py" line="4221"/>
         <source>Could not load quality report:
 {error}</source>
         <translation>품질 보고서를 로드할 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3952"/>
+        <location filename="../main_window.py" line="4245"/>
         <source>Quality report imported — {ok} strings matched, {skip} skipped</source>
         <translation>품질 보고서 가져옴 — {ok}개 문자열 일치, {skip}개 건너뜀</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3958"/>
+        <location filename="../main_window.py" line="4251"/>
         <source>Quality report imported — {n} strings</source>
         <translation>품질 보고서 가져옴 — {n}개 문자열</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3989"/>
-        <location filename="../main_window.py" line="4014"/>
-        <location filename="../main_window.py" line="4039"/>
+        <location filename="../main_window.py" line="4284"/>
+        <location filename="../main_window.py" line="4309"/>
+        <location filename="../main_window.py" line="4334"/>
         <source>Export Training Data</source>
         <translation>학습 데이터 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3990"/>
-        <location filename="../main_window.py" line="5624"/>
-        <location filename="../main_window.py" line="5657"/>
-        <location filename="../main_window.py" line="5680"/>
+        <location filename="../main_window.py" line="4285"/>
+        <location filename="../main_window.py" line="6002"/>
+        <location filename="../main_window.py" line="6035"/>
+        <location filename="../main_window.py" line="6058"/>
         <source>No translated strings found. Translate some strings first.</source>
         <translation>번역된 문자열을 찾을 수 없습니다. 먼저 일부 문자열을 번역하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4007"/>
+        <location filename="../main_window.py" line="4302"/>
         <source>Ready to export:
 
   • {total} translated strings total
@@ -3183,56 +3288,56 @@ Export which set?</source>
 어느 세트를 내보내시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4017"/>
+        <location filename="../main_window.py" line="4312"/>
         <source>Clean only ({n})</source>
         <translation>오류 없는 항목만 ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4021"/>
+        <location filename="../main_window.py" line="4316"/>
         <source>All translated ({n})</source>
         <translation>모든 번역됨 ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4041"/>
+        <location filename="../main_window.py" line="4336"/>
         <source>JSONL Dataset (*.jsonl);;All files (*)</source>
         <translation>JSONL 데이터셋 (*.jsonl);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4067"/>
-        <location filename="../main_window.py" line="5241"/>
-        <location filename="../main_window.py" line="5421"/>
+        <location filename="../main_window.py" line="4362"/>
+        <location filename="../main_window.py" line="5619"/>
+        <location filename="../main_window.py" line="5799"/>
         <source>Export Failed</source>
         <translation>내보내기 실패</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4068"/>
+        <location filename="../main_window.py" line="4363"/>
         <source>Could not write file:
 {error}</source>
         <translation>파일을 쓸 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4073"/>
+        <location filename="../main_window.py" line="4368"/>
         <source>Training data exported — {n} examples → {path}</source>
         <translation>학습 데이터 내보내기 완료 — {n}개 예제 → {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4099"/>
+        <location filename="../main_window.py" line="4394"/>
         <source>Auto-Retranslate</source>
         <translation>자동 재번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4100"/>
+        <location filename="../main_window.py" line="4395"/>
         <source>No errors or warnings found — translations look good.</source>
         <translation>오류 또는 경고 없음 — 번역이 양호합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4108"/>
+        <location filename="../main_window.py" line="4403"/>
         <source>Auto-Retranslate Issues</source>
         <translation>문제 자동 재번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4110"/>
+        <location filename="../main_window.py" line="4405"/>
         <source>Found {n} string(s) with quality issues ({e} error(s), {w} warning(s)).
 
 Retranslate them all with quality feedback hints?</source>
@@ -3241,232 +3346,242 @@ Retranslate them all with quality feedback hints?</source>
 품질 피드백 힌트와 함께 모두 재번역하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4167"/>
+        <location filename="../main_window.py" line="4466"/>
         <source>Retranslating {n} string(s) with quality feedback…</source>
         <translation>{n}개 문자열을 품질 피드백과 함께 재번역 중…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4174"/>
+        <location filename="../main_window.py" line="4473"/>
         <source>Retranslating {current}/{total}…</source>
         <translation>재번역 중 {current}/{total}…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4240"/>
+        <location filename="../main_window.py" line="4536"/>
+        <source>AI-fixing {n} string(s)…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="4543"/>
+        <source>AI Fix {current}/{total}…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="4609"/>
         <source>Rejected {n} translation(s)</source>
         <translation>{n}개 번역 거부됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4260"/>
+        <location filename="../main_window.py" line="4629"/>
         <source>Wrapped to first untranslated</source>
         <translation>첫 번째 미번역으로 이동됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4262"/>
-        <location filename="../main_window.py" line="4281"/>
+        <location filename="../main_window.py" line="4631"/>
+        <location filename="../main_window.py" line="4650"/>
         <source>No untranslated strings remaining</source>
         <translation>남은 미번역 문자열 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4279"/>
+        <location filename="../main_window.py" line="4648"/>
         <source>Wrapped to last untranslated</source>
         <translation>마지막 미번역으로 이동됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4313"/>
+        <location filename="../main_window.py" line="4682"/>
         <source>Macro applied to row {n}.</source>
         <translation>{n}행에 매크로 적용됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4315"/>
+        <location filename="../main_window.py" line="4684"/>
         <source>Macro: no changes on row {n}.</source>
         <translation>매크로: {n}행에 변경 없음.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4327"/>
+        <location filename="../main_window.py" line="4696"/>
         <source>Open a string or plugin file</source>
         <translation>문자열 또는 플러그인 파일 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4330"/>
+        <location filename="../main_window.py" line="4699"/>
         <source>Save the current file</source>
         <translation>현재 파일 저장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4333"/>
+        <location filename="../main_window.py" line="4702"/>
         <source>Save the current file to a new location</source>
         <translation>현재 파일을 새 위치에 저장</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4338"/>
+        <location filename="../main_window.py" line="4707"/>
         <source>Translate the selected strings using AI</source>
         <translation>AI를 사용하여 선택된 문자열 번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4342"/>
+        <location filename="../main_window.py" line="4711"/>
         <source>Translate all untranslated strings</source>
         <translation>모든 미번역 문자열 번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4346"/>
+        <location filename="../main_window.py" line="4715"/>
         <source>Accept the AI translation and advance to next row</source>
         <translation>AI 번역을 수락하고 다음 행으로 이동</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4350"/>
+        <location filename="../main_window.py" line="4719"/>
         <source>Clear the translation and mark as pending</source>
         <translation>번역을 지우고 대기 중으로 표시</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4354"/>
+        <location filename="../main_window.py" line="4723"/>
         <source>Stop the in-progress translation batch</source>
         <translation>진행 중인 번역 일괄 작업 중지</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4358"/>
-        <location filename="../main_window.py" line="6143"/>
+        <location filename="../main_window.py" line="4727"/>
+        <location filename="../main_window.py" line="6653"/>
         <source>Jump to the next untranslated string</source>
         <translation>다음 미번역 문자열로 이동</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4362"/>
+        <location filename="../main_window.py" line="4731"/>
         <source>Jump to the previous untranslated string</source>
         <translation>이전 미번역 문자열로 이동</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4368"/>
+        <location filename="../main_window.py" line="4737"/>
         <source>Search strings by ID, text, or status</source>
         <translation>ID, 텍스트 또는 상태로 문자열 검색</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4374"/>
+        <location filename="../main_window.py" line="4743"/>
         <source>Run post-translation quality checks</source>
         <translation>번역 후 품질 검사 실행</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4378"/>
+        <location filename="../main_window.py" line="4747"/>
         <source>Retranslate all rows with quality errors using feedback hints</source>
         <translation>피드백 힌트를 사용하여 품질 오류가 있는 모든 행 재번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4384"/>
+        <location filename="../main_window.py" line="4753"/>
         <source>Open the glossary editor</source>
         <translation>용어집 편집기 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4386"/>
+        <location filename="../main_window.py" line="4755"/>
         <source>Show or hide the glossary suggestions panel</source>
         <translation>용어집 제안 패널 표시 또는 숨기기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4390"/>
+        <location filename="../main_window.py" line="4759"/>
         <source>Open the searchable command palette</source>
         <translation>검색 가능한 명령 팔레트 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4392"/>
+        <location filename="../main_window.py" line="4761"/>
         <source>Preferences</source>
         <translation>환경 설정</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4393"/>
+        <location filename="../main_window.py" line="4762"/>
         <source>Open the Preferences dialog</source>
         <translation>환경 설정 대화 상자 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4398"/>
+        <location filename="../main_window.py" line="4767"/>
         <source>Import translations from a TXT file</source>
         <translation>TXT 파일에서 번역 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4401"/>
+        <location filename="../main_window.py" line="4770"/>
         <source>Export translations to a TXT file</source>
         <translation>TXT 파일로 번역 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4404"/>
+        <location filename="../main_window.py" line="4773"/>
         <source>Import from xTranslator SST XML</source>
         <translation>xTranslator SST XML에서 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4407"/>
+        <location filename="../main_window.py" line="4776"/>
         <source>Export to xTranslator SST XML</source>
         <translation>xTranslator SST XML로 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4434"/>
+        <location filename="../main_window.py" line="4803"/>
         <source>Open macro editor for batch regex-replace</source>
         <translation>일괄 정규식 바꾸기를 위한 매크로 편집기 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4637"/>
+        <location filename="../main_window.py" line="5015"/>
         <source>Export to TXT</source>
         <translation>TXT로 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4646"/>
+        <location filename="../main_window.py" line="5024"/>
         <source>Exporting to {filename}...</source>
         <translation>{filename}으로 내보내기 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4711"/>
+        <location filename="../main_window.py" line="5089"/>
         <source>Exported {count} strings to {filename} ✓</source>
         <translation>{filename}에 {count}개 문자열 내보냄 ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4717"/>
-        <location filename="../main_window.py" line="5052"/>
+        <location filename="../main_window.py" line="5095"/>
+        <location filename="../main_window.py" line="5430"/>
         <source>Export Complete</source>
         <translation>내보내기 완료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4718"/>
+        <location filename="../main_window.py" line="5096"/>
         <source>Successfully exported {count} strings to:
 {path}</source>
         <translation>{count}개 문자열을 성공적으로 내보냈습니다:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4728"/>
+        <location filename="../main_window.py" line="5106"/>
         <source>Failed to export:
 {error}</source>
         <translation>내보내기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4805"/>
-        <location filename="../main_window.py" line="4836"/>
+        <location filename="../main_window.py" line="5183"/>
+        <location filename="../main_window.py" line="5214"/>
         <source>Importing {current}/{total}...</source>
         <translation>가져오기 중 {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4841"/>
+        <location filename="../main_window.py" line="5219"/>
         <source>Importing: {current}/{total}</source>
         <translation>가져오기 중: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4858"/>
+        <location filename="../main_window.py" line="5236"/>
         <source>Import from TXT</source>
         <translation>TXT에서 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4867"/>
+        <location filename="../main_window.py" line="5245"/>
         <source>Importing from {filename}...</source>
         <translation>{filename}에서 가져오기 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4921"/>
+        <location filename="../main_window.py" line="5299"/>
         <source>Imported {count} translations from {filename} ✓</source>
         <translation>{filename}에서 {count}개 번역 가져옴 ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4927"/>
+        <location filename="../main_window.py" line="5305"/>
         <source>Successfully imported {count} translations from:
 {path}</source>
         <translation>{path}에서 {count}개 번역을 성공적으로 가져왔습니다:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4930"/>
+        <location filename="../main_window.py" line="5308"/>
         <source>
 
 (Skipped {count} untranslated entries)</source>
@@ -3475,237 +3590,237 @@ Retranslate them all with quality feedback hints?</source>
 ({count}개의 미번역 항목 건너뜀)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4934"/>
-        <location filename="../main_window.py" line="4989"/>
+        <location filename="../main_window.py" line="5312"/>
+        <location filename="../main_window.py" line="5367"/>
         <source>Import Complete</source>
         <translation>가져오기 완료</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4943"/>
+        <location filename="../main_window.py" line="5321"/>
         <source>Failed to import:
 {error}</source>
         <translation>가져오기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4954"/>
+        <location filename="../main_window.py" line="5332"/>
         <source>Import from XML (SST)</source>
         <translation>XML (SST)에서 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4956"/>
+        <location filename="../main_window.py" line="5334"/>
         <source>XML Files (*.xml *.sst);;All Files (*)</source>
         <translation>XML 파일 (*.xml *.sst);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4963"/>
+        <location filename="../main_window.py" line="5341"/>
         <source>Importing from XML {filename}...</source>
         <translation>XML {filename}에서 가져오기 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4973"/>
+        <location filename="../main_window.py" line="5351"/>
         <source>No Translations</source>
         <translation>번역 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4974"/>
+        <location filename="../main_window.py" line="5352"/>
         <source>No valid translations found in the XML file.</source>
         <translation>XML 파일에서 유효한 번역을 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4983"/>
+        <location filename="../main_window.py" line="5361"/>
         <source>Imported {count} translations from XML ✓</source>
         <translation>XML에서 {count}개 번역 가져옴 ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4990"/>
+        <location filename="../main_window.py" line="5368"/>
         <source>Successfully imported {count} translations from XML.</source>
         <translation>XML에서 {count}개 번역을 성공적으로 가져왔습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5000"/>
+        <location filename="../main_window.py" line="5378"/>
         <source>Failed to import XML:
 {error}</source>
         <translation>XML 가져오기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5014"/>
+        <location filename="../main_window.py" line="5392"/>
         <source>Export to XML (SST)</source>
         <translation>XML (SST)로 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5016"/>
+        <location filename="../main_window.py" line="5394"/>
         <source>XML Files (*.xml);;All Files (*)</source>
         <translation>XML 파일 (*.xml);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5023"/>
+        <location filename="../main_window.py" line="5401"/>
         <source>Exporting to XML {filename}...</source>
         <translation>XML {filename}으로 내보내기 중...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5046"/>
+        <location filename="../main_window.py" line="5424"/>
         <source>Exported {count} entries to XML ✓</source>
         <translation>XML에 {count}개 항목 내보냄 ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5053"/>
+        <location filename="../main_window.py" line="5431"/>
         <source>Successfully exported {count} entries to XML.</source>
         <translation>XML에 {count}개 항목을 성공적으로 내보냈습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5063"/>
+        <location filename="../main_window.py" line="5441"/>
         <source>Failed to export XML:
 {error}</source>
         <translation>XML 내보내기 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5119"/>
+        <location filename="../main_window.py" line="5497"/>
         <source>Comparison</source>
         <translation>비교</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5120"/>
+        <location filename="../main_window.py" line="5498"/>
         <source>No string data found in comparison file.</source>
         <translation>비교 파일에서 문자열 데이터를 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5126"/>
+        <location filename="../main_window.py" line="5504"/>
         <source>Comparison loaded: {count} strings mapped.</source>
         <translation>비교 로드됨: {count}개 문자열 매핑됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5132"/>
+        <location filename="../main_window.py" line="5510"/>
         <source>Comparison Loaded</source>
         <translation>비교 로드됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5134"/>
+        <location filename="../main_window.py" line="5512"/>
         <source>Comparison data from {filename} loaded.
 Differences are highlighted in yellow.</source>
         <translation>{filename}의 비교 데이터가 로드되었습니다.
 차이점이 노란색으로 강조됩니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5144"/>
+        <location filename="../main_window.py" line="5522"/>
         <source>Failed to load comparison file:
 {error}</source>
         <translation>비교 파일 로드 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5155"/>
+        <location filename="../main_window.py" line="5533"/>
         <source>Load Translation Memory</source>
         <translation>번역 메모리 로드</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5157"/>
+        <location filename="../main_window.py" line="5535"/>
         <source>Translation Memory (*.txt *.tmx);;Text Files (*.txt);;TMX Files (*.tmx);;All Files (*)</source>
         <translation>번역 메모리 (*.txt *.tmx);;텍스트 파일 (*.txt);;TMX 파일 (*.tmx);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5181"/>
+        <location filename="../main_window.py" line="5559"/>
         <source>Translation memory loaded: {loaded} entries, {applied} applied to current file</source>
         <translation>번역 메모리 로드됨: {loaded}개 항목, {applied}개가 현재 파일에 적용됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5191"/>
+        <location filename="../main_window.py" line="5569"/>
         <source>Load Failed</source>
         <translation>로드 실패</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5192"/>
+        <location filename="../main_window.py" line="5570"/>
         <source>Could not load translation memory:
 {error}</source>
         <translation>번역 메모리를 로드할 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5206"/>
+        <location filename="../main_window.py" line="5584"/>
         <source>Export Translation Memory</source>
         <translation>번역 메모리 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5207"/>
+        <location filename="../main_window.py" line="5585"/>
         <source>No translation memory loaded and no translations in the current file.</source>
         <translation>번역 메모리가 로드되지 않았고 현재 파일에 번역이 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5219"/>
+        <location filename="../main_window.py" line="5597"/>
         <source>Export Translation Memory as TMX</source>
         <translation>번역 메모리를 TMX로 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5221"/>
+        <location filename="../main_window.py" line="5599"/>
         <source>TMX Files (*.tmx);;All Files (*)</source>
         <translation>TMX 파일 (*.tmx);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5233"/>
+        <location filename="../main_window.py" line="5611"/>
         <source>Exported {n} translation units to {path}</source>
         <translation>{path}에 {n}개의 번역 단위 내보냄</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5242"/>
+        <location filename="../main_window.py" line="5620"/>
         <source>Could not export translation memory:
 {error}</source>
         <translation>번역 메모리를 내보낼 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5276"/>
+        <location filename="../main_window.py" line="5654"/>
         <source>NexusMods TM loaded ({label}): {n} entries, {applied} applied</source>
         <translation>NexusMods TM 로드됨 ({label}): {n}개 항목, {applied}개 적용됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5288"/>
+        <location filename="../main_window.py" line="5666"/>
         <source>NexusMods merge: {applied} translation(s) applied.</source>
         <translation>NexusMods 병합: {applied}개 번역 적용됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5317"/>
+        <location filename="../main_window.py" line="5695"/>
         <source>Lore RAG Unavailable</source>
         <translation>설정 RAG 사용 불가</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5318"/>
+        <location filename="../main_window.py" line="5696"/>
         <source>Failed to open the lore database. Check the log for details.</source>
         <translation>설정 데이터베이스를 열지 못했습니다. 자세한 내용은 로그를 확인하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5343"/>
+        <location filename="../main_window.py" line="5721"/>
         <source>Font auto-fix applied to {n} string(s)</source>
         <translation>폰트 자동 수정이 {n}개 문자열에 적용됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5364"/>
+        <location filename="../main_window.py" line="5742"/>
         <source>Not in ESP Mode</source>
         <translation>ESP 모드가 아님</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5365"/>
+        <location filename="../main_window.py" line="5743"/>
         <source>Open the ESP/ESM file in the main table first.</source>
         <translation>먼저 메인 테이블에서 ESP/ESM 파일을 여세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5375"/>
+        <location filename="../main_window.py" line="5753"/>
         <source>Not Found</source>
         <translation>찾을 수 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5376"/>
+        <location filename="../main_window.py" line="5754"/>
         <source>0x{fid:08X} / {fs} not found in the current file.</source>
         <translation>0x{fid:08X} / {fs}을(를) 현재 파일에서 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5392"/>
+        <location filename="../main_window.py" line="5770"/>
         <source>Config File</source>
         <translation>구성 파일</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5394"/>
+        <location filename="../main_window.py" line="5772"/>
         <source>Config file does not exist yet. Settings will be saved on first use.
 
 Config path: {path}</source>
@@ -3714,57 +3829,57 @@ Config path: {path}</source>
 구성 경로: {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5404"/>
+        <location filename="../main_window.py" line="5782"/>
         <source>Export Settings</source>
         <translation>설정 내보내기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5406"/>
-        <location filename="../main_window.py" line="5431"/>
+        <location filename="../main_window.py" line="5784"/>
+        <location filename="../main_window.py" line="5809"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>JSON 파일 (*.json *.JSON);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5416"/>
+        <location filename="../main_window.py" line="5794"/>
         <source>Export Successful</source>
         <translation>내보내기 성공</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5417"/>
+        <location filename="../main_window.py" line="5795"/>
         <source>Settings exported to:
 {path}</source>
         <translation>설정을 내보냈습니다:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5421"/>
+        <location filename="../main_window.py" line="5799"/>
         <source>Could not export settings.</source>
         <translation>설정을 내보낼 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5429"/>
+        <location filename="../main_window.py" line="5807"/>
         <source>Import Settings</source>
         <translation>설정 가져오기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5443"/>
+        <location filename="../main_window.py" line="5821"/>
         <source>Could not import settings file.</source>
         <translation>설정 파일을 가져올 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5452"/>
+        <location filename="../main_window.py" line="5830"/>
         <source>Validation Warnings</source>
         <translation>유효성 검사 경고</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5453"/>
+        <location filename="../main_window.py" line="5831"/>
         <source>Imported settings have issues:
 </source>
         <translation>가져온 설정에 문제가 있습니다:
 </translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5455"/>
+        <location filename="../main_window.py" line="5833"/>
         <source>
 
 Import anyway?</source>
@@ -3773,12 +3888,12 @@ Import anyway?</source>
 그래도 가져오시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5491"/>
+        <location filename="../main_window.py" line="5869"/>
         <source>Import Successful</source>
         <translation>가져오기 성공</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5493"/>
+        <location filename="../main_window.py" line="5871"/>
         <source>Settings imported from:
 {path}
 
@@ -3789,84 +3904,84 @@ Restart may be required for some changes to take effect.</source>
 일부 변경 사항은 재시작이 필요할 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5567"/>
-        <location filename="../main_window.py" line="5577"/>
+        <location filename="../main_window.py" line="5945"/>
+        <location filename="../main_window.py" line="5955"/>
         <source>Discover Terms</source>
         <translation>용어 발견</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5567"/>
+        <location filename="../main_window.py" line="5945"/>
         <source>No strings loaded.</source>
         <translation>로드된 문자열 없음.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5578"/>
+        <location filename="../main_window.py" line="5956"/>
         <source>No new candidate terms found in the loaded strings.</source>
         <translation>로드된 문자열에서 새 후보 용어를 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5604"/>
+        <location filename="../main_window.py" line="5982"/>
         <source>Terms Added</source>
         <translation>용어 추가됨</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5605"/>
+        <location filename="../main_window.py" line="5983"/>
         <source>{n} term(s) added to the protection list.</source>
         <translation>{n}개 용어가 보호 목록에 추가되었습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5623"/>
-        <location filename="../main_window.py" line="5632"/>
+        <location filename="../main_window.py" line="6001"/>
+        <location filename="../main_window.py" line="6010"/>
         <source>Consistency Check</source>
         <translation>일관성 검사</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5634"/>
+        <location filename="../main_window.py" line="6012"/>
         <source>No inconsistencies found — all translated strings are consistent.</source>
         <translation>불일치 없음 — 모든 번역된 문자열이 일관됩니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5656"/>
+        <location filename="../main_window.py" line="6034"/>
         <source>Register Check</source>
         <translation>어체 검사</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5679"/>
+        <location filename="../main_window.py" line="6057"/>
         <source>Gender Agreement Check</source>
         <translation>성별 일치 검사</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5701"/>
+        <location filename="../main_window.py" line="6079"/>
         <source>(no sessions yet)</source>
         <translation>(아직 세션 없음)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5751"/>
+        <location filename="../main_window.py" line="6129"/>
         <source>Session “{name}” started.</source>
         <translation>세션 “{name}”이(가) 시작되었습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5762"/>
+        <location filename="../main_window.py" line="6140"/>
         <source>Session saved: {name}</source>
         <translation>세션 저장됨: {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5809"/>
+        <location filename="../main_window.py" line="6187"/>
         <source>Session Not Found</source>
         <translation>세션 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5810"/>
+        <location filename="../main_window.py" line="6188"/>
         <source>Session “{name}” could not be loaded.</source>
         <translation>세션 “{name}”을(를) 불러올 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5824"/>
+        <location filename="../main_window.py" line="6202"/>
         <source>Open Session File?</source>
         <translation>세션 파일을 여시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5826"/>
+        <location filename="../main_window.py" line="6204"/>
         <source>This session is for:
 {path}
 
@@ -3877,12 +3992,12 @@ Open that file now?</source>
 지금 파일을 여시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5836"/>
+        <location filename="../main_window.py" line="6214"/>
         <source>File Not Found</source>
         <translation>파일 없음</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5838"/>
+        <location filename="../main_window.py" line="6216"/>
         <source>The session file no longer exists:
 {path}
 
@@ -3893,125 +4008,155 @@ You can still use the session context, but the file will need to be opened manua
 세션 컨텍스트는 계속 사용할 수 있지만 파일을 수동으로 열어야 합니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5861"/>
+        <location filename="../main_window.py" line="6239"/>
         <source>Session “{name}” resumed — {n} strings translated in session.</source>
         <translation>세션 “{name}” 재개됨 – 이 세션에서 {n}개 문자열 번역됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5994"/>
+        <location filename="../main_window.py" line="6372"/>
         <source>Loading files for version comparison…</source>
         <translation>버전 비교를 위한 파일 로딩 중…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6005"/>
+        <location filename="../main_window.py" line="6383"/>
         <source>Load Error</source>
         <translation>로드 오류</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6006"/>
+        <location filename="../main_window.py" line="6384"/>
         <source>Failed to load one or more files:
 {error}</source>
         <translation>하나 이상의 파일 로드 실패:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6053"/>
+        <location filename="../main_window.py" line="6431"/>
         <source>Migrated {n} translation(s) from previous version.</source>
         <translation>이전 버전에서 {n}개 번역 마이그레이션됨.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6073"/>
+        <location filename="../main_window.py" line="6451"/>
         <source>Keyboard Shortcuts</source>
         <translation>키보드 단축키</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6079"/>
+        <location filename="../main_window.py" line="6457"/>
         <source>Action</source>
         <translation>작업</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6079"/>
+        <location filename="../main_window.py" line="6457"/>
         <source>Shortcut</source>
         <translation>단축키</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6079"/>
+        <location filename="../main_window.py" line="6457"/>
         <source>Category</source>
         <translation>카테고리</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6093"/>
+        <location filename="../main_window.py" line="6471"/>
         <source>—</source>
         <translation>—</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6116"/>
+        <location filename="../main_window.py" line="6516"/>
+        <source>Up to Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6517"/>
+        <source>You are already running the latest version ({ver}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6523"/>
+        <source>Update Check Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6524"/>
+        <source>Could not reach the update server:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6556"/>
         <source>About Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings AI Translator 정보</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6118"/>
-        <source>&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;&lt;br&gt;Supports .strings / .dlstrings / .ilstrings and ESP/ESM files.&lt;br&gt;Translation via local Ollama models.&lt;br&gt;&lt;br&gt;&lt;b&gt;Keyboard Shortcuts:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;What&apos;s This?:&lt;/b&gt; Shift+F1, then click any widget</source>
-        <translation>&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;Starfield 및 기타 Bethesda 게임을 위한 AI 지원 현지화 도구.&lt;br&gt;&lt;br&gt;.strings / .dlstrings / .ilstrings 및 ESP/ESM 파일 지원.&lt;br&gt;로컬 Ollama 모델을 통한 번역.&lt;br&gt;&lt;br&gt;&lt;b&gt;키보드 단축키:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;이것은 무엇입니까?:&lt;/b&gt; Shift+F1, 그런 다음 위젯 클릭</translation>
+        <location filename="../main_window.py" line="6579"/>
+        <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6135"/>
+        <location filename="../main_window.py" line="6624"/>
+        <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;&lt;br&gt;Supports .strings / .dlstrings / .ilstrings and ESP/ESM files.&lt;br&gt;Translation via local Ollama models.&lt;br&gt;&lt;br&gt;&lt;b&gt;Keyboard Shortcuts:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;What&apos;s This?:&lt;/b&gt; Shift+F1, then click any widget</source>
+        <translation type="vanished">&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;Starfield 및 기타 Bethesda 게임을 위한 AI 지원 현지화 도구.&lt;br&gt;&lt;br&gt;.strings / .dlstrings / .ilstrings 및 ESP/ESM 파일 지원.&lt;br&gt;로컬 Ollama 모델을 통한 번역.&lt;br&gt;&lt;br&gt;&lt;b&gt;키보드 단축키:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;이것은 무엇입니까?:&lt;/b&gt; Shift+F1, 그런 다음 위젯 클릭</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6645"/>
         <source>Welcome to Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings AI Translator에 오신 것을 환영합니다</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6141"/>
+        <location filename="../main_window.py" line="6651"/>
         <source>Open a .strings, .dlstrings, .ilstrings or ESP/ESM file</source>
         <translation>.strings, .dlstrings, .ilstrings 또는 ESP/ESM 파일 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6142"/>
+        <location filename="../main_window.py" line="6652"/>
         <source>Translate all untranslated strings with AI</source>
         <translation>모든 미번역 문자열을 AI로 번역</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6144"/>
+        <location filename="../main_window.py" line="6654"/>
         <source>Approve the selected translation</source>
         <translation>선택한 번역 승인</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6145"/>
+        <location filename="../main_window.py" line="6655"/>
         <source>Open the command palette to find any action</source>
         <translation>명령 팔레트를 열어 모든 작업 찾기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6146"/>
+        <location filename="../main_window.py" line="6656"/>
         <source>Show all keyboard shortcuts</source>
         <translation>모든 키보드 단축키 표시</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6147"/>
+        <location filename="../main_window.py" line="6657"/>
         <source>Enter What&apos;s This? mode — click any widget for help</source>
         <translation>이것은 무엇입니까? 모드 진입 — 도움말을 보려면 위젯을 클릭하세요</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6183"/>
+        <location filename="../main_window.py" line="6693"/>
         <source>Source language of the text to translate.
 Set to Russian for Starfield&apos;s shipped strings.</source>
         <translation>번역할 텍스트의 원본 언어.
 Starfield 출시 문자열의 경우 러시아어로 설정하세요.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6187"/>
+        <location filename="../main_window.py" line="6697"/>
         <source>Target language for AI translation output.
 Typically Ukrainian for this project.</source>
         <translation>AI 번역 출력의 대상 언어.
 이 프로젝트의 경우 일반적으로 우크라이나어입니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6191"/>
+        <location filename="../main_window.py" line="6701"/>
         <source>Minimum quality score (1–10). Strings already rated at or above this
 threshold are skipped when running Translate All.</source>
         <translation>최소 품질 점수 (1–10). 이 임계값 이상으로 평가된 문자열은
 모두 번역 실행 시 건너뜁니다.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6195"/>
+        <location filename="../main_window.py" line="6705"/>
         <source>Currently loaded file path and format.
 Drag-and-drop a file here to open it.</source>
         <translation>현재 로드된 파일 경로 및 형식.
@@ -4059,208 +4204,208 @@ Drag-and-drop a file here to open it.</source>
 <context>
     <name>NexusModsBrowserDialog</name>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="396"/>
+        <location filename="../nexusmods_browser_dialog.py" line="444"/>
         <source>NexusMods Translation Browser</source>
         <translation>NexusMods 번역 브라우저</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="418"/>
+        <location filename="../nexusmods_browser_dialog.py" line="467"/>
         <source>⚠  No NexusMods API key configured — go to Settings → NexusMods to add one.</source>
         <translation>⚠  NexusMods API 키가 설정되지 않았습니다 — 설정 → NexusMods에서 추가하세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="458"/>
+        <location filename="../nexusmods_browser_dialog.py" line="507"/>
         <source>Game:</source>
         <translation>게임:</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="469"/>
+        <location filename="../nexusmods_browser_dialog.py" line="518"/>
         <source>Search: e.g. &quot;Ukrainian translation&quot;</source>
-        <translation>검색: 예: "Ukrainian translation"</translation>
+        <translation>검색: 예: &quot;Ukrainian translation&quot;</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="472"/>
+        <location filename="../nexusmods_browser_dialog.py" line="521"/>
         <source>🔍  Search</source>
         <translation>🔍  검색</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="504"/>
+        <location filename="../nexusmods_browser_dialog.py" line="560"/>
         <source>(click a mod card)</source>
         <translation>(모드 카드를 클릭하세요)</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="527"/>
+        <location filename="../nexusmods_browser_dialog.py" line="583"/>
         <source>Files:</source>
         <translation>파일:</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="531"/>
+        <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>File name</source>
         <translation>파일 이름</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="531"/>
+        <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Version</source>
         <translation>버전</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="531"/>
+        <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="531"/>
+        <location filename="../nexusmods_browser_dialog.py" line="587"/>
         <source>Category</source>
         <translation>카테고리</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="545"/>
+        <location filename="../nexusmods_browser_dialog.py" line="601"/>
         <source>🌐  Open mod page in browser</source>
         <translation>🌐  브라우저에서 모드 페이지 열기</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="550"/>
+        <location filename="../nexusmods_browser_dialog.py" line="606"/>
         <source>⬇  Download &amp; Open in Editor</source>
         <translation>⬇  다운로드 및 편집기에서 열기</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="553"/>
+        <location filename="../nexusmods_browser_dialog.py" line="609"/>
         <source>Download the selected .esp/.esm/.esl file (or zip containing one)
 and open it automatically in the editor.</source>
         <translation>선택된 .esp/.esm/.esl 파일(또는 해당 파일을 포함한 zip)을
 다운로드하고 편집기에서 자동으로 엽니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="560"/>
+        <location filename="../nexusmods_browser_dialog.py" line="616"/>
         <source>⬇  Download &amp; Import as TM</source>
         <translation>⬇  다운로드 및 TM으로 가져오기</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="563"/>
+        <location filename="../nexusmods_browser_dialog.py" line="619"/>
         <source>Download the selected file and load it as a Translation Memory.
 Known strings will be pre-filled and not retranslated by AI.</source>
         <translation>선택된 파일을 다운로드하고 번역 메모리로 로드합니다.
 알려진 문자열은 미리 채워지고 AI에 의해 재번역되지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="569"/>
+        <location filename="../nexusmods_browser_dialog.py" line="625"/>
         <source>⬇  Download &amp; Merge into Current</source>
         <translation>⬇  다운로드 및 현재 파일에 병합</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="572"/>
+        <location filename="../nexusmods_browser_dialog.py" line="628"/>
         <source>Download the selected file and apply any matching translations
 to the currently open file.  Existing translations are preserved.</source>
         <translation>선택된 파일을 다운로드하고 일치하는 번역을
 현재 열린 파일에 적용합니다. 기존 번역은 보존됩니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="579"/>
+        <location filename="../nexusmods_browser_dialog.py" line="635"/>
         <source>✕  Cancel download</source>
         <translation>✕  다운로드 취소</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="625"/>
+        <location filename="../nexusmods_browser_dialog.py" line="681"/>
         <source>Searching…</source>
         <translation>검색 중…</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="636"/>
+        <location filename="../nexusmods_browser_dialog.py" line="692"/>
         <source>No results found.</source>
         <translation>결과 없음.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="637"/>
+        <location filename="../nexusmods_browser_dialog.py" line="693"/>
         <source>0 results</source>
         <translation>0개 결과</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="641"/>
+        <location filename="../nexusmods_browser_dialog.py" line="697"/>
         <source>{n} result{&apos;s&apos; if n != 1 else &apos;&apos;}</source>
         <translation>{n}개 결과</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="647"/>
+        <location filename="../nexusmods_browser_dialog.py" line="703"/>
         <source>Search failed: {msg}</source>
         <translation>검색 실패: {msg}</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="726"/>
+        <location filename="../nexusmods_browser_dialog.py" line="831"/>
         <source>{len(files)} file(s) — translation-related files shown in green</source>
         <translation>{len(files)}개 파일 — 번역 관련 파일은 녹색으로 표시</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="768"/>
+        <location filename="../nexusmods_browser_dialog.py" line="873"/>
         <source>Downloading {nf.file_name}…</source>
         <translation>{nf.file_name} 다운로드 중…</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="794"/>
+        <location filename="../nexusmods_browser_dialog.py" line="899"/>
         <source>Download cancelled.</source>
         <translation>다운로드 취소됨.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="803"/>
+        <location filename="../nexusmods_browser_dialog.py" line="908"/>
         <source>Downloading… {mb_done:.1f} / {mb_total:.1f} MB</source>
         <translation>다운로드 중… {mb_done:.1f} / {mb_total:.1f} MB</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="813"/>
+        <location filename="../nexusmods_browser_dialog.py" line="918"/>
         <source>⚠  Free-user download requires &lt;b&gt;curl-cffi&lt;/b&gt;.  Run &lt;code&gt;pip install curl-cffi&lt;/code&gt; then restart the app.</source>
         <translation>⚠  무료 사용자 다운로드는 &lt;b&gt;curl-cffi&lt;/b&gt;가 필요합니다. &lt;code&gt;pip install curl-cffi&lt;/code&gt;를 실행한 후 앱을 재시작하세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="821"/>
+        <location filename="../nexusmods_browser_dialog.py" line="926"/>
         <source>⚠  No NexusMods session found in Firefox or Chromium.  Log in to NexusMods in your browser, then retry.</source>
         <translation>⚠  Firefox 또는 Chromium에서 NexusMods 세션을 찾을 수 없습니다. 브라우저에서 NexusMods에 로그인한 후 다시 시도하세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="829"/>
+        <location filename="../nexusmods_browser_dialog.py" line="934"/>
         <source>⚠  NexusMods session expired.  Log in again in your browser, then retry.</source>
         <translation>⚠  NexusMods 세션이 만료되었습니다. 브라우저에서 다시 로그인한 후 재시도하세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="837"/>
+        <location filename="../nexusmods_browser_dialog.py" line="942"/>
         <source>⚠  Could not parse download tokens from NexusMods.  The site may have changed — please report this issue.</source>
         <translation>⚠  NexusMods에서 다운로드 토큰을 파싱할 수 없습니다. 사이트가 변경되었을 수 있습니다 — 이 문제를 보고해 주세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="843"/>
+        <location filename="../nexusmods_browser_dialog.py" line="948"/>
         <source>Download failed: {msg}</source>
         <translation>다운로드 실패: {msg}</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="849"/>
+        <location filename="../nexusmods_browser_dialog.py" line="954"/>
         <source>No files found in the downloaded archive.</source>
         <translation>다운로드된 아카이브에서 파일을 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="857"/>
+        <location filename="../nexusmods_browser_dialog.py" line="962"/>
         <source>No .esp/.esm/.esl found in {paths[0].name}.</source>
         <translation>{paths[0].name}에서 .esp/.esm/.esl을 찾을 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="861"/>
+        <location filename="../nexusmods_browser_dialog.py" line="966"/>
         <source>✓  Opening {plugins[0].name} in editor…</source>
         <translation>✓  편집기에서 {plugins[0].name} 열기 중…</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="868"/>
+        <location filename="../nexusmods_browser_dialog.py" line="973"/>
         <source>Downloaded: {paths[0].name} — open it in the editor via File → Open to browse its contents.</source>
         <translation>다운로드됨: {paths[0].name} — 파일 → 열기를 통해 편집기에서 열어 내용을 탐색하세요.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="881"/>
+        <location filename="../nexusmods_browser_dialog.py" line="986"/>
         <source>Could not read {p.name}: {exc}</source>
         <translation>{p.name}을(를) 읽을 수 없습니다: {exc}</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="888"/>
+        <location filename="../nexusmods_browser_dialog.py" line="993"/>
         <source>✓  TM imported: {loaded} string(s) from {len(paths)} file(s).  Known strings will be skipped during AI translation.</source>
         <translation>✓  TM 가져옴: {len(paths)}개 파일에서 {loaded}개 문자열. 알려진 문자열은 AI 번역 중 건너뜁니다.</translation>
     </message>
     <message>
-        <location filename="../nexusmods_browser_dialog.py" line="894"/>
+        <location filename="../nexusmods_browser_dialog.py" line="999"/>
         <source>✓  Merge requested: {loaded} string(s) from {len(paths)} file(s).</source>
         <translation>✓  병합 요청됨: {len(paths)}개 파일에서 {loaded}개 문자열.</translation>
     </message>
@@ -4627,7 +4772,7 @@ Use informal language. Contractions are natural…</source>
     <message>
         <location filename="../profile_editor_dialog.py" line="296"/>
         <source>Delete profile &apos;{name}&apos;? This cannot be undone.</source>
-        <translation>'{name}' 프로필을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</translation>
+        <translation>&apos;{name}&apos; 프로필을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</translation>
     </message>
     <message>
         <location filename="../profile_editor_dialog.py" line="442"/>
@@ -4642,7 +4787,7 @@ Use informal language. Contractions are natural…</source>
     <message>
         <location filename="../profile_editor_dialog.py" line="466"/>
         <source>Save changes to &apos;{name}&apos;?</source>
-        <translation>'{name}'의 변경 사항을 저장하시겠습니까?</translation>
+        <translation>&apos;{name}&apos;의 변경 사항을 저장하시겠습니까?</translation>
     </message>
 </context>
 <context>
@@ -4736,7 +4881,7 @@ Use informal language. Contractions are natural…</source>
     <message>
         <location filename="../protected_terms_dialog.py" line="163"/>
         <source>Term &apos;{term}&apos; is already protected.</source>
-        <translation>'{term}' 용어는 이미 보호되어 있습니다.</translation>
+        <translation>&apos;{term}&apos; 용어는 이미 보호되어 있습니다.</translation>
     </message>
     <message>
         <location filename="../protected_terms_dialog.py" line="181"/>
@@ -4818,59 +4963,71 @@ Use informal language. Contractions are natural…</source>
         <translation>품질 검사 결과</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="511"/>
+        <location filename="../quality_dialog.py" line="515"/>
         <source>No quality issues found — all translations look good.</source>
         <translation>품질 문제 없음 — 모든 번역이 양호합니다.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="514"/>
+        <location filename="../quality_dialog.py" line="518"/>
         <source>{errors} error(s)  ·  {warnings} warning(s)  ·  {infos} info  across {total} string(s)  ({fixable} auto-fixable  ·  {retrans} need retranslation)</source>
         <translation>{errors}개 오류  ·  {warnings}개 경고  ·  {infos}개 정보  {total}개 문자열에서  ({fixable}개 자동 수정 가능  ·  {retrans}개 재번역 필요)</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="529"/>
+        <location filename="../quality_dialog.py" line="533"/>
         <source>Severity:</source>
         <translation>심각도:</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="532"/>
+        <location filename="../quality_dialog.py" line="536"/>
         <source>All</source>
         <translation>모두</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="533"/>
+        <location filename="../quality_dialog.py" line="537"/>
         <source>Errors</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="534"/>
+        <location filename="../quality_dialog.py" line="538"/>
         <source>Warnings</source>
         <translation>경고</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="535"/>
+        <location filename="../quality_dialog.py" line="539"/>
         <source>Info</source>
         <translation>정보</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="540"/>
+        <location filename="../quality_dialog.py" line="544"/>
         <source>Error code:</source>
         <translation>오류 코드:</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="545"/>
+        <location filename="../quality_dialog.py" line="549"/>
         <source>Filter rows by a specific issue code.
 Only codes that appear in the current results are listed.</source>
         <translation>특정 문제 코드로 행을 필터링합니다.
 현재 결과에 나타나는 코드만 나열됩니다.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="554"/>
+        <location filename="../quality_dialog.py" line="557"/>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="559"/>
+        <source>Hide all rows with the selected issue code.
+Useful to suppress noise (e.g. hide EMPTY_TRANSLATION)
+so you can focus on other issues.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="569"/>
         <source>Export Report…</source>
         <translation>보고서 내보내기…</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="556"/>
+        <location filename="../quality_dialog.py" line="571"/>
         <source>Export the full quality report.
 Choose format by file extension:
   .json — reimportable report (use after reload)
@@ -4885,43 +5042,53 @@ Choose format by file extension:
   .html — 형식화된 HTML 보고서</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="571"/>
+        <location filename="../quality_dialog.py" line="587"/>
+        <source>Show all codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="588"/>
+        <source>Remove all hidden-code filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="599"/>
         <source>Select Errors</source>
         <translation>오류 선택</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="572"/>
+        <location filename="../quality_dialog.py" line="600"/>
         <source>Select all error-severity rows</source>
         <translation>모든 오류 심각도 행 선택</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="576"/>
+        <location filename="../quality_dialog.py" line="604"/>
         <source>Select Warnings</source>
         <translation>경고 선택</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="577"/>
+        <location filename="../quality_dialog.py" line="605"/>
         <source>Select all warning-severity rows</source>
         <translation>모든 경고 심각도 행 선택</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="581"/>
+        <location filename="../quality_dialog.py" line="609"/>
         <source>Select All</source>
         <translation>모두 선택</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="585"/>
+        <location filename="../quality_dialog.py" line="613"/>
         <source>Clear</source>
         <translation>지우기</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="597"/>
-        <location filename="../quality_dialog.py" line="764"/>
+        <location filename="../quality_dialog.py" line="625"/>
+        <location filename="../quality_dialog.py" line="816"/>
         <source>Auto-Fix Selected</source>
         <translation>선택 항목 자동 수정</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="599"/>
+        <location filename="../quality_dialog.py" line="627"/>
         <source>Apply mechanical fixes to selected strings:
 • Restore missing newlines
 • Fix leading whitespace
@@ -4936,13 +5103,40 @@ Choose format by file extension:
 • 누락된 가 추가</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="611"/>
-        <location filename="../quality_dialog.py" line="770"/>
+        <location filename="../quality_dialog.py" line="639"/>
+        <location filename="../quality_dialog.py" line="827"/>
+        <location filename="../quality_dialog.py" line="940"/>
+        <source>Auto-Fix All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="641"/>
+        <source>Apply mechanical fixes to ALL strings with auto-fixable issues
+(no selection needed — fixes everything in one click)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="648"/>
+        <location filename="../quality_dialog.py" line="833"/>
+        <source>AI Fix Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="650"/>
+        <source>Send the flawed translation to the AI model to fix specific issues.
+Unlike retranslation, the model sees the existing translation and
+edits only what the QC check flagged — preserving correct parts.
+Fix starts after you close this dialog.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="659"/>
+        <location filename="../quality_dialog.py" line="839"/>
         <source>Queue Retranslation</source>
         <translation>재번역 대기열</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="613"/>
+        <location filename="../quality_dialog.py" line="661"/>
         <source>Queue selected strings for AI retranslation.
 The model will receive feedback about what went wrong.
 Retranslation starts after you close this dialog.</source>
@@ -4951,109 +5145,158 @@ Retranslation starts after you close this dialog.</source>
 이 대화 상자를 닫으면 재번역이 시작됩니다.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="621"/>
+        <location filename="../quality_dialog.py" line="669"/>
         <source>Queue All Errors</source>
         <translation>모든 오류 대기열 추가</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="623"/>
+        <location filename="../quality_dialog.py" line="671"/>
         <source>Queue ALL strings with errors for retranslation (no selection needed)</source>
         <translation>오류가 있는 모든 문자열을 재번역 대기열에 추가 (선택 불필요)</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="640"/>
+        <location filename="../quality_dialog.py" line="688"/>
         <source>Severity</source>
         <translation>심각도</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="641"/>
+        <location filename="../quality_dialog.py" line="689"/>
         <source>String ID</source>
         <translation>문자열 ID</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="642"/>
+        <location filename="../quality_dialog.py" line="690"/>
         <source>Original</source>
         <translation>원본</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="643"/>
+        <location filename="../quality_dialog.py" line="691"/>
         <source>Translation</source>
         <translation>번역</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="644"/>
+        <location filename="../quality_dialog.py" line="692"/>
         <source>Issue codes</source>
         <translation>문제 코드</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="664"/>
+        <location filename="../quality_dialog.py" line="712"/>
         <source>Issue Details</source>
         <translation>문제 세부 정보</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="679"/>
+        <location filename="../quality_dialog.py" line="727"/>
         <source>Jump to String in Table</source>
         <translation>테이블에서 문자열로 이동</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="690"/>
+        <location filename="../quality_dialog.py" line="738"/>
         <source>Close</source>
         <translation>닫기</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="763"/>
+        <location filename="../quality_dialog.py" line="815"/>
         <source>Auto-Fix Selected ({n})</source>
         <translation>선택 항목 자동 수정 ({n})</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="769"/>
+        <location filename="../quality_dialog.py" line="826"/>
+        <source>Auto-Fix All ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="832"/>
+        <source>AI Fix Selected ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="838"/>
         <source>Queue Retranslation ({n})</source>
         <translation>재번역 대기열 ({n})</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="819"/>
+        <location filename="../quality_dialog.py" line="888"/>
         <source>Auto-Fix Applied</source>
         <translation>자동 수정 적용됨</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="820"/>
+        <location filename="../quality_dialog.py" line="889"/>
+        <location filename="../quality_dialog.py" line="931"/>
         <source>Fixed {n} string(s):
 {log}</source>
         <translation>{n}개 문자열 수정됨:
 {log}</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="829"/>
+        <location filename="../quality_dialog.py" line="898"/>
         <source>Auto-Fix</source>
         <translation>자동 수정</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="830"/>
+        <location filename="../quality_dialog.py" line="899"/>
         <source>No automatically fixable issues found in the selected strings.</source>
         <translation>선택된 문자열에서 자동으로 수정 가능한 문제가 없습니다.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="870"/>
+        <location filename="../quality_dialog.py" line="930"/>
+        <source>Auto-Fix All Applied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="941"/>
+        <source>No automatically fixable issues found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="970"/>
+        <source>AI Fix Queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="971"/>
+        <source>All selected strings are already in the AI fix queue.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="977"/>
+        <source>{total} string(s) queued for AI fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="981"/>
+        <source>Queued for AI Fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="983"/>
+        <source>{added} string(s) added to AI fix queue.
+Total queued: {total}
+
+Close this dialog to start AI fixing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="1026"/>
         <source>Retranslation Queue</source>
         <translation>재번역 대기열</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="871"/>
+        <location filename="../quality_dialog.py" line="1027"/>
         <source>All selected strings are already in the queue.</source>
         <translation>선택된 모든 문자열이 이미 대기열에 있습니다.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="877"/>
+        <location filename="../quality_dialog.py" line="1033"/>
         <source>{total} string(s) queued for retranslation</source>
         <translation>{total}개 문자열이 재번역 대기열에 있습니다</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="881"/>
+        <location filename="../quality_dialog.py" line="1037"/>
         <source>Queued for Retranslation</source>
         <translation>재번역 대기 중</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="883"/>
+        <location filename="../quality_dialog.py" line="1039"/>
         <source>{added} string(s) added to retranslation queue.
 Total queued: {total}
 
@@ -5064,27 +5307,32 @@ Close this dialog to start retranslation.</source>
 재번역을 시작하려면 이 대화 상자를 닫으세요.</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="943"/>
+        <location filename="../quality_dialog.py" line="1099"/>
         <source>All codes</source>
         <translation>모든 코드</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="977"/>
+        <location filename="../quality_dialog.py" line="1136"/>
+        <source>Hidden: {codes}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../quality_dialog.py" line="1175"/>
         <source>Export Quality Report</source>
         <translation>품질 보고서 내보내기</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="980"/>
+        <location filename="../quality_dialog.py" line="1178"/>
         <source>JSON Report — reimportable (*.json);;CSV Spreadsheet (*.csv);;Text Log (*.txt);;HTML Report (*.html);;All Files (*)</source>
         <translation>JSON 보고서 — 다시 가져올 수 있음 (*.json);;CSV 스프레드시트 (*.csv);;텍스트 로그 (*.txt);;HTML 보고서 (*.html);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="1009"/>
+        <location filename="../quality_dialog.py" line="1207"/>
         <source>Export Failed</source>
         <translation>내보내기 실패</translation>
     </message>
     <message>
-        <location filename="../quality_dialog.py" line="1010"/>
+        <location filename="../quality_dialog.py" line="1208"/>
         <source>Could not write report:
 {error}</source>
         <translation>보고서를 쓸 수 없습니다:
@@ -5292,121 +5540,121 @@ Close this dialog to start retranslation.</source>
     <message>
         <location filename="../session_dialog.py" line="228"/>
         <source>Delete session &quot;{name}&quot;? This cannot be undone.</source>
-        <translation>세션 "{name}"을(를) 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</translation>
+        <translation>세션 &quot;{name}&quot;을(를) 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</translation>
     </message>
 </context>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settings_dialog.py" line="44"/>
+        <location filename="../settings_dialog.py" line="105"/>
         <source>Preferences</source>
         <translation>환경 설정</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="100"/>
+        <location filename="../settings_dialog.py" line="161"/>
         <source>Ollama AI Settings</source>
         <translation>Ollama AI 설정</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="105"/>
+        <location filename="../settings_dialog.py" line="166"/>
         <source>API URL:</source>
         <translation>API URL:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="118"/>
+        <location filename="../settings_dialog.py" line="179"/>
         <source>Type any Ollama model name or pick from the list.
 Click &apos;Refresh&apos; to load all installed models from the server.</source>
         <translation>Ollama 모델 이름을 입력하거나 목록에서 선택하세요.
-'새로 고침'을 클릭하여 서버에서 설치된 모든 모델을 로드합니다.</translation>
+&apos;새로 고침&apos;을 클릭하여 서버에서 설치된 모든 모델을 로드합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="124"/>
-        <location filename="../settings_dialog.py" line="862"/>
+        <location filename="../settings_dialog.py" line="185"/>
+        <location filename="../settings_dialog.py" line="1087"/>
         <source>Refresh</source>
         <translation>새로 고침</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="125"/>
+        <location filename="../settings_dialog.py" line="186"/>
         <source>Fetch installed models from the Ollama server</source>
         <translation>Ollama 서버에서 설치된 모델 가져오기</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="128"/>
+        <location filename="../settings_dialog.py" line="189"/>
         <source>Model:</source>
         <translation>모델:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="133"/>
+        <location filename="../settings_dialog.py" line="194"/>
         <source>Maximum number of tokens to generate (num_predict)</source>
         <translation>생성할 최대 토큰 수 (num_predict)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="134"/>
+        <location filename="../settings_dialog.py" line="195"/>
         <source>Token Limit:</source>
         <translation>토큰 제한:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="139"/>
+        <location filename="../settings_dialog.py" line="200"/>
         <source>Context window size in tokens (num_ctx). Increasing this uses more VRAM.</source>
         <translation>토큰의 컨텍스트 창 크기 (num_ctx). 이를 늘리면 더 많은 VRAM을 사용합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="140"/>
+        <location filename="../settings_dialog.py" line="201"/>
         <source>Context Limit:</source>
         <translation>컨텍스트 제한:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="145"/>
+        <location filename="../settings_dialog.py" line="206"/>
         <source>Auto</source>
         <translation>자동</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="147"/>
+        <location filename="../settings_dialog.py" line="208"/>
         <source>CPU threads passed to Ollama per request (0 = auto). Tune this to match your CPU core count for best performance.</source>
         <translation>요청당 Ollama에 전달되는 CPU 스레드 수 (0 = 자동). 최상의 성능을 위해 CPU 코어 수에 맞게 조정하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="150"/>
+        <location filename="../settings_dialog.py" line="211"/>
         <source>Ollama CPU threads:</source>
         <translation>Ollama CPU 스레드:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="156"/>
+        <location filename="../settings_dialog.py" line="219"/>
         <source>Connection Test</source>
         <translation>연결 테스트</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="158"/>
+        <location filename="../settings_dialog.py" line="221"/>
         <source>Test Connection</source>
         <translation>연결 테스트</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="160"/>
+        <location filename="../settings_dialog.py" line="223"/>
         <source>● Not tested</source>
         <translation>● 테스트 안됨</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="169"/>
+        <location filename="../settings_dialog.py" line="232"/>
         <source>Game Term Protection</source>
         <translation>게임 용어 보호</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="172"/>
+        <location filename="../settings_dialog.py" line="235"/>
         <source>Enable automatic term protection</source>
         <translation>자동 용어 보호 활성화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="174"/>
+        <location filename="../settings_dialog.py" line="237"/>
         <source>Protect game-specific terms, IDs, and names from translation</source>
         <translation>게임 고유 용어, ID 및 이름을 번역에서 보호</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="177"/>
+        <location filename="../settings_dialog.py" line="240"/>
         <source>Protect English text from translation</source>
         <translation>영어 텍스트를 번역에서 보호</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="180"/>
+        <location filename="../settings_dialog.py" line="243"/>
         <source>When translating from non-English source (e.g. Russian) to Ukrainian, keep English words/phrases unchanged.
 Useful for preserving names, titles, and terminology that should remain in English.
 Note: This is automatically disabled when English is the source language.</source>
@@ -5415,12 +5663,12 @@ Note: This is automatically disabled when English is the source language.</sourc
 참고: 영어가 원본 언어인 경우 자동으로 비활성화됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="187"/>
+        <location filename="../settings_dialog.py" line="250"/>
         <source>Protect proper nouns and lore terms (faction/company/ship/character names, resources, UI terms, loaded term file)</source>
         <translation>고유 명사 및 설정 용어 보호 (세력/회사/선박/캐릭터 이름, 자원, UI 용어, 로드된 용어 파일)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="193"/>
+        <location filename="../settings_dialog.py" line="256"/>
         <source>When enabled, faction names (Freestar Collective, UC…), company names, ship names, character names,
 creature/resource names, UI abbreviations (HUD, GPS…), and terms loaded from the custom terms file
 are replaced with placeholder tokens so the AI cannot modify them.
@@ -5434,87 +5682,87 @@ AI가 수정할 수 없도록 자리 표시자 토큰으로 대체됩니다.
 비활성화하면 (기본값) AI가 이 이름을 자유롭게 번역할 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="203"/>
+        <location filename="../settings_dialog.py" line="266"/>
         <source>Custom terms file:</source>
         <translation>사용자 정의 용어 파일:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="205"/>
+        <location filename="../settings_dialog.py" line="268"/>
         <source>Path to custom protected terms file</source>
         <translation>사용자 정의 보호 용어 파일 경로</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="210"/>
+        <location filename="../settings_dialog.py" line="273"/>
         <source>Browse...</source>
         <translation>찾아보기...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="217"/>
+        <location filename="../settings_dialog.py" line="280"/>
         <source>View/Edit Protected Terms</source>
         <translation>보호 용어 보기/편집</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="222"/>
+        <location filename="../settings_dialog.py" line="285"/>
         <source>ℹ️ Format tags, game IDs, XML/alias tokens, and user-added custom terms are always protected regardless of the setting above.</source>
         <translation>ℹ️ 형식 태그, 게임 ID, XML/별칭 토큰 및 사용자가 추가한 사용자 정의 용어는 위의 설정에 관계없이 항상 보호됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="232"/>
+        <location filename="../settings_dialog.py" line="295"/>
         <source>Appearance</source>
         <translation>외관</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="242"/>
+        <location filename="../settings_dialog.py" line="305"/>
         <source>Choose a built-in or custom theme</source>
         <translation>내장 또는 사용자 정의 테마 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="243"/>
+        <location filename="../settings_dialog.py" line="306"/>
         <source>Theme:</source>
         <translation>테마:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="272"/>
+        <location filename="../settings_dialog.py" line="336"/>
         <source>✓ = complete translation  ·  others are community work-in-progress</source>
         <translation>✓ = 완전한 번역  ·  나머지는 커뮤니티 작업 진행 중</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="274"/>
+        <location filename="../settings_dialog.py" line="338"/>
         <source>Interface Language:</source>
         <translation>인터페이스 언어:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="280"/>
+        <location filename="../settings_dialog.py" line="344"/>
         <source>OS default</source>
         <translation>OS 기본값</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="281"/>
+        <location filename="../settings_dialog.py" line="345"/>
         <source> pt</source>
         <translation> pt</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="284"/>
+        <location filename="../settings_dialog.py" line="348"/>
         <source>Set 0 to follow the OS font size. Changes apply after restart.</source>
         <translation>0으로 설정하면 OS 폰트 크기를 따릅니다. 변경 사항은 재시작 후 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="286"/>
+        <location filename="../settings_dialog.py" line="350"/>
         <source>Interface font size</source>
         <translation>인터페이스 폰트 크기</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="287"/>
+        <location filename="../settings_dialog.py" line="351"/>
         <source>Font Size:</source>
         <translation>폰트 크기:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="290"/>
+        <location filename="../settings_dialog.py" line="354"/>
         <source>Color-blind friendly status colors</source>
         <translation>색맹 친화적 상태 색상</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="294"/>
+        <location filename="../settings_dialog.py" line="358"/>
         <source>Replace green/red status indicators with blue/orange.
 Improves visibility for deuteranopia (red-green color blindness).
 Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
@@ -5523,62 +5771,124 @@ Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
 상태 기호 (✓ ⚠ ✗)는 색상에 관계없이 항상 상태를 전달합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="299"/>
+        <location filename="../settings_dialog.py" line="363"/>
         <source>Color-blind mode</source>
         <translation>색맹 모드</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="304"/>
+        <location filename="../settings_dialog.py" line="368"/>
         <source>Manage Themes...</source>
         <translation>테마 관리...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="314"/>
+        <location filename="../settings_dialog.py" line="378"/>
+        <source>Background / Wallpaper</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="381"/>
+        <source>Enable custom background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="388"/>
+        <source>Path to image or video file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="393"/>
+        <source>File:</source>
+        <translation type="unfinished">파일:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="398"/>
+        <source>Cover  (fill, crop edges)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="399"/>
+        <source>Contain  (fit inside, letterbox)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="400"/>
+        <source>Stretch  (distort to fill)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="401"/>
+        <source>Tile  (repeat)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="402"/>
+        <source>Center  (original size, centered)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="407"/>
+        <source>Fit mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="423"/>
+        <source>Opacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="427"/>
+        <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
+Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
+(Video requires PySide6-Multimedia and GStreamer plugins)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="440"/>
         <source>Translation Preferences</source>
         <translation>번역 환경 설정</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="321"/>
+        <location filename="../settings_dialog.py" line="447"/>
         <source>Default Source:</source>
         <translation>기본 원본:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="327"/>
+        <location filename="../settings_dialog.py" line="453"/>
         <source>Default Target:</source>
         <translation>기본 대상:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="333"/>
+        <location filename="../settings_dialog.py" line="459"/>
         <source>Default Quality:</source>
         <translation>기본 품질:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="338"/>
+        <location filename="../settings_dialog.py" line="464"/>
         <source>Character count threshold for &apos;long&apos; strings</source>
-        <translation>'긴' 문자열의 문자 수 임계값</translation>
+        <translation>&apos;긴&apos; 문자열의 문자 수 임계값</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="339"/>
+        <location filename="../settings_dialog.py" line="465"/>
         <source>Long String Threshold:</source>
         <translation>긴 문자열 임계값:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="343"/>
+        <location filename="../settings_dialog.py" line="469"/>
         <source>Translate</source>
         <translation>번역</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="344"/>
+        <location filename="../settings_dialog.py" line="470"/>
         <source>Original</source>
         <translation>원본</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="345"/>
+        <location filename="../settings_dialog.py" line="471"/>
         <source>Skip</source>
         <translation>건너뜀</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="362"/>
+        <location filename="../settings_dialog.py" line="488"/>
         <source>Action to take for strings exceeding the threshold:
 - Translate: Proceed with translation (may take long)
 - Original: Immediately return original text
@@ -5589,69 +5899,69 @@ Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
 - 건너뜀: 미번역으로 두고 대기 중으로 표시</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="367"/>
+        <location filename="../settings_dialog.py" line="493"/>
         <source>Long String Action:</source>
         <translation>긴 문자열 작업:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="378"/>
+        <location filename="../settings_dialog.py" line="504"/>
         <source>Books</source>
         <translation>책</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="379"/>
+        <location filename="../settings_dialog.py" line="505"/>
         <source>Notes</source>
         <translation>메모</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="380"/>
+        <location filename="../settings_dialog.py" line="506"/>
         <source>Terminals</source>
         <translation>터미널</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="381"/>
+        <location filename="../settings_dialog.py" line="507"/>
         <source>Dialogue</source>
         <translation>대화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="382"/>
+        <location filename="../settings_dialog.py" line="508"/>
         <source>Quests</source>
         <translation>퀘스트</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="383"/>
+        <location filename="../settings_dialog.py" line="509"/>
         <source>UI</source>
         <translation>UI</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="384"/>
+        <location filename="../settings_dialog.py" line="510"/>
         <source>System</source>
         <translation>시스템</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="393"/>
+        <location filename="../settings_dialog.py" line="519"/>
         <source>String types to skip during AI batch translation.
 Skipped strings are left untranslated (marked as pending).</source>
         <translation>AI 일괄 번역 중 건너뛸 문자열 유형.
 건너뛴 문자열은 미번역으로 남습니다 (대기 중으로 표시됨).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="396"/>
+        <location filename="../settings_dialog.py" line="522"/>
         <source>Skip Types:</source>
         <translation>건너뛸 유형:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="398"/>
+        <location filename="../settings_dialog.py" line="524"/>
         <source>Auto-save after translation</source>
         <translation>번역 후 자동 저장</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="406"/>
+        <location filename="../settings_dialog.py" line="532"/>
         <source>Translation Memory</source>
         <translation>번역 메모리</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="429"/>
+        <location filename="../settings_dialog.py" line="555"/>
         <source>Minimum similarity required for a fuzzy translation memory match.
 Higher = stricter (fewer but more accurate matches).
 100% = exact matches only.  Default: ~46%.</source>
@@ -5660,63 +5970,63 @@ Higher = stricter (fewer but more accurate matches).
 100% = 완전히 일치하는 항목만.  기본값: ~46%.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="437"/>
+        <location filename="../settings_dialog.py" line="563"/>
         <source>Min. fuzzy similarity:</source>
         <translation>최소 퍼지 유사도:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="443"/>
+        <location filename="../settings_dialog.py" line="569"/>
         <source>Performance</source>
         <translation>성능</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="446"/>
+        <location filename="../settings_dialog.py" line="572"/>
         <source>Enable translation cache</source>
         <translation>번역 캐시 활성화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="449"/>
+        <location filename="../settings_dialog.py" line="575"/>
         <source>Cache completed translations to disk so repeated strings are returned instantly.</source>
         <translation>완료된 번역을 디스크에 캐시하여 반복 문자열이 즉시 반환됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="453"/>
-        <location filename="../settings_dialog.py" line="1079"/>
+        <location filename="../settings_dialog.py" line="579"/>
+        <location filename="../settings_dialog.py" line="1323"/>
         <source>Clear Cache</source>
         <translation>캐시 지우기</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="454"/>
+        <location filename="../settings_dialog.py" line="580"/>
         <source>Remove all cached translations from memory and disk</source>
         <translation>메모리 및 디스크에서 모든 캐시된 번역 제거</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="462"/>
+        <location filename="../settings_dialog.py" line="588"/>
         <source>Number of parallel translation threads (1–32). Higher values increase throughput but may overwhelm Ollama. Default: 10.</source>
         <translation>병렬 번역 스레드 수 (1–32). 높은 값은 처리량을 증가시키지만 Ollama에 부담을 줄 수 있습니다. 기본값: 10.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="466"/>
+        <location filename="../settings_dialog.py" line="592"/>
         <source>Parallel workers:</source>
         <translation>병렬 작업자:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="472"/>
+        <location filename="../settings_dialog.py" line="598"/>
         <source>Storage</source>
         <translation>저장소</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="479"/>
+        <location filename="../settings_dialog.py" line="605"/>
         <source>Active config dir:</source>
         <translation>활성 구성 디렉토리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="483"/>
+        <location filename="../settings_dialog.py" line="609"/>
         <source>(default: ~/.config/BethesdaModTools)</source>
         <translation>(기본값: ~/.config/BethesdaModTools)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="485"/>
+        <location filename="../settings_dialog.py" line="611"/>
         <source>Override the directory where config.json and other app data are stored.
 Leave blank to use the default location.
 Takes effect after restarting the application.</source>
@@ -5725,45 +6035,71 @@ Takes effect after restarting the application.</source>
 애플리케이션을 재시작하면 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="491"/>
-        <location filename="../settings_dialog.py" line="531"/>
-        <location filename="../settings_dialog.py" line="692"/>
+        <location filename="../settings_dialog.py" line="990"/>
+        <source>Next tip →</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1021"/>
+        <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1026"/>
+        <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1031"/>
+        <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1035"/>
+        <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="390"/>
+        <location filename="../settings_dialog.py" line="617"/>
+        <location filename="../settings_dialog.py" line="657"/>
+        <location filename="../settings_dialog.py" line="866"/>
         <source>Browse…</source>
         <translation>찾아보기…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="493"/>
-        <location filename="../settings_dialog.py" line="533"/>
+        <location filename="../settings_dialog.py" line="619"/>
+        <location filename="../settings_dialog.py" line="659"/>
         <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="494"/>
+        <location filename="../settings_dialog.py" line="620"/>
         <source>Clear override and use the default config directory</source>
         <translation>재정의를 지우고 기본 구성 디렉토리 사용</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="501"/>
+        <location filename="../settings_dialog.py" line="627"/>
         <source>Config directory:</source>
         <translation>구성 디렉토리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="504"/>
+        <location filename="../settings_dialog.py" line="630"/>
         <source>⚠  Restart the application to use the new config directory.</source>
         <translation>⚠  새 구성 디렉토리를 사용하려면 애플리케이션을 재시작하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="519"/>
+        <location filename="../settings_dialog.py" line="645"/>
         <source>Active cache dir:</source>
         <translation>활성 캐시 디렉토리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="523"/>
+        <location filename="../settings_dialog.py" line="649"/>
         <source>(default: SSD if mounted, else config dir)</source>
         <translation>(기본값: SSD가 마운트되어 있으면 SSD, 아니면 구성 디렉토리)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="525"/>
+        <location filename="../settings_dialog.py" line="651"/>
         <source>Override the directory for the translation cache and other large data files.
 Leave blank to auto-select: /mnt/ssd/… when the SSD is mounted, otherwise the config dir.
 Takes effect after restarting the application.</source>
@@ -5772,32 +6108,54 @@ SSD가 마운트된 경우 /mnt/ssd/…를, 그렇지 않으면 설정 디렉토
 애플리케이션을 재시작한 후 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="534"/>
+        <location filename="../settings_dialog.py" line="660"/>
         <source>Clear override and use the default cache directory</source>
         <translation>재정의를 지우고 기본 캐시 디렉토리 사용</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="541"/>
+        <location filename="../settings_dialog.py" line="667"/>
         <source>Cache directory:</source>
         <translation>캐시 디렉토리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="544"/>
+        <location filename="../settings_dialog.py" line="670"/>
         <source>⚠  Restart the application to use the new cache directory.</source>
         <translation>⚠  새 캐시 디렉토리를 사용하려면 애플리케이션을 재시작하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="558"/>
+        <location filename="../settings_dialog.py" line="684"/>
+        <source>Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="688"/>
+        <source>Check for updates automatically on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="693"/>
+        <source>Silently checks the GitHub releases page 8 seconds after launch.
+Shows a dialog only when a new version is found.
+No personal data is transmitted — only a GET request to the GitHub API.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="700"/>
+        <source>Check Now…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="715"/>
         <source>Security</source>
         <translation>보안</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="561"/>
+        <location filename="../settings_dialog.py" line="718"/>
         <source>Encrypt translation cache</source>
         <translation>번역 캐시 암호화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="565"/>
+        <location filename="../settings_dialog.py" line="722"/>
         <source>Protect the on-disk translation cache with AES-256-GCM encryption.
 The key is stored in the system keyring or derived from the machine ID.
 Takes effect on the next cache save.</source>
@@ -5806,12 +6164,12 @@ Takes effect on the next cache save.</source>
 다음 캐시 저장 시 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="572"/>
+        <location filename="../settings_dialog.py" line="729"/>
         <source>Enable security audit log</source>
         <translation>보안 감사 로그 활성화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="576"/>
+        <location filename="../settings_dialog.py" line="733"/>
         <source>Write a JSON-lines audit log of security-relevant events
 (file open/save, translation batches, settings changes).
 No translated text is ever recorded.</source>
@@ -5820,27 +6178,27 @@ No translated text is ever recorded.</source>
 번역된 텍스트는 기록되지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="588"/>
+        <location filename="../settings_dialog.py" line="745"/>
         <source>unavailable</source>
         <translation>사용 불가</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="589"/>
+        <location filename="../settings_dialog.py" line="746"/>
         <source>Key storage: {backend}</source>
         <translation>키 저장소: {backend}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="597"/>
+        <location filename="../settings_dialog.py" line="754"/>
         <source>AI Quality Check</source>
         <translation>AI 품질 검사</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="600"/>
+        <location filename="../settings_dialog.py" line="757"/>
         <source>Enable AI quality check after rule-based QC</source>
         <translation>규칙 기반 QC 후 AI 품질 검사 활성화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="604"/>
+        <location filename="../settings_dialog.py" line="761"/>
         <source>Run the fine-tuned qcgemma4-st Ollama model on each translated string
 after the rule-based quality check. Slower but catches issues the rules miss.
 Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</source>
@@ -5849,27 +6207,41 @@ Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</
 재번역 중에는 비활성화됩니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="612"/>
+        <location filename="../settings_dialog.py" line="769"/>
         <source>Ollama model name for AI quality checks</source>
         <translation>AI 품질 검사를 위한 Ollama 모델 이름</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="613"/>
+        <location filename="../settings_dialog.py" line="770"/>
         <source>AI QC model:</source>
         <translation>AI QC 모델:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="619"/>
+        <location filename="../settings_dialog.py" line="773"/>
+        <source>Automatic self-review after translation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="780"/>
+        <source>After each translation batch, automatically run the quality check,
+mechanically fix every fixable issue, and AI-retranslate any string
+still left with a critical (non-visual) issue — with no prompts.
+Cosmetic/visual issues (UI overflow, added quotes, whitespace) are
+left untouched. Ends with a single summary message.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="793"/>
         <source>Lore RAG (Context Retrieval)</source>
         <translation>설정 RAG (컨텍스트 검색)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="623"/>
+        <location filename="../settings_dialog.py" line="797"/>
         <source>Inject lore context into translation prompts</source>
         <translation>번역 프롬프트에 설정 컨텍스트 주입</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="628"/>
+        <location filename="../settings_dialog.py" line="802"/>
         <source>When enabled, relevant lore articles (factions, places, characters) are
 retrieved from the local lore database and prepended to each translation
 prompt so the AI uses accurate Starfield terminology.
@@ -5880,61 +6252,61 @@ AI가 정확한 스타필드 용어를 사용하도록 합니다.
 번역 → 로어 RAG 컨텍스트...를 통해 UESP에서 문서를 다운로드하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="643"/>
+        <location filename="../settings_dialog.py" line="817"/>
         <source>Maximum characters of lore context injected per prompt.
 Higher values give more context but consume more tokens.</source>
         <translation>프롬프트당 주입되는 최대 설정 컨텍스트 문자 수.
 높은 값은 더 많은 컨텍스트를 제공하지만 더 많은 토큰을 소비합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="646"/>
+        <location filename="../settings_dialog.py" line="820"/>
         <source>Max context chars:</source>
         <translation>최대 컨텍스트 문자:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="652"/>
+        <location filename="../settings_dialog.py" line="826"/>
         <source>NexusMods</source>
         <translation>NexusMods</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="657"/>
+        <location filename="../settings_dialog.py" line="831"/>
         <source>Paste your NexusMods API key here</source>
         <translation>여기에 NexusMods API 키를 붙여넣으세요</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="660"/>
+        <location filename="../settings_dialog.py" line="834"/>
         <source>Personal API key from nexusmods.com → Settings → API Keys.
 Required for uploading mod files and browsing download links.</source>
         <translation>nexusmods.com → 설정 → API 키에서 개인 API 키.
 모드 파일 업로드 및 다운로드 링크 탐색에 필요합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="664"/>
+        <location filename="../settings_dialog.py" line="838"/>
         <source>Show</source>
         <translation>표시</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="673"/>
+        <location filename="../settings_dialog.py" line="847"/>
         <source>API Key:</source>
         <translation>API 키:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="678"/>
+        <location filename="../settings_dialog.py" line="852"/>
         <source>Optional: NexusMods file group ID to attach uploaded files to an existing group.</source>
         <translation>선택 사항: 업로드된 파일을 기존 그룹에 첨부하기 위한 NexusMods 파일 그룹 ID.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="680"/>
+        <location filename="../settings_dialog.py" line="854"/>
         <source>File Group ID:</source>
         <translation>파일 그룹 ID:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="684"/>
+        <location filename="../settings_dialog.py" line="858"/>
         <source>(auto-detect from Firefox / Chromium)</source>
         <translation>(Firefox / Chromium에서 자동 감지)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="686"/>
+        <location filename="../settings_dialog.py" line="860"/>
         <source>Optional: path to a Cookie-Editor JSON export for free-user NexusMods downloads.
 Export steps: install the &apos;Cookie-Editor&apos; browser extension → visit nexusmods.com
 → open Cookie-Editor → Export → JSON → save the file → select it here.
@@ -5945,188 +6317,187 @@ Leave blank to auto-detect cookies from Firefox or Chromium.</source>
 비워 두면 Firefox 또는 Chromium에서 쿠키를 자동으로 감지합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="696"/>
+        <location filename="../settings_dialog.py" line="870"/>
         <source>Cookies JSON:</source>
         <translation>쿠키 JSON:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="702"/>
+        <location filename="../settings_dialog.py" line="876"/>
         <source>Audio / TTS Preview</source>
         <translation>오디오 / TTS 미리보기</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="705"/>
+        <location filename="../settings_dialog.py" line="879"/>
         <source>Enable Audio Preview panel</source>
         <translation>오디오 미리보기 패널 활성화</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="710"/>
+        <location filename="../settings_dialog.py" line="884"/>
         <source>Show the Audio Preview dock so you can play the original game audio
 and synthesize a TTS read-out of your translation for timing comparison.</source>
         <translation>원본 게임 오디오를 재생하고 타이밍 비교를 위해
 번역의 TTS 읽기를 합성할 수 있도록 오디오 미리보기 독을 표시합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="717"/>
+        <location filename="../settings_dialog.py" line="891"/>
         <source>eSpeak-NG (built-in)</source>
         <translation>eSpeak-NG (내장)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="718"/>
+        <location filename="../settings_dialog.py" line="892"/>
         <source>Piper (neural, external binary)</source>
         <translation>Piper (신경망, 외부 바이너리)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="719"/>
+        <location filename="../settings_dialog.py" line="893"/>
         <source>None (duration estimate only)</source>
         <translation>없음 (길이 추정만)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="726"/>
+        <location filename="../settings_dialog.py" line="900"/>
         <source>TTS engine:</source>
         <translation>TTS 엔진:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="731"/>
+        <location filename="../settings_dialog.py" line="905"/>
         <source>eSpeak-NG voice code, e.g. uk, ru, de, fr, en-us.
 Run `espeak-ng --voices` for the full list.</source>
         <translation>eSpeak-NG 음성 코드, 예: uk, ru, de, fr, en-us.
 전체 목록을 보려면 `espeak-ng --voices`를 실행하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="734"/>
+        <location filename="../settings_dialog.py" line="908"/>
         <source>eSpeak voice:</source>
         <translation>eSpeak 음성:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="740"/>
+        <location filename="../settings_dialog.py" line="914"/>
         <source>eSpeak-NG words-per-minute rate (default 130 — slower than natural
 speech to better match game dialogue cadence).</source>
         <translation>eSpeak-NG 분당 단어 수 (기본값 130 — 게임 대화 리듬에 더 잘 맞도록
 자연 발화보다 느림).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="743"/>
+        <location filename="../settings_dialog.py" line="917"/>
         <source>eSpeak speed (WPM):</source>
         <translation>eSpeak 속도 (WPM):</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="748"/>
+        <location filename="../settings_dialog.py" line="922"/>
         <source>Path to the Piper binary, or just &apos;piper&apos; if on PATH.</source>
-        <translation>Piper 바이너리 경로, 또는 PATH에 있으면 'piper'.</translation>
+        <translation>Piper 바이너리 경로, 또는 PATH에 있으면 &apos;piper&apos;.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="750"/>
-        <location filename="../settings_dialog.py" line="761"/>
-        <location filename="../settings_dialog.py" line="775"/>
-        <location filename="../settings_dialog.py" line="833"/>
+        <location filename="../settings_dialog.py" line="924"/>
+        <location filename="../settings_dialog.py" line="935"/>
+        <location filename="../settings_dialog.py" line="949"/>
+        <location filename="../settings_dialog.py" line="1058"/>
         <source>…</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="754"/>
+        <location filename="../settings_dialog.py" line="928"/>
         <source>Piper binary:</source>
         <translation>Piper 바이너리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="758"/>
+        <location filename="../settings_dialog.py" line="932"/>
         <source>path/to/model.onnx</source>
         <translation>path/to/model.onnx</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="759"/>
+        <location filename="../settings_dialog.py" line="933"/>
         <source>Path to the Piper .onnx voice model file.</source>
         <translation>Piper .onnx 음성 모델 파일 경로.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="765"/>
+        <location filename="../settings_dialog.py" line="939"/>
         <source>Piper model:</source>
         <translation>Piper 모델:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="769"/>
+        <location filename="../settings_dialog.py" line="943"/>
         <source>Root dir of extracted game audio files</source>
         <translation>추출된 게임 오디오 파일의 루트 디렉토리</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="771"/>
+        <location filename="../settings_dialog.py" line="945"/>
         <source>Directory containing extracted Starfield/Fallout/Skyrim audio files.
 The panel will try to auto-locate files by form ID from the filename.</source>
         <translation>추출된 Starfield/Fallout/Skyrim 오디오 파일이 있는 디렉토리.
 패널이 파일 이름에서 폼 ID로 파일을 자동 찾으려고 시도합니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="779"/>
+        <location filename="../settings_dialog.py" line="953"/>
         <source>Audio directory:</source>
         <translation>오디오 디렉토리:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="782"/>
+        <location filename="../settings_dialog.py" line="956"/>
         <source>Auto-synthesize TTS on string selection</source>
         <translation>문자열 선택 시 TTS 자동 합성</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="788"/>
+        <location filename="../settings_dialog.py" line="962"/>
         <source>Automatically synthesize the TTS read-out whenever you select
 a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
         <translation>새 문자열을 선택할 때마다 자동으로 TTS 읽기를 합성합니다.
 합성에 1초 이상 걸리면 탐색이 느려질 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="801"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English Anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation>💡 팁: Starfield 우크라이나어 현지화에 최적화된 translategemma3-st(커스텀 수정)를 사용합니다. 영어 앵커 사용: &apos;To Ukrainian:&apos;, &apos;To English:&apos; 등.</translation>
+        <translation type="vanished">💡 팁: Starfield 우크라이나어 현지화에 최적화된 translategemma3-st(커스텀 수정)를 사용합니다. 영어 앵커 사용: &apos;To Ukrainian:&apos;, &apos;To English:&apos; 등.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="850"/>
+        <location filename="../settings_dialog.py" line="1075"/>
         <source>● {n} model(s) loaded</source>
         <translation>● {n}개 모델 로드됨</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="854"/>
+        <location filename="../settings_dialog.py" line="1079"/>
         <source>● Refresh failed</source>
         <translation>● 새로 고침 실패</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="857"/>
+        <location filename="../settings_dialog.py" line="1082"/>
         <source>Refresh Failed</source>
         <translation>새로 고침 실패</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="858"/>
+        <location filename="../settings_dialog.py" line="1083"/>
         <source>Could not load models from {url}:
 {error}</source>
         <translation>{url}에서 모델을 로드할 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="871"/>
+        <location filename="../settings_dialog.py" line="1096"/>
         <source>● Testing Ollama...</source>
         <translation>● Ollama 테스트 중...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="884"/>
+        <location filename="../settings_dialog.py" line="1109"/>
         <source>● Model &apos;{model}&apos; not found</source>
-        <translation>● 모델 '{model}'을(를) 찾을 수 없습니다</translation>
+        <translation>● 모델 &apos;{model}&apos;을(를) 찾을 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="887"/>
+        <location filename="../settings_dialog.py" line="1112"/>
         <source>Model Not Found</source>
         <translation>모델 없음</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="888"/>
+        <location filename="../settings_dialog.py" line="1113"/>
         <source>Model &apos;{model}&apos; is not installed.
 
 Available models:
 </source>
-        <translation>모델 '{model}'이(가) 설치되어 있지 않습니다.
+        <translation>모델 &apos;{model}&apos;이(가) 설치되어 있지 않습니다.
 
 사용 가능한 모델:
 </translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="891"/>
+        <location filename="../settings_dialog.py" line="1116"/>
         <source>
 
 Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</source>
@@ -6135,34 +6506,34 @@ Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</
 설치 방법: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="894"/>
+        <location filename="../settings_dialog.py" line="1119"/>
         <source>● Connected ✓</source>
         <translation>● 연결됨 ✓</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="896"/>
+        <location filename="../settings_dialog.py" line="1121"/>
         <source>Success</source>
         <translation>성공</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="896"/>
+        <location filename="../settings_dialog.py" line="1121"/>
         <source>Connected to Ollama!
 Model &apos;{model}&apos; is ready.</source>
         <translation>Ollama에 연결되었습니다!
-모델 '{model}'이(가) 준비되었습니다.</translation>
+모델 &apos;{model}&apos;이(가) 준비되었습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="899"/>
+        <location filename="../settings_dialog.py" line="1124"/>
         <source>● Connection failed</source>
         <translation>● 연결 실패</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="902"/>
+        <location filename="../settings_dialog.py" line="1127"/>
         <source>Connection Error</source>
         <translation>연결 오류</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="903"/>
+        <location filename="../settings_dialog.py" line="1128"/>
         <source>Could not connect to Ollama at {url}
 
 Make sure Ollama is running:
@@ -6175,122 +6546,127 @@ Ollama가 실행 중인지 확인하세요:
   • 기본 URL: http://localhost:11434</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="909"/>
+        <location filename="../settings_dialog.py" line="1134"/>
         <source>● Error</source>
         <translation>● 오류</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="911"/>
+        <location filename="../settings_dialog.py" line="1136"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="911"/>
+        <location filename="../settings_dialog.py" line="1136"/>
         <source>Unexpected error: {error}</source>
         <translation>예기치 않은 오류: {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="918"/>
+        <location filename="../settings_dialog.py" line="1143"/>
         <source>Select Config Directory</source>
         <translation>구성 디렉토리 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="933"/>
+        <location filename="../settings_dialog.py" line="1158"/>
         <source>Select Cache Directory</source>
         <translation>캐시 디렉토리 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="947"/>
+        <location filename="../settings_dialog.py" line="1183"/>
+        <source>Select Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1191"/>
         <source>Select Protected Terms File</source>
         <translation>보호 용어 파일 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="948"/>
+        <location filename="../settings_dialog.py" line="1192"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>텍스트 파일 (*.txt *.TXT);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="956"/>
+        <location filename="../settings_dialog.py" line="1200"/>
         <source>Select Cookie-Editor JSON Export</source>
         <translation>Cookie-Editor JSON 내보내기 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="957"/>
+        <location filename="../settings_dialog.py" line="1201"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>JSON 파일 (*.json *.JSON);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="972"/>
+        <location filename="../settings_dialog.py" line="1216"/>
         <source>Select Piper Binary</source>
         <translation>Piper 바이너리 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="972"/>
+        <location filename="../settings_dialog.py" line="1216"/>
         <source>Executable (*);;All Files (*)</source>
         <translation>실행 파일 (*);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="980"/>
+        <location filename="../settings_dialog.py" line="1224"/>
         <source>Select Piper Voice Model</source>
         <translation>Piper 음성 모델 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="981"/>
+        <location filename="../settings_dialog.py" line="1225"/>
         <source>ONNX model (*.onnx);;All Files (*)</source>
         <translation>ONNX 모델 (*.onnx);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="990"/>
+        <location filename="../settings_dialog.py" line="1234"/>
         <source>Select audio files directory</source>
         <translation>오디오 파일 디렉토리 선택</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1004"/>
+        <location filename="../settings_dialog.py" line="1248"/>
         <source>⚠  Restart the application to apply the new language.</source>
         <translation>⚠  새 언어를 적용하려면 애플리케이션을 재시작하세요.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1059"/>
+        <location filename="../settings_dialog.py" line="1303"/>
         <source>Unsaved Changes</source>
         <translation>저장되지 않은 변경 사항</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1060"/>
+        <location filename="../settings_dialog.py" line="1304"/>
         <source>You have unsaved changes.
 Discard them and close?</source>
         <translation>저장되지 않은 변경 사항이 있습니다.
 삭제하고 닫으시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1076"/>
-        <location filename="../settings_dialog.py" line="1093"/>
+        <location filename="../settings_dialog.py" line="1320"/>
+        <location filename="../settings_dialog.py" line="1337"/>
         <source>Cache</source>
         <translation>캐시</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1076"/>
+        <location filename="../settings_dialog.py" line="1320"/>
         <source>No translation cache is active.</source>
         <translation>활성 번역 캐시가 없습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1080"/>
+        <location filename="../settings_dialog.py" line="1324"/>
         <source>Remove all cached translations?
 This cannot be undone.</source>
         <translation>모든 캐시된 번역을 제거하시겠습니까?
 이 작업은 취소할 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1093"/>
+        <location filename="../settings_dialog.py" line="1337"/>
         <source>Translation cache cleared.</source>
         <translation>번역 캐시가 지워졌습니다.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1169"/>
+        <location filename="../settings_dialog.py" line="1419"/>
         <source>Keyboard Shortcuts</source>
         <translation>키보드 단축키</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1198"/>
+        <location filename="../settings_dialog.py" line="1448"/>
         <source>Reset All to Defaults</source>
         <translation>모두 기본값으로 초기화</translation>
     </message>
@@ -6298,22 +6674,30 @@ This cannot be undone.</source>
 <context>
     <name>StringEditDialog</name>
     <message>
-        <location filename="../string_table.py" line="717"/>
         <source>Edit String - ID: 0x{row_id:08X}</source>
-        <translation>문자열 편집 - ID: 0x{row_id:08X}</translation>
+        <translation type="vanished">문자열 편집 - ID: 0x{row_id:08X}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="726"/>
         <source>&lt;b&gt;String ID:&lt;/b&gt; 0x{row_id:08X} ({row_id})</source>
-        <translation>&lt;b&gt;문자열 ID:&lt;/b&gt; 0x{row_id:08X} ({row_id})</translation>
+        <translation type="vanished">&lt;b&gt;문자열 ID:&lt;/b&gt; 0x{row_id:08X} ({row_id})</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="733"/>
+        <location filename="../string_table.py" line="769"/>
+        <source>Edit String - ID: {id}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../string_table.py" line="776"/>
+        <source>&lt;b&gt;String ID:&lt;/b&gt; {id}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../string_table.py" line="780"/>
         <source>&lt;b&gt;Original Text:&lt;/b&gt;</source>
         <translation>&lt;b&gt;원본 텍스트:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="744"/>
+        <location filename="../string_table.py" line="791"/>
         <source>&lt;b&gt;Translated Text:&lt;/b&gt;</source>
         <translation>&lt;b&gt;번역된 텍스트:&lt;/b&gt;</translation>
     </message>
@@ -6321,52 +6705,52 @@ This cannot be undone.</source>
 <context>
     <name>StringTableModel</name>
     <message>
-        <location filename="../string_table.py" line="543"/>
+        <location filename="../string_table.py" line="589"/>
         <source>Translated — quality error</source>
         <translation>번역됨 — 품질 오류</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="545"/>
+        <location filename="../string_table.py" line="591"/>
         <source>Translated — quality warning</source>
         <translation>번역됨 — 품질 경고</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="546"/>
+        <location filename="../string_table.py" line="592"/>
         <source>Translated — OK</source>
         <translation>번역됨 — 정상</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="550"/>
+        <location filename="../string_table.py" line="596"/>
         <source>Pending — difficulty: {level}</source>
         <translation>대기 중 — 난이도: {level}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="553"/>
+        <location filename="../string_table.py" line="599"/>
         <source>Pending</source>
         <translation>대기 중</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="555"/>
+        <location filename="../string_table.py" line="601"/>
         <source>Translation error</source>
         <translation>번역 오류</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="557"/>
+        <location filename="../string_table.py" line="603"/>
         <source>String ID: {id}</source>
         <translation>문자열 ID: {id}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="559"/>
+        <location filename="../string_table.py" line="605"/>
         <source>Original: {text}</source>
         <translation>원본: {text}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="562"/>
+        <location filename="../string_table.py" line="608"/>
         <source>Translation: {text}</source>
         <translation>번역: {text}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="562"/>
+        <location filename="../string_table.py" line="608"/>
         <source>Not translated</source>
         <translation>미번역</translation>
     </message>
@@ -6374,37 +6758,37 @@ This cannot be undone.</source>
 <context>
     <name>StringTableView</name>
     <message>
-        <location filename="../string_table.py" line="981"/>
+        <location filename="../string_table.py" line="1028"/>
         <source>Edit String...</source>
         <translation>문자열 편집...</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="984"/>
+        <location filename="../string_table.py" line="1031"/>
         <source>View Diff...</source>
         <translation>차이 보기...</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="989"/>
+        <location filename="../string_table.py" line="1036"/>
         <source>Copy Translation	Ctrl+C</source>
         <translation>번역 복사	Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="992"/>
+        <location filename="../string_table.py" line="1039"/>
         <source>Copy Source	Ctrl+Shift+C</source>
         <translation>원본 복사	Ctrl+Shift+C</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="997"/>
+        <location filename="../string_table.py" line="1044"/>
         <source>Paste to Translation	Ctrl+V</source>
         <translation>번역에 붙여넣기	Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1000"/>
+        <location filename="../string_table.py" line="1047"/>
         <source>Fill Translation from Source	Ctrl+Shift+V</source>
         <translation>원본에서 번역 채우기	Ctrl+Shift+V</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1004"/>
+        <location filename="../string_table.py" line="1051"/>
         <source>Assign Character Profile…</source>
         <translation>캐릭터 프로필 할당…</translation>
     </message>
@@ -6527,7 +6911,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_dialog.py" line="153"/>
         <source>A theme named &apos;{name}&apos; already exists.</source>
-        <translation>'{name}'이라는 이름의 테마가 이미 존재합니다.</translation>
+        <translation>&apos;{name}&apos;이라는 이름의 테마가 이미 존재합니다.</translation>
     </message>
     <message>
         <location filename="../theme_dialog.py" line="167"/>
@@ -6558,7 +6942,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_dialog.py" line="183"/>
         <source>Theme &apos;{name}&apos; saved successfully.</source>
-        <translation>'{name}' 테마가 성공적으로 저장되었습니다.</translation>
+        <translation>&apos;{name}&apos; 테마가 성공적으로 저장되었습니다.</translation>
     </message>
     <message>
         <location filename="../theme_dialog.py" line="191"/>
@@ -6588,7 +6972,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_dialog.py" line="203"/>
         <source>Delete custom theme &apos;{name}&apos;?</source>
-        <translation>사용자 정의 테마 '{name}'을(를) 삭제하시겠습니까?</translation>
+        <translation>사용자 정의 테마 &apos;{name}&apos;을(를) 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../theme_dialog.py" line="210"/>
@@ -6619,7 +7003,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_dialog.py" line="237"/>
         <source>Imported as &apos;{name}&apos;</source>
-        <translation>'{name}'으로 가져옴</translation>
+        <translation>&apos;{name}&apos;으로 가져옴</translation>
     </message>
     <message>
         <location filename="../theme_dialog.py" line="239"/>
@@ -6680,52 +7064,92 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
 <context>
     <name>ThemeManager</name>
     <message>
-        <location filename="../theme_manager.py" line="507"/>
+        <location filename="../theme_manager.py" line="922"/>
         <source>Follows the OS light/dark preference. Currently using: {theme}.</source>
         <translation>OS 밝음/어두움 설정을 따릅니다. 현재 사용 중: {theme}.</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="512"/>
+        <location filename="../theme_manager.py" line="927"/>
         <source>Default dark theme with blue accents (slate colors)</source>
         <translation>파란색 강조의 기본 다크 테마 (슬레이트 색상)</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="513"/>
+        <location filename="../theme_manager.py" line="928"/>
         <source>Deep dark blue, minimal contrast</source>
         <translation>짙은 다크 블루, 최소 대비</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="514"/>
+        <location filename="../theme_manager.py" line="929"/>
         <source>Arctic blue-gray palette, soft on eyes</source>
         <translation>아크틱 블루-그레이 팔레트, 눈에 부드러움</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="515"/>
+        <location filename="../theme_manager.py" line="930"/>
         <source>Purple-accented dark theme</source>
         <translation>보라색 강조의 다크 테마</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="516"/>
+        <location filename="../theme_manager.py" line="931"/>
         <source>Warm dark theme with blue selection</source>
         <translation>파란색 선택의 따뜻한 다크 테마</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="517"/>
+        <location filename="../theme_manager.py" line="932"/>
         <source>Clean light theme with blue accents</source>
         <translation>파란색 강조의 깔끔한 라이트 테마</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="518"/>
+        <location filename="../theme_manager.py" line="933"/>
         <source>Low-contrast dark, optimized for readability</source>
         <translation>가독성에 최적화된 저대비 다크</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="519"/>
+        <location filename="../theme_manager.py" line="934"/>
+        <source>Warm retro dark with amber/orange accents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="935"/>
+        <source>Deep navy cyberpunk with blue highlights</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="936"/>
+        <source>Classic terminal dark with vibrant green accents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="937"/>
+        <source>Atom editor inspired, muted blue accents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="938"/>
+        <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="939"/>
+        <source>Warm cream light theme, easy on eyes for long sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="940"/>
+        <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="941"/>
+        <source>Green-on-black terminal/computer screen aesthetic from the game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../theme_manager.py" line="942"/>
         <source>WCAG AAA black/white/cyan theme for visually impaired users</source>
         <translation>시각 장애인을 위한 WCAG AAA 흑백/청록 테마</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="526"/>
+        <location filename="../theme_manager.py" line="949"/>
         <source>Custom theme loaded from {path}.qss</source>
         <translation>{path}.qss에서 로드된 사용자 정의 테마</translation>
     </message>
@@ -6840,6 +7264,64 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
         <location filename="../translation_editor_pane.py" line="101"/>
         <source>✓  Approve  Ctrl+Enter</source>
         <translation>✓  승인  Ctrl+Enter</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateDialog</name>
+    <message>
+        <location filename="../update_dialog.py" line="65"/>
+        <source>Update Available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="94"/>
+        <source>What&apos;s new:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="97"/>
+        <source>(no release notes provided)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="118"/>
+        <source>Download  {self._new}  ({size_str})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="123"/>
+        <source>Open Releases Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="129"/>
+        <source>Open in Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="135"/>
+        <source>Later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="153"/>
+        <source>Downloading {asset[&apos;name&apos;]}…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="164"/>
+        <source>Download complete — saved to {path}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="166"/>
+        <source>Open Downloads Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../update_dialog.py" line="176"/>
+        <source>Download failed: {msg}</source>
+        <translation type="unfinished">다운로드 실패: {msg}</translation>
     </message>
 </context>
 <context>
@@ -7261,7 +7743,7 @@ This will only update strings that are currently untranslated or marked as pendi
     <message>
         <location filename="../macro_dialog.py" line="54"/>
         <source>e.g.  &apos; &apos;  or  \1  (empty → delete)</source>
-        <translation>예:  ' '  또는  \1  (비어 있으면 → 삭제)</translation>
+        <translation>예:  &apos; &apos;  또는  \1  (비어 있으면 → 삭제)</translation>
     </message>
     <message>
         <location filename="../macro_dialog.py" line="60"/>
@@ -7312,12 +7794,12 @@ This will only update strings that are currently untranslated or marked as pendi
 <context>
     <name>_TermDiscoveryDialog</name>
     <message>
-        <location filename="../main_window.py" line="6212"/>
+        <location filename="../main_window.py" line="6722"/>
         <source>Discovered Terms — Review &amp; Approve</source>
         <translation>발견된 용어 — 검토 및 승인</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6220"/>
+        <location filename="../main_window.py" line="6730"/>
         <source>Candidate terms extracted from the loaded strings.
 Check the ones to add to the protection list. Edit category as needed.
 &lt;b&gt;Score&lt;/b&gt; = cross-match count × 3 + frequency (higher = stronger signal).</source>
@@ -7326,52 +7808,52 @@ Check the ones to add to the protection list. Edit category as needed.
 &lt;b&gt;점수&lt;/b&gt; = 교차 일치 수 × 3 + 빈도 (높을수록 = 더 강한 신호).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6230"/>
+        <location filename="../main_window.py" line="6740"/>
         <source>Filter:</source>
         <translation>필터:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6232"/>
+        <location filename="../main_window.py" line="6742"/>
         <source>type to filter…</source>
         <translation>필터링하려면 입력하세요…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6236"/>
+        <location filename="../main_window.py" line="6746"/>
         <source>Select All</source>
         <translation>모두 선택</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6238"/>
+        <location filename="../main_window.py" line="6748"/>
         <source>Select None</source>
         <translation>선택 해제</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6248"/>
+        <location filename="../main_window.py" line="6758"/>
         <source>✓</source>
         <translation>✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6248"/>
+        <location filename="../main_window.py" line="6758"/>
         <source>Term</source>
         <translation>용어</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6249"/>
+        <location filename="../main_window.py" line="6759"/>
         <source>Category</source>
         <translation>카테고리</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6249"/>
+        <location filename="../main_window.py" line="6759"/>
         <source>Freq</source>
         <translation>빈도</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6249"/>
+        <location filename="../main_window.py" line="6759"/>
         <source>Score</source>
         <translation>점수</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6265"/>
+        <location filename="../main_window.py" line="6775"/>
         <source>{len(self._candidates)} candidates found</source>
         <translation>{len(self._candidates)}개의 후보 찾음</translation>
     </message>
@@ -7379,22 +7861,22 @@ Check the ones to add to the protection list. Edit category as needed.
 <context>
     <name>_WelcomeWidget</name>
     <message>
-        <location filename="../main_window.py" line="160"/>
+        <location filename="../main_window.py" line="162"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings AI Translator</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="168"/>
+        <location filename="../main_window.py" line="170"/>
         <source>Open a string file or plugin to begin</source>
         <translation>시작하려면 문자열 파일 또는 플러그인을 여세요</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="176"/>
+        <location filename="../main_window.py" line="178"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="201"/>
+        <location filename="../main_window.py" line="203"/>
         <source>or drag &amp; drop files here</source>
         <translation>또는 여기에 파일을 드래그 앤 드롭하세요</translation>
     </message>
