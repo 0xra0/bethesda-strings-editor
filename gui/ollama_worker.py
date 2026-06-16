@@ -6,6 +6,7 @@ import json as _json
 import logging
 import re
 import threading
+import time
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
@@ -858,15 +859,32 @@ class OllamaWorker(QObject):
         session.mount("https://", adapter)
         return session
 
-    def _stream_ollama(self, payload: Dict[str, Any], timeout: int) -> Optional[str]:
+    def _stream_ollama(
+        self,
+        payload: Dict[str, Any],
+        timeout: int,
+        stall_timeout: Optional[int] = None,
+    ) -> Optional[str]:
         """POST *payload* to /api/generate in streaming mode and collect the full response.
 
         Returns the stripped response text (empty string if model gave no output),
         or None if the stop flag was set before or during generation.
 
+        ``timeout`` bounds time-to-first-token (it has to absorb Ollama's GPU queue
+        wait, which can be minutes deep in a parallel batch).  ``stall_timeout``
+        bounds the gap *between* streamed tokens once generation has started — a
+        much tighter bound enforced by a background watchdog, so a generously sized
+        first-token ``timeout`` can never be wasted by a frozen generation.  Steady
+        but slow generation streams within ``stall_timeout`` and completes normally;
+        only a genuine freeze trips the watchdog (reported as a ReadTimeout).
+
         Registers the live requests.Response in self._active_responses under the
         calling thread's ID so stop() can close it to abort immediately.
         """
+        if stall_timeout is None:
+            stall_timeout = self._STREAM_STALL_TIMEOUT
+        # The inter-token bound is meaningless if it exceeds the overall budget.
+        stall_timeout = min(stall_timeout, timeout)
         url = f"{self.base_url}/api/generate"
         stream_payload = {**payload, "stream": True}
         # Remove any stale stream=False that the caller may have set.
@@ -901,12 +919,36 @@ class OllamaWorker(QObject):
         with self._responses_lock:
             self._active_responses[tid] = response
 
+        # Inter-token stall watchdog.  Once the first token has streamed back, a
+        # token should arrive at least every ``stall_timeout`` seconds; if it does
+        # not, generation has frozen, so close the socket to abort (the same
+        # mechanism stop() uses).  Before the first token we leave timing to the
+        # request-level read timeout so a deep GPU queue is waited out patiently.
+        progress = {"last": time.monotonic(), "started": False, "stalled": False}
+        watch_stop = threading.Event()
+
+        def _watchdog() -> None:
+            poll = max(1.0, min(5.0, stall_timeout / 2))
+            while not watch_stop.wait(poll):
+                if progress["started"] and (time.monotonic() - progress["last"]) > stall_timeout:
+                    progress["stalled"] = True
+                    try:
+                        response.close()
+                    except Exception:
+                        pass
+                    return
+
+        watcher = threading.Thread(target=_watchdog, name="ollama-stall-watchdog", daemon=True)
+        watcher.start()
+
         try:
             parts: list = []
             for line in response.iter_lines():
                 with QMutexLocker(self._mutex):
                     if self._stop_flag:
                         return None
+                progress["last"] = time.monotonic()
+                progress["started"] = True
                 if not line:
                     continue
                 try:
@@ -917,13 +959,22 @@ class OllamaWorker(QObject):
                 if chunk.get("done"):
                     break
             return "".join(parts).strip()
-        except OSError:
-            # Socket was closed by stop() from the main thread — normal shutdown.
+        except (OSError,
+                requests.exceptions.ChunkedEncodingError,
+                requests.exceptions.ConnectionError) as exc:
+            # The watchdog closed the socket on an inter-token stall — surface it as
+            # a read timeout so the caller skips this string gracefully.
+            if progress["stalled"]:
+                raise requests.exceptions.ReadTimeout(
+                    f"Generation stalled: no token for {stall_timeout}s"
+                ) from exc
+            # Otherwise the socket was closed by stop() from the main thread.
             with QMutexLocker(self._mutex):
                 if self._stop_flag:
                     return None
             raise
         finally:
+            watch_stop.set()
             with self._responses_lock:
                 self._active_responses.pop(tid, None)
             try:
@@ -1141,6 +1192,12 @@ class OllamaWorker(QObject):
     _CHUNK_TRANSLATE_THRESHOLD = 12000  # chars — above this, split automatically
     _MAX_CHUNK_CHARS           = 4000   # max chars per chunk (for truly large texts)
     _CHUNK_TIMEOUT             = 180    # seconds per-chunk (vs 300 global)
+    # Max seconds allowed between two streamed tokens *once generation has started*.
+    # The request-level timeout has to be large enough to cover Ollama's GPU queue
+    # wait before the first token, which makes it useless for catching a generation
+    # that freezes mid-stream.  A healthy generation streams a token every few
+    # seconds even on a slow GPU, so a gap this long means it has genuinely stalled.
+    _STREAM_STALL_TIMEOUT      = 180
 
     @staticmethod
     def _split_text_into_chunks(text: str, max_chars: int) -> list:
@@ -1658,24 +1715,25 @@ class OllamaWorker(QObject):
             # thinking models also emit a reasoning chain before the translation —
             # this length term covers both.
             model_timeout += max(0, len(protected_text) // 20)
-            # Queue-wait headroom.  In streaming mode requests raises ReadTimeout when
-            # *no* token arrives within model_timeout — i.e. it bounds time-to-first-
-            # token, not generation.  Ollama serialises GPU work, so when several
-            # requests are posted at once (effective_workers) the trailing ones sit
-            # behind the others' full generations before their first token streams
-            # back.  The previous flat timeout only covered one string's own work, so
-            # clustered long dialogue strings (which the batch sorts to the end)
-            # reproducibly timed out before they ever started — e.g. mamaylm's 749s on
-            # a 580-char string with 4 in flight.  Add headroom for up to 3 queued
-            # generations ahead of this one; the per-generation estimate (first-token
-            # latency + slow-GPU token rate) is independent of the model's flat base so
-            # high-concurrency models don't get an absurd timeout.  A request that is
-            # served promptly still returns immediately, so the larger budget only ever
-            # matters when the GPU queue is genuinely deep.
+            # Queue-wait headroom.  In streaming mode `requests` raises ReadTimeout
+            # when *no* token arrives within model_timeout — i.e. it bounds time-to-
+            # first-token, not generation.  Ollama serialises GPU work, so when
+            # effective_workers requests are posted at once the trailing ones sit
+            # behind the others' *full* generations before their first token streams
+            # back.  At this point model_timeout is the budget for THIS string's own
+            # generation (base + length scaling); a string posted N-deep in the queue
+            # must additionally wait out N comparable generations ahead of it (the
+            # batch sorts long strings to the end, so the queue ahead of a long string
+            # is itself long).  Budget the queue by multiplying the single-generation
+            # cost by the queue depth.  This self-calibrates — a slow model (high base)
+            # or long string (high length term) scales its queue budget in proportion
+            # — where the previous flat additive estimate underbudgeted slow models
+            # (mamaylm timed out at 1706s on a 768-char string with 4 in flight).  The
+            # larger budget only ever bounds time-to-first-token; a request served
+            # promptly returns immediately, and the inter-token stall watchdog in
+            # _stream_ollama stops a frozen generation from burning the whole budget.
             queue_slots = min(max(0, self._effective_workers - 1), 3)
-            if queue_slots:
-                single_gen_estimate = 60 + len(protected_text) // 3
-                model_timeout += queue_slots * single_gen_estimate
+            model_timeout *= 1 + queue_slots
 
             # Adaptive num_ctx: allocate only what this string needs.
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
