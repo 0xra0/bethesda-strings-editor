@@ -768,6 +768,12 @@ class OllamaWorker(QObject):
         # under self._mutex.
         self._executor: Optional[ThreadPoolExecutor] = None
 
+        # Number of requests actually posted to Ollama at once during the current
+        # batch (= min(max_workers, model max_concurrent)). Used to size the
+        # streaming read timeout to cover Ollama's GPU-serialised queue wait.
+        # Set in translate_batch(); 1 until a batch starts.
+        self._effective_workers = 1
+
         # Maps thread-id → active streaming requests.Response so stop() can
         # close them to abort in-flight Ollama calls immediately.
         self._active_responses: Dict[int, Any] = {}
@@ -1039,6 +1045,9 @@ class OllamaWorker(QObject):
         model_config = self._get_model_config(batch_model or self.model)
         model_max_concurrent = int(model_config.get("max_concurrent") or self.max_workers)
         effective_workers = min(self.max_workers, model_max_concurrent)
+        # Expose the live concurrency to _translate_single so it can size each
+        # request's streaming read timeout to the GPU-serialised queue depth.
+        self._effective_workers = effective_workers
 
         dedup_count = sum(len(v) for v in followers.values())
         preflight_hits = completed_count
@@ -1646,13 +1655,27 @@ class OllamaWorker(QObject):
             model_timeout = int(model_config.get("timeout") or self._session.timeout)  # type: ignore[arg-type]
             # Scale the timeout with text length for *every* model, not just thinking
             # ones.  Generation time grows with output length (≈ input length), and
-            # because the GPU serialises requests a large string can sit behind several
-            # others in Ollama's queue before its first token even arrives.  The flat
-            # per-model timeout (e.g. mamaylm's 720s) only covers a *short* string's
-            # queue wait — without this length term a big book/document string
-            # reproducibly times out on slower GPUs.  Thinking models also emit a
-            # reasoning chain before the translation, which this same scaling covers.
+            # thinking models also emit a reasoning chain before the translation —
+            # this length term covers both.
             model_timeout += max(0, len(protected_text) // 20)
+            # Queue-wait headroom.  In streaming mode requests raises ReadTimeout when
+            # *no* token arrives within model_timeout — i.e. it bounds time-to-first-
+            # token, not generation.  Ollama serialises GPU work, so when several
+            # requests are posted at once (effective_workers) the trailing ones sit
+            # behind the others' full generations before their first token streams
+            # back.  The previous flat timeout only covered one string's own work, so
+            # clustered long dialogue strings (which the batch sorts to the end)
+            # reproducibly timed out before they ever started — e.g. mamaylm's 749s on
+            # a 580-char string with 4 in flight.  Add headroom for up to 3 queued
+            # generations ahead of this one; the per-generation estimate (first-token
+            # latency + slow-GPU token rate) is independent of the model's flat base so
+            # high-concurrency models don't get an absurd timeout.  A request that is
+            # served promptly still returns immediately, so the larger budget only ever
+            # matters when the GPU queue is genuinely deep.
+            queue_slots = min(max(0, self._effective_workers - 1), 3)
+            if queue_slots:
+                single_gen_estimate = 60 + len(protected_text) // 3
+                model_timeout += queue_slots * single_gen_estimate
 
             # Adaptive num_ctx: allocate only what this string needs.
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
