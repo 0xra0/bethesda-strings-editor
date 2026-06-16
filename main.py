@@ -20,16 +20,11 @@ from PySide6.QtGui import QFont
 from gui.main_window import MainWindow
 from gui.theme_manager import ThemeManager
 from gui.app_settings import load_settings, apply_theme, get_config_path
+from gui.log_setup import setup_logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler('translator.log', encoding='utf-8')
-    ]
-)
+# Configure logging: colored, bracketed [INFO]/[WARN]/[ERROR] level tags on the
+# console; plain (ANSI-free) text mirrored to translator.log.
+setup_logging(level=logging.INFO, log_file='translator.log')
 logger = logging.getLogger(__name__)
 
 # Global theme manager instance
