@@ -40,7 +40,7 @@ ollama create qcgemma4-st -f Modelfile.qc
 
 ## Compiling UI Translations
 
-UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compiled binary). Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`. After editing any `.ts` file:
+UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compiled binary). Supported locales: `uk_UA`, `de_DE`, `es_ES`, `fr_FR`, `ko_KR`, `pl_PL`, `cs_CZ`. After editing any `.ts` file:
 
 ```bash
 ./scripts/compile_translations.sh
