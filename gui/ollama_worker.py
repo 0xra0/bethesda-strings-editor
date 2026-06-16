@@ -780,6 +780,17 @@ class OllamaWorker(QObject):
         self._active_responses: Dict[int, Any] = {}
         self._responses_lock = threading.Lock()
 
+        # Wedged-backend circuit breaker.  A read timeout means Ollama returned
+        # *no bytes* for the whole first-token budget — i.e. it wedged, not merely
+        # slowed.  When several strings in a row time out with no success between
+        # them the backend is stuck (a slow GPU can lock up under sustained
+        # parallel load), so abort the batch instead of letting every remaining
+        # string burn its full budget.  All three are guarded by self._mutex and
+        # reset at the start of each batch.
+        self._consecutive_timeouts = 0
+        self._wedge_threshold = 0   # set per-batch from effective_workers
+        self._backend_wedged = False
+
         self._session = self._make_session()
 
         self.enable_term_protection = enable_term_protection
@@ -992,6 +1003,8 @@ class OllamaWorker(QObject):
         # ── Reset state from any previous run ────────────────────────────────
         with QMutexLocker(self._mutex):
             self._stop_flag = False
+            self._consecutive_timeouts = 0
+            self._backend_wedged = False
         self._session = self._make_session()
 
         total = len(requests)
@@ -1099,6 +1112,12 @@ class OllamaWorker(QObject):
         # Expose the live concurrency to _translate_single so it can size each
         # request's streaming read timeout to the GPU-serialised queue depth.
         self._effective_workers = effective_workers
+        # Trip the wedged-backend breaker once roughly a full wave of in-flight
+        # requests (plus one) has timed out with no success between them.  Healthy
+        # batches reset the counter on every completed string, so sporadic timeouts
+        # never accumulate this far — only a genuinely stuck backend does.
+        with QMutexLocker(self._mutex):
+            self._wedge_threshold = max(4, effective_workers + 1)
 
         dedup_count = sum(len(v) for v in followers.values())
         preflight_hits = completed_count
@@ -1121,6 +1140,26 @@ class OllamaWorker(QObject):
             for future in as_completed(future_to_req):
                 with QMutexLocker(self._mutex):
                     stopping = self._stop_flag
+                    wedged = self._backend_wedged
+
+                if wedged:
+                    pending_n = sum(1 for f in future_to_req if not f.done())
+                    logger.error(
+                        "Ollama backend wedged — aborting batch (%d futures pending)",
+                        pending_n,
+                    )
+                    for f in future_to_req:
+                        f.cancel()
+                    self.error.emit(
+                        f"Ollama stopped responding: several translations in a row "
+                        f"returned no output, so the backend has wedged (a slow GPU "
+                        f"can lock up under sustained parallel load). Aborted with "
+                        f"{pending_n} string(s) left. Restart Ollama (e.g. "
+                        f"`ollama stop {self.model}` or restart the service), lower "
+                        f"'Max workers' in Settings (try 1–2), then run Translate All "
+                        f"again — already-translated strings are cached and skipped."
+                    )
+                    break
 
                 if stopping:
                     logger.info(
@@ -1142,6 +1181,9 @@ class OllamaWorker(QObject):
                         completed_count += 1 + len(req_followers)
                         self.progress.emit(completed_count, total)
                     elif translated:
+                        # A real completion clears the wedged-backend run counter.
+                        with QMutexLocker(self._mutex):
+                            self._consecutive_timeouts = 0
                         self.translation_ready.emit(req.index, translated, req.string_id)
                         successful += 1
                         completed_count += 1
@@ -1371,6 +1413,7 @@ class OllamaWorker(QObject):
             try:
                 t = self._call_ollama_chunk(req, chunk, i, total)
             except requests.exceptions.Timeout:
+                self._note_timeout()
                 raise Exception(
                     f"Chunk {i}/{total} timed out (>{self._CHUNK_TIMEOUT}s) for "
                     f"string {req.string_id}. Try reducing the chunk size."
@@ -1716,24 +1759,24 @@ class OllamaWorker(QObject):
             # this length term covers both.
             model_timeout += max(0, len(protected_text) // 20)
             # Queue-wait headroom.  In streaming mode `requests` raises ReadTimeout
-            # when *no* token arrives within model_timeout — i.e. it bounds time-to-
-            # first-token, not generation.  Ollama serialises GPU work, so when
-            # effective_workers requests are posted at once the trailing ones sit
-            # behind the others' *full* generations before their first token streams
-            # back.  At this point model_timeout is the budget for THIS string's own
-            # generation (base + length scaling); a string posted N-deep in the queue
-            # must additionally wait out N comparable generations ahead of it (the
-            # batch sorts long strings to the end, so the queue ahead of a long string
-            # is itself long).  Budget the queue by multiplying the single-generation
-            # cost by the queue depth.  This self-calibrates — a slow model (high base)
-            # or long string (high length term) scales its queue budget in proportion
-            # — where the previous flat additive estimate underbudgeted slow models
-            # (mamaylm timed out at 1706s on a 768-char string with 4 in flight).  The
-            # larger budget only ever bounds time-to-first-token; a request served
-            # promptly returns immediately, and the inter-token stall watchdog in
-            # _stream_ollama stops a frozen generation from burning the whole budget.
+            # only when *no byte* arrives within model_timeout, so this bounds time-
+            # to-first-token.  Ollama serialises GPU work, so a request posted while
+            # other workers are busy waits behind their generations before its first
+            # token streams back; add a bounded per-slot allowance for that wait.
+            #
+            # Do NOT inflate this budget to "fix" batch timeouts.  When mamaylm timed
+            # out at 1706s and then 2996s, the request had received *zero* tokens for
+            # the entire budget: the Ollama backend had wedged under sustained
+            # concurrent load, not merely slowed down.  A larger first-token budget
+            # cannot translate through a wedged GPU — it only delays the failure (and
+            # earlier additive/multiplicative growth here did exactly that).  A wedge
+            # is instead caught by the consecutive-timeout circuit breaker in
+            # translate_batch and prevented by lowering the worker count; keeping this
+            # budget modest means a wedge surfaces in minutes rather than ~50 minutes,
+            # while still comfortably covering real queue waits (observed well under a
+            # minute at four workers).
             queue_slots = min(max(0, self._effective_workers - 1), 3)
-            model_timeout *= 1 + queue_slots
+            model_timeout += queue_slots * 90
 
             # Adaptive num_ctx: allocate only what this string needs.
             # Cyrillic/Latin text ≈ 3 chars/token; add 1 200 tokens for the system
@@ -2032,6 +2075,7 @@ class OllamaWorker(QObject):
                 "Slow GPU? Lower max workers, raise the model timeout, or split the string.",
                 req.string_id, used_timeout, len(req.original_text or ""),
             )
+            self._note_timeout()
             return None
         except requests.exceptions.ConnectionError:
             with QMutexLocker(self._mutex):
@@ -3546,7 +3590,24 @@ class OllamaWorker(QObject):
         """
         with QMutexLocker(self._mutex):
             self._stop_flag = True
-            executor = self._executor  # snapshot before releasing the lock
+
+        self._abort_inflight()
+
+        # Silence urllib3 retry warnings from threads still winding down.
+        logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
+
+    def _abort_inflight(self) -> None:
+        """Cancel pending futures and close every in-flight streaming socket.
+
+        Shared by stop() (user abort) and the wedged-backend circuit breaker.
+        Closing each live response immediately unblocks the thread stuck in
+        response.iter_lines() — the socket close makes recv() raise OSError, which
+        _stream_ollama catches and converts to a None return (no translation_ready
+        emitted).  Snapshots the executor under the lock to avoid racing
+        translate_batch's finally block, which clears self._executor.
+        """
+        with QMutexLocker(self._mutex):
+            executor = self._executor
 
         if executor is not None:
             try:
@@ -3554,10 +3615,6 @@ class OllamaWorker(QObject):
             except Exception:
                 pass
 
-        # Abort all in-flight streaming requests by closing their responses.
-        # This immediately unblocks threads stuck in response.iter_lines() —
-        # closing the socket causes recv() to raise OSError, which _stream_ollama
-        # catches and converts to a None return (→ no translation_ready emitted).
         with self._responses_lock:
             active = list(self._active_responses.values())
             self._active_responses.clear()
@@ -3567,8 +3624,35 @@ class OllamaWorker(QObject):
             except Exception:
                 pass
 
-        # Silence urllib3 retry warnings from threads still winding down.
-        logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
+    def _note_timeout(self) -> None:
+        """Record a read timeout for the wedged-backend circuit breaker.
+
+        A read timeout means Ollama returned no bytes for the entire first-token
+        budget — the backend wedged rather than merely ran slow.  When the count of
+        such timeouts with no successful translation between them reaches the
+        per-batch threshold, trip the breaker: set _backend_wedged (so
+        translate_batch aborts with an actionable error) and _stop_flag, then abort
+        the in-flight requests so the batch loop wakes promptly.  Called from worker
+        threads; the signal/abort is surfaced on the batch thread.
+        """
+        with QMutexLocker(self._mutex):
+            self._consecutive_timeouts += 1
+            count = self._consecutive_timeouts
+            tripped = (
+                self._wedge_threshold
+                and count >= self._wedge_threshold
+                and not self._backend_wedged
+            )
+            if tripped:
+                self._backend_wedged = True
+                self._stop_flag = True
+        if tripped:
+            logger.error(
+                "Wedged-backend circuit breaker tripped: %d consecutive Ollama "
+                "read timeouts with no success between them — aborting batch.",
+                count,
+            )
+            self._abort_inflight()
 
     def update_config(
         self,
