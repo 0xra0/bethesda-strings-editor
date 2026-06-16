@@ -1112,12 +1112,13 @@ class OllamaWorker(QObject):
         # Expose the live concurrency to _translate_single so it can size each
         # request's streaming read timeout to the GPU-serialised queue depth.
         self._effective_workers = effective_workers
-        # Trip the wedged-backend breaker once roughly a full wave of in-flight
-        # requests (plus one) has timed out with no success between them.  Healthy
-        # batches reset the counter on every completed string, so sporadic timeouts
-        # never accumulate this far — only a genuinely stuck backend does.
+        # Arm the wedged-backend breaker.  Healthy batches reset the counter on
+        # every completed string, so sporadic timeouts never accumulate this far —
+        # only a genuinely stuck backend does.  A fixed (small) threshold also
+        # catches a freeze that strands just the final in-flight wave, which a
+        # worker-count-scaled threshold would miss at the tail of a run.
         with QMutexLocker(self._mutex):
-            self._wedge_threshold = max(4, effective_workers + 1)
+            self._wedge_threshold = self._WEDGE_TIMEOUT_THRESHOLD
 
         dedup_count = sum(len(v) for v in followers.values())
         preflight_hits = completed_count
@@ -1240,6 +1241,15 @@ class OllamaWorker(QObject):
     # that freezes mid-stream.  A healthy generation streams a token every few
     # seconds even on a slow GPU, so a gap this long means it has genuinely stalled.
     _STREAM_STALL_TIMEOUT      = 180
+
+    # Wedged-backend circuit breaker: this many read timeouts in a row, with no
+    # successful translation between them, aborts the batch.  A read timeout means
+    # Ollama returned *zero bytes* for the whole budget — on a working GPU (even a
+    # slow one) the first token still arrives, so a run this long means the backend
+    # has hard-frozen (e.g. an amdgpu/ROCm GPU lockup that needs an Ollama restart).
+    # Three is low enough to catch a freeze that strands only the final in-flight
+    # wave, yet the reset-on-success means healthy batches never reach it.
+    _WEDGE_TIMEOUT_THRESHOLD   = 3
 
     @staticmethod
     def _split_text_into_chunks(text: str, max_chars: int) -> list:
