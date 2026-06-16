@@ -171,7 +171,6 @@ Initial public release.
 **Infrastructure**
 - PyInstaller onedir standalone builds for Linux x64 and Windows x64
 - GitHub Actions: build + release on tag push, test CI (Linux + Windows), lint (ruff + Pyright)
-- Arch Linux AUR package: `bethesda-strings-editor-bin`
 - Sphinx documentation with API reference, format specification, and architecture overview, hosted on GitHub Pages
 - git-cliff structured changelog from free-form commit messages
 

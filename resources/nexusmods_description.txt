@@ -13,10 +13,6 @@ Designed around the real localization workflow: integrates with xTranslator XML 
 [*]Run [b]bethesda-strings-editor[/b] (Linux) or [b]bethesda-strings-editor.exe[/b] (Windows)
 [/list]
 
-[b]Arch Linux (manual AUR install, package not yet on AUR):[/b][code]git clone https://github.com/0xra0/bethesda-strings-editor.git
-cd bethesda-strings-editor/aur
-makepkg -si[/code]
-
 [b]Optional — AI quality checker model (Ollama hub):[/b][code]ollama pull 0xra/bethesda-qc
 ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 

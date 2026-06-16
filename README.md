@@ -233,9 +233,9 @@ scripts/
   download_lang_dicts.py       Download Hunspell dictionaries for all supported languages
   extract_starfield_glossary.py Build starfield_glossary.json from string files
 
-aur/
-  PKGBUILD                     Manual AUR install script (not yet published to AUR; use makepkg -si)
-  .SRCINFO                     AUR metadata (kept in sync with PKGBUILD)
+packaging/
+  bethesda-strings-editor.desktop      Linux desktop entry (file associations)
+  bethesda-strings-editor-mime.xml     MIME-type definitions for .strings/.esp/.ba2
 ```
 
 ---

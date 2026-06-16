@@ -81,7 +81,7 @@ git-cliff, and publishes a GitHub Release automatically.
 | `scripts/` | Helper scripts |
 | `resources/` | Icons and QSS stylesheet |
 | `data/` | Word lists for language detection |
-| `aur/` | Arch Linux AUR package |
+| `packaging/` | Linux desktop entry + MIME-type definitions |
 | `docs/` | Sphinx documentation |
 | `.github/workflows/` | CI: lint, test, release, docs |
 

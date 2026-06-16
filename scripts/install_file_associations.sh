@@ -7,8 +7,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-MIME_XML="$PROJECT_DIR/aur/bethesda-strings-editor-mime.xml"
-DESKTOP_SRC="$PROJECT_DIR/aur/bethesda-strings-editor.desktop"
+MIME_XML="$PROJECT_DIR/packaging/bethesda-strings-editor-mime.xml"
+DESKTOP_SRC="$PROJECT_DIR/packaging/bethesda-strings-editor.desktop"
 APP_DIR="$HOME/.local/share/applications"
 MIME_DIR="$HOME/.local/share/mime/packages"
 

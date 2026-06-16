@@ -99,7 +99,7 @@ Project layout
    scripts/            Helper scripts (translation compile, etc.)
    resources/          Icons and QSS stylesheet
    data/               Word lists for language detection
-   aur/                Arch Linux AUR package (PKGBUILD)
+   packaging/          Linux desktop entry + MIME-type definitions
    docs/               This documentation (Sphinx)
    .github/workflows/  CI: lint, test, release, docs
 
