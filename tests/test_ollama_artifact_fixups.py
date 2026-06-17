@@ -19,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from gui.ollama_worker import OllamaWorker  # noqa: E402
+from gui.ollama_worker import OllamaWorker, TranslationRequest  # noqa: E402
 
 strip_br = OllamaWorker._strip_spurious_br
 unwrap = OllamaWorker._unwrap_spurious_brackets
@@ -143,6 +143,78 @@ def test_trailing_noop_when_equal():
     src = "x\n\n"
     tgt = "у\n\n"
     assert match_nl(tgt, src) == "у\n\n"
+
+
+# ── _match_trailing_newlines: CRLF sources (real mamaylm RU→UK batch) ───────────
+# The Russian source XML is CRLF, but mamaylm emits LF-only output.  A naive
+# \n+$ capture under-counts a CRLF trailing run (it stops at the \r between the
+# two breaks), so the source's "\r\n\r\n" (2 breaks) became "\n" (1) and tripped
+# NEWLINE_COUNT_MISMATCH.  The count must be matched as plain LF.
+
+def test_trailing_crlf_double_break_becomes_two_lf():
+    # ID 46444: src "…<0.Name>.\r\n\r\n", model gave "…<0.Name>.\n" → need "\n\n".
+    src = "Загружены данные для <0.Name>.\r\n\r\n"
+    tgt = "Завантажено дані для <0.Name>.\n"
+    out = match_nl(tgt, src)
+    assert out == "Завантажено дані для <0.Name>.\n\n"
+    assert "\r" not in out  # output stays LF-only to match the model's body
+    assert out.count("\n") == src.count("\n")  # QC newline counts now agree
+
+
+def test_trailing_crlf_single_break():
+    src = "Одна строка\r\n"
+    tgt = "Один рядок"
+    assert match_nl(tgt, src) == "Один рядок\n"
+
+
+def test_trailing_crlf_trims_excess_to_source_count():
+    # Source has one CRLF break; model over-produced three LF — trim to one.
+    src = "Заголовок\r\n"
+    tgt = "Заголовок\n\n\n"
+    assert match_nl(tgt, src) == "Заголовок\n"
+
+
+def test_trailing_bare_cr_counts_as_one_break():
+    src = "Текст\r"
+    tgt = "Текст"
+    assert match_nl(tgt, src) == "Текст\n"
+
+
+# ── retry-hint feedback leak (regression) ──────────────────────────────────────
+# A QC retry hint is English feedback.  It must NOT sit in the user turn after the
+# "To {tgt}:" anchor — a translation-tuned model translates everything there, so
+# the hint leaked into the output (e.g. "Переклад зворотного зв'язку — попередня
+# спроба…").  The hint belongs in the system prompt only.
+
+def _req(retry_hint: str = "") -> TranslationRequest:
+    return TranslationRequest(
+        index=0,
+        original_text="Hello world.",
+        string_id=1,
+        source_lang="en",
+        target_lang="uk",
+        retry_hint=retry_hint,
+    )
+
+
+_HINT = "\n\nRetranslation feedback — previous attempt had issues:\n• Preserve all numbers."
+
+
+def test_retry_hint_absent_from_user_turn():
+    user_turn = _req(retry_hint=_HINT).to_prompt()
+    assert "Retranslation feedback" not in user_turn
+    assert "Preserve all numbers" not in user_turn
+    # The source text itself is still present and the anchor is intact.
+    assert user_turn.startswith("To Ukrainian:")
+    assert "Hello world." in user_turn
+
+
+def test_retry_hint_present_in_system_prompt():
+    assert "Retranslation feedback" in _req(retry_hint=_HINT).to_system_prompt()
+
+
+def test_no_retry_hint_user_turn_is_plain_anchor():
+    assert _req().to_prompt() == "To Ukrainian:\nHello world."
 
 
 # ── _heal_known_artifacts (cache-hit healing path) ─────────────────────────────

@@ -429,8 +429,13 @@ class TranslationRequest:
                 f"Fixed {tgt_name} translation:"
             )
 
-        if self.retry_hint:
-            return f"To {tgt_name}:\n{self.retry_hint}\n\n{lore_prefix}Text to translate:\n{content}"
+        # NOTE: the retry hint is deliberately NOT placed in the user turn here.
+        # The anchor format means a translation-tuned model (mamaylm, TranslateGemma)
+        # translates *everything* after "To {tgt}:" verbatim, so an English hint put
+        # here leaks into the output as translated feedback text (e.g. "Переклад
+        # зворотного зв'язку — попередня спроба…").  The hint is appended to the
+        # system prompt in to_system_prompt() instead, which is the correct channel
+        # for instructions and is honoured by every chat model that uses this path.
         return f"To {tgt_name}:\n{lore_prefix}{content}"
 
     def to_system_prompt(self) -> str:
@@ -2348,20 +2353,32 @@ class OllamaWorker(QObject):
             return translated
 
         def _strip_trailing_nl(s: str) -> str:
+            # Strip the literal two-char escape form, real newlines, and bare CRs
+            # (mamaylm emits LF-only output, but be defensive about either form).
             while s.endswith("\\n"):
                 s = s[:-2]
-            while s.endswith("\n"):
+            while s and s[-1] in "\r\n":
                 s = s[:-1]
             return s
 
-        # Prefer the literal escape form when the source uses it; otherwise the
-        # actual-newline run (which is "" when the source has no trailing newline).
-        if re.search(r"(?:\\n)+$", original) and not original.endswith("\n"):
+        # Literal escape form (\n as two characters), used by some UI strings —
+        # only when the source genuinely ends in a literal \n run and NOT a real
+        # newline/CR (a CRLF source must fall through to the count-based branch).
+        if re.search(r"(?:\\n)+$", original) and not re.search(r"[\r\n]$", original):
             run = re.search(r"(?:\\n)+$", original).group(0)  # type: ignore[union-attr]
-        else:
-            m = re.search(r"\n+$", original)
-            run = m.group(0) if m else ""
-        return _strip_trailing_nl(translated) + run
+            return _strip_trailing_nl(translated) + run
+
+        # Real newline run.  Count line breaks treating CRLF / CR / LF each as one
+        # break: the source here is often CRLF (\r\n\r\n) but the model emits
+        # LF-only output, so a naive \n+$ capture under-counts a CRLF run (it stops
+        # at the \r between the two breaks) and leaves the translation one short.
+        # We append plain \n to match the LF body the model produced; the QC's
+        # newline check counts CRLF and LF alike, so the counts then agree.
+        m = re.search(r"[\r\n]+$", original)
+        if not m:
+            return _strip_trailing_nl(translated)
+        breaks = len(re.findall(r"\r\n|[\r\n]", m.group(0)))
+        return _strip_trailing_nl(translated) + ("\n" * breaks)
 
     @staticmethod
     def _strip_spurious_br(translated: str, original: str) -> str:
