@@ -640,21 +640,23 @@ class OllamaWorker(QObject):
         "mamaylm": {
             "temperature": 0.1,
             "num_predict": 4096,
-            "num_ctx": 16384,
+            "num_ctx": 8192,
             "top_k": 64,
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # Single-stream on purpose.  This 12B at num_ctx 16384 (q8_0 KV) is large
-            # relative to a 16 GiB consumer GPU: Ollama pre-allocates a full num_ctx KV
-            # window PER parallel slot, so OLLAMA_NUM_PARALLEL>1 (or >1 app worker) means
-            # 2× KV cache reserved on top of the ~7 GB model.  A single large string then
-            # crosses the VRAM ceiling and the runner is evicted/OOM-killed and respawned
-            # mid-batch (VRAM drops then refills) — slower AND unstable.  Cap at 1 so the
-            # app never sends concurrent requests into mamaylm; pair with
-            # OLLAMA_NUM_PARALLEL=1 server-side.  timeout 720s covers generation on slow HW.
+            # Two-stream on a 16 GiB consumer GPU.  Ollama pre-allocates a full num_ctx
+            # KV window PER parallel slot, so the VRAM cost is num_ctx × slots.  At the
+            # old num_ctx 16384 a single slot already filled the card, so 2 slots OOM'd
+            # and the runner thrashed (VRAM drops then refills mid-batch).  Halving
+            # num_ctx to 8192 means 2 slots reserve 2×8192 = the same 16384 footprint
+            # that ran stably at one slot — so max_concurrent 2 is safe AND ~2× faster.
+            # 8192 ctx is ample: every call is paragraph- or chunk-sized (chunking kicks
+            # in at _CHUNK_TRANSLATE_THRESHOLD chars, well under 8192 tokens), so no
+            # single request is truncated.  Pair with OLLAMA_NUM_PARALLEL=2 server-side
+            # (one slot per app worker).  timeout 720s covers two-up generation on slow HW.
             "timeout": 720,
-            "max_concurrent": 1,
+            "max_concurrent": 2,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
@@ -1234,9 +1236,16 @@ class OllamaWorker(QObject):
     # Texts below this threshold are sent to the model in a single call.
     # Fine-tuned models (translategemma3-st) produce garbage when given fragments
     # with the "Part X of Y" hint — they were trained on complete strings.
-    # 12 000 chars comfortably fits in one 16 384-token ctx call (the app default).
-    _CHUNK_TRANSLATE_THRESHOLD = 12000  # chars — above this, split automatically
+    # 6 000 chars (~2 000 tokens in + out + prompt) fits comfortably in an 8 192-token
+    # ctx call, so models capped at num_ctx 8192 (e.g. mamaylm two-up) are never
+    # truncated.  Anything larger is split into <=_MAX_CHUNK_CHARS chunks.
+    _CHUNK_TRANSLATE_THRESHOLD = 6000   # chars — above this, split automatically
     _MAX_CHUNK_CHARS           = 4000   # max chars per chunk (for truly large texts)
+    # Below this size a multi-paragraph string is translated in ONE call (structural
+    # newline tokens + restore net keep the \n\n breaks) instead of one call per
+    # paragraph.  Avoids exploding short journal/notes strings into many tiny calls;
+    # large strings still split per-paragraph where structure fidelity matters most.
+    _PP_SPLIT_MIN_CHARS        = 1500
     _CHUNK_TIMEOUT             = 180    # seconds per-chunk (vs 300 global)
     # Max seconds allowed between two streamed tokens *once generation has started*.
     # The request-level timeout has to be large enough to cover Ollama's GPU queue
@@ -1603,7 +1612,7 @@ class OllamaWorker(QObject):
         # paragraph independently so the app—not the model—controls paragraph
         # structure.  Eliminates reliance on the model preserving
         # [[STRUCT_BREAK_DBL_N]] tokens, which it routinely ignores.
-        if "\n\n" in protected_text:
+        if "\n\n" in protected_text and len(protected_text) > self._PP_SPLIT_MIN_CHARS:
             _pp_segs = protected_text.split("\n\n")
             if sum(1 for _s in _pp_segs if _s.strip()) >= 2:
                 from dataclasses import replace as _dc_pp
@@ -3248,7 +3257,15 @@ class OllamaWorker(QObject):
     def _force_english_retranslate(
         self, req: TranslationRequest, text: str
     ) -> Optional[str]:
-        """Two-pass retry for EN→UK strings that the model echoed back untranslated."""
+        """Single-pass retry for EN→UK strings that the model echoed back untranslated.
+
+        Returns the retranslation only if it is *no longer* an English echo; otherwise
+        returns None so the caller keeps the original draft.  A former second pass (higher
+        temperature, no echo-check guard) was dropped: it almost never rescued a string
+        the first pass couldn't, and on a single-stream GPU each extra call is pure
+        wall-clock — especially costly because this fires on every echo-flagged paragraph
+        fragment of long book/journal strings.
+        """
         orig = req.original_text
         input_len = max(len(text), len(orig))
         string_id = req.string_id
@@ -3261,7 +3278,6 @@ class OllamaWorker(QObject):
             "Preserve all game tags (<Alias=…>, <font>), escape sequences (\\n \\t), and structure exactly."
         )
 
-        # Pass 1: explicit instruction with different framing
         try:
             p1_prompt = (
                 f"Ukrainian translation of the following English text:\n\n{orig}\n\n"
@@ -3271,23 +3287,11 @@ class OllamaWorker(QObject):
             if result:
                 cleaned = self._clean_translation(result, req.target_lang, orig, string_id)
                 if cleaned and not self._needs_en_to_uk_retry(orig, cleaned):
-                    logger.debug(f"String {string_id}: EN retranslate pass 1 succeeded")
+                    logger.debug(f"String {string_id}: EN retranslate succeeded")
                     return cleaned
-            logger.debug(f"String {string_id}: EN retranslate pass 1 still English, trying pass 2")
+            logger.debug(f"String {string_id}: EN retranslate still English, keeping original draft")
         except Exception as e:
-            logger.debug(f"String {string_id}: EN retranslate pass 1 failed: {e}")
-
-        # Pass 2: higher temperature, minimal framing
-        try:
-            p2_prompt = f"Перекласти українською:\n{orig}"
-            result = self._call_ollama_rewrite(BASE_SYSTEM, p2_prompt, input_len, 0.4)
-            if result:
-                cleaned = self._clean_translation(result, req.target_lang, orig, string_id)
-                if cleaned:
-                    logger.debug(f"String {string_id}: EN retranslate pass 2 done")
-                    return cleaned
-        except Exception as e:
-            logger.debug(f"String {string_id}: EN retranslate pass 2 failed: {e}")
+            logger.debug(f"String {string_id}: EN retranslate failed: {e}")
 
         return None
 
