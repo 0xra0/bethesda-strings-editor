@@ -419,14 +419,17 @@ class TranslationRequest:
         lore_prefix = f"Lore context: {self.lore_snippet}\n\n" if self.lore_snippet else ""
 
         if self.fix_translation:
-            # AI-fix mode: ask the model to correct specific issues in the existing translation.
-            issues_block = self.retry_hint.strip() if self.retry_hint else "General quality issues."
+            # AI-fix mode: ask the model to correct the existing translation.  The
+            # list of specific issues lives in the SYSTEM prompt (to_system_prompt),
+            # NOT here — a translation-tuned model (mamaylm) would otherwise translate
+            # that English instruction text straight into the output, the same leak
+            # the retry-hint path had.  The user turn carries only the reference
+            # material (source + flawed translation) and the output anchor.
             return (
                 f"{lore_prefix}"
                 f"Original ({src_name}):\n{content}\n\n"
                 f"Flawed {tgt_name} translation:\n{self.fix_translation}\n\n"
-                f"Issues to fix:\n{issues_block}\n\n"
-                f"Fixed {tgt_name} translation:"
+                f"Corrected {tgt_name} translation:"
             )
 
         # NOTE: the retry hint is deliberately NOT placed in the user turn here.
@@ -458,11 +461,12 @@ class TranslationRequest:
                 self.target_lang,
                 f"Write natural, polished {tgt_name} appropriate to Starfield's NASApunk sci-fi setting.",
             )
+            issues_block = self.retry_hint.strip() if self.retry_hint else "General quality issues."
             fix_base = (
                 f"You are a professional Bethesda Starfield game localization proofreader.\n"
-                f"You will receive a {src_name} source string, a flawed {tgt_name} translation, "
-                f"and a list of specific issues. "
-                f"Fix ONLY those issues. Preserve every other part of the existing translation unchanged.\n"
+                f"You will receive a {src_name} source string and a flawed {tgt_name} translation. "
+                f"Fix ONLY the specific issues listed below. "
+                f"Preserve every other part of the existing translation unchanged.\n"
                 f"Output ONLY the corrected {tgt_name} translation — no labels, no commentary.\n\n"
                 f"Rules:\n"
                 f"1. {style_rule}\n"
@@ -471,6 +475,9 @@ class TranslationRequest:
                 "\\n, \\t, %s, %d, %f, %.1f, %.2f, %.3f, %g, %e, %i, %u, %x, %%, %1$s, %2$d, #IDs.\n"
                 "3. Keep brackets [] exactly as in the source unless the issue specifically requires fixing them.\n"
                 "4. Do NOT change any correctly translated parts — edit as little as possible.\n"
+                # Issues live here in the system prompt (instructions), never in the
+                # user turn, so a translation-tuned model can't echo them as output.
+                f"\nIssues to fix:\n{issues_block}\n"
             )
             if self.glossary_snippet:
                 fix_base += "\nGlossary (use these exact translations):\n" + self.glossary_snippet

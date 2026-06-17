@@ -217,6 +217,48 @@ def test_no_retry_hint_user_turn_is_plain_anchor():
     assert _req().to_prompt() == "To Ukrainian:\nHello world."
 
 
+# ── AI-fix mode: same leak vector via the "Issues to fix" block ─────────────────
+# fix_translation mode passes the source, the flawed translation, and the QC
+# issues.  The issues are English instructions, so they must sit in the system
+# prompt — not the user turn — or a translation-tuned model echoes them as output.
+
+def _fix_req(retry_hint: str = "") -> TranslationRequest:
+    return TranslationRequest(
+        index=0,
+        original_text="Hello world.",
+        string_id=1,
+        source_lang="en",
+        target_lang="uk",
+        fix_translation="Привіт світ.",
+        retry_hint=retry_hint,
+    )
+
+
+def test_fix_mode_issues_absent_from_user_turn():
+    req = _fix_req(retry_hint=_HINT)
+    user_turn = req.to_prompt()
+    assert "Retranslation feedback" not in user_turn
+    assert "Preserve all numbers" not in user_turn
+    assert "Issues to fix" not in user_turn
+    # Reference material and the output anchor are still there.
+    assert "Hello world." in user_turn          # source
+    assert "Привіт світ." in user_turn           # flawed translation to correct
+    assert user_turn.rstrip().endswith("Corrected Ukrainian translation:")
+
+
+def test_fix_mode_issues_present_in_system_prompt():
+    sys_prompt = _fix_req(retry_hint=_HINT).to_system_prompt()
+    assert "Issues to fix:" in sys_prompt
+    assert "Preserve all numbers" in sys_prompt
+    # Proofreader persona, not the plain-translator one.
+    assert "proofreader" in sys_prompt.lower()
+
+
+def test_fix_mode_without_hint_has_generic_issues_block():
+    sys_prompt = _fix_req().to_system_prompt()
+    assert "General quality issues." in sys_prompt
+
+
 # ── _heal_known_artifacts (cache-hit healing path) ─────────────────────────────
 
 def test_heal_applies_all_fixups():
