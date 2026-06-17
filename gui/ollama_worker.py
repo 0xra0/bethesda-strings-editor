@@ -1075,8 +1075,7 @@ class OllamaWorker(QObject):
                 )
                 cached = self.translation_cache.get(cache_key)
                 if cached:
-                    cached = self._restore_missing_newlines(cached, req.original_text)
-                    cached = self._apply_trailing_newline(cached, req.original_text)
+                    cached = self._heal_known_artifacts(cached, req.original_text)
                     self.translation_ready.emit(req.index, cached, req.string_id)
                     successful += 1
                     completed_count += 1
@@ -1455,6 +1454,8 @@ class OllamaWorker(QObject):
         if result:
             result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
             result = self._restore_dropped_tags(result, req.original_text)
+            result = self._strip_spurious_br(result, req.original_text)
+            result = self._unwrap_spurious_brackets(result, req.original_text)
             result = self._restore_size_spacers(result, req.original_text)
             result = self._restore_unclosed_guillemets(result)
             result = self._restore_dropped_opening_brackets(result, req.original_text)
@@ -1462,16 +1463,9 @@ class OllamaWorker(QObject):
             result = self._restore_missing_newlines(result, req.original_text)
             result = self._fix_case_and_line_prefix(result, req.original_text)
 
-            # Strip or restore trailing newlines to match the original.
+            # Make the trailing newline run exactly match the source.
             if req.original_text:
-                _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
-                if not _orig_ends_nl:
-                    while result.endswith("\n"):
-                        result = result[:-1]
-                    while result.endswith("\\n"):
-                        result = result[:-2]
-                else:
-                    result = self._apply_trailing_newline(result, req.original_text)
+                result = self._match_trailing_newlines(result, req.original_text)
 
         if result and cache_key and self.translation_cache is not None:
             self.translation_cache.set(cache_key, result)
@@ -1556,8 +1550,7 @@ class OllamaWorker(QObject):
                 cached = self.translation_cache.get(cache_key)
                 if cached is not None:
                     logger.debug(f"Cache hit for string {req.string_id}")
-                    cached = self._restore_missing_newlines(cached, req.original_text)
-                    cached = self._apply_trailing_newline(cached, req.original_text)
+                    cached = self._heal_known_artifacts(cached, req.original_text)
                     return cached
             else:
                 # Evict the stale (bad) entry so the fresh result replaces it.
@@ -2050,6 +2043,8 @@ class OllamaWorker(QObject):
             # Restore any <Alias=…>/<Global=…> tags the model dropped
             if translated:
                 translated = self._restore_dropped_tags(translated, req.original_text)
+                translated = self._strip_spurious_br(translated, req.original_text)
+                translated = self._unwrap_spurious_brackets(translated, req.original_text)
                 translated = self._restore_size_spacers(translated, req.original_text)
                 translated = self._restore_unclosed_guillemets(translated)
                 translated = self._restore_dropped_opening_brackets(translated, req.original_text)
@@ -2061,17 +2056,10 @@ class OllamaWorker(QObject):
             if translated and (leading_seps or trailing_seps):
                 translated = leading_seps + translated + trailing_seps
 
-            # Strip or restore trailing newlines to match the original.
+            # Make the trailing newline run exactly match the source.
             # Handles both actual \n and the two-character literal \n escape.
             if translated and req.original_text:
-                _orig_ends_nl = req.original_text.endswith("\n") or req.original_text.endswith("\\n")
-                if not _orig_ends_nl:
-                    while translated.endswith("\n"):
-                        translated = translated[:-1]
-                    while translated.endswith("\\n"):
-                        translated = translated[:-2]
-                else:
-                    translated = self._apply_trailing_newline(translated, req.original_text)
+                translated = self._match_trailing_newlines(translated, req.original_text)
 
             if translated and cache_key and self.translation_cache is not None:
                 self.translation_cache.set(cache_key, translated)
@@ -2335,18 +2323,100 @@ class OllamaWorker(QObject):
         return translated
 
     @staticmethod
-    def _apply_trailing_newline(translated: str, original: str) -> str:
-        """Restore a trailing newline (actual \\n or literal \\\\n) that the model dropped.
+    def _match_trailing_newlines(translated: str, original: str) -> str:
+        """Make the translation's trailing newline run exactly match the source.
 
-        Called both on fresh translations and on cache hits so that stale cache
-        entries produced before this fix was added are healed on first read.
+        Supersedes the old "ensure at least one trailing newline" logic: it fixes
+        the *count*, not just presence.  Handles both the literal two-character
+        escape form (``\\\\n``) and actual newline characters, in both directions —
+        a model that dropped a trailing newline (``…\\n\\n`` → ``…\\n``), one that
+        added extras, and the case where the source has no trailing newline at all.
+
+        Called on fresh translations and on cache hits so stale entries heal on
+        first read.
         """
         if not translated or not original:
             return translated
-        orig_ends_nl = original.endswith("\n") or original.endswith("\\n")
-        if orig_ends_nl and not (translated.endswith("\n") or translated.endswith("\\n")):
-            return translated + ("\\n" if original.endswith("\\n") else "\n")
+
+        def _strip_trailing_nl(s: str) -> str:
+            while s.endswith("\\n"):
+                s = s[:-2]
+            while s.endswith("\n"):
+                s = s[:-1]
+            return s
+
+        # Prefer the literal escape form when the source uses it; otherwise the
+        # actual-newline run (which is "" when the source has no trailing newline).
+        if re.search(r"(?:\\n)+$", original) and not original.endswith("\n"):
+            run = re.search(r"(?:\\n)+$", original).group(0)  # type: ignore[union-attr]
+        else:
+            m = re.search(r"\n+$", original)
+            run = m.group(0) if m else ""
+        return _strip_trailing_nl(translated) + run
+
+    @staticmethod
+    def _strip_spurious_br(translated: str, original: str) -> str:
+        """Remove ``<br>`` line-break tags the model invented.
+
+        mamaylm likes to insert HTML ``<br>`` tags (often with an adjacent
+        newline) at sentence boundaries in long prose even when the source has
+        none.  Bethesda strings do not use ``<br>``; any genuinely in the source
+        are protected and restored verbatim, so any ``<br>`` reaching here beyond
+        the source's own count is a model artifact.  Drop the excess, folding the
+        tag plus one adjacent newline back into a single space so sentence spacing
+        matches the source (this also corrects the newline-count inflation the
+        ``<br>\\n`` pattern introduces).
+        """
+        if not translated:
+            return translated
+        orig_br = len(re.findall(r"<br\s*/?>", original or "", re.IGNORECASE))
+        matches = list(re.finditer(r"[ \t]*<br\s*/?>[ \t]*\n?", translated, re.IGNORECASE))
+        if len(matches) <= orig_br:
+            return translated
+        # Keep the first `orig_br` occurrences, drop the rest (right-to-left so
+        # earlier match offsets stay valid).
+        for m in reversed(matches[orig_br:]):
+            start, end = m.start(), m.end()
+            before = translated[start - 1] if start > 0 else ""
+            after = translated[end] if end < len(translated) else ""
+            repl = "" if (not before or before.isspace() or not after or after.isspace()) else " "
+            translated = translated[:start] + repl + translated[end:]
         return translated
+
+    @staticmethod
+    def _unwrap_spurious_brackets(translated: str, original: str) -> str:
+        """Strip brackets the model wraps around bare all-caps source tokens.
+
+        Source prose sometimes contains a bare acronym/identifier token (e.g. a
+        faction code like ``LIST``).  The model occasionally mistakes it for a
+        placeholder and emits ``[LIST]``.  For any all-caps token (≥3 letters)
+        that appears *unbracketed* in the source — and is not bracketed there —
+        remove brackets the model added around it in the translation.
+        """
+        if not translated or not original:
+            return translated
+        candidates = set(re.findall(r"(?<![\w\[])([A-Z]{3,})(?![\w\]])", original))
+        for tok in candidates:
+            bracketed = f"[{tok}]"
+            if bracketed in original:
+                continue  # legitimately bracketed in the source — leave it
+            if bracketed in translated:
+                translated = translated.replace(bracketed, tok)
+        return translated
+
+    @classmethod
+    def _heal_known_artifacts(cls, text: str, original: str) -> str:
+        """Apply the source-deterministic fixups that also heal stale cache hits:
+        spurious ``<br>`` tags, bracket-wrapped acronyms, dropped internal
+        newlines, and exact trailing-newline count.
+        """
+        if not text or not original:
+            return text
+        text = cls._strip_spurious_br(text, original)
+        text = cls._unwrap_spurious_brackets(text, original)
+        text = cls._restore_missing_newlines(text, original)
+        text = cls._match_trailing_newlines(text, original)
+        return text
 
     @staticmethod
     def _fix_case_and_line_prefix(translated: str, original: str) -> str:
