@@ -29,6 +29,10 @@ jobs:
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
+          # Refresh the package index first: the runner's pre-baked apt lists
+          # pin a libegl-mesa0 point release that has since been superseded in
+          # the archive, so a bare install 404s on the stale URL.
+          sudo apt-get update
           sudo apt-get install -y libegl1 libhunspell-dev
           pip install hunspell
 
