@@ -645,12 +645,16 @@ class OllamaWorker(QObject):
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # Ollama serialises GPU work, so 10 parallel requests (the default) each
-            # wait behind 9 others before the GPU starts — queue time alone can exceed
-            # 480s.  Cap at 4 to keep queue depth manageable, and raise timeout to 720s
-            # to cover both queue wait and generation time on slower hardware.
+            # Single-stream on purpose.  This 12B at num_ctx 16384 (q8_0 KV) is large
+            # relative to a 16 GiB consumer GPU: Ollama pre-allocates a full num_ctx KV
+            # window PER parallel slot, so OLLAMA_NUM_PARALLEL>1 (or >1 app worker) means
+            # 2× KV cache reserved on top of the ~7 GB model.  A single large string then
+            # crosses the VRAM ceiling and the runner is evicted/OOM-killed and respawned
+            # mid-batch (VRAM drops then refills) — slower AND unstable.  Cap at 1 so the
+            # app never sends concurrent requests into mamaylm; pair with
+            # OLLAMA_NUM_PARALLEL=1 server-side.  timeout 720s covers generation on slow HW.
             "timeout": 720,
-            "max_concurrent": 4,
+            "max_concurrent": 1,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
