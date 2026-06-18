@@ -964,6 +964,61 @@ class SettingsDialog(QDialog):
         ))
         audio_layout.addRow(self.chk_tts_auto_preview)
 
+        # ── Native voice playback (Starfield Wwise .wem in *Voices*.ba2) ──────
+        voice_hdr = QLabel(self.tr("Native game voice playback (Starfield)"))
+        voice_hdr.setStyleSheet("font-weight: bold; margin-top: 6px;")
+        audio_layout.addRow(voice_hdr)
+
+        voice_dir_row = QHBoxLayout()
+        self.voice_data_dir_edit = QLineEdit(getattr(self._settings, "voice_data_dir", ""))
+        self.voice_data_dir_edit.setPlaceholderText(self.tr("Game Data dir with *Voices*.ba2 archives"))
+        self.voice_data_dir_edit.setToolTip(self.tr(
+            "Starfield 'Data' directory containing the voice archives\n"
+            "(e.g. 'Starfield - Voices01.ba2').  In ESP/ESM mode the dialogue\n"
+            "FormID is resolved automatically; in .strings mode enter a FormID\n"
+            "manually in the Audio Preview panel."
+        ))
+        voice_dir_row.addWidget(self.voice_data_dir_edit, stretch=1)
+        btn_browse_voice = QPushButton(self.tr("…"))
+        btn_browse_voice.setMaximumWidth(28)
+        btn_browse_voice.clicked.connect(self._browse_voice_data_dir)
+        voice_dir_row.addWidget(btn_browse_voice)
+        audio_layout.addRow(self.tr("Voice Data directory:"), voice_dir_row)
+
+        vgmstream_row = QHBoxLayout()
+        self.vgmstream_binary_edit = QLineEdit(
+            getattr(self._settings, "vgmstream_binary", "vgmstream-cli")
+        )
+        self.vgmstream_binary_edit.setPlaceholderText("vgmstream-cli")
+        self.vgmstream_binary_edit.setToolTip(self.tr(
+            "Path to vgmstream-cli, or just 'vgmstream-cli' if on PATH.\n"
+            "Required to decode Wwise .wem voice clips (ffmpeg cannot)."
+        ))
+        vgmstream_row.addWidget(self.vgmstream_binary_edit, stretch=1)
+        btn_browse_vgm = QPushButton(self.tr("…"))
+        btn_browse_vgm.setMaximumWidth(28)
+        btn_browse_vgm.clicked.connect(self._browse_vgmstream_binary)
+        vgmstream_row.addWidget(btn_browse_vgm)
+        audio_layout.addRow(self.tr("vgmstream binary:"), vgmstream_row)
+
+        self.combo_voice_language = QComboBox()
+        for label, val in [
+            (self.tr("English (Voices01/02)"), "en"),
+            (self.tr("German (_de)"), "de"),
+            (self.tr("Spanish (_es)"), "es"),
+            (self.tr("French (_fr)"), "fr"),
+            (self.tr("Japanese (_ja)"), "ja"),
+        ]:
+            self.combo_voice_language.addItem(label, val)
+        cur_voice_lang = getattr(self._settings, "voice_language", "en")
+        vl_idx = self.combo_voice_language.findData(cur_voice_lang)
+        if vl_idx >= 0:
+            self.combo_voice_language.setCurrentIndex(vl_idx)
+        self.combo_voice_language.setToolTip(self.tr(
+            "Which voice language pack to index for playback."
+        ))
+        audio_layout.addRow(self.tr("Voice language:"), self.combo_voice_language)
+
         audio_group.setLayout(audio_layout)
         layout.addWidget(audio_group)
 
@@ -1237,6 +1292,26 @@ class SettingsDialog(QDialog):
         if d:
             self.audio_dir_edit.setText(d)
 
+    @Slot()
+    def _browse_voice_data_dir(self) -> None:
+        from PySide6.QtWidgets import QFileDialog
+        d = QFileDialog.getExistingDirectory(
+            self, self.tr("Select game Data directory (with *Voices*.ba2)"),
+            self.voice_data_dir_edit.text() or str(Path.home()),
+        )
+        if d:
+            self.voice_data_dir_edit.setText(d)
+
+    @Slot()
+    def _browse_vgmstream_binary(self) -> None:
+        path, _ = get_open_filename(
+            self, self.tr("Select vgmstream-cli binary"),
+            self.vgmstream_binary_edit.text() or "",
+            self.tr("All Files (*)"),
+        )
+        if path:
+            self.vgmstream_binary_edit.setText(path)
+
     @Slot(str)
     @Slot(int)
     def _on_lang_changed(self, _index: int) -> None:
@@ -1401,6 +1476,9 @@ class SettingsDialog(QDialog):
         settings.piper_model = self.piper_model_edit.text().strip()
         settings.audio_dir = self.audio_dir_edit.text().strip()
         settings.tts_auto_preview = self.chk_tts_auto_preview.isChecked()
+        settings.voice_data_dir = self.voice_data_dir_edit.text().strip()
+        settings.vgmstream_binary = self.vgmstream_binary_edit.text().strip() or "vgmstream-cli"
+        settings.voice_language = self.combo_voice_language.currentData() or "en"
         settings.check_updates_on_startup = self.chk_update_on_startup.isChecked()
         settings.background_enabled = self.chk_bg_enabled.isChecked()
         settings.background_path = self.bg_path_edit.text().strip()

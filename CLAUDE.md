@@ -55,6 +55,7 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 - `core.py` — `BethesdaStringFile` / `StringDataObject`: binary parser/writer for `.strings`, `.dlstrings`, `.ilstrings`. Header is 8 bytes; each directory entry is 8 bytes (ID + relative offset). `.dlstrings`/`.ilstrings` have a 4-byte length prefix per string; `.strings` use null termination.
 - `esp_handler.py` — `EspFile`: parses ESP/ESM/ESL plugin files. Only handles *non-localized* plugins (text stored directly in field buffers). Localized plugins (bit 0x80 in flags) use companion `.strings` files instead. Translatable field/record combinations are in `_FIELD_DEFS`.
 - `ba2_handler.py` — `BA2File`: reads BA2 archives (GNRL type only, zlib-compressed). Supports Fallout 4 v1 and Starfield v2 formats. Used to open `.strings` files bundled inside BA2 archives.
+- `wwise_voice.py` — `VoiceIndex`: maps a Starfield dialogue **FormID → original voice clip** packed inside `*Voices*.ba2` archives. Starfield ships voice as Wwise `.wem` (RIFF/WAVE, Vorbis tag `0xFFFF`) at `sound/voice/<plugin>.esm/<voicetype>/<8hex-formid>.wem` — *not* `.fuz` like Skyrim/FO4. One FormID maps to several voice types, so `find()` returns a list. `ffmpeg` cannot decode `.wem`; `get_wav()` shells out to `vgmstream-cli` and caches the decoded WAV. Pure helpers: `classify_archive_language()` (no `_xx` suffix = English base game), `form_id_from_name()`, `voice_type_from_name()`.
 - `xml_handler.py` — `XMLHandler`: imports/exports xTranslator SST XML format (match by `sID` hex first, fall back to `Source` text — mirrors xTranslator's Pascal logic).
 - `encoding.py` — `EncodingConverter`: encoding detection and conversion (UTF-8/CP1251/CP1252/BOM).
 - `operations.py` — factory functions for `BethesdaStringFile.filter_and_modify()`.
@@ -128,7 +129,7 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 - `nexusmods_uploader.py` — NexusMods v3 multipart upload client (6-step: presigned URLs → S3 → finalise → poll → attach metadata).
 
 #### Audio / TTS
-- `audio_preview_panel.py` — dock panel: plays original game audio and synthesizes TTS read-out of translations for timing comparison.
+- `audio_preview_panel.py` — dock panel: plays original game audio and synthesizes TTS read-out of translations for timing comparison. Also drives **native Starfield voice playback** via `bethesda_strings/wwise_voice.VoiceIndex`: a FormID box + voice-type combo + "Load voice" button decode the original `.wem` clip (built in a background `_VoiceIndexWorker`, decoded in `_VoiceDecodeWorker`). In ESP/ESM mode the row's FormID auto-fills the box; in `.strings` mode the user enters one manually. The decoded clip is fed into the existing original-audio slot so it reuses the player, duration label, and timing bar. Note: the model row dict keys the id as `"id"` (not `"string_id"`).
 - `tts_engine.py` — local TTS abstraction supporting eSpeak-NG (built-in), Piper (neural, external binary), and duration-estimate-only mode.
 
 #### Infrastructure
@@ -173,4 +174,4 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 pytest tests/
 ```
 
-Test files: `test_encoding_detection.py` (28 tests), `test_glossary.py`, `test_pre_translation_estimator.py`, `test_quality_checker.py`, `test_term_protector_threading.py`, `test_diff_viewer.py`.
+Test files: `test_encoding_detection.py` (28 tests), `test_glossary.py`, `test_pre_translation_estimator.py`, `test_quality_checker.py`, `test_term_protector_threading.py`, `test_diff_viewer.py`, `test_ollama_artifact_fixups.py`, `test_wwise_voice.py` (Wwise voice index — pure-function tests always run; the end-to-end BA2 decode test self-skips when the game/`vgmstream-cli` are absent).

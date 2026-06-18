@@ -34,7 +34,7 @@ from PySide6.QtCore import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPainter, QPen
 from PySide6.QtWidgets import (
-    QDockWidget, QFileDialog, QHBoxLayout, QLabel, QLineEdit,
+    QComboBox, QDockWidget, QFileDialog, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QToolButton, QVBoxLayout, QWidget,
 )
 
@@ -244,6 +244,73 @@ class _SynthWorker(QRunnable):
         self.signals.done.emit(result)
 
 
+# ── Native game-voice workers (Wwise .wem via VoiceIndex) ─────────────────────
+
+class _VoiceIndexSignals(QObject):
+    done = Signal(object)   # VoiceIndex | None
+
+
+class _VoiceIndexWorker(QRunnable):
+    """Build a VoiceIndex (scans large *Voices*.ba2 archives) off the UI thread."""
+
+    def __init__(
+        self,
+        data_dir: str,
+        vgmstream_binary: str,
+        cache_dir: Optional[Path],
+        language: str,
+    ) -> None:
+        super().__init__()
+        self.setAutoDelete(True)
+        self.data_dir = data_dir
+        self.vgmstream_binary = vgmstream_binary
+        self.cache_dir = cache_dir
+        self.language = language
+        self.signals = _VoiceIndexSignals()
+
+    def run(self) -> None:
+        from bethesda_strings.wwise_voice import VoiceIndex
+        try:
+            idx = VoiceIndex(
+                self.data_dir,
+                vgmstream_binary=self.vgmstream_binary,
+                cache_dir=self.cache_dir,
+                language=self.language,
+            )
+            idx.build()
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Voice index build failed: %s", exc)
+            idx = None
+        self.signals.done.emit(idx)
+
+
+class _VoiceDecodeSignals(QObject):
+    done = Signal(object)   # (form_id, voice_type, wav_path_or_None, autoplay)
+
+
+class _VoiceDecodeWorker(QRunnable):
+    """Extract + decode one voice clip to a cached WAV off the UI thread."""
+
+    def __init__(self, index, form_id: int, voice_type: Optional[str], autoplay: bool) -> None:
+        super().__init__()
+        self.setAutoDelete(True)
+        self.index = index
+        self.form_id = form_id
+        self.voice_type = voice_type
+        self.autoplay = autoplay
+        self.signals = _VoiceDecodeSignals()
+
+    def run(self) -> None:
+        try:
+            wav = self.index.get_wav(self.form_id, self.voice_type)
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Voice decode failed: %s", exc)
+            wav = None
+        self.signals.done.emit(
+            (self.form_id, self.voice_type, str(wav) if wav else None, self.autoplay)
+        )
+
+
 # ── Panel ─────────────────────────────────────────────────────────────────────
 
 class AudioPreviewPanel(QDockWidget):
@@ -269,6 +336,16 @@ class AudioPreviewPanel(QDockWidget):
         self._espeak_speed = 130
         self._auto_preview = False
         self._cache_dir: Optional[Path] = None
+
+        # Native game-voice playback (Starfield Wwise .wem in *Voices*.ba2)
+        self._voice_data_dir: str = ""
+        self._vgmstream_binary: str = "vgmstream-cli"
+        self._voice_language: str = "en"
+        self._voice_cache_dir: Optional[Path] = None
+        self._voice_index = None            # bethesda_strings.wwise_voice.VoiceIndex | None
+        self._voice_index_building: bool = False
+        self._pending_voice_formid: Optional[int] = None  # explicit load awaiting build
+        self._populating_voice_combo: bool = False
 
         # Current string state
         self._current_translated: str = ""
@@ -364,6 +441,42 @@ class AudioPreviewPanel(QDockWidget):
         cols.addLayout(tts_col, stretch=1)
         root_layout.addLayout(cols)
 
+        # ── Native game voice (Starfield Wwise .wem) ─────────────────
+        voice_row = QHBoxLayout()
+        voice_row.setSpacing(4)
+        voice_row.addWidget(QLabel(self.tr("Game voice:")))
+        self._voice_formid_edit = QLineEdit()
+        self._voice_formid_edit.setPlaceholderText(self.tr("FormID e.g. 00012345"))
+        self._voice_formid_edit.setMaximumWidth(120)
+        self._voice_formid_edit.setToolTip(self.tr(
+            "Dialogue FormID. Auto-filled in ESP/ESM mode; enter manually "
+            "(hex, with or without 0x) for .strings files."
+        ))
+        self._voice_formid_edit.returnPressed.connect(self._on_voice_load_clicked)
+        voice_row.addWidget(self._voice_formid_edit)
+
+        self._voice_type_combo = QComboBox()
+        self._voice_type_combo.setMinimumWidth(140)
+        self._voice_type_combo.setToolTip(self.tr(
+            "NPC voice type recorded for this line. Changing it auditions "
+            "a different voice actor's take."
+        ))
+        self._voice_type_combo.currentIndexChanged.connect(self._on_voice_type_changed)
+        voice_row.addWidget(self._voice_type_combo, stretch=1)
+
+        self._voice_play_btn = QPushButton(self.tr("▶ Load voice"))
+        self._voice_play_btn.setToolTip(self.tr(
+            "Decode the original game voice clip and play it. The decoded clip "
+            "also feeds the timing comparison as the 'original' duration."
+        ))
+        self._voice_play_btn.clicked.connect(self._on_voice_load_clicked)
+        voice_row.addWidget(self._voice_play_btn)
+
+        self._voice_status_label = QLabel("")
+        self._voice_status_label.setStyleSheet("font-size: 10px; color: #888;")
+        voice_row.addWidget(self._voice_status_label)
+        root_layout.addLayout(voice_row)
+
         # ── Timing bar ───────────────────────────────────────────────
         self._timing_bar = _TimingBar()
         self._timing_label = QLabel("")
@@ -387,6 +500,9 @@ class AudioPreviewPanel(QDockWidget):
         audio_dir: str,
         auto_preview: bool,
         cache_dir: Path,
+        voice_data_dir: str = "",
+        vgmstream_binary: str = "vgmstream-cli",
+        voice_language: str = "en",
     ) -> None:
         self._engine_type = engine_type
         self._voice = voice
@@ -398,6 +514,25 @@ class AudioPreviewPanel(QDockWidget):
         self._cache_dir = cache_dir
         self._audio_index.set_directory(audio_dir)
 
+        # Native voice playback config. If the source dir or language changed,
+        # drop the built index so the next lookup rebuilds for the new target.
+        new_dir = voice_data_dir or ""
+        new_lang = voice_language or "en"
+        if new_dir != self._voice_data_dir or new_lang != self._voice_language:
+            if self._voice_index is not None:
+                try:
+                    self._voice_index.close()
+                except Exception:  # noqa: BLE001
+                    pass
+            self._voice_index = None
+            self._voice_index_building = False
+        self._voice_data_dir = new_dir
+        self._voice_language = new_lang
+        self._vgmstream_binary = vgmstream_binary or "vgmstream-cli"
+        self._voice_cache_dir = (
+            (cache_dir.parent / "voice_cache") if cache_dir else None
+        )
+
     def update_string(self, row_data: Optional[dict]) -> None:
         """Called from main_window when selection changes."""
         if row_data is None:
@@ -407,7 +542,10 @@ class AudioPreviewPanel(QDockWidget):
             self._current_string_id = -1
             return
 
-        string_id = row_data.get("string_id", -1)
+        # The table model keys the row by "id" (form_id in ESP mode, string id
+        # in .strings mode); txt mode uses a non-int key, so guard the cast.
+        raw_id = row_data.get("id", row_data.get("string_id", -1))
+        string_id = raw_id if isinstance(raw_id, int) else -1
         original = row_data.get("original", "")
         translated = row_data.get("translated", "")
         self._current_string_id = string_id
@@ -425,6 +563,15 @@ class AudioPreviewPanel(QDockWidget):
             found = self._audio_index.find(string_id)
             if found:
                 self._set_orig_path(str(found))
+
+        # In ESP/ESM mode the row id IS the dialogue FormID, so the original
+        # voice clip can be resolved directly. Pre-fill the FormID box and warm
+        # the voice index so the user only has to click "Load voice".
+        if "_esp_entry" in row_data and string_id > 0:
+            self._voice_formid_edit.setText(f"{string_id:08X}")
+            idx = self._ensure_voice_index()
+            if idx is not None:
+                self._populate_voice_types(string_id)
 
         # Update estimated duration in timing bar even before synthesis
         from gui.tts_engine import estimate_duration
@@ -473,6 +620,139 @@ class AudioPreviewPanel(QDockWidget):
     def _on_orig_state_changed(self, state) -> None:
         playing = (state == _SubprocessPlayer.PlaybackState.PlayingState)
         self._orig_play_btn.setText(self.tr("⏸ Pause") if playing else self.tr("▶ Play"))
+
+    # ── Native game voice (Wwise .wem) ──────────────────────────────────────────
+
+    @staticmethod
+    def _parse_formid(text: str) -> Optional[int]:
+        """Parse a hex FormID from user/auto input ('0x00012345' or '00012345')."""
+        s = text.strip().lower()
+        if s.startswith("0x"):
+            s = s[2:]
+        if not s:
+            return None
+        try:
+            return int(s, 16)
+        except ValueError:
+            return None
+
+    def _ensure_voice_index(self):
+        """Return the built VoiceIndex, or None if unconfigured/still building.
+
+        Kicks off a background build on first use; the result is delivered to
+        :meth:`_on_voice_index_done`.
+        """
+        if self._voice_index is not None:
+            return self._voice_index
+        if not self._voice_data_dir:
+            return None
+        if self._voice_index_building:
+            return None
+        self._voice_index_building = True
+        self._voice_status_label.setText(self.tr("Indexing voices…"))
+        worker = _VoiceIndexWorker(
+            data_dir=self._voice_data_dir,
+            vgmstream_binary=self._vgmstream_binary,
+            cache_dir=self._voice_cache_dir,
+            language=self._voice_language,
+        )
+        worker.signals.done.connect(self._on_voice_index_done)
+        QThreadPool.globalInstance().start(worker)
+        return None
+
+    @Slot(object)
+    def _on_voice_index_done(self, index) -> None:
+        self._voice_index_building = False
+        self._voice_index = index
+        if index is None:
+            self._voice_status_label.setText(self.tr("Voice index failed"))
+            return
+        self._voice_status_label.setText(
+            self.tr("%d voiced lines indexed") % index.count
+        )
+        # Populate the combo for whatever FormID is currently in the box.
+        cur = self._parse_formid(self._voice_formid_edit.text())
+        if cur is not None:
+            self._populate_voice_types(cur)
+        # Resume an explicit load that was waiting on the build.
+        if self._pending_voice_formid is not None:
+            fid = self._pending_voice_formid
+            self._pending_voice_formid = None
+            self._do_voice_load(fid, autoplay=True)
+
+    def _populate_voice_types(self, form_id: int) -> None:
+        if self._voice_index is None:
+            return
+        types = self._voice_index.voice_types(form_id)
+        self._populating_voice_combo = True
+        try:
+            self._voice_type_combo.clear()
+            for t in types:
+                self._voice_type_combo.addItem(t or self.tr("(default)"), t)
+        finally:
+            self._populating_voice_combo = False
+        if not types:
+            self._voice_status_label.setText(self.tr("No voice clip for this FormID"))
+        else:
+            self._voice_status_label.setText("")
+
+    @Slot(int)
+    def _on_voice_type_changed(self, _index: int = 0) -> None:
+        # Programmatic repopulation must not trigger a decode/playback.
+        if self._populating_voice_combo:
+            return
+        fid = self._parse_formid(self._voice_formid_edit.text())
+        if fid is not None and self._voice_index is not None:
+            # Load (and play) the newly selected voice type.
+            self._do_voice_load(fid, autoplay=True)
+
+    @Slot()
+    def _on_voice_load_clicked(self) -> None:
+        fid = self._parse_formid(self._voice_formid_edit.text())
+        if fid is None:
+            self._voice_status_label.setText(self.tr("Enter a valid FormID (hex)"))
+            return
+        idx = self._ensure_voice_index()
+        if idx is None:
+            if not self._voice_data_dir:
+                self._voice_status_label.setText(
+                    self.tr("Set the Voice Data directory in Settings → Audio")
+                )
+            else:
+                # Build in progress — resume this load when it finishes.
+                self._pending_voice_formid = fid
+            return
+        self._populate_voice_types(fid)
+        self._do_voice_load(fid, autoplay=True)
+
+    def _do_voice_load(self, form_id: int, autoplay: bool) -> None:
+        idx = self._voice_index
+        if idx is None:
+            return
+        if not idx.find(form_id):
+            self._voice_status_label.setText(self.tr("No voice clip for this FormID"))
+            return
+        voice_type = self._voice_type_combo.currentData()
+        self._voice_status_label.setText(self.tr("Decoding…"))
+        self._voice_play_btn.setEnabled(False)
+        worker = _VoiceDecodeWorker(idx, form_id, voice_type, autoplay)
+        worker.signals.done.connect(self._on_voice_decode_done)
+        QThreadPool.globalInstance().start(worker)
+
+    @Slot(object)
+    def _on_voice_decode_done(self, payload) -> None:
+        _form_id, _voice_type, wav, autoplay = payload
+        self._voice_play_btn.setEnabled(True)
+        if not wav:
+            self._voice_status_label.setText(self.tr("Decode failed"))
+            return
+        self._voice_status_label.setText("")
+        # Feed the decoded clip into the existing original-audio slot so it drives
+        # the duration label, the timing comparison, and the ▶ Play control.
+        self._set_orig_path(wav)
+        if autoplay:
+            self._orig_player.setSource(f"file://{wav}")
+            self._orig_player.play()
 
     # ── TTS synthesis ─────────────────────────────────────────────────────────
 

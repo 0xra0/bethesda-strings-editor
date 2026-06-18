@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 32  # Increment when schema changes
+CONFIG_VERSION = 33  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -158,6 +158,11 @@ class AppSettings:
     piper_model: str = ""
     audio_dir: str = ""               # root directory of extracted game audio files
     tts_auto_preview: bool = False    # auto-synthesize on selection change
+
+    # ── Native voice playback (Starfield Wwise .wem in *Voices*.ba2) ───────────
+    voice_data_dir: str = ""          # game Data dir containing *Voices*.ba2 archives
+    vgmstream_binary: str = "vgmstream-cli"  # decoder for Wwise .wem clips
+    voice_language: str = "en"        # which voice language pack to index
 
     # ── Validation rules ─────────────────────────────────────────
     _URL_MIN_LENGTH = 5

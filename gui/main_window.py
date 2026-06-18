@@ -3348,6 +3348,9 @@ class MainWindow(QMainWindow):
             audio_dir=getattr(self.settings, "audio_dir", ""),
             auto_preview=getattr(self.settings, "tts_auto_preview", False),
             cache_dir=cache_dir,
+            voice_data_dir=getattr(self.settings, "voice_data_dir", ""),
+            vgmstream_binary=getattr(self.settings, "vgmstream_binary", "vgmstream-cli"),
+            voice_language=getattr(self.settings, "voice_language", "en"),
         )
 
     # ── Editor pane ───────────────────────────────────────────────────────────
