@@ -15,6 +15,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
+from . import vmad_handler
+
 
 # ── Record/field definitions (Starfield _recorddefs.txt) ────────────────────
 # Each entry: (field_sig, record_sig, list_index, ignored, proc_id)
@@ -761,3 +763,325 @@ def patch_localized_flag(path: Path) -> Path:
     path.write_bytes(data)
 
     return backup
+
+
+# ── VMAD (Papyrus script property) analysis ─────────────────────────────────────
+
+@dataclass
+class VmadStringEntry:
+    """A single string-typed script property extracted from a record's VMAD."""
+
+    form_id:     int
+    edid:        str
+    record_sig:  str
+    script_name: str
+    prop_name:   str
+    array_index: int     # -1 for a scalar String property; >=0 for an array element
+    risk:        str     # vmad_handler.RISK_* constant
+    reason:      str
+    original:    str
+    vmad_index:  int     # index within this record's VMAD string list (write locator)
+    translation: str = ""
+
+
+@dataclass
+class VmadScanResult:
+    plugin_name:   str
+    entries:       list[VmadStringEntry]
+    records_with_vmad: int
+    parse_warnings: int   # records whose VMAD could not be fully parsed
+
+    @property
+    def translatable_count(self) -> int:
+        return sum(1 for e in self.entries if e.risk == vmad_handler.RISK_TRANSLATABLE)
+
+    @property
+    def review_count(self) -> int:
+        return sum(1 for e in self.entries if e.risk == vmad_handler.RISK_REVIEW)
+
+    @property
+    def locked_count(self) -> int:
+        return sum(1 for e in self.entries if e.risk == vmad_handler.RISK_LOCKED)
+
+
+def _decompress_body(flags: int, body: bytes) -> Optional[bytes]:
+    """Return the (possibly decompressed) record body, or None if undecodable."""
+    if not (flags & _FLAG_COMPRESSED):
+        return body
+    if len(body) < 4:
+        return None
+    if struct.unpack_from("<I", body, 0)[0] == 0:
+        return None
+    try:
+        return zlib.decompress(body[4:])
+    except zlib.error:
+        return None
+
+
+def _edid_of(body: bytes) -> str:
+    """Pull the EDID field from a (decompressed) record body, if present."""
+    pos = 0
+    next_size = 0
+    n = len(body)
+    while pos + 6 <= n:
+        fsig = body[pos:pos + 4]
+        fsize = struct.unpack_from("<H", body, pos + 4)[0]
+        pos += 6
+        actual = next_size if next_size else fsize
+        next_size = 0
+        if pos + actual > n:
+            break
+        fdata = body[pos:pos + actual]
+        pos += actual
+        if fsig == b"XXXX":
+            if len(fdata) >= 4:
+                next_size = struct.unpack_from("<I", fdata, 0)[0]
+            continue
+        if fsig == b"EDID":
+            return fdata.rstrip(b"\x00").decode("ascii", errors="replace")
+    return ""
+
+
+def scan_vmad(path: Path, encoding: str = "utf-8") -> VmadScanResult:
+    """
+    Scan an ESP/ESM/ESL file and return every string-typed VMAD script property.
+
+    Works for both localized and non-localized plugins — VMAD strings live
+    inside the plugin regardless of the Localized flag (they are never
+    externalised to companion .strings files).
+    """
+    data = path.read_bytes()
+    size = len(data)
+    if size < 24 or data[0:4] != b"TES4":
+        raise ValueError("Not a valid ESP/ESM file (missing TES4 header)")
+
+    tes4_data_size = struct.unpack_from("<I", data, 4)[0]
+    entries: list[VmadStringEntry] = []
+    records_with_vmad = 0
+    parse_warnings = 0
+
+    pos = 24 + tes4_data_size
+    grup_stack: list[int] = []
+    while pos < size:
+        while grup_stack and pos >= grup_stack[-1]:
+            grup_stack.pop()
+        if pos + 8 > size:
+            break
+        sig = bytes(data[pos:pos + 4])
+        dsize = struct.unpack_from("<I", data, pos + 4)[0]
+        if sig == b"GRUP":
+            if pos + 24 > size:
+                break
+            grup_stack.append(pos + dsize)
+            pos += 24
+            continue
+        if sig in _SKIP_RECORDS:
+            pos += 24 + dsize
+            continue
+
+        rec_end = pos + 24 + dsize
+        if rec_end > size:
+            break
+        flags   = struct.unpack_from("<I", data, pos + 8)[0]
+        form_id = struct.unpack_from("<I", data, pos + 12)[0]
+        body    = _decompress_body(flags, bytes(data[pos + 24:rec_end]))
+        pos = rec_end
+        if body is None:
+            continue
+
+        vmad = vmad_handler.find_vmad_field(body)
+        if vmad is None:
+            continue
+        records_with_vmad += 1
+        info = vmad_handler.parse_vmad(vmad, encoding)
+        if not info.fully_parsed:
+            parse_warnings += 1
+        if not info.strings:
+            continue
+
+        edid = _edid_of(body)
+        rec_str = sig.decode("ascii", errors="replace")
+        for i, s in enumerate(info.strings):
+            entries.append(VmadStringEntry(
+                form_id=form_id, edid=edid, record_sig=rec_str,
+                script_name=s.script_name, prop_name=s.prop_name,
+                array_index=s.array_index, risk=s.risk, reason=s.reason,
+                original=s.value, vmad_index=i,
+            ))
+
+    return VmadScanResult(
+        plugin_name=path.name, entries=entries,
+        records_with_vmad=records_with_vmad, parse_warnings=parse_warnings,
+    )
+
+
+def apply_vmad_translations(
+    path: Path,
+    edits: dict[tuple[int, int], str],
+    encoding: str = "utf-8",
+    make_backup: bool = True,
+) -> Optional[Path]:
+    """
+    Write edited VMAD string properties back into an ESP/ESM file.
+
+    *edits* maps ``(form_id, vmad_index)`` → new text (the same locators
+    produced by :func:`scan_vmad`).  Only the affected VMAD fields are rebuilt;
+    record/GRUP sizes are recomputed and compressed records are re-compressed.
+    Every byte outside an edited string value is preserved exactly.
+
+    Returns the backup path (``path`` + ``.bak``) when *make_backup* is True,
+    else None.  Does nothing and returns the backup path if no edits apply.
+    """
+    if not edits:
+        return None
+
+    data = bytes(path.read_bytes())
+    if len(data) < 24 or data[0:4] != b"TES4":
+        raise ValueError("Not a valid ESP/ESM file (missing TES4 header)")
+
+    form_ids = frozenset(fid for (fid, _idx) in edits)
+    out = bytearray()
+    _vmad_rewrite(data, 0, len(data), out, edits, form_ids, encoding)
+
+    backup: Optional[Path] = None
+    if make_backup:
+        backup = path.with_suffix(path.suffix + ".bak")
+        backup.write_bytes(data)
+    path.write_bytes(out)
+    return backup
+
+
+def _vmad_rewrite(
+    data:     bytes,
+    pos:      int,
+    end:      int,
+    out:      bytearray,
+    edits:    dict[tuple[int, int], str],
+    form_ids: frozenset[int],
+    encoding: str,
+) -> int:
+    """Recursively copy chunks, rebuilding VMAD fields of edited records."""
+    if pos == 0:
+        if len(data) < 8:
+            out += data
+            return len(data)
+        tes4_end = 24 + struct.unpack_from("<I", data, 4)[0]
+        out += data[:tes4_end]
+        pos = tes4_end
+
+    while pos < end:
+        if pos + 8 > len(data):
+            out += data[pos:end]
+            return end
+
+        sig   = bytes(data[pos:pos + 4])
+        dsize = struct.unpack_from("<I", data, pos + 4)[0]
+
+        if sig == b"GRUP":
+            if pos + 24 > len(data):
+                out += data[pos:end]
+                return end
+            grup_input_end = pos + dsize
+            size_field_pos = len(out) + 4
+            grup_out_start = len(out)
+            out += sig
+            out += b"\x00\x00\x00\x00"
+            out += data[pos + 8:pos + 24]
+            pos = _vmad_rewrite(
+                data, pos + 24, grup_input_end, out, edits, form_ids, encoding
+            )
+            struct.pack_into("<I", out, size_field_pos, len(out) - grup_out_start)
+
+        elif sig in _SKIP_RECORDS:
+            out += data[pos:pos + 24 + dsize]
+            pos += 24 + dsize
+
+        else:
+            rec_end = pos + 24 + dsize
+            flags   = struct.unpack_from("<I", data, pos + 8)[0]
+            form_id = struct.unpack_from("<I", data, pos + 12)[0]
+
+            if form_id not in form_ids:
+                out += data[pos:rec_end]
+                pos = rec_end
+                continue
+
+            raw_body = bytes(data[pos + 24:rec_end])
+            body = _decompress_body(flags, raw_body)
+            if body is None:
+                out += data[pos:rec_end]   # cannot decode — leave untouched
+                pos = rec_end
+                continue
+
+            new_body = _splice_vmad_field(body, form_id, edits, encoding)
+            if new_body == body:
+                out += data[pos:rec_end]   # nothing actually changed
+                pos = rec_end
+                continue
+
+            if flags & _FLAG_COMPRESSED:
+                packed = struct.pack("<I", len(new_body)) + zlib.compress(new_body)
+            else:
+                packed = new_body
+
+            new_header = bytearray(data[pos:pos + 24])
+            struct.pack_into("<I", new_header, 4, len(packed))
+            out += new_header
+            out += packed
+            pos = rec_end
+
+    return pos
+
+
+def _splice_vmad_field(
+    body:     bytes,
+    form_id:  int,
+    edits:    dict[tuple[int, int], str],
+    encoding: str,
+) -> bytes:
+    """Rebuild a record body with its VMAD field's edited strings replaced."""
+    sub = {idx: val for (fid, idx), val in edits.items() if fid == form_id}
+    if not sub:
+        return body
+
+    out = bytearray()
+    pos = 0
+    pending = b""        # a buffered XXXX field awaiting its owner field
+    next_size = 0
+    n = len(body)
+
+    while pos + 6 <= n:
+        fsig = body[pos:pos + 4]
+        fsize = struct.unpack_from("<H", body, pos + 4)[0]
+        header_end = pos + 6
+        actual = next_size if next_size else fsize
+        val_end = header_end + actual
+        if val_end > n:
+            out += pending + body[pos:]
+            return bytes(out)
+        fdata = body[header_end:val_end]
+
+        if fsig == b"XXXX":
+            next_size = struct.unpack_from("<I", fdata, 0)[0] if len(fdata) >= 4 else 0
+            pending = body[pos:val_end]
+            pos = val_end
+            continue
+
+        next_size = 0
+        if fsig == b"VMAD":
+            new_vmad = vmad_handler.replace_strings(fdata, sub, encoding)
+            if len(new_vmad) <= 0xFFFF:
+                out += b"VMAD" + struct.pack("<H", len(new_vmad)) + new_vmad
+            else:
+                out += b"XXXX" + struct.pack("<H", 4) + struct.pack("<I", len(new_vmad))
+                out += b"VMAD" + struct.pack("<H", 0) + new_vmad
+            pending = b""
+            pos = val_end
+            continue
+
+        out += pending + body[pos:val_end]
+        pending = b""
+        pos = val_end
+
+    out += pending + body[pos:]
+    return bytes(out)

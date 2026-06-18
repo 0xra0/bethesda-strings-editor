@@ -73,6 +73,7 @@ from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
 from gui.dialogue_tree_dialog import DialogueTreeDialog
+from gui.vmad_dialog import VmadDialog
 from gui.translation_memory import TranslationMemory
 from gui.string_table import StringTableModel, StringTableView
 from gui.term_protector import ProtectedTerm, TermProtector
@@ -405,6 +406,7 @@ class MainWindow(QMainWindow):
         self._current_ba2: Optional[BA2File] = None   # open BA2 archive (if any)
         self._current_ba2_entry: Optional[str] = None  # internal path of the loaded strings file
         self._dialogue_tree_dlg: Optional[DialogueTreeDialog] = None
+        self._vmad_dlg: Optional[VmadDialog] = None
         self.settings: AppSettings = (
             settings if settings is not None else load_settings()
         )
@@ -1185,6 +1187,18 @@ class MainWindow(QMainWindow):
         self.dialogue_tree_action.triggered.connect(self._open_dialogue_tree)
         self.dialogue_tree_action.setEnabled(False)
         trans_menu.addAction(self.dialogue_tree_action)
+
+        self.vmad_action = QAction(
+            self.tr("Script &Property Analysis (VMAD)…"), self
+        )
+        self.vmad_action.setIcon(QIcon.fromTheme("dialog-warning"))
+        self.vmad_action.setToolTip(self.tr(
+            "Parse compiled Papyrus script (VMAD) properties from an ESP/ESM/ESL.\n"
+            "Real display text is editable; script identifiers, event names and\n"
+            "resource paths are locked because editing them breaks the mod."
+        ))
+        self.vmad_action.triggered.connect(self._open_vmad_dialog)
+        trans_menu.addAction(self.vmad_action)
 
         self.lore_rag_action = QAction(self.tr("Lore &RAG Context…"), self)
         self.lore_rag_action.setIcon(QIcon.fromTheme("document-properties"))
@@ -5753,6 +5767,20 @@ class MainWindow(QMainWindow):
             dlg.jump_requested.connect(self._jump_to_esp_field)
             dlg.finished.connect(lambda: setattr(self, "_dialogue_tree_dlg", None))
             self._dialogue_tree_dlg = dlg
+        dlg.show()
+        dlg.raise_()
+        dlg.activateWindow()
+
+    def _open_vmad_dialog(self) -> None:
+        dlg = self._vmad_dlg
+        if dlg is None:
+            path = ""
+            if isinstance(self.current_file, EspFile) and self.current_path:
+                path = str(self.current_path)
+            encoding = (self.table_model._encoding or "utf-8") if path else "utf-8"
+            dlg = VmadDialog(parent=self, initial_path=path, encoding=encoding)
+            dlg.finished.connect(lambda: setattr(self, "_vmad_dlg", None))
+            self._vmad_dlg = dlg
         dlg.show()
         dlg.raise_()
         dlg.activateWindow()
