@@ -618,6 +618,9 @@ class OllamaWorker(QObject):
             # is serialised so raising max_concurrent beyond 4 just adds queue wait time.
             "timeout": 480,
             "max_concurrent": 4,
+            # Pin every request to num_ctx 8192 so a short→long string never forces Ollama
+            # to unload and reload the runner just to resize the context window mid-batch.
+            "pin_num_ctx": True,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
@@ -651,24 +654,34 @@ class OllamaWorker(QObject):
         # No think_disabled: Gemma 3 has no thinking mode.
         "mamaylm": {
             "temperature": 0.1,
-            "num_predict": 4096,
+            # 512, not 4096.  mamaylm is a general Gemma 3 fine-tune (not a translation-
+            # specialised model), so on short game-string fragments it sometimes fails to
+            # emit <end_of_turn> and rambles/repeats to the cap.  num_predict is a CAP, not
+            # a target — a well-behaved reply still stops early — but when the model misbehaves
+            # a 4096 cap wastes seconds per string × 49 000 strings = hours.  512 is ample for
+            # UI/dialogue lines; the adaptive path (input_len×4, up to self.ollama_num_predict
+            # = 4096) still raises the budget for genuinely long book strings, so nothing is
+            # truncated.  Mirrors translategemma3-st-2's reasoning.
+            "num_predict": 512,
             "num_ctx": 8192,
             "top_k": 64,
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # Two-stream on a 16 GiB consumer GPU.  Ollama pre-allocates a full num_ctx
-            # KV window PER parallel slot, so the VRAM cost is num_ctx × slots.  At the
-            # old num_ctx 16384 a single slot already filled the card, so 2 slots OOM'd
-            # and the runner thrashed (VRAM drops then refills mid-batch).  Halving
-            # num_ctx to 8192 means 2 slots reserve 2×8192 = the same 16384 footprint
-            # that ran stably at one slot — so max_concurrent 2 is safe AND ~2× faster.
-            # 8192 ctx is ample: every call is paragraph- or chunk-sized (chunking kicks
-            # in at _CHUNK_TRANSLATE_THRESHOLD chars, well under 8192 tokens), so no
-            # single request is truncated.  Pair with OLLAMA_NUM_PARALLEL=2 server-side
-            # (one slot per app worker).  timeout 720s covers two-up generation on slow HW.
+            # Single-stream by default on a 16 GiB consumer GPU.  Ollama pre-allocates a full
+            # num_ctx KV window PER parallel slot, so VRAM = weights (~7.5 GiB Q4) + num_ctx ×
+            # slots × KV + compute buffers.  At 2 slots × 8192 the card sits right on its 16 GiB
+            # limit, so the desktop compositor/browser taking a couple of GiB tips it over →
+            # ROCm evicts the runner mid-batch → Ollama reloads the model (the "VRAM drops then
+            # refills" thrash, and the 1706 s / 2996 s zero-token wedges).  One slot uses half
+            # the KV (~5 GiB headroom) → the model loads ONCE and never reloads, which on this
+            # hardware is faster overall than a thrashing 2-up.  pin_num_ctx keeps every request
+            # at exactly 8192 so a short→long size change never forces a context-resize reload.
+            # To opt back into 2-up you need BOTH spare VRAM AND OLLAMA_NUM_PARALLEL=2 set on the
+            # Ollama server: raise max_concurrent to 2 here.  timeout 720 s covers slow HW.
             "timeout": 720,
-            "max_concurrent": 2,
+            "max_concurrent": 1,
+            "pin_num_ctx": True,
             "stops": [
                 "<end_of_turn>",
                 "<start_of_turn>",
@@ -1333,7 +1346,13 @@ class OllamaWorker(QObject):
             adaptive_num_ctx = 32768
         model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
-        effective_num_ctx = max(8192, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
+        if model_config.get("pin_num_ctx"):
+            # Fixed context size for VRAM-capped models so the runner never reloads to
+            # resize its KV window between chunks (each chunk is <=_MAX_CHUNK_CHARS, so it
+            # always fits).  Keep the 8192 floor the non-pinned path also uses here.
+            effective_num_ctx = max(8192, min(model_max_ctx, user_max_ctx))
+        else:
+            effective_num_ctx = max(8192, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
         # Use ×4 (matching the non-chunked path); add thinking overhead for
         # models that may generate chain-of-thought tokens before the translation.
@@ -1823,7 +1842,14 @@ class OllamaWorker(QObject):
             # model config's num_ctx is the architecture ceiling; user limit further constrains.
             model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
             user_max_ctx = max(self.ollama_num_ctx, 4096)
-            effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
+            if model_config.get("pin_num_ctx"):
+                # VRAM-capped models (mamaylm, translategemma3-st-2): use a single fixed
+                # context size for EVERY request so the runner loads once and never reloads
+                # to grow/shrink its KV window mid-batch.  Long strings are chunked below
+                # _CHUNK_TRANSLATE_THRESHOLD, so this fixed size never truncates.
+                effective_num_ctx = max(4096, min(model_max_ctx, user_max_ctx))
+            else:
+                effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
             # TranslateGemma models embed the language-pair instruction in the TEMPLATE;
             # the payload must carry raw source text only (no "To Ukrainian:" prefix).
