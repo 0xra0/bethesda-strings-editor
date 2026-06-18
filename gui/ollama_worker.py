@@ -1211,6 +1211,20 @@ class OllamaWorker(QObject):
                         # Primary skipped; followers also skip
                         completed_count += 1 + len(req_followers)
                         self.progress.emit(completed_count, total)
+                    elif translated and self._is_untranslated_echo(
+                        req.original_text, translated, req.source_lang, req.target_lang
+                    ):
+                        # Defensive: an untranslated echo must NEVER be saved or fanned
+                        # out to dedup followers (a single echoed primary would otherwise
+                        # poison all of its duplicate rows).  _translate_single already
+                        # converts these to None; this is a belt-and-braces guard so a
+                        # future code path can't reintroduce the amplification.
+                        failed += 1 + len(req_followers)
+                        completed_count += 1 + len(req_followers)
+                        self.error.emit(
+                            f"Untranslated echo for string {req.string_id} — not saved"
+                        )
+                        self.progress.emit(completed_count, total)
                     elif translated:
                         # A real completion clears the wedged-backend run counter.
                         with QMutexLocker(self._mutex):
@@ -2096,6 +2110,7 @@ class OllamaWorker(QObject):
                 translated = self._restore_unclosed_guillemets(translated)
                 translated = self._restore_dropped_opening_brackets(translated, req.original_text)
                 translated = self._restore_missing_format_specs(translated, req.original_text)
+                translated = self._restore_dropped_designator(translated, req.original_text)
                 translated = self._restore_missing_newlines(translated, req.original_text)
                 translated = self._fix_case_and_line_prefix(translated, req.original_text)
 
@@ -2107,6 +2122,22 @@ class OllamaWorker(QObject):
             # Handles both actual \n and the two-character literal \n escape.
             if translated and req.original_text:
                 translated = self._match_trailing_newlines(translated, req.original_text)
+
+            # Final guard: a verbatim echo of a source that still carries source-language
+            # content (Russian-only letters/words for ru→uk, Latin words for en→uk) was
+            # NOT translated.  Return None so it is treated as a failure — never saved,
+            # never cached, and never fanned out to this string's dedup followers.  This
+            # is the single most important fix for the report: an echo that reached the
+            # cache used to be replayed on every re-run, and one echoed primary used to
+            # be copied onto all of its (up to thousands of) duplicate rows.
+            if translated and self._is_untranslated_echo(
+                req.original_text, translated, req.source_lang, req.target_lang
+            ):
+                logger.warning(
+                    "String %s: model returned an untranslated echo of the source "
+                    "— treating as failure (not saved or cached)", req.string_id
+                )
+                return None
 
             if translated and cache_key and self.translation_cache is not None:
                 self.translation_cache.set(cache_key, translated)
@@ -2211,6 +2242,36 @@ class OllamaWorker(QObject):
                     insert_pos += 1
                 translated = translated[:insert_pos] + " " + full + translated[insert_pos:]
         return translated
+
+    # Leading record-code designator that models routinely drop, e.g.
+    #   "FB 441 :: Массив коммуникаций"  ->  drops "FB 441 :: "
+    #   'GLB-222 "Превосходство"'        ->  drops "GLB-222 "
+    # Group 1 matches an all-caps/alphanumeric code (with digits, spaces, hyphens)
+    # that is followed either by a "::" separator or by a quoted name.
+    _DESIGNATOR_RE = re.compile(
+        r'^([A-Z][A-Z0-9]*(?:[ \-][A-Z0-9]+)*'
+        r'(?:\s*::\s*|\s+(?=[«"“])))'
+    )
+
+    @classmethod
+    def _restore_dropped_designator(cls, translated: str, original: str) -> str:
+        """Re-prepend a leading record-code designator (``FB 441 :: ``, ``GLB-222 ``)
+        the model dropped.  Only acts when the source starts with such a code, the
+        translation does not, and the code is not already present anywhere in the
+        translation — so it never double-inserts or fires on ordinary prose."""
+        if not original or not translated:
+            return translated
+        m = cls._DESIGNATOR_RE.match(original)
+        if not m:
+            return translated
+        designator = m.group(1)
+        code = designator.rstrip(" :").strip()
+        if not code:
+            return translated
+        # Already there (anywhere) → nothing to do.
+        if code in translated or cls._DESIGNATOR_RE.match(translated):
+            return translated
+        return designator + translated
 
     @staticmethod
     def _restore_unclosed_guillemets(translated: str) -> str:
@@ -3079,6 +3140,43 @@ class OllamaWorker(QObject):
 
     # Ukrainian-specific characters that confirm the text is already (partially) Ukrainian
     _UK_SPECIFIC = re.compile(r"[іїєІЇЄ]")
+
+    @staticmethod
+    def _norm_for_echo(s: str) -> str:
+        """Whitespace-collapsed, case-folded form for echo comparison."""
+        return re.sub(r"\s+", " ", s.strip()).casefold()
+
+    @classmethod
+    def _is_untranslated_echo(
+        cls, source: str, translated: str, source_lang: str, target_lang: str
+    ) -> bool:
+        """True when the model handed back the source verbatim AND the source contains
+        content that *must* change in the target language — i.e. it was never translated.
+
+        Strings spelled identically in both languages (proper nouns, loanwords such as
+        ``Ставка на ремонт`` or ``Графин для вина``) are correct as-is and are NOT
+        treated as echoes — forcing a retranslation on those would only corrupt them.
+        Only a verbatim copy that still carries source-language-specific evidence is
+        flagged: Russian-only letters (ы/э/ё/ъ) or distinctly-Russian vocabulary for
+        ru→uk, residual Latin words for en→uk.
+        """
+        if not source or not translated:
+            return False
+        if cls._norm_for_echo(source) != cls._norm_for_echo(translated):
+            return False
+        sl = (source_lang or "").lower()
+        tl = (target_lang or "").lower()
+        if sl.startswith("ru") and tl.startswith("uk"):
+            if cls._RU_SPECIFIC_RE.search(source):
+                return True
+            try:
+                return text_has_russian_words(source, threshold=2)
+            except Exception:
+                return False
+        if sl.startswith("en") and tl.startswith("uk"):
+            return any(c.isalpha() and c.isascii() for c in source)
+        # Other language pairs: cannot prove an identical copy is wrong — allow it.
+        return False
 
     def _needs_ru_to_uk_retry(self, original_text: str, translated_text: str) -> bool:
         """Detect when RU->UK output still contains Russian text."""
