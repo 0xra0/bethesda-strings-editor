@@ -316,6 +316,10 @@ class _VoiceDecodeWorker(QRunnable):
 class AudioPreviewPanel(QDockWidget):
     """Dockable panel for original audio playback and TTS preview."""
 
+    # Emitted when a speaker lookup completes: (form_id, voice_types_list_or_None).
+    # ``None`` means voice playback isn't configured, so no speaker can be resolved.
+    speakerResolved: Signal = Signal(int, object)
+
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.setObjectName("AudioPreviewPanel")
@@ -345,6 +349,7 @@ class AudioPreviewPanel(QDockWidget):
         self._voice_index = None            # bethesda_strings.wwise_voice.VoiceIndex | None
         self._voice_index_building: bool = False
         self._pending_voice_formid: Optional[int] = None  # explicit load awaiting build
+        self._pending_speaker_formids: list[int] = []     # speaker lookups awaiting build
         self._populating_voice_combo: bool = False
 
         # Current string state
@@ -679,6 +684,34 @@ class AudioPreviewPanel(QDockWidget):
             fid = self._pending_voice_formid
             self._pending_voice_formid = None
             self._do_voice_load(fid, autoplay=True)
+        # Resume any speaker lookups that were waiting on the build.
+        if self._pending_speaker_formids:
+            pending = self._pending_speaker_formids
+            self._pending_speaker_formids = []
+            for fid in pending:
+                self.speakerResolved.emit(fid, index.voice_types(fid))
+
+    def resolve_speaker(self, form_id: int) -> None:
+        """Resolve who speaks the line with ``form_id`` and emit ``speakerResolved``.
+
+        Shares the single :class:`VoiceIndex` with audio playback.  If the index
+        isn't built yet, the lookup is queued and answered when the build
+        finishes.  When voice playback is unconfigured, emits ``(form_id, None)``
+        so the speaker panel can show a "not configured" hint instead of waiting.
+        """
+        if form_id is None or form_id <= 0:
+            self.speakerResolved.emit(form_id or 0, [])
+            return
+        if self._voice_index is not None:
+            self.speakerResolved.emit(form_id, self._voice_index.voice_types(form_id))
+            return
+        if not self._voice_data_dir:
+            self.speakerResolved.emit(form_id, None)
+            return
+        # Build pending (or kicked off here) — answer when it completes.
+        if form_id not in self._pending_speaker_formids:
+            self._pending_speaker_formids.append(form_id)
+        self._ensure_voice_index()
 
     def _populate_voice_types(self, form_id: int) -> None:
         if self._voice_index is None:

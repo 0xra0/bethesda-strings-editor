@@ -1003,6 +1003,16 @@ class MainWindow(QMainWindow):
         self._audio_panel.setVisible(self.settings.enable_audio_preview)
         self._apply_audio_settings()
 
+        # ── Speaker (NPC) map dock ────────────────────────────────────────────
+        # Shares the audio panel's single VoiceIndex via resolve_speaker().
+        from gui.speaker_panel import SpeakerPanel
+        self._speaker_panel = SpeakerPanel(self)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self._speaker_panel)
+        self.tabifyDockWidget(self._audio_panel, self._speaker_panel)
+        self._speaker_panel.set_resolver(self._audio_panel.resolve_speaker)
+        self._audio_panel.speakerResolved.connect(self._speaker_panel.update_speaker)
+        self._speaker_panel.setVisible(self.settings.enable_audio_preview)
+
         # ── Visual Context Preview dock ───────────────────────────────────────
         from gui.visual_context_preview import VisualContextPreview
         self._visual_preview = VisualContextPreview(self)
@@ -3291,6 +3301,9 @@ class MainWindow(QMainWindow):
         # Update audio preview panel (only when visible — skip if hidden)
         if hasattr(self, "_audio_panel") and self._audio_panel.isVisible():
             self._push_string_to_audio_panel()
+        # Update speaker (NPC) map panel (only when visible — skip if hidden)
+        if hasattr(self, "_speaker_panel") and self._speaker_panel.isVisible():
+            self._speaker_panel.update_for_row(self._get_current_row())
         # Update translation editor pane (only when visible)
         if hasattr(self, "_editor_pane") and self._editor_pane.isVisible():
             self._push_string_to_editor_pane()
@@ -3321,9 +3334,13 @@ class MainWindow(QMainWindow):
     def _toggle_audio_panel(self) -> None:
         visible = self._audio_panel.isVisible()
         self._audio_panel.setVisible(not visible)
+        if hasattr(self, "_speaker_panel"):
+            self._speaker_panel.setVisible(not visible)
         self.audio_panel_action.setChecked(not visible)
         if not visible:
             self._push_string_to_audio_panel()
+            if hasattr(self, "_speaker_panel"):
+                self._speaker_panel.update_for_row(self._get_current_row())
 
     def _push_string_to_visual_preview(self) -> None:
         self._visual_preview.update_string(self._get_current_row())
@@ -4914,6 +4931,8 @@ class MainWindow(QMainWindow):
             # Apply audio preview settings to panel
             self._apply_audio_settings()
             self._audio_panel.setVisible(self.settings.enable_audio_preview)
+            if hasattr(self, "_speaker_panel"):
+                self._speaker_panel.setVisible(self.settings.enable_audio_preview)
             self.audio_panel_action.setChecked(self.settings.enable_audio_preview)
 
             # Apply background / wallpaper
