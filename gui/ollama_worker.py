@@ -668,19 +668,19 @@ class OllamaWorker(QObject):
             "top_p": 0.95,
             "repeat_penalty": 1.1,
             "recommended_quality": 7,
-            # Single-stream by default on a 16 GiB consumer GPU.  Ollama pre-allocates a full
-            # num_ctx KV window PER parallel slot, so VRAM = weights (~7.5 GiB Q4) + num_ctx ×
-            # slots × KV + compute buffers.  At 2 slots × 8192 the card sits right on its 16 GiB
-            # limit, so the desktop compositor/browser taking a couple of GiB tips it over →
-            # ROCm evicts the runner mid-batch → Ollama reloads the model (the "VRAM drops then
-            # refills" thrash, and the 1706 s / 2996 s zero-token wedges).  One slot uses half
-            # the KV (~5 GiB headroom) → the model loads ONCE and never reloads, which on this
-            # hardware is faster overall than a thrashing 2-up.  pin_num_ctx keeps every request
-            # at exactly 8192 so a short→long size change never forces a context-resize reload.
-            # To opt back into 2-up you need BOTH spare VRAM AND OLLAMA_NUM_PARALLEL=2 set on the
-            # Ollama server: raise max_concurrent to 2 here.  timeout 720 s covers slow HW.
+            # Two-stream on a 16 GiB consumer GPU.  Ollama pre-allocates a full num_ctx KV
+            # window PER parallel slot, so VRAM = weights (~7.5 GiB Q4) + num_ctx × slots × KV
+            # + compute buffers.  2 slots × 8192 = 16384 KV = the footprint that ran stably at
+            # one slot × 16384; the real 49 049-string run completed two-up in 8.65 h with ZERO
+            # timeouts, so 2-up is the right default here — single-stream would ~double wall time.
+            # pin_num_ctx fixes every request at exactly 8192 so a short→long size change never
+            # forces a context-resize reload (the reload the user saw); num_predict 512 caps any
+            # rambling string so a stuck slot frees fast instead of blocking the other stream.
+            # Requires OLLAMA_NUM_PARALLEL=2 server-side for the 2 app workers to get real slots.
+            # FALLBACK if the soft ROCm hang / VRAM eviction returns on this card: drop
+            # max_concurrent to 1 here and OLLAMA_NUM_PARALLEL=1 server-side (stability > speed).
             "timeout": 720,
-            "max_concurrent": 1,
+            "max_concurrent": 2,
             "pin_num_ctx": True,
             "stops": [
                 "<end_of_turn>",

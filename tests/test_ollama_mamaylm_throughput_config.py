@@ -11,12 +11,16 @@ further costs: every short string was allowed to generate up to num_predict 4096
 tokens (a general fine-tune rambles past the stop token on game fragments), and the
 per-request num_ctx stepped 4096→8192 mid-batch, forcing a context-resize reload.
 
-The stability fix: single-stream (max_concurrent 1) so the runner loads ONCE with
-~5 GiB headroom and never gets evicted; pin_num_ctx so num_ctx is fixed and never
-triggers a resize reload; num_predict 512 so a misbehaving short string can't burn a
-4096-token budget.  These invariants encode that reasoning so a future config tweak
-can't silently re-break it (re-introducing the VRAM thrash, reload churn, or wasted
-generation).
+The fix has three parts.  (1) Two-up at HALF the context: 2 slots × num_ctx 8192 =
+16384 KV = the footprint that ran stably at one slot × 16384, so two streams give ~2×
+throughput without exceeding it — the real 49 049-string run finished two-up in 8.65 h
+with zero timeouts, and single-stream would roughly double that.  (2) pin_num_ctx so
+num_ctx is FIXED per request and a short→long string never forces a context-resize
+reload mid-batch.  (3) num_predict 512 (a cap, not a target) so a misbehaving short
+string can't ramble to a 4096-token budget and pin a slot — the adaptive path still
+raises the budget for genuinely long strings.  These invariants encode that reasoning
+so a future config tweak can't silently re-break it (re-introducing the VRAM thrash,
+reload churn, or wasted generation).
 
 Run with:
     python -m pytest tests/test_ollama_mamaylm_throughput_config.py -v
@@ -38,9 +42,10 @@ def _mamaylm():
     return OllamaWorker.MODEL_CONFIGS["mamaylm"]
 
 
-def test_mamaylm_runs_single_stream():
-    """One KV slot on a 16 GiB card so the runner never OOM-evicts and reloads."""
-    assert _mamaylm()["max_concurrent"] == 1
+def test_mamaylm_runs_two_streams():
+    """Two-up is the real throughput lever (the 49k run completed two-up in 8.65h
+    with zero timeouts); single-stream would roughly double wall time."""
+    assert _mamaylm()["max_concurrent"] == 2
 
 
 def test_mamaylm_slots_fit_the_stable_footprint():
