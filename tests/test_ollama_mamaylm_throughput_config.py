@@ -31,7 +31,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from gui.ollama_worker import OllamaWorker  # noqa: E402
+from gui.ollama_worker import OllamaWorker, TranslationRequest  # noqa: E402
 
 # The VRAM footprint (num_ctx × slots) that ran stably as a single slot on the
 # 16 GiB card.  mamaylm must not exceed it.
@@ -95,3 +95,90 @@ def test_chunk_pieces_fit_smallest_model_ctx():
     )
     approx_tokens = OllamaWorker._MAX_CHUNK_CHARS / 3.5 * 2 + 512
     assert approx_tokens < min_ctx
+
+
+# ── runtime num_ctx pin (the actual reload trigger) ──────────────────────────────
+#
+# The config flag pin_num_ctx is only half the fix — every code path that builds an
+# Ollama payload must *honour* it.  The "model keeps restarting mid-batch" symptom was
+# the rewrite path (_call_ollama_rewrite, fired on every Russian-leakage cleanup —
+# a large share of strings on mamaylm-v2.0) sending an adaptive num_ctx=4096 for short
+# strings while the main translate/chunk paths sent the model's 8192, so the runner
+# reloaded to resize its KV window (8192⇄4096) on roughly every other string.  Ollama
+# only reloads on LOAD-TIME option changes (num_ctx the dominant one); sampling params
+# never trigger it.  So the invariant a pinned model needs is: every payload-building
+# path sends the *same fixed* num_ctx (the model's configured value), regardless of the
+# input length or the user's num_ctx slider.  These tests pin that down at the payload
+# level — config-only assertions above can't catch a path that ignores the flag.
+
+
+def _capture_num_ctx(worker, call):
+    """Run *call* with worker._stream_ollama stubbed; return the sent options.num_ctx."""
+    captured = {}
+
+    def _fake_stream(payload, *_):  # extra arg = the timeout _stream_ollama is called with
+        captured["num_ctx"] = payload["options"]["num_ctx"]
+        # A clean Ukrainian string so no downstream echo/leakage rewrite fires.
+        return "Привіт, світ і друзі"
+
+    worker._stream_ollama = _fake_stream  # type: ignore[method-assign]
+    call(worker)
+    return captured["num_ctx"]
+
+
+def _req(text="Hello world"):
+    return TranslationRequest(
+        index=0, original_text=text, string_id=1,
+        source_lang="en", target_lang="ukrainian",
+    )
+
+
+def test_pinned_rewrite_path_sends_model_num_ctx_for_short_input():
+    """The rewrite path used adaptive num_ctx (4096 for a short string).  On a pinned
+    model it must send the model's configured num_ctx instead — this is the exact path
+    that forced the mid-batch reload."""
+    w = OllamaWorker(model="mamaylm-gemma3-12b-v2.0:latest",
+                     enable_term_protection=False, ollama_num_ctx=16384)
+    sent = _capture_num_ctx(w, lambda x: x._call_ollama_rewrite("sys", "prompt", input_len=20))
+    assert sent == _mamaylm()["num_ctx"] == 8192
+
+
+def test_pinned_chunk_path_sends_model_num_ctx_for_short_input():
+    w = OllamaWorker(model="mamaylm-gemma3-12b-v2.0:latest",
+                     enable_term_protection=False, ollama_num_ctx=16384)
+    sent = _capture_num_ctx(w, lambda x: x._call_ollama_chunk(_req(), "Hello world", 1, 1))
+    assert sent == _mamaylm()["num_ctx"] == 8192
+
+
+def test_pinned_paths_send_identical_num_ctx():
+    """Every payload-building path on a pinned model must agree byte-for-byte, or the
+    runner reloads when control passes between them mid-batch."""
+    w = OllamaWorker(model="mamaylm-gemma3-12b-v2.0:latest",
+                     enable_term_protection=False, ollama_num_ctx=16384)
+    rewrite = _capture_num_ctx(w, lambda x: x._call_ollama_rewrite("sys", "prompt", input_len=20))
+    chunk = _capture_num_ctx(w, lambda x: x._call_ollama_chunk(_req(), "Hello world", 1, 1))
+    assert rewrite == chunk == _mamaylm()["num_ctx"]
+
+
+def test_pinned_num_ctx_ignores_user_slider():
+    """The pinned value is the VRAM-tuned model setting; the user's num_ctx slider must
+    not clamp it (down OR up), or two users with different sliders would each thrash a
+    different way.  Both a low (4096) and high (32768) slider must yield the model's
+    8192."""
+    for slider in (4096, 32768):
+        w = OllamaWorker(model="mamaylm-gemma3-12b-v2.0:latest",
+                         enable_term_protection=False, ollama_num_ctx=slider)
+        sent = _capture_num_ctx(w, lambda x: x._call_ollama_rewrite("sys", "prompt", input_len=20))
+        assert sent == _mamaylm()["num_ctx"] == 8192, f"slider={slider} leaked into num_ctx"
+
+
+def test_unpinned_model_keeps_adaptive_num_ctx():
+    """Contrast: a non-pinned model still scales num_ctx to the input — proving the pin
+    flag (not some unrelated change) is what fixes the short-string num_ctx for mamaylm.
+    A short rewrite on translategemma3-st (num_ctx 16384, unpinned) takes the small
+    adaptive 4096 step, not the model max."""
+    w = OllamaWorker(model="translategemma3-st",
+                     enable_term_protection=False, ollama_num_ctx=16384)
+    sent = _capture_num_ctx(w, lambda x: x._call_ollama_rewrite("sys", "prompt", input_len=20))
+    assert sent == 4096
+    assert sent < int(OllamaWorker.MODEL_CONFIGS["translategemma3-st"]["num_ctx"])

@@ -1361,10 +1361,10 @@ class OllamaWorker(QObject):
         model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
         user_max_ctx  = max(self.ollama_num_ctx, 4096)
         if model_config.get("pin_num_ctx"):
-            # Fixed context size for VRAM-capped models so the runner never reloads to
-            # resize its KV window between chunks (each chunk is <=_MAX_CHUNK_CHARS, so it
-            # always fits).  Keep the 8192 floor the non-pinned path also uses here.
-            effective_num_ctx = max(8192, min(model_max_ctx, user_max_ctx))
+            # Fixed context size (the model's configured num_ctx) so the runner never
+            # reloads to resize its KV window between chunks — byte-identical to the single
+            # and rewrite paths.  Each chunk is <=_MAX_CHUNK_CHARS so it always fits.
+            effective_num_ctx = model_max_ctx
         else:
             effective_num_ctx = max(8192, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
@@ -1870,11 +1870,14 @@ class OllamaWorker(QObject):
             model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
             user_max_ctx = max(self.ollama_num_ctx, 4096)
             if model_config.get("pin_num_ctx"):
-                # VRAM-capped models (mamaylm, translategemma3-st-2): use a single fixed
-                # context size for EVERY request so the runner loads once and never reloads
-                # to grow/shrink its KV window mid-batch.  Long strings are chunked below
-                # _CHUNK_TRANSLATE_THRESHOLD, so this fixed size never truncates.
-                effective_num_ctx = max(4096, min(model_max_ctx, user_max_ctx))
+                # VRAM-capped models (mamaylm, translategemma3-st-2): use the model's
+                # configured num_ctx, FIXED for EVERY request (single, chunk, AND rewrite)
+                # so the runner loads once and never reloads to resize its KV window
+                # mid-batch.  Long strings are chunked below _CHUNK_TRANSLATE_THRESHOLD so
+                # this never truncates.  Deliberately NOT clamped by the user's num_ctx
+                # slider: the pinned value is the VRAM-tuned model setting and must be
+                # byte-identical across all three paths or the runner reloads.
+                effective_num_ctx = model_max_ctx
             else:
                 effective_num_ctx = max(4096, min(adaptive_num_ctx, model_max_ctx, user_max_ctx))
 
@@ -3328,7 +3331,17 @@ class OllamaWorker(QObject):
         else:
             rewrite_num_ctx = 32768
         model_max_ctx = int(model_config.get("num_ctx") or 32768)  # type: ignore[arg-type]
-        rewrite_num_ctx = max(4096, min(rewrite_num_ctx, model_max_ctx, max(self.ollama_num_ctx, 4096)))
+        if model_config.get("pin_num_ctx"):
+            # Honour the pinned context size so a rewrite never resizes the runner's KV
+            # window.  This path used to send an adaptive 4096 for short strings while the
+            # main translate path sends the model's 8192, so on a VRAM-capped model
+            # (mamaylm) every Russian-leakage rewrite — which fires on a large share of
+            # strings — forced an 8192⇄4096 runner reload mid-batch (the "model keeps
+            # restarting" symptom).  Pin it to the model's configured num_ctx like the
+            # single and chunk paths so the runner loads once and stays put.
+            rewrite_num_ctx = model_max_ctx
+        else:
+            rewrite_num_ctx = max(4096, min(rewrite_num_ctx, model_max_ctx, max(self.ollama_num_ctx, 4096)))
         payload: dict = {
             "model": self.model,
             "prompt": prompt,
