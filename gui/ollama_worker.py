@@ -291,7 +291,11 @@ _TARGET_STYLE: dict[str, str] = {
         "ALWAYS close every opening « with a matching closing » — never leave « open. "
         "Brand names already written in Cyrillic in the source (e.g. ТерраБрю, Чанкс, "
         "Ксенофреш) MUST stay in Cyrillic in the translation — never switch them to their "
-        "English Latin-script spelling."
+        "English Latin-script spelling. "
+        "Do NOT insert explicit or parenthetical gender pronouns (він/вона, він(вона), "
+        "«він або вона») — Ukrainian marks gender through verb and adjective endings, so "
+        "choose the single form that best fits the context; if the referent's gender is "
+        "genuinely unknown, prefer neutral phrasing over naming a pronoun."
     ),
 }
 
