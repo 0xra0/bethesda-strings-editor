@@ -138,20 +138,38 @@ def _restore_line_structure(translated: str, original_text: str) -> str:
         cumulative += seg_lens[ci]
         target = max(1, min(int(total_trans * cumulative / total_orig), len(flat) - 1))
 
-        # Search outward from `target` for the nearest space, within ±40 % of
-        # the expected segment width.
+        # Search outward from `target`, within ±40 % of the expected segment width.
         snap = max(4, int(total_trans * seg_lens[ci] / total_orig * 0.4))
         lo = max(0, target - snap)
         hi = min(len(flat), target + snap)
 
+        def _is_space(p: int) -> bool:
+            return lo <= p < hi and flat[p] == " "
+
+        # A paragraph break belongs *between sentences*, not mid-phrase.  Prefer a
+        # space that follows sentence-ending punctuation (directly, or through a
+        # trailing quote/paren); only fall back to the nearest plain space when no
+        # sentence boundary lies in the window.  Pure placement — never changes the
+        # newline count, just stops cuts like "…ПОТОЧНОЇ\n\nАНІМАЦІЇ!".
+        def _is_sentence_break(p: int) -> bool:
+            if not _is_space(p) or p == 0:
+                return False
+            prev = flat[p - 1]
+            if prev in ".!?…":
+                return True
+            return prev in '»"\')' and p >= 2 and flat[p - 2] in ".!?…"
+
         best = target
-        for off in range(max(hi - target, target - lo) + 1):
+        for predicate in (_is_sentence_break, _is_space):
             found = False
-            for sign in (1, -1):
-                pos = target + sign * off
-                if lo <= pos < hi and flat[pos] == " ":
-                    best = pos
-                    found = True
+            for off in range(max(hi - target, target - lo) + 1):
+                for sign in (1, -1):
+                    pos = target + sign * off
+                    if predicate(pos):
+                        best = pos
+                        found = True
+                        break
+                if found:
                     break
             if found:
                 break
@@ -1656,6 +1674,10 @@ class OllamaWorker(QObject):
         # Strip leading/trailing separator lines from the source text before sending
         # to the model so it doesn't echo them back or get confused by them.
         # Separators are stored and restored around the final translation.
+        # Capture the full source (separators included) first — the newline-structure
+        # safety net at the end compares the final translation's newline count
+        # against it (req.original_text is replaced with the inner text just below).
+        _orig_full = req.original_text
         leading_seps, inner_text, trailing_seps = self._extract_separators(req.original_text)
         if leading_seps or trailing_seps:
             from dataclasses import replace as _dc_replace_sep
@@ -1671,19 +1693,8 @@ class OllamaWorker(QObject):
         # structure.  Eliminates reliance on the model preserving
         # [[STRUCT_BREAK_DBL_N]] tokens, which it routinely ignores.
         if "\n\n" in protected_text and len(protected_text) > self._PP_SPLIT_MIN_CHARS:
-            _pp_segs = protected_text.split("\n\n")
-            if sum(1 for _s in _pp_segs if _s.strip()) >= 2:
-                from dataclasses import replace as _dc_pp
-                _pp_results: list = []
-                for _seg in _pp_segs:
-                    if not _seg.strip():
-                        _pp_results.append(_seg)
-                        continue
-                    _pp_req = _dc_pp(req, original_text=_seg, string_id=-1)
-                    _pp_trans = self._translate_single(_pp_req)
-                    _pp_results.append(_pp_trans if _pp_trans else _seg)
-                _pp_result = "\n\n".join(_pp_results)
-                _pp_result = leading_seps + _pp_result + trailing_seps
+            _pp_result = self._translate_paragraphs(req, leading_seps, trailing_seps)
+            if _pp_result is not None:
                 if cache_key and self.translation_cache is not None:
                     self.translation_cache.set(cache_key, _pp_result)
                 return _pp_result
@@ -2139,6 +2150,36 @@ class OllamaWorker(QObject):
             if translated and req.original_text:
                 translated = self._match_trailing_newlines(translated, req.original_text)
 
+            # Newline-structure safety net (esp. mamaylm on multi-paragraph notes).
+            # The proactive per-paragraph split above only fires for LONG strings
+            # (_PP_SPLIT_MIN_CHARS); a SHORT blank-line-delimited note still goes
+            # through a single call, where a general fine-tune can collapse or
+            # misplace paragraph breaks — observed on a 3-paragraph data slate that
+            # came back with the first \n\n dropped (and a spurious \n inserted
+            # mid-sentence), drifting the newline count 6 → 5.  The mechanical
+            # restores above re-insert *missing* newlines proportionally but can't
+            # undo a misplaced one, so the count stays wrong.  When it does, retranslate
+            # paragraph-by-paragraph so the app — not the model — owns the separators;
+            # the rejoined structure then matches the source by construction.  Fires
+            # only on a genuine mismatch and only for the primary string, so the common
+            # case pays nothing and it can't recurse (each sub-paragraph has no \n\n).
+            if (
+                translated
+                and req.string_id != -1
+                and "\n\n" in _orig_full.replace("\r\n", "\n")
+                and self._nl_count(translated) != self._nl_count(_orig_full)
+            ):
+                logger.info(
+                    "String %s: newline count %d → %d after single-call restore; "
+                    "retranslating per-paragraph to lock paragraph structure",
+                    req.string_id, self._nl_count(_orig_full), self._nl_count(translated),
+                )
+                pp = self._translate_paragraphs(req, leading_seps, trailing_seps)
+                # Only adopt the per-paragraph result if it actually reconciled the
+                # count — never make the translation worse than the single-call one.
+                if pp is not None and self._nl_count(pp) == self._nl_count(_orig_full):
+                    translated = pp
+
             # Final guard: a verbatim echo of a source that still carries source-language
             # content (Russian-only letters/words for ru→uk, Latin words for en→uk) was
             # NOT translated.  Return None so it is treated as a failure — never saved,
@@ -2189,6 +2230,43 @@ class OllamaWorker(QObject):
             raise Exception(f"Ollama HTTP error: {e}")
         except Exception as e:
             raise Exception(f"Ollama translation error: {e}")
+
+    def _translate_paragraphs(self, req, leading_seps: str, trailing_seps: str):
+        """Translate a blank-line-delimited string one paragraph per Ollama call and
+        rejoin with app-controlled ``\\n\\n`` separators.
+
+        The model never sees the paragraph breaks, so it cannot collapse, misplace,
+        or invent them — the rejoined newline structure matches the source by
+        construction.  Used both proactively for long multi-paragraph strings
+        (gated by ``_PP_SPLIT_MIN_CHARS``) and as a post-translation safety net when
+        a single call drifts the newline count on a short note.
+
+        Returns the joined translation with separators re-attached, or ``None`` when
+        *req.original_text* is not actually multi-paragraph (< 2 non-empty
+        paragraphs) so the caller can fall through.  Caching is left to the caller —
+        the safety-net caller only commits the result if it reconciled the count.
+        """
+        from dataclasses import replace as _dc_pp
+
+        segs = req.original_text.replace("\r\n", "\n").replace("\r", "\n").split("\n\n")
+        if sum(1 for s in segs if s.strip()) < 2:
+            return None
+        results: list = []
+        for seg in segs:
+            if not seg.strip():
+                results.append(seg)  # keep empty (e.g. trailing) paragraphs verbatim
+                continue
+            sub = _dc_pp(req, original_text=seg, string_id=-1)
+            trans = self._translate_single(sub)
+            results.append(trans if trans else seg)
+        return leading_seps + "\n\n".join(results) + trailing_seps
+
+    @staticmethod
+    def _nl_count(s: str) -> int:
+        """Count newlines the way the QC newline check does: literal two-character
+        ``\\n`` escapes plus real line breaks (a CRLF counts as one, since ``\\r\\n``
+        contributes a single ``\\n``).  Used to detect post-translation structure drift."""
+        return s.count("\\n") + s.count("\n")
 
     @staticmethod
     def _restore_dropped_tags(translated: str, original: str) -> str:

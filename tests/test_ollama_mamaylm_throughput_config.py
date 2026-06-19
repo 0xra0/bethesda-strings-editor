@@ -31,7 +31,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from gui.ollama_worker import OllamaWorker, TranslationRequest  # noqa: E402
+from gui.ollama_worker import (  # noqa: E402
+    OllamaWorker,
+    TranslationRequest,
+    _restore_line_structure,
+)
 
 # The VRAM footprint (num_ctx × slots) that ran stably as a single slot on the
 # 16 GiB card.  mamaylm must not exceed it.
@@ -182,3 +186,119 @@ def test_unpinned_model_keeps_adaptive_num_ctx():
     sent = _capture_num_ctx(w, lambda x: x._call_ollama_rewrite("sys", "prompt", input_len=20))
     assert sent == 4096
     assert sent < int(OllamaWorker.MODEL_CONFIGS["translategemma3-st"]["num_ctx"])
+
+
+# ── newline-structure safety net (paragraph-by-paragraph re-fill) ─────────────────
+#
+# mamaylm (a general fine-tune) can collapse, misplace, or invent paragraph breaks on
+# a SHORT blank-line-delimited note that falls below the proactive _PP_SPLIT_MIN_CHARS
+# gate, so it goes through a single call.  The real symptom (xTranslator export of an
+# earlier run): a 3-paragraph data slate came back with the first \n\n dropped and a
+# spurious \n inserted mid-sentence, drifting the QC newline count 6 → 5.  The
+# mechanical restores re-insert *missing* newlines but can't undo a misplaced one, so
+# the count stays wrong.  The fix: when the count still disagrees after the single-call
+# restores, retranslate paragraph-by-paragraph and rejoin with app-controlled \n\n —
+# the structure then matches the source by construction.  These tests pin that down.
+
+
+def _mamaylm_worker():
+    return OllamaWorker(model="mamaylm-gemma3-12b-v2.0:latest",
+                        enable_term_protection=False, ollama_num_ctx=8192)
+
+
+def test_translate_paragraphs_rejoins_with_app_separators():
+    """The helper translates each non-empty paragraph and rejoins with \\n\\n, keeping
+    empty (e.g. trailing) paragraphs verbatim — so the newline count matches the source
+    no matter what the per-paragraph model output looks like."""
+    w = _mamaylm_worker()
+    seen: list = []
+
+    def _fake_single(sub):
+        seen.append(sub.original_text)
+        return f"Абзац-{len(seen)}"
+
+    w._translate_single = _fake_single  # type: ignore[method-assign]
+    req = _req("Alpha one.\r\n\r\nBeta two.\r\n\r\nGamma three.\r\n\r\n")
+    out = w._translate_paragraphs(req, "", "")
+    assert seen == ["Alpha one.", "Beta two.", "Gamma three."]
+    assert out == "Абзац-1\n\nАбзац-2\n\nАбзац-3\n\n"
+    assert w._nl_count(out) == w._nl_count(req.original_text) == 6
+
+
+def test_translate_paragraphs_returns_none_for_single_paragraph():
+    """Not multi-paragraph → return None so the caller keeps the single-call result
+    (the helper must never fire its extra per-paragraph calls on a plain string)."""
+    w = _mamaylm_worker()
+
+    def _must_not_call(*_):
+        raise AssertionError("single paragraph must not be split")
+
+    w._translate_single = _must_not_call  # type: ignore[method-assign]
+    assert w._translate_paragraphs(_req("Just one paragraph, no breaks."), "", "") is None
+
+
+def test_nl_count_matches_qc_formula():
+    """_nl_count must count literal \\n escapes + real LF, with CRLF counting as one —
+    identical to the QC newline check it guards against."""
+    assert OllamaWorker._nl_count("a\r\n\r\nb\r\n\r\nc\r\n\r\n") == 6   # CRLF source
+    assert OllamaWorker._nl_count("a\n\nb\n\nc\n\n") == 6               # LF translation
+    assert OllamaWorker._nl_count("a\\nb\\nc") == 2                     # literal escapes
+
+
+def test_multiparagraph_newline_count_repaired_end_to_end():
+    """End-to-end: a single call that drifts the newline count (here the model invents
+    an extra paragraph break — restores only ADD missing newlines, never remove extras)
+    triggers the per-paragraph re-fill, and the final result's count matches the
+    source."""
+    w = _mamaylm_worker()
+
+    def _fake_stream(payload, *_):
+        if "STRUCT_BREAK_DBL_N" in payload["prompt"]:
+            # Full multi-paragraph call: model mangles structure (4 → 6 newlines).
+            return "Альфа текст.\n\nБета текст.\n\nГама текст.\n\nЗайвий рядок."
+        # Per-paragraph call: a clean single-paragraph translation, no breaks.
+        return "Переклад абзацу"
+
+    w._stream_ollama = _fake_stream  # type: ignore[method-assign]
+    src = "Alpha one.\r\n\r\nBeta two.\r\n\r\nGamma three."
+    out = w._translate_single(_req(src))
+    assert out is not None
+    assert w._nl_count(out) == w._nl_count(src) == 4
+    assert out.count("\n\n") == 2  # app-controlled separators, not the model's
+
+
+def test_clean_multiparagraph_translation_skips_refill():
+    """When the single call already preserves the paragraph structure, the safety net
+    must NOT fire its extra per-paragraph calls (no wasted work on the common case)."""
+    w = _mamaylm_worker()
+    calls = {"n": 0}
+
+    def _fake_stream(payload, *_):
+        calls["n"] += 1
+        if "STRUCT_BREAK_DBL_N" in payload["prompt"]:
+            # Faithful structure: same two breaks as the source (the tokens restore to
+            # \n\n), so the count already matches and no re-fill is needed.
+            return "Альфа.[[STRUCT_BREAK_DBL_N]]Бета.[[STRUCT_BREAK_DBL_N]]Гама."
+        raise AssertionError("clean structure must not trigger per-paragraph re-fill")
+
+    w._stream_ollama = _fake_stream  # type: ignore[method-assign]
+    src = "Alpha one.\r\n\r\nBeta two.\r\n\r\nGamma three."
+    out = w._translate_single(_req(src))
+    assert out is not None
+    assert w._nl_count(out) == w._nl_count(src) == 4
+    assert calls["n"] == 1  # exactly one model call — no per-paragraph fan-out
+
+
+def test_restore_line_structure_snaps_to_sentence_boundary():
+    """When the model flattens a multi-paragraph string, the proportional re-fill must
+    put the paragraph break *between sentences*, not mid-phrase.  Here the proportional
+    target lands inside 'delta', so a plain nearest-space snap would cut after 'delta'
+    (off=1); sentence-snap instead reaches back to the real boundary after 'zeta.'
+    (off=5).  This is pure placement — the newline count is unchanged either way."""
+    original = "alpha beta gamma.\n\ndelta."
+    flat = "alpha beta gamma epsilon zeta. delta extra here."
+    out = _restore_line_structure(flat, original)
+    assert out == "alpha beta gamma epsilon zeta.\n\ndelta extra here."
+    head, _, _ = out.partition("\n\n")
+    assert head.rstrip()[-1] in ".!?…"  # break landed at a sentence end
+    assert out.count("\n") == original.count("\n")  # count preserved
