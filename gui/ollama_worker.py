@@ -1603,9 +1603,22 @@ class OllamaWorker(QObject):
             if not is_retry:
                 cached = self.translation_cache.get(cache_key)
                 if cached is not None:
-                    logger.debug(f"Cache hit for string {req.string_id}")
                     cached = self._heal_known_artifacts(cached, req.original_text)
-                    return cached
+                    # Self-heal a poisoned cache: an untranslated echo written by an
+                    # older run (before the echo guard existed) must not be replayed.
+                    # Evict it and fall through to a fresh AI translation instead of
+                    # serving the bad value on every re-run.
+                    if self._is_untranslated_echo(
+                        req.original_text, cached, req.source_lang, req.target_lang
+                    ):
+                        logger.info(
+                            "String %s: cached value is an untranslated echo — evicting "
+                            "and retranslating", req.string_id
+                        )
+                        self.translation_cache.delete(cache_key)
+                    else:
+                        logger.debug(f"Cache hit for string {req.string_id}")
+                        return cached
             else:
                 # Evict the stale (bad) entry so the fresh result replaces it.
                 self.translation_cache.delete(cache_key)
