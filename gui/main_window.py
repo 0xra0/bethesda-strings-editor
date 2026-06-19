@@ -1255,6 +1255,17 @@ class MainWindow(QMainWindow):
         self.batch_compare_action.triggered.connect(self._batch_compare_folders)
         trans_menu.addAction(self.batch_compare_action)
 
+        self.esp_migrate_action = QAction(
+            self.tr("Mod Update &Migration (ESP/ESM)…"), self
+        )
+        self.esp_migrate_action.setIcon(QIcon.fromTheme("document-revert"))
+        self.esp_migrate_action.setToolTip(self.tr(
+            "Diff two versions of a mod plugin (old vs new ESP/ESM) and carry\n"
+            "your existing translations forward to the updated version."
+        ))
+        self.esp_migrate_action.triggered.connect(self._migrate_esp_versions)
+        trans_menu.addAction(self.esp_migrate_action)
+
         trans_menu.addSeparator()
         self.translate_interface_action = QAction(
             self.tr("Translate Starfield Interface TXT..."), self
@@ -6484,6 +6495,104 @@ class MainWindow(QMainWindow):
                 5000,
             )
             logger.info("Version migration applied: %d rows updated", len(updates))
+
+    def _migrate_esp_versions(self) -> None:
+        """Open the ESP/ESM mod-update migration setup, then show the diff."""
+        from gui.esp_migrate_dialog import EspMigrateSetupDialog, EspMigrateDialog
+        from bethesda_strings.esp_diff import compute_esp_diff, load_esp_entries
+
+        current_path = ""
+        if isinstance(self.current_file, EspFile) and self.current_path:
+            current_path = str(self.current_path)
+
+        setup = EspMigrateSetupDialog(initial_new_path=current_path, parent=self)
+        if setup.exec() != QDialog.Accepted:
+            return
+
+        enc = setup.encoding
+        try:
+            self.statusBar().showMessage(self.tr("Loading plugins for migration…"))
+            QApplication.processEvents()
+            old_entries = load_esp_entries(setup.old_path, enc)
+            new_entries = load_esp_entries(setup.new_path, enc)
+            trans_entries = (
+                load_esp_entries(setup.translation_path, enc)
+                if setup.translation_path else None
+            )
+        except Exception as exc:
+            logger.error("ESP migration load failed: %s", exc, exc_info=True)
+            QMessageBox.critical(
+                self, self.tr("Load Error"),
+                self.tr("Failed to load one or more plugins:\n{error}").format(error=exc),
+            )
+            self.statusBar().clearMessage()
+            return
+
+        entries = compute_esp_diff(old_entries, new_entries, trans_entries)
+
+        dlg = EspMigrateDialog(
+            entries=entries,
+            old_label=Path(setup.old_path).name,
+            new_label=Path(setup.new_path).name,
+            parent=self,
+        )
+        dlg.migrate_requested.connect(self._apply_esp_migration)
+        self.statusBar().clearMessage()
+        dlg.exec()
+
+    def _apply_esp_migration(self, items: list) -> None:
+        """Apply migrated ESP translations to the open plugin's table.
+
+        ``items`` is a list of (form_id, record_sig, field_sig, occurrence,
+        translation); each is matched to a loaded row by the same composite key.
+        Only pending/empty rows are filled so in-progress work is never clobbered.
+        """
+        if not items or self.table_model._mode != "esp":
+            QMessageBox.warning(
+                self, self.tr("No Target Plugin"),
+                self.tr("Open the new plugin in the editor before migrating so the "
+                        "translations have somewhere to go."),
+            )
+            return
+
+        from bethesda_strings.esp_diff import index_by_key
+
+        entries = []
+        row_of_entry: dict = {}
+        for i, row in enumerate(self.table_model._data):
+            e = row.get("_esp_entry")
+            if e is None:
+                continue
+            entries.append(e)
+            row_of_entry[id(e)] = i
+        key_map = index_by_key(entries)
+
+        updates = []
+        for (fid, rec, fld, occ, trans) in items:
+            entry = key_map.get((fid, rec, fld, occ))
+            if entry is None:
+                continue
+            row_idx = row_of_entry.get(id(entry))
+            if row_idx is None:
+                continue
+            row = self.table_model._data[row_idx]
+            if row.get("status") == "pending" or not row.get("translated"):
+                updates.append((row_idx, trans))
+
+        if updates:
+            self.table_model.set_translated_text_batch(updates)
+            self.setWindowModified(True)
+            self.statusBar().showMessage(
+                self.tr("Migrated {n} translation(s) from the previous mod version.").format(
+                    n=len(updates)),
+                5000,
+            )
+            logger.info("ESP migration applied: %d rows updated", len(updates))
+        else:
+            self.statusBar().showMessage(
+                self.tr("No matching pending strings to migrate in the open plugin."),
+                5000,
+            )
 
     @Slot()
     def _batch_compare_folders(self) -> None:
