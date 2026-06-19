@@ -75,6 +75,27 @@ def test_protects_mixed_alnum_codes(tp):
         assert code in _protected_originals(tp, f"код {code} тут"), code
 
 
+def test_protects_codes_with_weak_symbols(tp):
+    # Real report codes carry ^ ! ' @ — these must lock whole (the trailing/embedded
+    # weak symbol is part of the obfuscation).
+    cases = {
+        "Смена фокуса WWFX - это VH1QCR4P$KU^ симуляции": "VH1QCR4P$KU^",
+        "остаточно YE3F^@TTSOZKQA, що": "YE3F^@TTSOZKQA",
+        "краще Y!JQ71CD кінець": "Y!JQ71CD",
+        "код YE3F^@TTSOZKQA'OBC тут": "YE3F^@TTSOZKQA'OBC",
+    }
+    for text, code in cases.items():
+        assert code in _protected_originals(tp, text), text
+
+
+def test_weak_symbols_alone_do_not_qualify(tp):
+    # A weak symbol (^ ! ' ~) never turns a punctuated word or bare price into a code:
+    # qualification still requires a digit or a strong symbol ($ # @).
+    for s in ("I don't know", "Hello! Wow!!!", "Сумма $500 кредитов",
+              "OK! Поехали", "Уровень 5! Победа"):
+        assert _protected_originals(tp, s) == set(), s
+
+
 def test_pure_numbers_are_not_codes(tp):
     # No ASCII letter in the run → not a code token (prices, quantities).
     for s in ("Цена 270 кредитов", "Сумма $500", "Атлатл 270К"):

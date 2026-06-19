@@ -93,20 +93,27 @@ class TermProtector:
         # scrambled terminal output, labels like "VH1QCR4P$KU" or "WWFX").  These are
         # NOT words: they must survive translation byte-for-byte while the natural-
         # language frame around them is still translated.  Two shapes:
-        #   (a) obf_code    — an ASCII alphanumeric run (+ embedded $ # @) with at
-        #                     least one letter AND at least one digit-or-code-symbol,
-        #                     e.g. VH1QCR4P$KU, WWFX2, C$1000 ;
+        #   (a) obf_code    — a run of ASCII alphanumerics + code symbols holding at
+        #                     least one letter AND at least one *qualifying* char (a
+        #                     digit or a strong symbol $ # @), e.g. VH1QCR4P$KU, WWFX2,
+        #                     Y!JQ71CD, YE3F^@TTSOZKQA, C$1000 .  Weak symbols ^ ! ' ~
+        #                     are allowed in the run but NEVER qualify it on their own,
+        #                     so ordinary punctuated words (don't, Hello!, OK!) and
+        #                     bare prices ($500) are left alone — they have no
+        #                     digit-or-strong-symbol.  (A real code adjacent to
+        #                     punctuation, e.g. "C4!", absorbs the mark; harmless since
+        #                     it is preserved verbatim in place.)
         #   (b) obf_acronym — an all-uppercase ASCII run with no vowel, e.g. WWFX, TBD
         #                     (an unpronounceable acronym/code).  Vowel-bearing
         #                     acronyms (DNA → ДНК) are left for the AI to localise.
         # Overlap resolution keeps the longest match, so obf_code wins over the
         # shorter chemical_formula/form_id spans on the same token.
         (
-            r"(?<![A-Za-z0-9$#@])"
-            r"(?=[A-Za-z0-9$#@]*[A-Za-z])"
-            r"(?=[A-Za-z0-9$#@]*[0-9$#@])"
-            r"[A-Za-z0-9$#@]{3,}"
-            r"(?![A-Za-z0-9$#@])",
+            r"(?<![A-Za-z0-9$#@^!'~])"
+            r"(?=[A-Za-z0-9$#@^!'~]*[A-Za-z])"
+            r"(?=[A-Za-z0-9$#@^!'~]*[0-9$#@])"
+            r"[A-Za-z0-9$#@^!'~]{3,}"
+            r"(?![A-Za-z0-9$#@^!'~])",
             "obf_code",
         ),
         (r"\b[B-DF-HJ-NP-TV-Z]{3,}\b", "obf_acronym"),
