@@ -3339,14 +3339,17 @@ class MainWindow(QMainWindow):
         if getattr(self, "_ollama_restart_proc", None) is not None:
             return
 
-        from gui.ollama_control import build_restart_argv, restart_env
+        from gui.ollama_control import prepare_restart
 
-        argv = build_restart_argv(command)
+        # prepare_restart wraps the command for a graphical sudo/pkexec password
+        # dialog when 'Requires root' is set (Linux), picks cmd/sh per OS, and
+        # returns a clean env (un-polluted LD_LIBRARY_PATH under PyInstaller, plus
+        # SUDO_ASKPASS when elevating).
+        argv, _env = prepare_restart(
+            command, elevate=self.settings.ollama_restart_elevate
+        )
         proc = QProcess(self)
         proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
-        # Under PyInstaller, hand the system binary a clean LD_LIBRARY_PATH so it
-        # doesn't load the bundle's libstdc++/libssl and crash (see restart_env).
-        _env = restart_env()
         if _env is not None:
             from PySide6.QtCore import QProcessEnvironment
             qenv = QProcessEnvironment()

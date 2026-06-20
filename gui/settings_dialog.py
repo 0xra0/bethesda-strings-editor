@@ -220,25 +220,42 @@ class SettingsDialog(QDialog):
         )
         self.ollama_restart_command.setToolTip(
             self.tr(
-                "Shell command run when you press Stop, to forcibly restart the "
+                "Command run when you press Stop, to forcibly restart/kill the "
                 "Ollama server and free the GPU immediately.\n"
                 "Closing sockets alone does not interrupt a wedged GPU mid-"
                 "generation.\n"
-                "Examples: sv restart ollama · sudo sv restart ollama · "
-                "systemctl restart ollama · pkill -x ollama\n"
-                "If it needs sudo, set up a passwordless (NOPASSWD) rule or it "
-                "will fail."
+                "Linux: sv restart ollama · systemctl restart ollama · "
+                "pkill -x ollama\n"
+                "Windows: taskkill /F /T /IM ollama.exe  (no admin if Ollama runs "
+                "as you)\n"
+                "If it needs root, tick 'Requires root' below for a password "
+                "dialog."
             )
         )
         restart_row = QHBoxLayout()
         restart_row.addWidget(self.ollama_restart_command, stretch=1)
         self.btn_detect_restart = QPushButton(self.tr("Auto-detect"))
         self.btn_detect_restart.setToolTip(
-            self.tr("Guess the restart command for this system's service manager")
+            self.tr("Guess the force-stop command for this operating system")
         )
         self.btn_detect_restart.clicked.connect(self._detect_restart_command)
         restart_row.addWidget(self.btn_detect_restart)
         ollama_layout.addRow(self.tr("Force-stop command:"), restart_row)
+
+        self.chk_restart_elevate = QCheckBox(
+            self.tr("Requires root — show a system password dialog (Linux)")
+        )
+        self.chk_restart_elevate.setChecked(self._settings.ollama_restart_elevate)
+        self.chk_restart_elevate.setToolTip(
+            self.tr(
+                "Wrap the command with graphical sudo (sudo -A askpass, or pkexec) "
+                "so a password dialog appears — no NOPASSWD rule or terminal "
+                "needed.\n"
+                "Leave off for a non-root command such as 'pkill -x ollama' or, on "
+                "Windows, 'taskkill' (ignored there)."
+            )
+        )
+        ollama_layout.addRow("", self.chk_restart_elevate)
 
         self.ollama_model.currentTextChanged.connect(self._update_model_hint)
 
@@ -1135,11 +1152,15 @@ class SettingsDialog(QDialog):
 
     @Slot()
     def _detect_restart_command(self):
-        """Fill the force-stop field with a best guess for this system."""
-        from gui.ollama_control import detect_restart_command
+        """Fill the force-stop field with a best guess for this OS.
+
+        Also pre-ticks 'Requires root' when the guess manages a system service.
+        """
+        from gui.ollama_control import detect_restart_command, command_needs_root
         cmd = detect_restart_command()
         if cmd:
             self.ollama_restart_command.setText(cmd)
+            self.chk_restart_elevate.setChecked(command_needs_root(cmd))
         else:
             QMessageBox.information(
                 self,
@@ -1487,6 +1508,7 @@ class SettingsDialog(QDialog):
         settings.ollama_num_ctx = self.spin_num_ctx.value()
         settings.ollama_num_thread = self.spin_num_thread.value()
         settings.ollama_restart_command = self.ollama_restart_command.text().strip()
+        settings.ollama_restart_elevate = self.chk_restart_elevate.isChecked()
         settings.default_source_lang = self.combo_source.currentData()
         settings.default_target_lang = self.combo_target.currentData()
         settings.quality_level = self.spin_quality.value()

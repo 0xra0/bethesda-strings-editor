@@ -4,19 +4,25 @@ The normal Stop path (``OllamaWorker.stop``) only closes the *client* sockets.
 On a slow or wedged ROCm GPU the Ollama *server* keeps generating the in-flight
 requests, so the model stays resident and the whole machine feels frozen for many
 seconds after the user hits Stop.  The only reliable way to free the GPU
-immediately is to restart (or kill) the Ollama server process itself — exactly
-what ``sv restart ollama`` / ``systemctl restart ollama`` / ``pkill ollama`` do.
+immediately is to restart (or kill) the Ollama server process itself.
 
-This module runs a *user-configured* shell command to do that.  Nothing here ever
-runs automatically: it fires only when the user has put a command in Settings, so
-we never invoke ``sudo`` or restart a service behind the user's back.  Commands
-run with stdin closed and under a hard timeout, so a ``sudo`` password prompt (no
-NOPASSWD rule) fails fast instead of hanging the app.
+This module runs a *user-configured* command to do that.  Nothing here ever runs
+automatically: it fires only when the user has put a command in Settings.  Two
+ways to get the rights to do it:
 
-Pure helpers (``detect_restart_command`` / ``restart_ollama``) live here with no
-Qt dependency so they can be unit-tested; the GUI runs the command asynchronously
-via ``QProcess`` (see ``MainWindow._force_restart_ollama``) and reuses
-:func:`build_restart_argv` so both paths execute the command identically.
+* **Privileged (Linux/BSD):** when the command needs root (e.g. restarting a
+  system service), set ``elevate`` and it is wrapped to ask for the password via
+  a **graphical dialog** — ``sudo -A`` with a detected GUI askpass helper (works
+  with no terminal and no polkit agent), falling back to ``pkexec`` (polkit's own
+  dialog).  No NOPASSWD rule required.
+* **Non-root (any OS, incl. Windows):** if Ollama runs as the current user, just
+  kill it — ``pkill -x ollama`` on Unix, ``taskkill /F /T /IM ollama.exe`` on
+  Windows.  No elevation needed.
+
+Pure helpers live here with no Qt dependency so they can be unit-tested; the GUI
+runs the command asynchronously via ``QProcess`` (see
+``MainWindow._force_restart_ollama``) and reuses :func:`prepare_restart` so the
+blocking and async paths execute the command identically.
 """
 
 from __future__ import annotations
@@ -31,89 +37,212 @@ from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-# Candidate hard-stop commands in preference order.  Each tuple is
-# (binary-to-probe, full-command).  runit (`sv`) first because that is what the
-# user's box uses; then systemd; then a blunt process kill as a last resort.
+# Candidate hard-stop commands in preference order (Linux/BSD).  Each tuple is
+# (binary-to-probe, full-command).  runit (`sv`) first; then systemd; OpenRC; a
+# blunt user-owned process kill as a last resort.
 _RESTART_CANDIDATES: List[Tuple[str, str]] = [
     ("sv", "sv restart ollama"),
     ("systemctl", "systemctl restart ollama"),
     ("rc-service", "rc-service ollama restart"),  # OpenRC
-    ("brew", "brew services restart ollama"),     # macOS
     ("pkill", "pkill -x ollama"),                 # no service manager — just kill it
 ]
 
+# Non-root kill of a *user-owned* Ollama (frees the GPU without any elevation).
+_WIN_KILL = "taskkill /F /T /IM ollama.exe"
+_UNIX_KILL = "pkill -x ollama"
+
+# GUI password helpers for `sudo -A` (SUDO_ASKPASS).  Probed in order; absolute
+# paths are checked on disk, bare names via PATH.
+_ASKPASS_CANDIDATES: List[str] = [
+    "ssh-askpass",
+    "ksshaskpass",
+    "lxqt-openssh-askpass",
+    "x11-ssh-askpass",
+    "/usr/libexec/openssh/ssh-askpass",
+    "/usr/lib/ssh/ssh-askpass",
+    "/usr/lib/openssh/gnome-ssh-askpass",
+    "/usr/bin/ssh-askpass",
+]
+
+_PRIV_WORDS = ("sudo", "pkexec", "doas")
+
 
 def detect_restart_command() -> str:
-    """Best-guess command to restart/kill the local Ollama server.
+    """Best-guess force-stop command for this platform.
 
-    Probes ``PATH`` for a known service manager and returns the matching command,
-    or ``""`` when none is found.  The result is only a *suggestion* shown in the
-    Settings field — the user can edit it (e.g. prepend ``sudo``) before it ever
-    runs.
+    Windows → ``taskkill`` (non-root, kills a user-owned Ollama).  macOS → brew
+    service restart if present, else ``pkill``.  Linux/BSD → the first available
+    service manager, else ``pkill``.  Only a *suggestion* shown in Settings; the
+    user can edit it.
     """
+    if sys.platform == "win32":
+        return _WIN_KILL
+    if sys.platform == "darwin":
+        if shutil.which("brew"):
+            return "brew services restart ollama"
+        return _UNIX_KILL
     for binary, command in _RESTART_CANDIDATES:
         if shutil.which(binary):
             return command
     return ""
 
 
-def restart_env() -> Optional[Dict[str, str]]:
+def detect_kill_command() -> str:
+    """Non-root command to kill a user-owned Ollama (works on every OS)."""
+    return _WIN_KILL if sys.platform == "win32" else _UNIX_KILL
+
+
+def command_needs_root(command: str) -> bool:
+    """Heuristic: does *command* manage a system service (and so need root)?
+
+    Used to pre-tick the elevation checkbox after auto-detect.  A bare process
+    kill (pkill/taskkill) of a user-owned Ollama does not need root.
+    """
+    c = (command or "").lower()
+    return any(tok in c for tok in ("systemctl", "sv ", "rc-service", "service "))
+
+
+# ── Environment (PyInstaller + askpass) ────────────────────────────────────
+
+
+def restart_env(extra: Optional[Dict[str, str]] = None) -> Optional[Dict[str, str]]:
     """Environment for launching a *system* binary from a PyInstaller bundle.
 
-    Returns ``None`` when not frozen (inherit the real environment unchanged).
-    When frozen, PyInstaller's bootloader has prepended the bundle's lib dir to
-    ``LD_LIBRARY_PATH`` (``DYLD_LIBRARY_PATH`` on macOS) so the *app's* bundled
-    Qt/Python libs load — but a system binary (sv / systemctl / ollama / pkill /
-    /bin/sh) inheriting that may load the bundle's libstdc++/libssl/libz and crash
-    with version errors.  PyInstaller saves the pre-launch value as
-    ``<VAR>_ORIG``; restore it (or drop the var) for the child, per the
-    PyInstaller docs.  Only applied when frozen, so running from source keeps any
-    LD_LIBRARY_PATH the user legitimately set in their shell.
+    Returns ``None`` (inherit unchanged) when not frozen *and* no ``extra`` env is
+    needed.  When frozen, PyInstaller's bootloader prepended the bundle's lib dir
+    to ``LD_LIBRARY_PATH`` (``DYLD_LIBRARY_PATH`` on macOS); a system binary
+    inheriting that may load the bundle's libstdc++/libssl and crash, so restore
+    the pre-launch value from PyInstaller's ``<VAR>_ORIG`` snapshot (or drop it).
+    *extra* (e.g. ``SUDO_ASKPASS``) is merged in last and forces a concrete env.
     """
-    if not getattr(sys, "frozen", False):
+    frozen = bool(getattr(sys, "frozen", False))
+    if not frozen and not extra:
         return None
     env = dict(os.environ)
-    for key in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
-        orig = env.get(key + "_ORIG")
-        if orig is not None:
-            env[key] = orig
-        else:
-            env.pop(key, None)
+    if frozen:
+        for key in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
+            orig = env.get(key + "_ORIG")
+            if orig is not None:
+                env[key] = orig
+            else:
+                env.pop(key, None)
+    if extra:
+        env.update(extra)
     return env
 
 
-def build_restart_argv(command: str) -> List[str]:
-    """Wrap a command string so any shell form (sudo, pipes, ``&&``) works.
+# ── Privilege escalation (graphical) ───────────────────────────────────────
 
-    Returns an argv suitable for both :func:`subprocess.Popen` and
-    ``QProcess.start`` so the blocking and async paths execute identically.
+
+def _find_askpass() -> Optional[str]:
+    """Path to a GUI password helper for ``sudo -A``, or None."""
+    for cand in _ASKPASS_CANDIDATES:
+        if os.path.isabs(cand):
+            if os.path.exists(cand):
+                return cand
+        else:
+            found = shutil.which(cand)
+            if found:
+                return found
+    return None
+
+
+def elevation_prefix() -> Optional[Tuple[str, Dict[str, str]]]:
+    """Graphical privilege-escalation prefix for a root command, or None.
+
+    Returns ``(prefix, extra_env)``.  Linux/BSD only.  Prefers ``sudo -A`` with a
+    detected GUI askpass helper — it needs neither a controlling terminal nor a
+    running polkit agent — then ``pkexec`` (polkit's own dialog), then plain
+    ``sudo`` as a last resort.
     """
+    if sys.platform in ("win32", "darwin"):
+        return None
+    askpass = _find_askpass()
+    if shutil.which("sudo") and askpass:
+        return "sudo -A", {"SUDO_ASKPASS": askpass}
+    if shutil.which("pkexec"):
+        return "pkexec", {}
+    if shutil.which("sudo"):
+        return "sudo", {}
+    return None
+
+
+def _strip_leading_priv(command: str) -> str:
+    """Drop a leading sudo/pkexec/doas (and its option flags) from *command*.
+
+    Lets us re-apply the chosen escalation cleanly even if the user already typed
+    ``sudo …`` in the Settings field.
+    """
+    toks = command.strip().split()
+    while toks and toks[0].lower() in _PRIV_WORDS:
+        toks.pop(0)
+        while toks and toks[0].startswith("-"):
+            toks.pop(0)
+    return " ".join(toks)
+
+
+def build_restart_argv(command: str) -> List[str]:
+    """Wrap a command string in the platform shell so any form works.
+
+    Windows → ``cmd /c``; everywhere else → ``/bin/sh -c``.  Returns an argv for
+    both :func:`subprocess.Popen` and ``QProcess.start``.
+    """
+    if sys.platform == "win32":
+        return ["cmd", "/c", command]
     return ["/bin/sh", "-c", command]
 
 
-def restart_ollama(command: str, timeout: float = 20.0) -> Tuple[bool, str]:
+def prepare_restart(
+    command: str, elevate: bool = False
+) -> Tuple[List[str], Optional[Dict[str, str]]]:
+    """Build ``(argv, env)`` for the force-stop command.
+
+    When *elevate* is set (Linux/BSD), the command is wrapped to ask for the root
+    password via a graphical dialog (see :func:`elevation_prefix`).  On Windows
+    *elevate* is ignored — use the non-root ``taskkill`` method instead.  ``env``
+    is ``None`` to mean "inherit", unless a clean PyInstaller env or
+    ``SUDO_ASKPASS`` must be injected.
+    """
+    command = (command or "").strip()
+    extra_env: Dict[str, str] = {}
+    if elevate and command:
+        info = elevation_prefix()
+        if info is not None:
+            prefix, extra_env = info
+            command = f"{prefix} {_strip_leading_priv(command)}"
+        else:
+            logger.warning(
+                "Elevation requested but no sudo/pkexec/askpass found — running "
+                "the command unprivileged."
+            )
+    return build_restart_argv(command), restart_env(extra_env or None)
+
+
+def restart_ollama(
+    command: str, elevate: bool = False, timeout: float = 20.0
+) -> Tuple[bool, str]:
     """Run *command* to restart/kill Ollama, blocking up to *timeout* seconds.
 
-    Returns ``(ok, message)``.  stdin is closed so an interactive ``sudo``
-    password prompt fails immediately rather than hanging; the whole process
-    group is killed on timeout so a stuck command can never wedge the caller.
-
-    The GUI does not call this (it uses ``QProcess`` to stay non-blocking) — this
-    is the testable/CLI entry point and a fallback.
+    Returns ``(ok, message)``.  stdin is closed so a plain ``sudo`` prompt fails
+    fast instead of hanging (``sudo -A`` / ``pkexec`` use a GUI dialog instead);
+    the whole process group is killed on timeout.  The GUI uses ``QProcess`` to
+    stay non-blocking — this is the testable/CLI entry point and a fallback.
     """
     command = (command or "").strip()
     if not command:
         return False, "No restart command configured."
 
+    argv, env = prepare_restart(command, elevate=elevate)
+
     try:
         proc = subprocess.Popen(
-            build_restart_argv(command),
+            argv,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             start_new_session=True,  # own process group so killpg reaches children
             text=True,
-            env=restart_env(),  # un-pollute LD_LIBRARY_PATH under PyInstaller
+            env=env,
         )
     except (OSError, ValueError) as exc:
         logger.error("Failed to launch Ollama restart command %r: %s", command, exc)
@@ -139,15 +268,23 @@ def restart_ollama(command: str, timeout: float = 20.0) -> Tuple[bool, str]:
         "Ollama restart command failed (exit %s): %r — %s",
         proc.returncode, command, out,
     )
-    # A sudo password prompt with no tty surfaces here; give an actionable hint.
     hint = out or f"exit code {proc.returncode}"
     if "password" in out.lower() or "terminal is required" in out.lower():
-        hint += " (configure passwordless sudo for this command, e.g. a NOPASSWD rule)"
+        hint += (
+            " (tick 'Requires root' in Settings to get a graphical password "
+            "dialog, or set up passwordless sudo)"
+        )
     return False, hint
 
 
 def _kill_group(proc: "subprocess.Popen") -> None:
     """Terminate the command's whole process group; ignore if already gone."""
+    if sys.platform == "win32":
+        try:
+            proc.kill()
+        except OSError:
+            pass
+        return
     try:
         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
     except (ProcessLookupError, PermissionError, OSError):
