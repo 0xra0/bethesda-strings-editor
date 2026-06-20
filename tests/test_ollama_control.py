@@ -161,6 +161,42 @@ def test_prepare_restart_elevate_wraps_and_sets_askpass(linux, monkeypatch):
     assert env is not None and env["SUDO_ASKPASS"] == "/usr/bin/ssh-askpass"
 
 
+# ── sudo -S (app-themed password dialog path) ──────────────────────────────
+
+
+def test_sudo_available_true_when_sudo_on_path(linux, monkeypatch):
+    monkeypatch.setattr(ollama_control.shutil, "which", lambda b: b == "sudo")
+    assert ollama_control.sudo_available() is True
+
+
+def test_sudo_available_false_without_sudo(linux, monkeypatch):
+    monkeypatch.setattr(ollama_control.shutil, "which", lambda b: None)
+    assert ollama_control.sudo_available() is False
+
+
+def test_sudo_available_false_on_windows(monkeypatch):
+    monkeypatch.setattr(ollama_control.sys, "platform", "win32")
+    monkeypatch.setattr(ollama_control.shutil, "which", lambda b: b == "sudo")
+    assert ollama_control.sudo_available() is False
+
+
+def test_build_sudo_stdin_argv_uses_dash_s(linux):
+    assert ollama_control.build_sudo_stdin_argv("sv restart ollama") == [
+        "/bin/sh",
+        "-c",
+        "sudo -S -p '' sv restart ollama",
+    ]
+
+
+def test_build_sudo_stdin_argv_strips_leading_sudo(linux):
+    # User already typed 'sudo …' — must not double up.
+    assert ollama_control.build_sudo_stdin_argv("sudo systemctl restart ollama") == [
+        "/bin/sh",
+        "-c",
+        "sudo -S -p '' systemctl restart ollama",
+    ]
+
+
 # ── restart_env (PyInstaller LD_LIBRARY_PATH handling) ─────────────────────
 
 

@@ -167,6 +167,29 @@ def elevation_prefix() -> Optional[Tuple[str, Dict[str, str]]]:
     return None
 
 
+def sudo_available() -> bool:
+    """True if ``sudo`` can be used for elevation on this platform.
+
+    Unix only (Windows uses non-root ``taskkill``).  Gate for the app's own
+    themed password dialog → :func:`build_sudo_stdin_argv`.
+    """
+    return sys.platform != "win32" and shutil.which("sudo") is not None
+
+
+def build_sudo_stdin_argv(command: str) -> List[str]:
+    """argv to run *command* as root via ``sudo -S`` (password from stdin).
+
+    Pairs with the app's own themed password dialog (:class:`gui.sudo_dialog.
+    SudoPasswordDialog`): the GUI collects the password, then writes it plus a
+    newline to this process's stdin.  ``-S`` reads the password from stdin and
+    ``-p ''`` suppresses sudo's own prompt text (the dialog already asked).  Any
+    leading sudo/pkexec/doas the user typed is stripped first so we don't double
+    up.  Returns an argv for :func:`subprocess.Popen` / ``QProcess.start``.
+    """
+    stripped = _strip_leading_priv((command or "").strip())
+    return build_restart_argv(f"sudo -S -p '' {stripped}")
+
+
 def _strip_leading_priv(command: str) -> str:
     """Drop a leading sudo/pkexec/doas (and its option flags) from *command*.
 

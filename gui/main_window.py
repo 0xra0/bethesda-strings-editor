@@ -3339,15 +3339,36 @@ class MainWindow(QMainWindow):
         if getattr(self, "_ollama_restart_proc", None) is not None:
             return
 
-        from gui.ollama_control import prepare_restart
-
-        # prepare_restart wraps the command for a graphical sudo/pkexec password
-        # dialog when 'Requires root' is set (Linux), picks cmd/sh per OS, and
-        # returns a clean env (un-polluted LD_LIBRARY_PATH under PyInstaller, plus
-        # SUDO_ASKPASS when elevating).
-        argv, _env = prepare_restart(
-            command, elevate=self.settings.ollama_restart_elevate
+        from gui.ollama_control import (
+            build_sudo_stdin_argv,
+            prepare_restart,
+            restart_env,
+            sudo_available,
         )
+
+        # When elevation is needed and sudo is available, ask for the password
+        # with our *own* themed dialog and feed it to `sudo -S` — no external,
+        # unthemed ssh-askpass/pkexec popup.  Otherwise fall back to
+        # prepare_restart (pkexec / sudo -A askpass, or no elevation at all).
+        password = None
+        if self.settings.ollama_restart_elevate and sudo_available():
+            from gui.sudo_dialog import SudoPasswordDialog
+
+            password = SudoPasswordDialog.get_password(command, self)
+            if password is None:
+                self.statusBar().showMessage(
+                    self.tr("Ollama force-stop cancelled."), 4000
+                )
+                return
+            argv, _env = build_sudo_stdin_argv(command), restart_env()
+        else:
+            # prepare_restart wraps the command for a graphical sudo/pkexec
+            # password dialog when 'Requires root' is set (Linux), picks cmd/sh
+            # per OS, and returns a clean env (un-polluted LD_LIBRARY_PATH under
+            # PyInstaller, plus SUDO_ASKPASS when elevating).
+            argv, _env = prepare_restart(
+                command, elevate=self.settings.ollama_restart_elevate
+            )
         proc = QProcess(self)
         proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
         if _env is not None:
@@ -3372,7 +3393,11 @@ class MainWindow(QMainWindow):
         )
         logger.info("Running Ollama force-stop command: %s", command)
         proc.start(argv[0], argv[1:])
-        # Nothing will be written to the command's stdin.
+        if password is not None:
+            # Feed the password to `sudo -S` on stdin, then close it.  Never log
+            # it; drop the reference immediately after writing.
+            proc.write((password + "\n").encode("utf-8"))
+            password = None
         proc.closeWriteChannel()
 
     @Slot()
@@ -3426,9 +3451,12 @@ class MainWindow(QMainWindow):
                 "Ollama force-stop command exited %s: %s", exit_code, output
             )
             hint = output or self.tr("exit code %s") % exit_code
-            if "password" in output.lower() or "terminal is required" in output.lower():
+            low = output.lower()
+            if "incorrect password" in low or "sorry, try again" in low:
+                hint = self.tr("incorrect password")
+            elif "password" in low or "terminal is required" in low:
                 hint = self.tr(
-                    "needs passwordless sudo (NOPASSWD) — see translator.log"
+                    "authentication failed — check 'Requires root' / your password"
                 )
             self.statusBar().showMessage(
                 self.tr("Ollama restart failed: %s") % hint, 8000

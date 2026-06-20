@@ -243,13 +243,15 @@ class SettingsDialog(QDialog):
         ollama_layout.addRow(self.tr("Force-stop command:"), restart_row)
 
         self.chk_restart_elevate = QCheckBox(
-            self.tr("Requires root — show a system password dialog (Linux)")
+            self.tr("Requires root — show a password dialog (Linux)")
         )
         self.chk_restart_elevate.setChecked(self._settings.ollama_restart_elevate)
         self.chk_restart_elevate.setToolTip(
             self.tr(
-                "Wrap the command with graphical sudo (sudo -A askpass, or pkexec) "
-                "so a password dialog appears — no NOPASSWD rule or terminal "
+                "Run the command as root.  When sudo is available you get the "
+                "app's own themed password dialog (the password is fed to "
+                "'sudo -S'); otherwise it falls back to graphical sudo "
+                "(sudo -A askpass) or pkexec.  No NOPASSWD rule or terminal "
                 "needed.\n"
                 "Leave off for a non-root command such as 'pkill -x ollama' or, on "
                 "Windows, 'taskkill' (ignored there)."
