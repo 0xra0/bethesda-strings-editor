@@ -126,9 +126,25 @@ class _WelcomeWidget(QWidget):
         self._setup()
 
     def _setup(self):
-        outer = QVBoxLayout(self)
-        outer.setAlignment(Qt.AlignCenter)
+        # Scrollable, horizontally-centred column: welcome card on top, an
+        # optional "What's New" changelog panel below it (filled async from
+        # GitHub once load_changelog() is called).
+        from PySide6.QtWidgets import QScrollArea
+
+        page = QVBoxLayout(self)
+        page.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        page.addWidget(scroll)
+
+        container = QWidget()
+        scroll.setWidget(container)
+        outer = QVBoxLayout(container)
+        outer.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         outer.setContentsMargins(24, 24, 24, 24)
+        outer.setSpacing(18)
 
         card = QFrame()
         card.setObjectName("WelcomeCard")
@@ -141,7 +157,9 @@ class _WelcomeWidget(QWidget):
             "}"
         )
         card.setStyleSheet(self._card_default_style)
-        card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        card.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        card.setMaximumWidth(720)
+        card.setMinimumWidth(420)
 
         card_layout = QVBoxLayout(card)
         card_layout.setAlignment(Qt.AlignCenter)
@@ -213,11 +231,95 @@ class _WelcomeWidget(QWidget):
         lbl_fmt.setStyleSheet("font-size: 11px; opacity: 0.28; letter-spacing: 0.5px;")
         card_layout.addWidget(lbl_fmt)
 
-        outer.addWidget(card)
+        outer.addWidget(card, alignment=Qt.AlignHCenter)
+
+        # ── "What's New" changelog panel (hidden until load_changelog) ─────────
+        from PySide6.QtWidgets import QTextBrowser
+
+        self._changelog_panel = QFrame()
+        self._changelog_panel.setObjectName("ChangelogCard")
+        self._changelog_panel.setMaximumWidth(720)
+        self._changelog_panel.setMinimumWidth(420)
+        self._changelog_panel.setVisible(False)
+        cl_layout = QVBoxLayout(self._changelog_panel)
+        cl_layout.setContentsMargins(4, 0, 4, 0)
+        cl_layout.setSpacing(8)
+
+        cl_header = QLabel(self.tr("What's New"))
+        cl_header.setStyleSheet("font-size: 15px; font-weight: 700;")
+        cl_layout.addWidget(cl_header)
+
+        self._changelog_view = QTextBrowser()
+        self._changelog_view.setOpenExternalLinks(True)
+        self._changelog_view.setMinimumHeight(220)
+        self._changelog_view.setStyleSheet(
+            "QTextBrowser { border: 1px solid rgba(127,127,127,0.25);"
+            "  border-radius: 12px; padding: 8px; background: rgba(127,127,127,0.04); }"
+        )
+        cl_layout.addWidget(self._changelog_view)
+
+        self._changelog_footer = QLabel()
+        self._changelog_footer.setOpenExternalLinks(True)
+        self._changelog_footer.setAlignment(Qt.AlignRight)
+        self._changelog_footer.setStyleSheet("font-size: 11px; opacity: 0.6;")
+        cl_layout.addWidget(self._changelog_footer)
+
+        outer.addWidget(self._changelog_panel, alignment=Qt.AlignHCenter)
+        self._changelog_fetcher = None
 
         # Start idle pulse after the widget is shown
         from gui.micro_animations import start_card_pulse
         QTimer.singleShot(400, lambda: start_card_pulse(card))
+
+    def load_changelog(self) -> None:
+        """Fetch recent GitHub releases and show them in the What's New panel.
+
+        Non-blocking (runs in a QThread); silently does nothing on network
+        failure beyond leaving a link to the releases page.  Called once at
+        startup when update checks are enabled.
+        """
+        if self._changelog_fetcher is not None:
+            return
+        from gui.updater import ChangelogFetcher
+
+        self._changelog_panel.setVisible(True)
+        self._changelog_view.setHtml(
+            f"<p style='color:gray'>{self.tr('Loading changelog…')}</p>"
+        )
+        fetcher = ChangelogFetcher(limit=6, parent=self)
+        fetcher.loaded.connect(self._on_changelog_loaded)
+        fetcher.failed.connect(self._on_changelog_failed)
+        fetcher.finished.connect(fetcher.deleteLater)
+        self._changelog_fetcher = fetcher
+        fetcher.start()
+
+    @Slot(list)
+    def _on_changelog_loaded(self, releases: list) -> None:
+        from gui.updater import RELEASES_URL, changelog_to_html
+
+        try:
+            from _version import __version__ as current
+        except Exception:
+            current = ""
+        if not releases:
+            self._changelog_panel.setVisible(False)
+            return
+        self._changelog_panel.setVisible(True)
+        self._changelog_view.setHtml(changelog_to_html(releases, current))
+        self._changelog_view.verticalScrollBar().setValue(0)
+        self._changelog_footer.setText(
+            f"<a href='{RELEASES_URL}'>{self.tr('All releases on GitHub →')}</a>"
+        )
+
+    @Slot(str)
+    def _on_changelog_failed(self, _msg: str) -> None:
+        from gui.updater import RELEASES_URL
+
+        # Don't nag — collapse to a single quiet link to the releases page.
+        self._changelog_view.setHtml(
+            f"<p style='color:gray'>{self.tr('Could not load the changelog.')} "
+            f"<a href='{RELEASES_URL}'>{self.tr('Open releases on GitHub')}</a></p>"
+        )
 
     def dragEnterEvent(self, event):
         try:
@@ -860,6 +962,11 @@ class MainWindow(QMainWindow):
         self._welcome.open_requested.connect(self.open_file)
         self._welcome.file_dropped.connect(self._open_file_path)
         self._content_stack.addWidget(self._welcome)
+        # Show recent GitHub releases under the welcome card.  Gated on the same
+        # "check for updates on startup" preference (same GitHub endpoint), and
+        # deferred so it never delays the window appearing.
+        if self.settings.check_updates_on_startup:
+            QTimer.singleShot(1200, self._welcome.load_changelog)
 
         # Page 1 — string table
         self.table_view = StringTableView()

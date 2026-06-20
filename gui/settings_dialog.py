@@ -739,8 +739,9 @@ class SettingsDialog(QDialog):
         self.chk_update_on_startup.setChecked(self._settings.check_updates_on_startup)
         self.chk_update_on_startup.setToolTip(
             self.tr(
-                "Silently checks the GitHub releases page 8 seconds after launch.\n"
-                "Shows a dialog only when a new version is found.\n"
+                "Silently checks the GitHub releases page shortly after launch.\n"
+                "Shows a dialog only when a new version is found, and lists recent\n"
+                "release notes in the 'What's New' panel on the welcome screen.\n"
                 "No personal data is transmitted — only a GET request to the GitHub API."
             )
         )
