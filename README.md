@@ -87,6 +87,8 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Binary string files**: `.strings` (null-terminated), `.dlstrings` / `.ilstrings` (length-prefixed)
 - **BA2 archives**: read and write Starfield v2 BA2 files (GNRL type, zlib-compressed); picker dialog for multi-entry archives
 - **ESP/ESM plugins**: non-localized plugins where text is stored directly in field buffers
+- **ESP/ESM Mod Update Migration** (Translation → Mod Update Migration) — diff an old and new version of a plugin keyed on FormID and carry existing translations forward to the updated release (xTranslator-style); risk-coloured 7-column diff with changed-only filter and CSV/HTML export
+- **VMAD script-property analysis** (Translation → Script Property Analysis) — parses the Papyrus script-property strings attached to records, classifies each value as translatable / review / locked (resource paths, event names, identifiers), and byte-splices only the edited values so unmodelled script structures survive untouched; works on both localized and non-localized plugins
 - **Starfield interface TXT**: `translate_en.txt` / `translate_ru.txt` key=value interface string files
 - **xTranslator SST XML**: import/export in xTranslator format (match by `sID`, fallback to source text)
 - **Drag-and-drop** file loading with format validation
@@ -103,13 +105,17 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Per-code hide filter** — suppress specific QC issue codes from the results table for the current session
 - **Retranslation queue** — strings flagged by QC are queued and retranslated with a per-string hint describing what went wrong
 - **Error-code filter** — filter QC results by code (MISSING_TAGS, NEWLINE_COUNT_MISMATCH, etc.)
-- **Consistency checker** — finds the same source string translated differently across the file, with canonical-form picker and batch replace
+- **Consistency checker** (Ctrl+Alt+K) — finds the same source string translated differently across the file, with canonical-form picker and batch replace
+- **Ukrainian gender agreement checker** (Ctrl+Alt+G) — detects adjective/noun gender mismatches using a noun-gender dictionary, with inline fix suggestions
+- **ти/ви register checker** (Ctrl+Alt+R) — finds mixed formal/informal address within a file and reports each violation with context
 - **Plugin validator** — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies
 
 ### Review tools
 - **Visual Context Preview** (Ctrl+Shift+P) — dockable panel that renders the current string inside a faithful recreation of the Bethesda UI using actual game fonts extracted from `fonts_uk.swf` / `fonts_en.swf`; pixel-exact borders, noise tile, and dark gradient from `dialoguemenu.swf`; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI); colour-coded overflow indicator; Source/Translation/Both view modes
 - **Dialogue Tree Visualizer** — interactive quest → topic → response node graph (Translation → Dialogue Tree) with Starfield dark-space visual theme; click any node to jump to that string in the table
 - **Audio / TTS Preview** (Ctrl+Shift+A) — dockable panel with eSpeak-NG and Piper backends; synthesizes a TTS read-out of the translation so timing can be compared against the original game audio; colour-coded timing bar (green ≤ 110 %, orange ≤ 130 %, red > 130 %)
+- **Native Starfield voice playback** — decodes the original Wwise `.wem` voice clip for a dialogue line straight from the game's `*Voices*.ba2` archives (FormID → voice clip, via `vgmstream-cli`) and plays it back in the audio panel alongside the TTS read-out; in ESP/ESM mode the row's FormID auto-fills
+- **Speaker (NPC) panel** — shows who voices the selected dialogue line (name, gender, faction, category, raw voice type, plus "also voiced by" for shared lines) by parsing the Wwise voice-type folder name; tabified with the Audio panel
 - **Version comparison** — diff two game versions, migrate unchanged translations, export CSV/HTML reports; batch folder comparison
 - **Diff viewer** — side-by-side word-level or character-level diff; editable right pane with live diff update; HTML export
 - **Advanced search** — regex and fuzzy search across source and translation columns; batch Find & Replace
@@ -119,13 +125,18 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Multi-monitor / detached panes** — Translation Editor dock (Ctrl+Shift+E) floats to any monitor; Pop Out String List (Ctrl+Shift+L) opens a second table window sharing the same selection model
 - **Claude AI Assistant dock** (Ctrl+Shift+C) — chat about the current string and apply Claude's suggested translation with one click
 - **Command palette** (Ctrl+K) and vim-style navigation (j/k, G)
+- **Translation sessions** — named work sessions with persistent search/filter state (Ctrl+Shift+N new, Ctrl+Shift+S save)
+- **Macro recorder** (Ctrl+M) — record and replay sequences of edit operations as named macros
 - **Keyboard shortcuts editor** — rebind any action
 - **F7** → jump to next untranslated; **Ctrl+Enter** → approve; **Ctrl+R** → reject
 - **Encoding detection** — auto-detects UTF-8, CP1251, CP1252, CP1250, GBK/GB2312, BOM variants; override per-file
 - **Themes** — 16 built-in themes: Slate, Midnight, Nord, Dracula, Catppuccin, Light, Solarized Dark, Solarized Light, Gruvbox, Tokyo Night, Monokai, One Dark, Sepia, Starfield, Starfield Terminal, High Contrast; plus custom QSS file support
 - **GPU monitor** — status bar widget showing GPU utilisation, VRAM usage, and temperature (AMD sysfs + NVIDIA nvidia-smi; auto-hides if no GPU found)
+- **Ollama force-stop** — frees a wedged GPU by restarting the Ollama service; on Linux a privileged restart uses the app's own Qt-themed password dialog (`sudo -S`, with askpass/pkexec fallback), on Windows it stops the service via `taskkill` with no console flash
 - **UI translations** — interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
-- **Desktop notifications** on batch completion
+- **Cross-platform desktop notifications** on batch completion — `notify-send`/D-Bus on Linux, native system-tray balloons on Windows and macOS
+- **"What's New" panel** — recent GitHub release notes are fetched and rendered on the welcome screen after the welcome card
+- **Automatic update check** — checks the GitHub releases API on startup and offers to download a newer build (toggle in Settings)
 - **Crash recovery** — periodic auto-save; recovery dialog offered at startup if the previous session ended unexpectedly
 - **Security audit log** — append-only JSON-lines file recording file operations and translation batches; API keys stored in system keyring with AES-256-GCM file fallback
 
@@ -136,6 +147,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - Python 3.10+
 - [Ollama](https://ollama.com) running locally (or a Claude API key for the Claude backend)
 - Audio playback requires `paplay` (PulseAudio), `ffplay`, or `aplay` — any of the three will be auto-detected
+- Native Starfield voice playback requires `vgmstream-cli` on PATH (decodes Wwise `.wem` clips)
 
 ```bash
 pip install -r requirements.txt
@@ -167,6 +179,9 @@ bethesda_strings/              Pure Python parsing library (no Qt dependency)
   core.py                      Binary parser/writer for .strings/.dlstrings/.ilstrings
   ba2_handler.py               BA2 archive reader/writer (Starfield v2, FO4 v1)
   esp_handler.py               ESP/ESM plugin parser (non-localized plugins)
+  esp_diff.py                  ESP/ESM mod-update migration (FormID-keyed diff)
+  vmad_handler.py              VMAD Papyrus script-property parser/classifier/byte-splice editor
+  wwise_voice.py               Wwise voice index — FormID → original .wem clip from Voices BA2
   txt_handler.py               Starfield interface TXT parser (translate_en/ru.txt)
   xml_handler.py               xTranslator SST XML import/export
   encoding.py                  Encoding detection and conversion
@@ -179,13 +194,17 @@ bethesda_strings/              Pure Python parsing library (no Qt dependency)
 gui/                           PySide6 application layer
   main_window.py               Top-level window, file I/O, translation orchestration
   ollama_worker.py             QThread worker — parallel calls, per-language prompts, AI-fix mode
+  ollama_control.py            Ollama service force-stop/restart helper (sudo/taskkill)
+  sudo_dialog.py               Qt-themed sudo password prompt (sudo -S over stdin)
   claude_translation_worker.py Claude API drop-in replacement for OllamaWorker
   claude_chat_panel.py         Dockable AI assistant chat panel
   gpu_monitor.py               Status bar GPU utilisation widget (AMD sysfs + NVIDIA nvidia-smi)
   visual_context_preview.py    Game-accurate string rendering using extracted SWF fonts/assets
   dialogue_tree_dialog.py      Interactive quest → topic → response node graph
-  audio_preview_panel.py       TTS preview dock (eSpeak-NG / Piper backends)
+  audio_preview_panel.py       TTS preview dock + native Wwise voice playback (eSpeak-NG / Piper)
   tts_engine.py                TTS synthesis engine
+  speaker_map.py               Wwise voice-type → speaker (name/gender/faction) parser
+  speaker_panel.py             Speaker (NPC) dock — who voices the selected line
   focus_overlay.py             Zen / full-screen focus mode
   lore_rag_manager.py          SQLite FTS5 lore database + UESP downloader
   lore_rag_dialog.py           Lore database management dialog
@@ -200,12 +219,18 @@ gui/                           PySide6 application layer
   translation_memory.py        Pre-loaded map of string ID → known-good translation
   glossary.py                  Glossary data model, CSV/TBX/JSON I/O
   consistency_checker.py       Finds inconsistent translations of identical source strings
+  gender_checker.py            Ukrainian adjective/noun gender agreement checker
+  register_checker.py          ти/ви formal/informal register consistency checker
+  vmad_dialog.py               VMAD script-property analysis UI (risk-coloured, byte-splice apply)
+  esp_migrate_dialog.py        ESP/ESM mod-update migration UI (FormID-keyed diff)
   version_compare_dialog.py    Game-version diff UI, migration, CSV/HTML export
   diff_viewer.py               Side-by-side word/character-level diff viewer
   pre_translation_estimator.py Difficulty scorer (0–100) with weight learning
   profile_editor_dialog.py     Character persona profile editor
   profile_assign_dialog.py     Assign persona profiles to strings / quests
   keyboard_manager.py          Rebindable shortcuts, vim navigation, command palette
+  session_manager.py           Named work sessions with persistent search/filter state
+  macro_recorder.py            Record/replay sequences of edit operations as macros
   theme_manager.py             16 built-in QSS themes + custom theme loader
   nexusmods_uploader.py        NexusMods v3 multipart upload client
   nexusmods_browser_dialog.py  NexusMods translation browser (card grid, async thumbnails)
@@ -213,6 +238,8 @@ gui/                           PySide6 application layer
   app_settings.py              AppSettings dataclass, JSON + QSettings persistence
   secret_store.py              API key storage (keyring + AES-256-GCM fallback)
   audit_log.py                 Append-only security audit log (JSON-lines)
+  updater.py                   GitHub release update check + welcome "What's New" changelog
+  desktop_notify.py            Cross-platform batch-complete notifications (notify-send / tray)
   crash_recovery.py            Periodic auto-save and recovery dialog
 
 data/
