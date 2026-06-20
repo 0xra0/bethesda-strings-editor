@@ -1,17 +1,23 @@
 """
-Desktop push notifications for Linux.
+Desktop push notifications — cross-platform.
 
 Backend priority:
-  1. notify-send (libnotify) — GNOME, KDE Plasma, XFCE, MATE, Cinnamon,
-     and any tiling WM with a freedesktop notification daemon
-     (dunst, mako, swaync, fnott, deadd-notification-center, etc.).
-  2. dbus-send  — same freedesktop D-Bus spec, no libnotify wrapper needed.
-  3. QSystemTrayIcon.showMessage — Qt-level popup as last resort.
+  Linux:
+    1. notify-send (libnotify) — GNOME, KDE Plasma, XFCE, MATE, Cinnamon,
+       and any tiling WM with a freedesktop notification daemon
+       (dunst, mako, swaync, fnott, deadd-notification-center, etc.).
+    2. dbus-send  — same freedesktop D-Bus spec, no libnotify wrapper needed.
+    3. QSystemTrayIcon.showMessage — Qt-level popup as last resort.
+  Windows / macOS:
+    QSystemTrayIcon.showMessage first — it maps to the native balloon/toast
+    (Shell_NotifyIcon on Windows, NSUserNotification on macOS); the libnotify /
+    D-Bus probes are skipped since those tools don't exist there.
 """
 
 import logging
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -75,29 +81,58 @@ def _try_dbus_send(title: str, body: str, timeout_ms: int) -> bool:
         return False
 
 
+def _try_qt_tray(title: str, body: str, timeout_ms: int, tray_icon) -> bool:
+    """Show a balloon via QSystemTrayIcon — the native path on Windows/macOS.
+
+    ``showMessage`` only works on a *visible* tray icon whose platform supports
+    balloon messages, so verify both first (otherwise it silently no-ops, which
+    is the usual reason "nothing pops up" on Windows).
+    """
+    if tray_icon is None:
+        return False
+    try:
+        from PySide6.QtWidgets import QSystemTrayIcon
+
+        if not QSystemTrayIcon.supportsMessages():
+            return False
+        # If the tray wasn't shown at creation (system tray reported unavailable
+        # at startup, common on a slow Windows logon), show it now.
+        if not tray_icon.isVisible():
+            tray_icon.show()
+        if not tray_icon.isVisible():
+            return False
+        tray_icon.showMessage(
+            title,
+            body,
+            QSystemTrayIcon.MessageIcon.Information,
+            timeout_ms,
+        )
+        return True
+    except Exception as exc:
+        logger.debug(f"QSystemTrayIcon.showMessage failed: {exc}")
+        return False
+
+
 def send_notification(
     title: str,
     body: str,
     timeout_ms: int = 6000,
     tray_icon=None,
 ) -> None:
-    """Send a desktop push notification on Linux.
+    """Send a desktop push notification (cross-platform).
 
-    tray_icon: optional QSystemTrayIcon passed for the Qt fallback path.
-    Falls through each backend silently; never raises.
+    tray_icon: optional QSystemTrayIcon, used for the native Windows/macOS
+    balloon and as the Linux last-resort fallback.  Falls through each backend
+    silently; never raises.
     """
+    # Windows / macOS: notify-send & dbus-send don't exist there, so go straight
+    # to the Qt tray balloon (the OS-native notification path).
+    if sys.platform != "linux":
+        _try_qt_tray(title, body, timeout_ms, tray_icon)
+        return
+    # Linux: prefer the freedesktop notification daemon, fall back to Qt.
     if _try_notify_send(title, body, timeout_ms):
         return
     if _try_dbus_send(title, body, timeout_ms):
         return
-    if tray_icon is not None:
-        try:
-            from PySide6.QtWidgets import QSystemTrayIcon
-            tray_icon.showMessage(
-                title,
-                body,
-                QSystemTrayIcon.MessageIcon.Information,
-                timeout_ms,
-            )
-        except Exception as exc:
-            logger.debug(f"QSystemTrayIcon.showMessage failed: {exc}")
+    _try_qt_tray(title, body, timeout_ms, tray_icon)

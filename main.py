@@ -85,6 +85,20 @@ def main():
     app.setApplicationVersion("0.2.2")
     app.setOrganizationName("BethesdaModTools")
 
+    # Windows: give the process an explicit AppUserModelID.  Without it the
+    # taskbar shows the generic Python/host icon instead of ours, and tray
+    # balloon notifications are attributed to the interpreter rather than the
+    # app (and can be silently suppressed).  Must be set before any window shows.
+    if sys.platform == "win32":
+        try:
+            import ctypes
+
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                "BethesdaModTools.StringsTranslator"
+            )
+        except Exception as exc:  # noqa: BLE001 - best-effort, never fatal
+            logger.debug("Could not set AppUserModelID: %s", exc)
+
     # Load settings (JSON config > QSettings > defaults) with env overrides
     settings = load_settings()
     logger.info(f"Config loaded from {get_config_path()}")
