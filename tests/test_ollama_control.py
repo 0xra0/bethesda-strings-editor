@@ -77,6 +77,47 @@ def test_command_needs_root():
     assert not ollama_control.command_needs_root("taskkill /F /T /IM ollama.exe")
 
 
+# ── is_already_stopped (benign "nothing was running") ──────────────────────
+
+
+def test_taskkill_not_found_is_benign():
+    # Windows taskkill exits 128 with "process not found" when Ollama is absent.
+    out = 'ERROR: The process "ollama.exe" not found.'
+    assert ollama_control.is_already_stopped(
+        "taskkill /F /T /IM ollama.exe", 128, out
+    )
+
+
+def test_taskkill_not_found_by_text_any_code():
+    assert ollama_control.is_already_stopped(
+        "taskkill /F /IM ollama.exe", 1, "process not found"
+    )
+
+
+def test_taskkill_real_failure_is_not_benign():
+    # Access denied (service-owned Ollama) is a genuine failure, not "not running".
+    assert not ollama_control.is_already_stopped(
+        "taskkill /F /T /IM ollama.exe", 1, "ERROR: Access is denied."
+    )
+
+
+def test_pkill_no_match_is_benign():
+    # pkill exits 1 when no process matched — Ollama already stopped.
+    assert ollama_control.is_already_stopped("pkill -x ollama", 1, "")
+
+
+def test_pkill_syntax_error_is_not_benign():
+    assert not ollama_control.is_already_stopped("pkill -x ollama", 2, "usage: pkill")
+
+
+def test_service_restart_failure_is_not_benign():
+    # systemctl/sv failures are real — never swallowed.
+    assert not ollama_control.is_already_stopped(
+        "systemctl restart ollama", 1, "Failed to restart ollama.service"
+    )
+    assert not ollama_control.is_already_stopped("sv restart ollama", 1, "fail: ollama")
+
+
 # ── build_restart_argv ────────────────────────────────────────────────────
 
 

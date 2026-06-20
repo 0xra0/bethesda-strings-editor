@@ -3339,6 +3339,8 @@ class MainWindow(QMainWindow):
         if getattr(self, "_ollama_restart_proc", None) is not None:
             return
 
+        import sys
+
         from gui.ollama_control import (
             build_sudo_stdin_argv,
             prepare_restart,
@@ -3377,9 +3379,21 @@ class MainWindow(QMainWindow):
             for k, v in _env.items():
                 qenv.insert(k, v)
             proc.setProcessEnvironment(qenv)
+        # Windows: GUI is windowed, so a console child (cmd/taskkill) would flash
+        # its own window — suppress it via CREATE_NO_WINDOW.
+        if sys.platform == "win32":
+            from gui.ollama_control import CREATE_NO_WINDOW
+
+            def _no_window(args, _flag=CREATE_NO_WINDOW):
+                args.flags |= _flag
+
+            proc.setCreateProcessArgumentsModifier(_no_window)
         proc.finished.connect(self._on_ollama_restart_finished)
         proc.errorOccurred.connect(self._on_ollama_restart_error)
         self._ollama_restart_proc = proc
+        # Remembered so the finished handler can tell "Ollama wasn't running"
+        # (a benign non-zero exit from taskkill/pkill) from a real failure.
+        self._ollama_restart_command = command
 
         # Watchdog: kill the command if it runs longer than 20s (e.g. a sudo
         # prompt waiting on a tty that will never answer).
@@ -3442,10 +3456,21 @@ class MainWindow(QMainWindow):
                 output = ""
             proc.deleteLater()
         self._ollama_restart_proc = None
+        command = getattr(self, "_ollama_restart_command", "")
+        self._ollama_restart_command = ""
+
+        from gui.ollama_control import is_already_stopped
 
         if exit_code == 0:
             logger.info("Ollama force-stop command succeeded")
             self.statusBar().showMessage(self.tr("Ollama restarted — GPU freed."), 4000)
+        elif is_already_stopped(command, exit_code, output):
+            # taskkill 'not found' / pkill 'no match' — nothing was running, so
+            # the GPU is already free.  Not a failure.
+            logger.info("Ollama was not running (nothing to stop)")
+            self.statusBar().showMessage(
+                self.tr("Ollama was not running — GPU already free."), 4000
+            )
         else:
             logger.error(
                 "Ollama force-stop command exited %s: %s", exit_code, output

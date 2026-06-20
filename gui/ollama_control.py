@@ -102,6 +102,29 @@ def command_needs_root(command: str) -> bool:
     return any(tok in c for tok in ("systemctl", "sv ", "rc-service", "service "))
 
 
+def is_already_stopped(command: str, exit_code: int, output: str) -> bool:
+    """True if a non-zero exit only means Ollama wasn't running to begin with.
+
+    A kill command that finds no process is not an error for us — the GPU is
+    already free, so the Stop succeeded.  Windows ``taskkill /IM ollama.exe``
+    exits **128** with "process not found"; Unix ``pkill -x ollama`` exits **1**
+    when nothing matched.  Service-manager restarts (systemctl/sv/…) are not
+    treated this way — their non-zero exits are real failures.
+    """
+    cmd = (command or "").lower()
+    low = (output or "").lower()
+    if "taskkill" in cmd:
+        return exit_code == 128 or "not found" in low
+    if "pkill" in cmd:
+        return exit_code == 1  # pkill: exit 1 == no processes matched
+    return False
+
+
+# Windows process-creation flag: don't allocate a console window for a console
+# child (taskkill/cmd) launched from the windowed GUI — avoids a visible flash.
+CREATE_NO_WINDOW = 0x08000000
+
+
 # ── Environment (PyInstaller + askpass) ────────────────────────────────────
 
 
@@ -257,6 +280,10 @@ def restart_ollama(
 
     argv, env = prepare_restart(command, elevate=elevate)
 
+    # On Windows the GUI is windowed (no console), so a console child like
+    # taskkill/cmd would flash its own window — suppress it.
+    creationflags = CREATE_NO_WINDOW if sys.platform == "win32" else 0
+
     try:
         proc = subprocess.Popen(
             argv,
@@ -266,6 +293,7 @@ def restart_ollama(
             start_new_session=True,  # own process group so killpg reaches children
             text=True,
             env=env,
+            creationflags=creationflags,
         )
     except (OSError, ValueError) as exc:
         logger.error("Failed to launch Ollama restart command %r: %s", command, exc)
@@ -286,6 +314,10 @@ def restart_ollama(
     if proc.returncode == 0:
         logger.info("Ollama restart command succeeded: %r", command)
         return True, out or "Ollama restarted."
+
+    if is_already_stopped(command, proc.returncode or 0, out):
+        logger.info("Ollama was not running (nothing to stop): %r", command)
+        return True, "Ollama was not running — GPU already free."
 
     logger.error(
         "Ollama restart command failed (exit %s): %r — %s",
