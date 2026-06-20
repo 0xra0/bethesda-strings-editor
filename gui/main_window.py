@@ -3339,11 +3339,20 @@ class MainWindow(QMainWindow):
         if getattr(self, "_ollama_restart_proc", None) is not None:
             return
 
-        from gui.ollama_control import build_restart_argv
+        from gui.ollama_control import build_restart_argv, restart_env
 
         argv = build_restart_argv(command)
         proc = QProcess(self)
         proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
+        # Under PyInstaller, hand the system binary a clean LD_LIBRARY_PATH so it
+        # doesn't load the bundle's libstdc++/libssl and crash (see restart_env).
+        _env = restart_env()
+        if _env is not None:
+            from PySide6.QtCore import QProcessEnvironment
+            qenv = QProcessEnvironment()
+            for k, v in _env.items():
+                qenv.insert(k, v)
+            proc.setProcessEnvironment(qenv)
         proc.finished.connect(self._on_ollama_restart_finished)
         proc.errorOccurred.connect(self._on_ollama_restart_error)
         self._ollama_restart_proc = proc

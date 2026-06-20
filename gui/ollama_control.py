@@ -26,7 +26,8 @@ import os
 import shutil
 import signal
 import subprocess
-from typing import List, Tuple
+import sys
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,31 @@ def detect_restart_command() -> str:
         if shutil.which(binary):
             return command
     return ""
+
+
+def restart_env() -> Optional[Dict[str, str]]:
+    """Environment for launching a *system* binary from a PyInstaller bundle.
+
+    Returns ``None`` when not frozen (inherit the real environment unchanged).
+    When frozen, PyInstaller's bootloader has prepended the bundle's lib dir to
+    ``LD_LIBRARY_PATH`` (``DYLD_LIBRARY_PATH`` on macOS) so the *app's* bundled
+    Qt/Python libs load — but a system binary (sv / systemctl / ollama / pkill /
+    /bin/sh) inheriting that may load the bundle's libstdc++/libssl/libz and crash
+    with version errors.  PyInstaller saves the pre-launch value as
+    ``<VAR>_ORIG``; restore it (or drop the var) for the child, per the
+    PyInstaller docs.  Only applied when frozen, so running from source keeps any
+    LD_LIBRARY_PATH the user legitimately set in their shell.
+    """
+    if not getattr(sys, "frozen", False):
+        return None
+    env = dict(os.environ)
+    for key in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
+        orig = env.get(key + "_ORIG")
+        if orig is not None:
+            env[key] = orig
+        else:
+            env.pop(key, None)
+    return env
 
 
 def build_restart_argv(command: str) -> List[str]:
@@ -87,6 +113,7 @@ def restart_ollama(command: str, timeout: float = 20.0) -> Tuple[bool, str]:
             stderr=subprocess.STDOUT,
             start_new_session=True,  # own process group so killpg reaches children
             text=True,
+            env=restart_env(),  # un-pollute LD_LIBRARY_PATH under PyInstaller
         )
     except (OSError, ValueError) as exc:
         logger.error("Failed to launch Ollama restart command %r: %s", command, exc)

@@ -57,6 +57,32 @@ def test_build_argv_wraps_in_shell():
     ]
 
 
+# ── restart_env (PyInstaller LD_LIBRARY_PATH handling) ─────────────────────
+
+
+def test_restart_env_none_when_not_frozen(monkeypatch):
+    monkeypatch.delattr(ollama_control.sys, "frozen", raising=False)
+    assert ollama_control.restart_env() is None
+
+
+def test_restart_env_restores_orig_when_frozen(monkeypatch):
+    monkeypatch.setattr(ollama_control.sys, "frozen", True, raising=False)
+    monkeypatch.setenv("LD_LIBRARY_PATH", "/bundle/_internal")
+    monkeypatch.setenv("LD_LIBRARY_PATH_ORIG", "/usr/lib")
+    env = ollama_control.restart_env()
+    assert env is not None
+    assert env["LD_LIBRARY_PATH"] == "/usr/lib"  # restored to the system value
+
+
+def test_restart_env_drops_var_when_no_orig(monkeypatch):
+    monkeypatch.setattr(ollama_control.sys, "frozen", True, raising=False)
+    monkeypatch.setenv("LD_LIBRARY_PATH", "/bundle/_internal")
+    monkeypatch.delenv("LD_LIBRARY_PATH_ORIG", raising=False)
+    env = ollama_control.restart_env()
+    assert env is not None
+    assert "LD_LIBRARY_PATH" not in env  # bundle path removed, none to restore
+
+
 # ── restart_ollama ────────────────────────────────────────────────────────
 
 
