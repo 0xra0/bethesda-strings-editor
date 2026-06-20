@@ -11,6 +11,7 @@ from typing import Optional
 
 from PySide6.QtCore import (
     QItemSelectionModel,
+    QProcess,
     QSize,
     Qt,
     QThread,
@@ -499,6 +500,7 @@ class MainWindow(QMainWindow):
         # Translation workers
         self.ollama_thread = None
         self.ollama_worker = None
+        self._ollama_restart_proc = None  # QProcess for the force-stop command
         self._is_translating_txt = False
         self._txt_translation_data = []
         self._translatable_items = []
@@ -3306,12 +3308,119 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def _stop_translation(self):
-        """Stop the current translation batch."""
+        """Stop the current translation batch.
+
+        Soft-stops the worker (cancels pending futures, closes in-flight sockets)
+        immediately, then — if a force-stop command is configured and we're on the
+        Ollama backend — restarts the Ollama server so a wedged ROCm GPU is freed
+        right away instead of grinding through the in-flight generations.
+        """
         if self.ollama_worker:
             self._translation_stopping = True
             self.ollama_worker.stop()
             self.statusBar().showMessage(self.tr("Stopping translation..."), 3000)
             logger.info("Translation stop requested by user")
+            self._force_restart_ollama()
+
+    def _force_restart_ollama(self):
+        """Run the configured force-stop command to restart Ollama (non-blocking).
+
+        Uses QProcess so the GUI never blocks; stdin is closed so a sudo prompt
+        with no NOPASSWD rule fails fast, and a watchdog kills a command that
+        hangs.  No-op unless a command is set and the active backend is Ollama.
+        """
+        command = (self.settings.ollama_restart_command or "").strip()
+        if not command:
+            return
+        # Claude backend has no local server to restart.
+        if is_claude_model(self.settings.ollama_model):
+            return
+        # Don't pile up restarts if one is already in flight.
+        if getattr(self, "_ollama_restart_proc", None) is not None:
+            return
+
+        from gui.ollama_control import build_restart_argv
+
+        argv = build_restart_argv(command)
+        proc = QProcess(self)
+        proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
+        proc.finished.connect(self._on_ollama_restart_finished)
+        proc.errorOccurred.connect(self._on_ollama_restart_error)
+        self._ollama_restart_proc = proc
+
+        # Watchdog: kill the command if it runs longer than 20s (e.g. a sudo
+        # prompt waiting on a tty that will never answer).
+        self._ollama_restart_watchdog = QTimer(self)
+        self._ollama_restart_watchdog.setSingleShot(True)
+        self._ollama_restart_watchdog.timeout.connect(self._kill_ollama_restart)
+        self._ollama_restart_watchdog.start(20000)
+
+        self.statusBar().showMessage(
+            self.tr("Force-stopping Ollama: %s") % command, 5000
+        )
+        logger.info("Running Ollama force-stop command: %s", command)
+        proc.start(argv[0], argv[1:])
+        # Nothing will be written to the command's stdin.
+        proc.closeWriteChannel()
+
+    @Slot()
+    def _kill_ollama_restart(self):
+        """Watchdog: terminate a force-stop command that overran its budget."""
+        proc = getattr(self, "_ollama_restart_proc", None)
+        if proc is not None and proc.state() != QProcess.ProcessState.NotRunning:
+            logger.error("Ollama force-stop command timed out — killing it")
+            proc.kill()
+
+    @Slot()
+    def _on_ollama_restart_error(self, err):
+        """QProcess could not launch the command (e.g. /bin/sh missing).
+
+        On FailedToStart, finished() will not fire, so clean up here to avoid
+        leaking the watchdog/proc reference and blocking later restarts.
+        """
+        logger.error("Ollama force-stop command error: %s", err)
+        if err == QProcess.ProcessError.FailedToStart:
+            if hasattr(self, "_ollama_restart_watchdog"):
+                self._ollama_restart_watchdog.stop()
+            proc = getattr(self, "_ollama_restart_proc", None)
+            if proc is not None:
+                proc.deleteLater()
+            self._ollama_restart_proc = None
+            self.statusBar().showMessage(
+                self.tr("Force-stop command failed to start — see translator.log"),
+                6000,
+            )
+
+    @Slot()
+    def _on_ollama_restart_finished(self, exit_code, _status):
+        """Report the result of the force-stop command and clean up."""
+        if hasattr(self, "_ollama_restart_watchdog"):
+            self._ollama_restart_watchdog.stop()
+        proc = getattr(self, "_ollama_restart_proc", None)
+        output = ""
+        if proc is not None:
+            try:
+                output = bytes(proc.readAll().data()).decode("utf-8", "replace").strip()
+            except Exception:
+                output = ""
+            proc.deleteLater()
+        self._ollama_restart_proc = None
+
+        if exit_code == 0:
+            logger.info("Ollama force-stop command succeeded")
+            self.statusBar().showMessage(self.tr("Ollama restarted — GPU freed."), 4000)
+        else:
+            logger.error(
+                "Ollama force-stop command exited %s: %s", exit_code, output
+            )
+            hint = output or self.tr("exit code %s") % exit_code
+            if "password" in output.lower() or "terminal is required" in output.lower():
+                hint = self.tr(
+                    "needs passwordless sudo (NOPASSWD) — see translator.log"
+                )
+            self.statusBar().showMessage(
+                self.tr("Ollama restart failed: %s") % hint, 8000
+            )
 
     @Slot()
     def _on_selection_changed(self):

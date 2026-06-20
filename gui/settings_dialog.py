@@ -210,6 +210,36 @@ class SettingsDialog(QDialog):
         )
         ollama_layout.addRow(self.tr("Ollama CPU threads:"), self.spin_num_thread)
 
+        # Force-stop command: closing client sockets does not stop a wedged ROCm
+        # GPU mid-generation, so Stop can feel frozen for many seconds.  This
+        # command (run on Stop, if set) restarts/kills the server to free the GPU
+        # instantly.  Empty = soft stop only.
+        self.ollama_restart_command = QLineEdit(self._settings.ollama_restart_command)
+        self.ollama_restart_command.setPlaceholderText(
+            self.tr("e.g. sv restart ollama  (empty = soft stop only)")
+        )
+        self.ollama_restart_command.setToolTip(
+            self.tr(
+                "Shell command run when you press Stop, to forcibly restart the "
+                "Ollama server and free the GPU immediately.\n"
+                "Closing sockets alone does not interrupt a wedged GPU mid-"
+                "generation.\n"
+                "Examples: sv restart ollama · sudo sv restart ollama · "
+                "systemctl restart ollama · pkill -x ollama\n"
+                "If it needs sudo, set up a passwordless (NOPASSWD) rule or it "
+                "will fail."
+            )
+        )
+        restart_row = QHBoxLayout()
+        restart_row.addWidget(self.ollama_restart_command, stretch=1)
+        self.btn_detect_restart = QPushButton(self.tr("Auto-detect"))
+        self.btn_detect_restart.setToolTip(
+            self.tr("Guess the restart command for this system's service manager")
+        )
+        self.btn_detect_restart.clicked.connect(self._detect_restart_command)
+        restart_row.addWidget(self.btn_detect_restart)
+        ollama_layout.addRow(self.tr("Force-stop command:"), restart_row)
+
         self.ollama_model.currentTextChanged.connect(self._update_model_hint)
 
         self.ollama_group.setLayout(ollama_layout)
@@ -1104,6 +1134,24 @@ class SettingsDialog(QDialog):
         self._show_tip()
 
     @Slot()
+    def _detect_restart_command(self):
+        """Fill the force-stop field with a best guess for this system."""
+        from gui.ollama_control import detect_restart_command
+        cmd = detect_restart_command()
+        if cmd:
+            self.ollama_restart_command.setText(cmd)
+        else:
+            QMessageBox.information(
+                self,
+                self.tr("Auto-detect"),
+                self.tr(
+                    "No known service manager (sv / systemctl / rc-service) was "
+                    "found on PATH. Enter the command manually, e.g. "
+                    "'pkill -x ollama'."
+                ),
+            )
+
+    @Slot()
     def _refresh_ollama_models(self):
         """Fetch installed models from Ollama and populate the model combo."""
         import requests
@@ -1438,6 +1486,7 @@ class SettingsDialog(QDialog):
         settings.ollama_num_predict = self.spin_num_predict.value()
         settings.ollama_num_ctx = self.spin_num_ctx.value()
         settings.ollama_num_thread = self.spin_num_thread.value()
+        settings.ollama_restart_command = self.ollama_restart_command.text().strip()
         settings.default_source_lang = self.combo_source.currentData()
         settings.default_target_lang = self.combo_target.currentData()
         settings.quality_level = self.spin_quality.value()

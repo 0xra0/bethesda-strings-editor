@@ -16,7 +16,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 33  # Increment when schema changes
+CONFIG_VERSION = 34  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -62,6 +62,12 @@ class AppSettings:
     ollama_model: str = "translategemma3-st"
     ollama_num_predict: int = 4096
     ollama_num_ctx: int = 16384
+    # Shell command run to forcibly restart/kill the Ollama server when the user
+    # hits Stop.  Closing client sockets does not stop a wedged ROCm GPU mid-
+    # generation; restarting the server frees it instantly.  Empty = disabled
+    # (Stop stays soft).  Examples: "sv restart ollama", "sudo sv restart ollama",
+    # "systemctl restart ollama", "pkill -x ollama".  See gui/ollama_control.py.
+    ollama_restart_command: str = ""
 
     # ── Translation defaults ─────────────────────────────────────
     default_source_lang: str = "ru"   # Starfield locale code (en/de/es/fr/it/ja/pl/ptbr/zhhans/ru/uk)
@@ -395,6 +401,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v32: added auto_self_review setting")
 
+    if from_version < 34:
+        data.setdefault("ollama_restart_command", "")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v34: added ollama_restart_command setting")
+
     if from_version < CONFIG_VERSION:
         logger.warning(
             f"Config version {from_version} is older than current {CONFIG_VERSION}. "
@@ -634,6 +645,7 @@ def load_settings_qsettings() -> AppSettings:
         ollama_model=_s("ollama/model", "translategemma3-st"),
         ollama_num_predict=_i("ollama/num_predict", 4096),
         ollama_num_ctx=_i("ollama/num_ctx", 16384),
+        ollama_restart_command=_s("ollama/restart_command", ""),
         default_source_lang=_s("translation/source_lang", "ru"),
         default_target_lang=_s("translation/target_lang", "uk"),
         quality_level=_i("translation/quality", 7),
@@ -665,6 +677,7 @@ def save_settings_qsettings(settings: AppSettings) -> None:
     qs.setValue("ollama/model", settings.ollama_model)
     qs.setValue("ollama/num_predict", settings.ollama_num_predict)
     qs.setValue("ollama/num_ctx", settings.ollama_num_ctx)
+    qs.setValue("ollama/restart_command", settings.ollama_restart_command)
     qs.setValue("translation/source_lang", settings.default_source_lang)
     qs.setValue("translation/target_lang", settings.default_target_lang)
     qs.setValue("translation/quality", settings.quality_level)
