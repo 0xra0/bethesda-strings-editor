@@ -90,8 +90,47 @@ def setup_logging(level: int = logging.INFO, log_file: str = "translator.log") -
     root.addHandler(console)
 
     if log_file:
-        file_handler = logging.FileHandler(log_file, encoding="utf-8")
-        file_handler.setFormatter(LevelTagFormatter(_FORMAT, datefmt=_DATEFMT, color=False))
-        root.addHandler(file_handler)
+        file_handler = _make_file_handler(log_file)
+        if file_handler is not None:
+            file_handler.setFormatter(
+                LevelTagFormatter(_FORMAT, datefmt=_DATEFMT, color=False)
+            )
+            root.addHandler(file_handler)
 
     return root
+
+
+def _make_file_handler(log_file: str) -> "logging.FileHandler | None":
+    """Create the file log handler, tolerating a read-only working directory.
+
+    A bare relative ``log_file`` lands in the current working directory.  For a
+    frozen (PyInstaller) build launched from a desktop entry the cwd is often
+    ``/`` or another read-only location, so ``FileHandler`` would raise at import
+    time and the app would die before showing a window.  Try the requested path,
+    then a per-user data dir, then the temp dir; give up (console-only) rather
+    than crash.
+    """
+    import tempfile
+
+    candidates = [log_file]
+    name = os.path.basename(log_file) or "translator.log"
+    # Prefer the app's config dir so the log sits next to config.json.
+    try:
+        from gui.app_settings import get_config_dir
+        candidates.append(str(get_config_dir() / name))
+    except Exception:
+        pass
+    candidates.append(os.path.join(tempfile.gettempdir(), name))
+
+    for path in candidates:
+        try:
+            return logging.FileHandler(path, encoding="utf-8")
+        except OSError:
+            continue
+
+    # Console-only: warn via the already-attached stdout handler.
+    logging.getLogger(__name__).warning(
+        "Could not open any writable log file (tried: %s); logging to console only.",
+        ", ".join(candidates),
+    )
+    return None

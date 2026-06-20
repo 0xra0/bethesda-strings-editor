@@ -16,10 +16,12 @@ block_cipher = None
 # Mirrors the source tree layout so that Path(__file__).parent… resolution
 # in word checkers and main.py works identically in frozen and development mode.
 datas = [
-    # Word lists used by language-detection checkers
-    ('data/english_words.txt',  'data/'),
-    ('data/russian_words.txt',  'data/'),
-    ('data/ukrainian_words.txt','data/'),
+    # Word lists for every language-detection checker (en/ru/uk/de/fr/es/it/pl/pt/ko).
+    # Globbed so a newly-added *_words.txt is bundled automatically.
+    *[(str(p), 'data/') for p in __import__('pathlib').Path('data').glob('*_words.txt')],
+    # Visual-context preview: game-UI reference images + bundled UI fonts.
+    *[(str(p), 'data/') for p in __import__('pathlib').Path('data').glob('*.png')],
+    *[(str(p), 'data/fonts/') for p in __import__('pathlib').Path('data/fonts').glob('*.ttf')],
     # UI: application icon and base stylesheet
     ('resources/app_icon.ico',    'resources/'),
     ('resources/app_icon.png',    'resources/'),

@@ -2,6 +2,7 @@
 Theme system with built-in themes and custom theme support.
 """
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -899,7 +900,16 @@ class ThemeManager:
     @property
     def custom_dir(self) -> Path:
         if self._custom_dir is None:
-            self._custom_dir = Path(__file__).parent.parent / self.THEMES_DIR_NAME
+            if getattr(sys, "frozen", False):
+                # The bundle dir (Path(__file__).parent.parent → _MEIPASS) is
+                # read-only, so user-saved themes must live in the config dir.
+                try:
+                    from gui.app_settings import get_config_dir
+                    self._custom_dir = get_config_dir() / self.THEMES_DIR_NAME
+                except Exception:
+                    self._custom_dir = Path(__file__).parent.parent / self.THEMES_DIR_NAME
+            else:
+                self._custom_dir = Path(__file__).parent.parent / self.THEMES_DIR_NAME
         return self._custom_dir
 
     def get_stylesheet(self, name: str) -> Optional[str]:
