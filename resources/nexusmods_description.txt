@@ -54,6 +54,8 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b].dlstrings / .ilstrings[/b] — length-prefixed binary format
 [*][b]BA2 archives[/b] — read and write Starfield v2 and Fallout 4 v1 BA2 archives (GNRL/zlib); picker dialog for multi-entry archives
 [*][b]ESP/ESM plugins[/b] — extracts and writes back translatable fields from non-localized plugins directly
+[*][b]ESP/ESM Mod Update Migration[/b] — diff an old and new version of a plugin keyed on FormID and carry your existing translations forward to the updated release (xTranslator-style); risk-coloured diff with changed-only filter and CSV/HTML export
+[*][b]VMAD script-property analysis[/b] — parses the Papyrus script-property strings attached to records, classifies each value as translatable / review / locked (resource paths, event names, identifiers), and byte-splices only the edited values so unmodelled script structures survive untouched; works on both localized and non-localized plugins
 [*][b]Starfield interface TXT[/b] — [b]translate_en.txt[/b] / [b]translate_ru.txt[/b] key=value interface string files
 [*][b]xTranslator SST XML[/b] — import/export compatible with existing xTranslator projects
 [*][b]Encoding detection[/b] — auto-detects UTF-8 BOM, UTF-8, CP1251, CP1252, CP1250 (Polish), GBK; per-file override
@@ -81,6 +83,8 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b]Visual Context Preview[/b] ([b]Ctrl+Shift+P[/b]) — dockable panel that renders the current string inside a faithful recreation of the Bethesda in-game UI using actual game fonts extracted from SWF assets; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI)
 [*][b]Dialogue Tree Visualizer[/b] — interactive Quest → Topic → Response node graph ([b]Ctrl+Alt+D[/b]) with Starfield dark-space visual theme; click any node to jump to that string in the table
 [*][b]Audio / TTS Preview[/b] ([b]Ctrl+Shift+A[/b]) — synthesizes a TTS read-out of the translation for timing comparison; eSpeak-NG and Piper backends; colour-coded timing bar
+[*][b]Native Starfield voice playback[/b] — decodes the original Wwise [b].wem[/b] voice clip for a dialogue line straight from the game's Voices BA2 archives (FormID → voice clip, via vgmstream-cli) and plays it back alongside the TTS read-out; in ESP/ESM mode the row's FormID auto-fills
+[*][b]Speaker (NPC) panel[/b] — shows who voices the selected dialogue line (name, gender, faction, category, raw voice type, plus "also voiced by" for shared lines) by parsing the Wwise voice-type folder name
 [*][b]Diff viewer[/b] — side-by-side word-level or character-level diff of source vs. translation; editable right pane with live diff update; HTML export
 [*][b]Advanced search[/b] — regex and fuzzy search across source and translation columns; batch Find & Replace
 [/list]
@@ -104,7 +108,11 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
 [*][b]16 built-in themes[/b] — Slate, Midnight, Nord, Dracula, Catppuccin, Light, Solarized Dark, Solarized Light, Gruvbox, Tokyo Night, Monokai, One Dark, Sepia, Starfield, Starfield Terminal, High Contrast; plus custom QSS file support
 [*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; colour-coded green/yellow/red (AMD and NVIDIA)
+[*][b]Ollama force-stop[/b] — free a wedged GPU by restarting the Ollama service without leaving the app; on Linux a privileged restart uses the app's own themed password dialog (sudo -S, with askpass/pkexec fallback), on Windows it stops the service via taskkill
 [*][b]Interface translations[/b] — UI available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
+[*][b]Cross-platform desktop notifications[/b] on batch completion — notify-send/D-Bus on Linux, native system-tray balloons on Windows and macOS
+[*][b]"What's New" panel[/b] — recent release notes are fetched from GitHub and shown on the welcome screen
+[*][b]Automatic update check[/b] — checks for a newer release on startup and offers to download it (toggle in Settings)
 [*][b]Crash recovery[/b] — periodic auto-save; recovery dialog offered at startup if the previous session ended unexpectedly
 [*][b]Security audit log[/b] — append-only JSON-lines log of all file operations and translation batches; API keys stored in system keyring with AES-256-GCM file fallback
 [*]Status bar with live progress, translated count, and ETA during AI batches
