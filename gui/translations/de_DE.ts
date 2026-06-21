@@ -4,10 +4,6 @@
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
-        <source>Advanced Search</source>
-        <translation type="vanished">Erweiterte Suche</translation>
-    </message>
-    <message>
         <location filename="../advanced_search_dialog.py" line="48"/>
         <source>Search Criteria</source>
         <translation>Suchkriterien</translation>
@@ -36,14 +32,6 @@
         <location filename="../advanced_search_dialog.py" line="55"/>
         <source>Both texts</source>
         <translation>Beide Texte</translation>
-    </message>
-    <message>
-        <source>Enter search text...</source>
-        <translation type="vanished">Suchtext eingeben...</translation>
-    </message>
-    <message>
-        <source>Text:</source>
-        <translation type="vanished">Text:</translation>
     </message>
     <message>
         <location filename="../advanced_search_dialog.py" line="64"/>
@@ -221,72 +209,148 @@ die den aktuellen Suchkriterien entsprechen</translation>
 <context>
     <name>AudioPreviewPanel</name>
     <message>
-        <location filename="../audio_preview_panel.py" line="255"/>
+        <location filename="../audio_preview_panel.py" line="326"/>
         <source>Audio Preview</source>
         <translation>Audio-Vorschau</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="300"/>
-        <location filename="../audio_preview_panel.py" line="404"/>
+        <location filename="../audio_preview_panel.py" line="382"/>
+        <location filename="../audio_preview_panel.py" line="544"/>
         <source>(no string selected)</source>
         <translation>(keine Zeichenkette ausgewählt)</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="312"/>
+        <location filename="../audio_preview_panel.py" line="394"/>
         <source>Original audio:</source>
         <translation>Original-Audio:</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="316"/>
+        <location filename="../audio_preview_panel.py" line="398"/>
         <source>Path to .wav / .mp3 …</source>
         <translation>Pfad zu .wav / .mp3 …</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="321"/>
+        <location filename="../audio_preview_panel.py" line="403"/>
         <source>Browse for audio file</source>
         <translation>Audiodatei durchsuchen</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="327"/>
-        <location filename="../audio_preview_panel.py" line="347"/>
-        <location filename="../audio_preview_panel.py" line="475"/>
-        <location filename="../audio_preview_panel.py" line="521"/>
+        <location filename="../audio_preview_panel.py" line="409"/>
+        <location filename="../audio_preview_panel.py" line="429"/>
+        <location filename="../audio_preview_panel.py" line="627"/>
+        <location filename="../audio_preview_panel.py" line="834"/>
         <source>▶ Play</source>
         <translation>▶ Abspielen</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="340"/>
+        <location filename="../audio_preview_panel.py" line="422"/>
         <source>TTS preview:</source>
         <translation>TTS-Vorschau:</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="343"/>
+        <location filename="../audio_preview_panel.py" line="425"/>
         <source>⟳ Synthesize</source>
         <translation>⟳ Synthetisieren</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="445"/>
+        <location filename="../audio_preview_panel.py" line="452"/>
+        <source>Game voice:</source>
+        <translation>Spielstimme:</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="454"/>
+        <source>FormID e.g. 00012345</source>
+        <translation>FormID, z. B. 00012345</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="457"/>
+        <source>Dialogue FormID. Auto-filled in ESP/ESM mode; enter manually (hex, with or without 0x) for .strings files.</source>
+        <translation>Dialog-FormID. Wird im ESP/ESM-Modus automatisch ausgefüllt; bei .strings-Dateien manuell eingeben (hex, mit oder ohne 0x).</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="466"/>
+        <source>NPC voice type recorded for this line. Changing it auditions a different voice actor&apos;s take.</source>
+        <translation>Für diese Zeile aufgezeichneter NPC-Stimmtyp. Eine Änderung spielt die Aufnahme eines anderen Sprechers vor.</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="472"/>
+        <source>▶ Load voice</source>
+        <translation>▶ Stimme laden</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="474"/>
+        <source>Decode the original game voice clip and play it. The decoded clip also feeds the timing comparison as the &apos;original&apos; duration.</source>
+        <translation>Den originalen Sprachclip des Spiels dekodieren und abspielen. Der dekodierte Clip dient zudem als „Original“-Dauer für den Timing-Vergleich.</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="597"/>
         <source>Select original audio file</source>
         <translation>Original-Audiodatei auswählen</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="447"/>
+        <location filename="../audio_preview_panel.py" line="599"/>
         <source>Audio files (*.wav *.mp3 *.ogg *.flac *.xwm);;All files (*)</source>
         <translation>Audiodateien (*.wav *.mp3 *.ogg *.flac *.xwm);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="475"/>
-        <location filename="../audio_preview_panel.py" line="521"/>
+        <location filename="../audio_preview_panel.py" line="627"/>
+        <location filename="../audio_preview_panel.py" line="834"/>
         <source>⏸ Pause</source>
         <translation>⏸ Pause</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="485"/>
+        <location filename="../audio_preview_panel.py" line="657"/>
+        <source>Indexing voices…</source>
+        <translation>Stimmen werden indiziert…</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="673"/>
+        <source>Voice index failed</source>
+        <translation>Stimmindex fehlgeschlagen</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="676"/>
+        <source>%d voiced lines indexed</source>
+        <translation>%d vertonte Zeilen indiziert</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="724"/>
+        <source>(default)</source>
+        <translation>(Standard)</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="728"/>
+        <location filename="../audio_preview_panel.py" line="766"/>
+        <source>No voice clip for this FormID</source>
+        <translation>Kein Sprachclip für diese FormID</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="746"/>
+        <source>Enter a valid FormID (hex)</source>
+        <translation>Gültige FormID eingeben (hex)</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="752"/>
+        <source>Set the Voice Data directory in Settings → Audio</source>
+        <translation>Lege das Sprachdaten-Verzeichnis unter Einstellungen → Audio fest</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="769"/>
+        <source>Decoding…</source>
+        <translation>Dekodierung…</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="780"/>
+        <source>Decode failed</source>
+        <translation>Dekodierung fehlgeschlagen</translation>
+    </message>
+    <message>
+        <location filename="../audio_preview_panel.py" line="798"/>
         <source>Synthesizing…</source>
         <translation>Synthese läuft…</translation>
     </message>
     <message>
-        <location filename="../audio_preview_panel.py" line="503"/>
+        <location filename="../audio_preview_panel.py" line="816"/>
         <source>Synthesis failed</source>
         <translation>Synthese fehlgeschlagen</translation>
     </message>
@@ -655,14 +719,6 @@ Proceed?</source>
 Fortfahren?</translation>
     </message>
     <message>
-        <source>Replace {n} row(s) with:
-&quot;{text}&quot;
-Proceed?</source>
-        <translation type="vanished">{n} Zeile(n) ersetzen mit:
-„{text}“
-Fortfahren?</translation>
-    </message>
-    <message>
         <location filename="../consistency_dialog.py" line="249"/>
         <source>Nothing to Replace</source>
         <translation>Nichts zu ersetzen</translation>
@@ -848,34 +904,205 @@ Verwerfen – Snapshot löschen und neu beginnen.</translation>
     </message>
 </context>
 <context>
+    <name>EspMigrateDialog</name>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="217"/>
+        <source>Mod Update Migration</source>
+        <translation>Mod-Update-Migration</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="255"/>
+        <source>Show:</source>
+        <translation>Anzeigen:</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="263"/>
+        <source>Changed only</source>
+        <translation>Nur geänderte</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="272"/>
+        <source>FormID</source>
+        <translation>FormID</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="272"/>
+        <source>EditorID</source>
+        <translation>EditorID</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="272"/>
+        <source>Record·Field</source>
+        <translation>Datensatz·Feld</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="273"/>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="274"/>
+        <source>Existing Translation</source>
+        <translation>Vorhandene Übersetzung</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="293"/>
+        <source>Export CSV…</source>
+        <translation>CSV exportieren…</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="296"/>
+        <source>Export HTML Report…</source>
+        <translation>HTML-Bericht exportieren…</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="374"/>
+        <source>Migrate {n} Unchanged Translation(s)</source>
+        <translation>{n} unveränderte Übersetzung(en) migrieren</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="384"/>
+        <source>Migrate Translations</source>
+        <translation>Übersetzungen migrieren</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="386"/>
+        <source>Copy {n} existing translation(s) for unchanged strings into the currently-open plugin?
+
+Only strings that are still untranslated or pending will be filled — your in-progress work is left alone.</source>
+        <translation>{n} vorhandene Übersetzung(en) für unveränderte Zeichenketten in das aktuell geöffnete Plugin kopieren?
+
+Es werden nur noch nicht übersetzte oder ausstehende Zeichenketten gefüllt — Ihre laufende Arbeit bleibt unangetastet.</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="397"/>
+        <source>Migration Complete</source>
+        <translation>Migration abgeschlossen</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="398"/>
+        <source>{n} translation(s) applied to the open plugin. Save the file to keep the changes.</source>
+        <translation>{n} Übersetzung(en) auf das geöffnete Plugin angewendet. Speichern Sie die Datei, um die Änderungen zu behalten.</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="407"/>
+        <source>Export as CSV</source>
+        <translation>Als CSV exportieren</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="415"/>
+        <location filename="../esp_migrate_dialog.py" line="438"/>
+        <source>Export Error</source>
+        <translation>Exportfehler</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="421"/>
+        <source>Export as HTML Report</source>
+        <translation>Als HTML-Bericht exportieren</translation>
+    </message>
+</context>
+<context>
+    <name>EspMigrateSetupDialog</name>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="90"/>
+        <source>Mod Update Migration (ESP/ESM)</source>
+        <translation>Mod-Update-Migration (ESP/ESM)</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="98"/>
+        <source>Carry your existing translations forward to an updated mod. Provide the previous English plugin and the new English plugin to see what was added, changed, or removed. Add your prior &lt;b&gt;translated&lt;/b&gt; plugin to migrate the unchanged strings automatically.
+
+Migration fills the currently-open plugin, so open the new version in the editor first.</source>
+        <translation>Übertragen Sie Ihre vorhandenen Übersetzungen in eine aktualisierte Mod. Geben Sie das vorherige englische Plugin und das neue englische Plugin an, um zu sehen, was hinzugefügt, geändert oder entfernt wurde. Fügen Sie Ihr früheres &lt;b&gt;übersetztes&lt;/b&gt; Plugin hinzu, um die unveränderten Zeichenketten automatisch zu migrieren.
+
+Die Migration füllt das aktuell geöffnete Plugin – öffnen Sie daher zuerst die neue Version im Editor.</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="116"/>
+        <source>Browse…</source>
+        <translation>Durchsuchen…</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="124"/>
+        <source>Old plugin (English):</source>
+        <translation>Altes Plugin (Englisch):</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="128"/>
+        <source>New plugin (English):</source>
+        <translation>Neues Plugin (Englisch):</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="133"/>
+        <source>Prior translation (optional):</source>
+        <translation>Frühere Übersetzung (optional):</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="143"/>
+        <source>Select Old Plugin</source>
+        <translation>Altes Plugin auswählen</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="145"/>
+        <source>Select New Plugin</source>
+        <translation>Neues Plugin auswählen</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="147"/>
+        <source>Select Prior Translated Plugin</source>
+        <translation>Früheres übersetztes Plugin auswählen</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="151"/>
+        <source>Text encoding:</source>
+        <translation>Textkodierung:</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="169"/>
+        <location filename="../esp_migrate_dialog.py" line="173"/>
+        <source>Missing File</source>
+        <translation>Fehlende Datei</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="170"/>
+        <source>Please select the old plugin.</source>
+        <translation>Bitte wählen Sie das alte Plugin aus.</translation>
+    </message>
+    <message>
+        <location filename="../esp_migrate_dialog.py" line="174"/>
+        <source>Please select the new plugin.</source>
+        <translation>Bitte wählen Sie das neue Plugin aus.</translation>
+    </message>
+</context>
+<context>
     <name>ExportModeDialog</name>
     <message>
-        <location filename="../main_window.py" line="6873"/>
+        <location filename="../main_window.py" line="7313"/>
         <source>Export Mode</source>
         <translation>Exportmodus</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6883"/>
+        <location filename="../main_window.py" line="7323"/>
         <source>Select export mode:</source>
         <translation>Exportmodus auswählen:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6887"/>
+        <location filename="../main_window.py" line="7327"/>
         <source>All strings</source>
         <translation>Alle Zeichenketten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6891"/>
+        <location filename="../main_window.py" line="7331"/>
         <source>Translated only</source>
         <translation>Nur übersetzte</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6898"/>
+        <location filename="../main_window.py" line="7338"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6902"/>
+        <location filename="../main_window.py" line="7342"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1867,229 +2094,225 @@ Dies kann nicht rückgängig gemacht werden.</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="394"/>
-        <location filename="../main_window.py" line="642"/>
-        <location filename="../main_window.py" line="6324"/>
+        <location filename="../main_window.py" line="498"/>
+        <location filename="../main_window.py" line="748"/>
+        <location filename="../main_window.py" line="6666"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings KI-Übersetzer</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="629"/>
+        <location filename="../main_window.py" line="735"/>
         <source>Restored {n} translation(s) from crash recovery snapshot.</source>
         <translation>{n} Übersetzung(en) aus Absturz-Wiederherstellungssnapshot wiederhergestellt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="645"/>
+        <location filename="../main_window.py" line="751"/>
         <source>Show</source>
         <translation>Anzeigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="648"/>
+        <location filename="../main_window.py" line="754"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="765"/>
+        <location filename="../main_window.py" line="871"/>
         <source>No file loaded</source>
         <translation>Keine Datei geladen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="777"/>
-        <location filename="../main_window.py" line="3714"/>
+        <location filename="../main_window.py" line="883"/>
+        <location filename="../main_window.py" line="4040"/>
         <source>Encoding: —</source>
         <translation>Kodierung: —</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="780"/>
+        <location filename="../main_window.py" line="886"/>
         <source>Change…</source>
         <translation>Ändern…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="784"/>
+        <location filename="../main_window.py" line="890"/>
         <source>Override the auto-detected file encoding and re-decode all strings</source>
         <translation>Automatisch erkannte Dateikodierung überschreiben und alle Zeichenketten neu dekodieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="794"/>
+        <location filename="../main_window.py" line="900"/>
         <source>Strings: 0</source>
         <translation>Zeichenketten: 0</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="810"/>
+        <location filename="../main_window.py" line="916"/>
         <source>Source:</source>
         <translation>Quelle:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="824"/>
+        <location filename="../main_window.py" line="930"/>
         <source>Target:</source>
         <translation>Ziel:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="836"/>
+        <location filename="../main_window.py" line="942"/>
         <source>Quality:</source>
         <translation>Qualität:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="843"/>
+        <location filename="../main_window.py" line="949"/>
         <source>Quality 7-10 recommended</source>
         <translation>Qualität 7–10 empfohlen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="940"/>
+        <location filename="../main_window.py" line="1051"/>
         <source>Total strings · translated · remaining
 Updates live as translations complete.</source>
         <translation>Gesamt · übersetzt · verbleibend
 Aktualisiert sich live bei Abschluss der Übersetzungen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="950"/>
+        <location filename="../main_window.py" line="1061"/>
         <source>Estimated time remaining for current translation batch</source>
         <translation>Geschätzte verbleibende Zeit für den aktuellen Übersetzungsstapel</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="967"/>
+        <location filename="../main_window.py" line="1078"/>
         <source>Ready</source>
         <translation>Bereit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="970"/>
+        <location filename="../main_window.py" line="1081"/>
         <source>Glossary Suggestions</source>
         <translation>Glossar-Vorschläge</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="979"/>
-        <location filename="../main_window.py" line="3551"/>
+        <location filename="../main_window.py" line="1090"/>
+        <location filename="../main_window.py" line="3877"/>
         <source>Select a string to see glossary hints.</source>
         <translation>Wählen Sie eine Zeichenkette, um Glossar-Hinweise anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="984"/>
+        <location filename="../main_window.py" line="1095"/>
         <source>Double-click to copy the target term to clipboard.</source>
         <translation>Doppelklick, um den Zielbegriff in die Zwischenablage zu kopieren.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1030"/>
+        <location filename="../main_window.py" line="1151"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1031"/>
+        <location filename="../main_window.py" line="1152"/>
         <source>&amp;Open...</source>
         <translation>&amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1036"/>
+        <location filename="../main_window.py" line="1157"/>
         <source>Open &amp;Recent</source>
         <translation>Zuletzt &amp;geöffnete</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1040"/>
+        <location filename="../main_window.py" line="1161"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1047"/>
+        <location filename="../main_window.py" line="1168"/>
         <source>Save &amp;As...</source>
         <translation>Speichern &amp;unter...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1055"/>
+        <location filename="../main_window.py" line="1176"/>
         <source>Upload to &amp;NexusMods…</source>
         <translation>Zu &amp;NexusMods hochladen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1060"/>
+        <location filename="../main_window.py" line="1181"/>
         <source>&amp;Browse NexusMods for Translations…</source>
         <translation>NexusMods nach Übersetzungen &amp;durchsuchen…</translation>
     </message>
     <message>
-        <source>&amp;Weblate Community Sync…</source>
-        <translation type="vanished">&amp;Weblate-Community-Synchronisierung…</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="1066"/>
+        <location filename="../main_window.py" line="1187"/>
         <source>E&amp;xit</source>
         <translation>Be&amp;enden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1072"/>
+        <location filename="../main_window.py" line="1193"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1074"/>
+        <location filename="../main_window.py" line="1195"/>
         <source>&amp;Advanced Search...</source>
         <translation>&amp;Erweiterte Suche...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1084"/>
+        <location filename="../main_window.py" line="1205"/>
         <source>Copy &amp;Original → Translated</source>
         <translation>&amp;Original → Übersetzt kopieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1094"/>
+        <location filename="../main_window.py" line="1215"/>
         <source>&amp;Translation</source>
         <translation>Ü&amp;bersetzung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1096"/>
+        <location filename="../main_window.py" line="1217"/>
         <source>Translate &amp;Selected</source>
         <translation>Ausgewählte &amp;übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1104"/>
+        <location filename="../main_window.py" line="1225"/>
         <source>Translate &amp;All</source>
         <translation>&amp;Alle übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1113"/>
+        <location filename="../main_window.py" line="1234"/>
         <source>Stop Translation</source>
         <translation>Übersetzung stoppen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1122"/>
+        <location filename="../main_window.py" line="1243"/>
         <source>Import from &amp;TXT...</source>
         <translation>Aus &amp;TXT importieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1130"/>
+        <location filename="../main_window.py" line="1251"/>
         <source>Export to &amp;TXT...</source>
         <translation>Als &amp;TXT exportieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1138"/>
+        <location filename="../main_window.py" line="1259"/>
         <source>Import from &amp;XML (SST)...</source>
         <translation>Aus &amp;XML (SST) importieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1144"/>
+        <location filename="../main_window.py" line="1265"/>
         <source>Export to &amp;XML (SST)...</source>
         <translation>Als &amp;XML (SST) exportieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1152"/>
+        <location filename="../main_window.py" line="1273"/>
         <source>Compare with &amp;File...</source>
         <translation>Mit &amp;Datei vergleichen...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1168"/>
+        <location filename="../main_window.py" line="1289"/>
         <source>Dialogue &amp;Tree Visualizer…</source>
         <translation>Dialog&amp;baum-Visualisierung…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1172"/>
+        <location filename="../main_window.py" line="1293"/>
         <source>Visualise the Quest → Topic → Response dialogue tree from an ESP/ESM file.
 Shows conversation flow as a node graph so translators can see context.</source>
         <translation>Visualisiert den Dialogbaum Quest → Thema → Antwort aus einer ESP/ESM-Datei.
 Zeigt den Gesprächsverlauf als Knotengrafik, damit Übersetzer den Kontext erkennen können.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1179"/>
+        <location filename="../main_window.py" line="1312"/>
         <source>Lore &amp;RAG Context…</source>
         <translation>Lore-&amp;RAG-Kontext…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1182"/>
+        <location filename="../main_window.py" line="1315"/>
         <source>Manage the local lore database used for Retrieval-Augmented Generation.
 Download articles from UESP or import a local JSON file to give the AI
 accurate lore context when translating strings mentioning factions, places,
@@ -2100,12 +2323,12 @@ um der KI beim Übersetzen von Zeichenketten mit Fraktionen, Orten oder
 Charakteren (z. B. House Va&apos;ruun, Akila City, Freestar Collective) genauen Lore-Kontext zu geben.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1190"/>
+        <location filename="../main_window.py" line="1323"/>
         <source>&amp;Character Profiles…</source>
         <translation>&amp;Charakterprofile…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1193"/>
+        <location filename="../main_window.py" line="1326"/>
         <source>Create and manage character personas (Freestar Ranger, SysDef Officer, …).
 Assign profiles to strings via right-click; the AI will adapt its register,
 tone, and temperature to match the character&apos;s voice.</source>
@@ -2114,12 +2337,12 @@ Weisen Sie Zeichenketten per Rechtsklick Profile zu; die KI passt Stilebene,
 Ton und Temperatur an die Stimme des Charakters an.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1200"/>
+        <location filename="../main_window.py" line="1333"/>
         <source>Font &amp;Glyph Checker…</source>
         <translation>Schriftart- und &amp;Glyphenprüfung…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1203"/>
+        <location filename="../main_window.py" line="1336"/>
         <source>Scan translated strings for characters that will render as missing
 glyphs (tofu □) in-game due to incomplete font atlas coverage.
 Supports Scaleform SWF font atlases and TTF/OTF fonts.</source>
@@ -2128,193 +2351,193 @@ unvollständiger Schriftatlas-Abdeckung als fehlende Glyphen (Tofu □) angezeig
 Unterstützt Scaleform-SWF-Schriftatlanten und TTF/OTF-Schriftarten.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1315"/>
+        <location filename="../main_window.py" line="1459"/>
         <source>&amp;Macro Editor… (q)</source>
         <translation>&amp;Makro-Editor… (q)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1320"/>
+        <location filename="../main_window.py" line="1464"/>
         <source>Open the macro editor to define regex-replace steps and apply
 them to thousands of strings in one batch. (Ctrl+M or &apos;q&apos; in table)</source>
         <translation>Öffnet den Makro-Editor, um Regex-Ersetzungsschritte zu definieren und
 auf Tausende Zeichenketten in einem Durchgang anzuwenden. (Strg+M oder „q“ in der Tabelle)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1503"/>
+        <location filename="../main_window.py" line="1647"/>
         <source>Show/hide the Claude AI chat assistant panel (Ctrl+Shift+C)</source>
         <translation>Zeigt/verbirgt den Claude-KI-Chat-Assistenzbereich (Strg+Umschalt+C)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1537"/>
+        <location filename="../main_window.py" line="1681"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1539"/>
+        <location filename="../main_window.py" line="1683"/>
         <source>&amp;Zen / Focus Mode</source>
         <translation>&amp;Zen-/Fokusmodus</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1544"/>
+        <location filename="../main_window.py" line="1688"/>
         <source>Hide all panels and enter a distraction-free single-string editor (F11)</source>
         <translation>Blendet alle Bereiche aus und öffnet einen ablenkungsfreien Einzelzeichenketten-Editor (F11)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1551"/>
+        <location filename="../main_window.py" line="1695"/>
         <source>&amp;Editor Pane</source>
         <translation>&amp;Editorbereich</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1556"/>
+        <location filename="../main_window.py" line="1700"/>
         <source>Show/hide the Translation Editor pane — a larger editing area that can be dragged to a second monitor (Ctrl+Shift+E)</source>
         <translation>Zeigt/verbirgt den Übersetzungs-Editorbereich – einen größeren Bearbeitungsbereich, der auf einen zweiten Monitor verschoben werden kann (Strg+Umschalt+E)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1562"/>
+        <location filename="../main_window.py" line="1706"/>
         <source>&amp;Pop Out String List</source>
         <translation>Zeichenkettenliste &amp;abdocken</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1567"/>
+        <location filename="../main_window.py" line="1711"/>
         <source>Open the string list in a separate window — ideal for placing on a second monitor (Ctrl+Shift+L)</source>
         <translation>Öffnet die Zeichenkettenliste in einem separaten Fenster – ideal für die Platzierung auf einem zweiten Monitor (Strg+Umschalt+L)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1575"/>
+        <location filename="../main_window.py" line="1719"/>
         <source>&amp;Audio Preview</source>
         <translation>&amp;Audio-Vorschau</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1581"/>
+        <location filename="../main_window.py" line="1725"/>
         <source>Show/hide the Audio Preview panel (Ctrl+Shift+A)</source>
         <translation>Zeigt/verbirgt den Audio-Vorschau-Bereich (Strg+Umschalt+A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1586"/>
+        <location filename="../main_window.py" line="1730"/>
         <source>&amp;Visual Context Preview</source>
         <translation>&amp;Visuelle Kontextvorschau</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1593"/>
+        <location filename="../main_window.py" line="1737"/>
         <source>Show/hide the Visual Context Preview panel — renders the current string in a faithful Bethesda UI box using the actual game fonts (Ctrl+Shift+P)</source>
         <translation>Zeigt/verbirgt den Bereich „Visuelle Kontextvorschau“ – stellt die aktuelle Zeichenkette in einer originalgetreuen Bethesda-UI-Box mit den tatsächlichen Spielschriften dar (Strg+Umschalt+P)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1602"/>
+        <location filename="../main_window.py" line="1746"/>
         <source>&amp;Settings</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1613"/>
+        <location filename="../main_window.py" line="1757"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1619"/>
+        <location filename="../main_window.py" line="1763"/>
         <source>Open &amp;Config File...</source>
         <translation>&amp;Konfigurationsdatei öffnen...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1623"/>
+        <location filename="../main_window.py" line="1767"/>
         <source>Export Sett&amp;ings...</source>
         <translation>Einstellungen e&amp;xportieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1627"/>
+        <location filename="../main_window.py" line="1771"/>
         <source>Import Sett&amp;ings...</source>
         <translation>Einstellungen i&amp;mportieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1664"/>
+        <location filename="../main_window.py" line="1808"/>
         <source>Main Toolbar</source>
         <translation>Hauptwerkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1670"/>
+        <location filename="../main_window.py" line="1814"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1673"/>
+        <location filename="../main_window.py" line="1817"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1678"/>
-        <location filename="../main_window.py" line="2908"/>
+        <location filename="../main_window.py" line="1822"/>
+        <location filename="../main_window.py" line="3052"/>
         <source>Translate</source>
         <translation>Übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1682"/>
+        <location filename="../main_window.py" line="1826"/>
         <source>Stop</source>
         <translation>Stopp</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1686"/>
+        <location filename="../main_window.py" line="1830"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1691"/>
+        <location filename="../main_window.py" line="1835"/>
         <source>Quality Check</source>
         <translation>Qualitätsprüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1697"/>
+        <location filename="../main_window.py" line="1841"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1910"/>
+        <location filename="../main_window.py" line="2054"/>
         <source>(none)</source>
         <translation>(keine)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1912"/>
+        <location filename="../main_window.py" line="2056"/>
         <source>Profile &apos;{name}&apos; assigned to {n} string(s)</source>
         <translation>Profil „{name}“ {n} Zeichenkette(n) zugewiesen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2029"/>
+        <location filename="../main_window.py" line="2173"/>
         <source>Add Protected Terms</source>
         <translation>Geschützte Begriffe hinzufügen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2036"/>
+        <location filename="../main_window.py" line="2180"/>
         <source>Detected potential company/faction names. Select and add to protection list:</source>
         <translation>Mögliche Firmen-/Fraktionsnamen erkannt. Auswählen und zur Schutzliste hinzufügen:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2052"/>
+        <location filename="../main_window.py" line="2196"/>
         <source>Category:</source>
         <translation>Kategorie:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2063"/>
+        <location filename="../main_window.py" line="2207"/>
         <source>Add Selected</source>
         <translation>Ausgewählte hinzufügen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2069"/>
+        <location filename="../main_window.py" line="2213"/>
         <source>Skip</source>
         <translation>Überspringen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2232"/>
-        <location filename="../main_window.py" line="2344"/>
-        <location filename="../main_window.py" line="2405"/>
+        <location filename="../main_window.py" line="2376"/>
+        <location filename="../main_window.py" line="2488"/>
+        <location filename="../main_window.py" line="2549"/>
         <source>Loading {filename}...</source>
         <translation>Lade {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2262"/>
-        <location filename="../main_window.py" line="3389"/>
+        <location filename="../main_window.py" line="2406"/>
+        <location filename="../main_window.py" line="3715"/>
         <source>String List</source>
         <translation>Zeichenkettenliste</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2301"/>
+        <location filename="../main_window.py" line="2445"/>
         <source>Found companion string file(s):
 {names}
 
@@ -2325,132 +2548,158 @@ Load them together with {loaded} for a complete dictionary?</source>
 Zusammen mit {loaded} laden, um ein vollständiges Wörterbuch zu erhalten?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2368"/>
+        <location filename="../main_window.py" line="2512"/>
         <source>Encoding: {encoding}</source>
         <translation>Kodierung: {encoding}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2241"/>
-        <location filename="../main_window.py" line="2335"/>
-        <location filename="../main_window.py" line="2371"/>
-        <location filename="../main_window.py" line="2416"/>
-        <location filename="../main_window.py" line="2521"/>
+        <location filename="../main_window.py" line="2385"/>
+        <location filename="../main_window.py" line="2479"/>
+        <location filename="../main_window.py" line="2515"/>
+        <location filename="../main_window.py" line="2560"/>
+        <location filename="../main_window.py" line="2665"/>
         <source>Strings: {count}</source>
         <translation>Zeichenketten: {count}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1403"/>
+        <location filename="../main_window.py" line="1301"/>
+        <source>Script &amp;Property Analysis (VMAD)…</source>
+        <translation>Skript-&amp;Eigenschaftsanalyse (VMAD)…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1305"/>
+        <source>Parse compiled Papyrus script (VMAD) properties from an ESP/ESM/ESL.
+Real display text is editable; script identifiers, event names and
+resource paths are locked because editing them breaks the mod.</source>
+        <translation>Analysiert Eigenschaften kompilierter Papyrus-Skripte (VMAD) aus einer ESP/ESM/ESL.
+Echter Anzeigetext ist bearbeitbar; Skript-Bezeichner, Ereignisnamen und
+Ressourcenpfade sind gesperrt, da ihre Bearbeitung die Mod beschädigt.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1368"/>
+        <source>Mod Update &amp;Migration (ESP/ESM)…</source>
+        <translation>Mod-Update-&amp;Migration (ESP/ESM)…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1372"/>
+        <source>Diff two versions of a mod plugin (old vs new ESP/ESM) and carry
+your existing translations forward to the updated version.</source>
+        <translation>Vergleicht zwei Versionen eines Mod-Plugins (altes vs. neues ESP/ESM) und überträgt
+Ihre vorhandenen Übersetzungen in die aktualisierte Version.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1547"/>
         <source>Check &amp;Register (ти/ви)…</source>
         <translation>&amp;Register prüfen (ти/ви)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1408"/>
+        <location filename="../main_window.py" line="1552"/>
         <source>Detect NPC speakers whose translated lines mix informal (ти) and
 formal (ви) address when speaking to the player. (Ctrl+Alt+R)</source>
         <translation>NPC-Sprecher erkennen, deren übersetzte Zeilen beim Ansprechen des Spielers
 informelle (ти) und formelle (ви) Anrede mischen. (Ctrl+Alt+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1416"/>
+        <location filename="../main_window.py" line="1560"/>
         <source>Check &amp;Gender Agreement…</source>
         <translation>Genus-&amp;Kongruenz prüfen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1421"/>
+        <location filename="../main_window.py" line="1565"/>
         <source>Scan translated strings for adjective/noun gender agreement
 errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
         <translation>Übersetzte Zeichenfolgen auf Fehler bei der Genus-Kongruenz von
 Adjektiv und Substantiv prüfen (ukrainische Grammatik). (Ctrl+Alt+G)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1429"/>
+        <location filename="../main_window.py" line="1573"/>
         <source>&amp;Sessions</source>
         <translation>Sit&amp;zungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1432"/>
+        <location filename="../main_window.py" line="1576"/>
         <source>&amp;New Session…</source>
         <translation>&amp;Neue Sitzung…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1436"/>
+        <location filename="../main_window.py" line="1580"/>
         <source>Start a named work session that saves your search filter, cursor, and per-session translation count. (Ctrl+Shift+N)</source>
         <translation>Eine benannte Arbeitssitzung starten, die Ihren Suchfilter, die Cursorposition und den Übersetzungszähler pro Sitzung speichert. (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1443"/>
+        <location filename="../main_window.py" line="1587"/>
         <source>&amp;Save Session</source>
         <translation>Sitzung &amp;speichern</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1451"/>
+        <location filename="../main_window.py" line="1595"/>
         <source>Save Session &amp;As…</source>
         <translation>Sitzung speichern &amp;unter…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1460"/>
+        <location filename="../main_window.py" line="1604"/>
         <source>&amp;Manage Sessions…</source>
         <translation>Sitzungen &amp;verwalten…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1467"/>
+        <location filename="../main_window.py" line="1611"/>
         <source>Recent Sessions</source>
         <translation>Letzte Sitzungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1650"/>
+        <location filename="../main_window.py" line="1794"/>
         <source>Check for &amp;Updates…</source>
         <translation>Nach &amp;Updates suchen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2140"/>
+        <location filename="../main_window.py" line="2284"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Alle unterstützten Dateien (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;Zeichenfolgendateien (*.strings *.dlstrings *.ilstrings);;Plugin-Dateien (*.esp *.esm *.esl);;BA2-Archive (*.ba2 *.BA2);;Interface-TXT-Dateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2166"/>
+        <location filename="../main_window.py" line="2310"/>
         <source>Unsupported File</source>
         <translation>Nicht unterstützte Datei</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2168"/>
+        <location filename="../main_window.py" line="2312"/>
         <source>This .txt file does not appear to be a Starfield interface translation file.
 Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
         <translation>Diese .txt-Datei scheint keine Starfield-Interface-Übersetzungsdatei zu sein.
 Erwartetes Format: $KEY&lt;TAB&gt;WERT-Zeilen, kodiert als UTF-16.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2276"/>
-        <location filename="../main_window.py" line="2392"/>
-        <location filename="../main_window.py" line="2437"/>
-        <location filename="../main_window.py" line="2468"/>
-        <location filename="../main_window.py" line="2505"/>
-        <location filename="../main_window.py" line="2585"/>
-        <location filename="../main_window.py" line="2674"/>
-        <location filename="../main_window.py" line="3037"/>
-        <location filename="../main_window.py" line="3085"/>
-        <location filename="../main_window.py" line="5105"/>
-        <location filename="../main_window.py" line="5320"/>
-        <location filename="../main_window.py" line="5377"/>
-        <location filename="../main_window.py" line="5440"/>
-        <location filename="../main_window.py" line="5521"/>
+        <location filename="../main_window.py" line="2420"/>
+        <location filename="../main_window.py" line="2536"/>
+        <location filename="../main_window.py" line="2581"/>
+        <location filename="../main_window.py" line="2612"/>
+        <location filename="../main_window.py" line="2649"/>
+        <location filename="../main_window.py" line="2729"/>
+        <location filename="../main_window.py" line="2818"/>
+        <location filename="../main_window.py" line="3181"/>
+        <location filename="../main_window.py" line="3229"/>
+        <location filename="../main_window.py" line="5433"/>
+        <location filename="../main_window.py" line="5648"/>
+        <location filename="../main_window.py" line="5705"/>
+        <location filename="../main_window.py" line="5768"/>
+        <location filename="../main_window.py" line="5849"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2277"/>
+        <location filename="../main_window.py" line="2421"/>
         <source>Failed to load:
 {error}</source>
         <translation>Laden fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2354"/>
+        <location filename="../main_window.py" line="2498"/>
         <source>Localized Plugin</source>
         <translation>Lokalisiertes Plugin</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2356"/>
+        <location filename="../main_window.py" line="2500"/>
         <source>{name} is a localized plugin.
 Its text is stored in companion .strings/.dlstrings/.ilstrings files.
 Open those files instead to translate them.</source>
@@ -2459,327 +2708,372 @@ Sein Text ist in begleitenden .strings/.dlstrings/.ilstrings Dateien gespeichert
 Öffnen Sie stattdessen diese Dateien, um sie zu übersetzen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2379"/>
-        <location filename="../main_window.py" line="2424"/>
+        <location filename="../main_window.py" line="2523"/>
+        <location filename="../main_window.py" line="2568"/>
         <source>Loaded {count} strings from {name}</source>
         <translation>{count} Zeichenketten aus {name} geladen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2393"/>
+        <location filename="../main_window.py" line="2537"/>
         <source>Failed to load plugin:
 {error}</source>
         <translation>Plugin-Laden fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2414"/>
+        <location filename="../main_window.py" line="2558"/>
         <source>Encoding: utf-16</source>
         <translation>Kodierung: utf-16</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2438"/>
+        <location filename="../main_window.py" line="2582"/>
         <source>Failed to load TXT:
 {error}</source>
         <translation>TXT konnte nicht geladen werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2574"/>
+        <location filename="../main_window.py" line="2718"/>
         <source>Saved successfully ✓</source>
         <translation>Erfolgreich gespeichert ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2576"/>
+        <location filename="../main_window.py" line="2720"/>
         <source>Saved ✓  {name}</source>
         <translation>Gespeichert ✓  {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2586"/>
-        <location filename="../main_window.py" line="2675"/>
+        <location filename="../main_window.py" line="2730"/>
+        <location filename="../main_window.py" line="2819"/>
         <source>Failed to save:
 {error}</source>
         <translation>Speichern fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2604"/>
+        <location filename="../main_window.py" line="2748"/>
         <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Interface-TXT-Dateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2610"/>
+        <location filename="../main_window.py" line="2754"/>
         <source>Plugin Files (*.esp *.esm *.esl);;All Files (*)</source>
         <translation>Plugin-Dateien (*.esp *.esm *.esl);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2623"/>
+        <location filename="../main_window.py" line="2767"/>
         <source>Bethesda String Files (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;All Files (*)</source>
         <translation>Bethesda Zeichenkettendateien (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2628"/>
+        <location filename="../main_window.py" line="2772"/>
         <source>Save As</source>
         <translation>Speichern unter</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2665"/>
+        <location filename="../main_window.py" line="2809"/>
         <source>Saved to {filename}</source>
         <translation>Gespeichert unter {filename}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2687"/>
+        <location filename="../main_window.py" line="2831"/>
         <source>No Selection</source>
         <translation>Keine Auswahl</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2687"/>
+        <location filename="../main_window.py" line="2831"/>
         <source>Select strings first.</source>
         <translation>Wählen Sie zuerst Zeichenketten aus.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2721"/>
+        <location filename="../main_window.py" line="2865"/>
         <source>Added {count} protected terms</source>
         <translation>{count} geschützte Begriffe hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2747"/>
+        <location filename="../main_window.py" line="2891"/>
         <source>Same Language</source>
         <translation>Gleiche Sprache</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2748"/>
+        <location filename="../main_window.py" line="2892"/>
         <source>Source and target languages are identical.</source>
         <translation>Quell- und Zielsprache sind identisch.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2792"/>
-        <location filename="../main_window.py" line="3012"/>
+        <location filename="../main_window.py" line="2936"/>
+        <location filename="../main_window.py" line="3156"/>
         <source>Nothing to Translate</source>
         <translation>Nichts zu übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2793"/>
+        <location filename="../main_window.py" line="2937"/>
         <source>All selected strings are already translated.</source>
         <translation>Alle ausgewählten Zeichenketten sind bereits übersetzt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2807"/>
-        <location filename="../main_window.py" line="3102"/>
+        <location filename="../main_window.py" line="2951"/>
+        <location filename="../main_window.py" line="3246"/>
         <source>Translating {current}/{total}...</source>
         <translation>Übersetze {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2848"/>
+        <location filename="../main_window.py" line="2992"/>
         <source>Pre-flight Cost Estimate</source>
         <translation>Kostenvoranschau</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2852"/>
+        <location filename="../main_window.py" line="2996"/>
         <source>&lt;b&gt;Claude API — estimated cost for this batch&lt;/b&gt;</source>
         <translation>&lt;b&gt;Claude-API – geschätzte Kosten für diesen Stapel&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2863"/>
+        <location filename="../main_window.py" line="3007"/>
         <source>Model:</source>
         <translation>Modell:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2864"/>
+        <location filename="../main_window.py" line="3008"/>
         <source>Strings to translate:</source>
         <translation>Zu übersetzende Zeichenketten:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2874"/>
+        <location filename="../main_window.py" line="3018"/>
         <source>Est. input tokens:</source>
         <translation>Geschätzte Eingabe-Token:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2875"/>
+        <location filename="../main_window.py" line="3019"/>
         <source>Est. output tokens:</source>
         <translation>Geschätzte Ausgabe-Token:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2891"/>
+        <location filename="../main_window.py" line="3035"/>
         <source>Est. cost (USD):</source>
         <translation>Geschätzte Kosten (USD):</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2893"/>
+        <location filename="../main_window.py" line="3037"/>
         <source>Cache savings:</source>
         <translation>Cache-Einsparung:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2894"/>
+        <location filename="../main_window.py" line="3038"/>
         <source>~{pct:.0f}% via prompt caching</source>
         <translation>~{pct:.0f}% durch Prompt-Caching</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2899"/>
+        <location filename="../main_window.py" line="3043"/>
         <source>&lt;i&gt;Estimates use ~3.5 chars/token. Actual cost depends on prompt caching state and output length.&lt;/i&gt;</source>
         <translation>&lt;i&gt;Schätzungen basieren auf ~3,5 Zeichen/Token. Die tatsächlichen Kosten hängen vom Prompt-Caching-Status und der Ausgabelänge ab.&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2921"/>
+        <location filename="../main_window.py" line="3065"/>
         <source>Open Starfield Interface TXT</source>
         <translation>Starfield Interface TXT öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2923"/>
-        <location filename="../main_window.py" line="2947"/>
-        <location filename="../main_window.py" line="5017"/>
-        <location filename="../main_window.py" line="5238"/>
+        <location filename="../main_window.py" line="3067"/>
+        <location filename="../main_window.py" line="3091"/>
+        <location filename="../main_window.py" line="5345"/>
+        <location filename="../main_window.py" line="5566"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Textdateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2945"/>
+        <location filename="../main_window.py" line="3089"/>
         <source>Save Translated TXT As</source>
         <translation>Übersetztes TXT speichern unter</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3013"/>
+        <location filename="../main_window.py" line="3157"/>
         <source>No translatable lines found in the TXT file.</source>
         <translation>Keine übersetzbaren Zeilen in der TXT-Datei gefunden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3024"/>
+        <location filename="../main_window.py" line="3168"/>
         <source>Translating TXT {current}/{total}...</source>
         <translation>Übersetze TXT {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3038"/>
+        <location filename="../main_window.py" line="3182"/>
         <source>Failed to read TXT:
 {error}</source>
         <translation>Lesen der TXT fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3068"/>
+        <location filename="../main_window.py" line="3212"/>
         <source>TXT Translation Complete: {count} successful</source>
         <translation>TXT-Übersetzung abgeschlossen: {count} erfolgreich</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3086"/>
+        <location filename="../main_window.py" line="3230"/>
         <source>Failed to save translated TXT:
 {error}</source>
         <translation>Speichern der übersetzten TXT fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3120"/>
+        <location filename="../main_window.py" line="3264"/>
         <source>Translating: {current}/{total}</source>
         <translation>Übersetze: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3192"/>
+        <location filename="../main_window.py" line="3336"/>
         <source>{n} strings translated</source>
         <translation>{n} Zeichenfolgen übersetzt</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3199"/>
+        <location filename="../main_window.py" line="3343"/>
         <source>{ok} translated, {fail} failed</source>
         <translation>{ok} übersetzt, {fail} fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3240"/>
+        <location filename="../main_window.py" line="3384"/>
         <source>Complete</source>
         <translation>Abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3241"/>
+        <location filename="../main_window.py" line="3385"/>
         <source>{msg}
 Check log for details.</source>
         <translation>{msg}
 Prüfen Sie das Protokoll für Details.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3870"/>
+        <location filename="../main_window.py" line="3469"/>
+        <source>Ollama force-stop cancelled.</source>
+        <translation>Ollama-Zwangsstopp abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3513"/>
+        <source>Force-stopping Ollama: %s</source>
+        <translation>Ollama wird zwangsweise gestoppt: %s</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3548"/>
+        <source>Force-stop command failed to start — see translator.log</source>
+        <translation>Zwangsstopp-Befehl konnte nicht gestartet werden — siehe translator.log</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3573"/>
+        <source>Ollama restarted — GPU freed.</source>
+        <translation>Ollama neu gestartet — GPU freigegeben.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3579"/>
+        <source>Ollama was not running — GPU already free.</source>
+        <translation>Ollama lief nicht — GPU bereits frei.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3585"/>
+        <source>exit code %s</source>
+        <translation>Exit-Code %s</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3588"/>
+        <source>incorrect password</source>
+        <translation>falsches Passwort</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3591"/>
+        <source>authentication failed — check &apos;Requires root&apos; / your password</source>
+        <translation>Authentifizierung fehlgeschlagen — prüfen Sie „Root erforderlich“ / Ihr Passwort</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3594"/>
+        <source>Ollama restart failed: %s</source>
+        <translation>Ollama-Neustart fehlgeschlagen: %s</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="4196"/>
         <source>Self-review: checking translation quality…</source>
         <translation>Selbstüberprüfung: Übersetzungsqualität wird geprüft…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3929"/>
+        <location filename="../main_window.py" line="4255"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
         <translation>Selbstüberprüfung, Durchlauf {n}: {c} Zeichenfolgen werden neu übersetzt…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3949"/>
+        <location filename="../main_window.py" line="4275"/>
         <source>{n} string(s) translated.</source>
         <translation>{n} Zeichenfolgen übersetzt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3952"/>
+        <location filename="../main_window.py" line="4278"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
         <translation>{n} Probleme maschinell behoben.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3956"/>
+        <location filename="../main_window.py" line="4282"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
         <translation>{n} Zeichenfolgen in {p} Überprüfungsdurchläufen neu übersetzt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3962"/>
+        <location filename="../main_window.py" line="4288"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
         <translation>Alle kritischen Probleme wurden automatisch behoben — keine manuelle Prüfung erforderlich.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3969"/>
+        <location filename="../main_window.py" line="4295"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
         <translation>{n} Zeichenfolgen konnten nicht automatisch behoben werden (kein weiterer Fortschritt) und müssen manuell geprüft werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3975"/>
+        <location filename="../main_window.py" line="4301"/>
         <source>{n} string(s) still need manual review.</source>
         <translation>{n} Zeichenfolgen müssen noch manuell geprüft werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3979"/>
+        <location filename="../main_window.py" line="4305"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
         <translation>Details unter Übersetzung → Qualitätsprüfung. Kosmetische/visuelle Probleme wurden unverändert gelassen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3991"/>
+        <location filename="../main_window.py" line="4317"/>
         <source>Self-review complete — all critical issues fixed</source>
         <translation>Selbstüberprüfung abgeschlossen — alle kritischen Probleme behoben</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3994"/>
-        <location filename="../main_window.py" line="4001"/>
+        <location filename="../main_window.py" line="4320"/>
+        <location filename="../main_window.py" line="4327"/>
         <source>Self-Review Complete</source>
         <translation>Selbstüberprüfung abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3998"/>
+        <location filename="../main_window.py" line="4324"/>
         <source>Self-review done — {n} need manual review</source>
         <translation>Selbstüberprüfung fertig — {n} benötigen manuelle Prüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4004"/>
+        <location filename="../main_window.py" line="4330"/>
         <source>Translation + self-review complete</source>
         <translation>Übersetzung + Selbstüberprüfung abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4092"/>
+        <location filename="../main_window.py" line="4418"/>
         <source>Quality check passed — no issues found</source>
         <translation>Qualitätsprüfung bestanden – keine Probleme gefunden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4128"/>
+        <location filename="../main_window.py" line="4454"/>
         <source>Running AI quality check ({n} strings)…</source>
         <translation>KI-Qualitätsprüfung läuft ({n} Zeichenketten)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4129"/>
+        <location filename="../main_window.py" line="4455"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4134"/>
+        <location filename="../main_window.py" line="4460"/>
         <source>AI Quality Check</source>
         <translation>KI-Qualitätsprüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4302"/>
+        <location filename="../main_window.py" line="4628"/>
         <source>Ready to export:
 
   • {total} translated strings total
@@ -2794,7 +3088,7 @@ Export which set?</source>
 Welche Auswahl soll exportiert werden?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4405"/>
+        <location filename="../main_window.py" line="4731"/>
         <source>Found {n} string(s) with quality issues ({e} error(s), {w} warning(s)).
 
 Retranslate them all with quality feedback hints?</source>
@@ -2803,32 +3097,32 @@ Retranslate them all with quality feedback hints?</source>
 Alle mit Qualitäts-Feedback-Hinweisen neu übersetzen?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4536"/>
+        <location filename="../main_window.py" line="4862"/>
         <source>AI-fixing {n} string(s)…</source>
         <translation>KI-Korrektur von {n} Zeichenfolge(n)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4543"/>
+        <location filename="../main_window.py" line="4869"/>
         <source>AI Fix {current}/{total}…</source>
         <translation>KI-Korrektur {current}/{total}…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4682"/>
+        <location filename="../main_window.py" line="5008"/>
         <source>Macro applied to row {n}.</source>
         <translation>Makro auf Zeile {n} angewendet.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4684"/>
+        <location filename="../main_window.py" line="5010"/>
         <source>Macro: no changes on row {n}.</source>
         <translation>Makro: keine Änderungen an Zeile {n}.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4803"/>
+        <location filename="../main_window.py" line="5129"/>
         <source>Open macro editor for batch regex-replace</source>
         <translation>Öffnet den Makro-Editor für stapelweise Regex-Ersetzung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5308"/>
+        <location filename="../main_window.py" line="5636"/>
         <source>
 
 (Skipped {count} untranslated entries)</source>
@@ -2837,106 +3131,106 @@ Alle mit Qualitäts-Feedback-Hinweisen neu übersetzen?</translation>
 ({count} unübersetzte Einträge übersprungen)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5535"/>
+        <location filename="../main_window.py" line="5863"/>
         <source>Translation Memory (*.txt *.tmx);;Text Files (*.txt);;TMX Files (*.tmx);;All Files (*)</source>
         <translation>Übersetzungsspeicher (*.txt *.tmx);;Textdateien (*.txt);;TMX-Dateien (*.tmx);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5559"/>
+        <location filename="../main_window.py" line="5887"/>
         <source>Translation memory loaded: {loaded} entries, {applied} applied to current file</source>
         <translation>Übersetzungsspeicher geladen: {loaded} Einträge, {applied} auf aktuelle Datei angewendet</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5569"/>
+        <location filename="../main_window.py" line="5897"/>
         <source>Load Failed</source>
         <translation>Laden fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5570"/>
+        <location filename="../main_window.py" line="5898"/>
         <source>Could not load translation memory:
 {error}</source>
         <translation>Übersetzungsspeicher konnte nicht geladen werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5584"/>
+        <location filename="../main_window.py" line="5912"/>
         <source>Export Translation Memory</source>
         <translation>Übersetzungsspeicher exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5585"/>
+        <location filename="../main_window.py" line="5913"/>
         <source>No translation memory loaded and no translations in the current file.</source>
         <translation>Kein Übersetzungsspeicher geladen und keine Übersetzungen in der aktuellen Datei.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5597"/>
+        <location filename="../main_window.py" line="5925"/>
         <source>Export Translation Memory as TMX</source>
         <translation>Übersetzungsspeicher als TMX exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5599"/>
+        <location filename="../main_window.py" line="5927"/>
         <source>TMX Files (*.tmx);;All Files (*)</source>
         <translation>TMX-Dateien (*.tmx);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5611"/>
+        <location filename="../main_window.py" line="5939"/>
         <source>Exported {n} translation units to {path}</source>
         <translation>{n} Übersetzungseinheiten nach {path} exportiert</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5620"/>
+        <location filename="../main_window.py" line="5948"/>
         <source>Could not export translation memory:
 {error}</source>
         <translation>Übersetzungsspeicher konnte nicht exportiert werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5654"/>
+        <location filename="../main_window.py" line="5982"/>
         <source>NexusMods TM loaded ({label}): {n} entries, {applied} applied</source>
         <translation>NexusMods-Übersetzungsspeicher geladen ({label}): {n} Einträge, {applied} angewendet</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5666"/>
+        <location filename="../main_window.py" line="5994"/>
         <source>NexusMods merge: {applied} translation(s) applied.</source>
         <translation>NexusMods-Zusammenführung: {applied} Übersetzung(en) angewendet.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5695"/>
+        <location filename="../main_window.py" line="6023"/>
         <source>Lore RAG Unavailable</source>
         <translation>Lore-RAG nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5696"/>
+        <location filename="../main_window.py" line="6024"/>
         <source>Failed to open the lore database. Check the log for details.</source>
         <translation>Die Lore-Datenbank konnte nicht geöffnet werden. Details siehe Protokoll.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5721"/>
+        <location filename="../main_window.py" line="6049"/>
         <source>Font auto-fix applied to {n} string(s)</source>
         <translation>Automatische Schriftkorrektur auf {n} Zeichenkette(n) angewendet</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5742"/>
+        <location filename="../main_window.py" line="6084"/>
         <source>Not in ESP Mode</source>
         <translation>Nicht im ESP-Modus</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5743"/>
+        <location filename="../main_window.py" line="6085"/>
         <source>Open the ESP/ESM file in the main table first.</source>
         <translation>Öffnen Sie zuerst die ESP/ESM-Datei in der Haupttabelle.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5753"/>
+        <location filename="../main_window.py" line="6095"/>
         <source>Not Found</source>
         <translation>Nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5754"/>
+        <location filename="../main_window.py" line="6096"/>
         <source>0x{fid:08X} / {fs} not found in the current file.</source>
         <translation>0x{fid:08X} / {fs} wurde in der aktuellen Datei nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5772"/>
+        <location filename="../main_window.py" line="6114"/>
         <source>Config file does not exist yet. Settings will be saved on first use.
 
 Config path: {path}</source>
@@ -2945,474 +3239,480 @@ Config path: {path}</source>
 Konfigurationspfad: {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5784"/>
-        <location filename="../main_window.py" line="5809"/>
+        <location filename="../main_window.py" line="6126"/>
+        <location filename="../main_window.py" line="6151"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>JSON-Dateien (*.json *.JSON);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6579"/>
+        <location filename="../main_window.py" line="6795"/>
+        <source>Loading plugins for migration…</source>
+        <translation>Plugins für die Migration werden geladen…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6807"/>
+        <source>Failed to load one or more plugins:
+{error}</source>
+        <translation>Ein oder mehrere Plugins konnten nicht geladen werden:
+{error}</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6833"/>
+        <source>No Target Plugin</source>
+        <translation>Kein Ziel-Plugin</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6834"/>
+        <source>Open the new plugin in the editor before migrating so the translations have somewhere to go.</source>
+        <translation>Öffnen Sie das neue Plugin vor der Migration im Editor, damit die Übersetzungen ein Ziel haben.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6867"/>
+        <source>Migrated {n} translation(s) from the previous mod version.</source>
+        <translation>{n} Übersetzung(en) aus der vorherigen Mod-Version migriert.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="6874"/>
+        <source>No matching pending strings to migrate in the open plugin.</source>
+        <translation>Im geöffneten Plugin gibt es keine passenden ausstehenden Zeichenketten zum Migrieren.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="7019"/>
         <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
         <translation>KI-gestütztes Lokalisierungswerkzeug für Starfield und andere Bethesda-Spiele.&lt;br&gt;Entwickelt für die &lt;b&gt;ukrainische&lt;/b&gt; Lokalisierung von Starfield-Zeichenfolgendateien.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6624"/>
+        <location filename="../main_window.py" line="7064"/>
         <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
         <translation>&lt;span style=&apos;color:#666&apos;&gt;&lt;b&gt;F1&lt;/b&gt; für alle Tastenkürzel · &lt;b&gt;Shift+F1&lt;/b&gt;, dann auf ein Widget klicken für Kontexthilfe&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3073"/>
-        <location filename="../main_window.py" line="3244"/>
+        <location filename="../main_window.py" line="3217"/>
+        <location filename="../main_window.py" line="3388"/>
         <source>Success</source>
         <translation>Erfolg</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5015"/>
+        <location filename="../main_window.py" line="5343"/>
         <source>Export to TXT</source>
         <translation>Als TXT exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5533"/>
+        <location filename="../main_window.py" line="5861"/>
         <source>Load Translation Memory</source>
         <translation>Übersetzungsspeicher laden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5024"/>
+        <location filename="../main_window.py" line="5352"/>
         <source>Exporting to {filename}...</source>
         <translation>Exportiere nach {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5089"/>
+        <location filename="../main_window.py" line="5417"/>
         <source>Exported {count} strings to {filename} ✓</source>
         <translation>{count} Zeichenketten nach {filename} exportiert ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5095"/>
-        <location filename="../main_window.py" line="5430"/>
+        <location filename="../main_window.py" line="5423"/>
+        <location filename="../main_window.py" line="5758"/>
         <source>Export Complete</source>
         <translation>Export abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5096"/>
+        <location filename="../main_window.py" line="5424"/>
         <source>Successfully exported {count} strings to:
 {path}</source>
         <translation>Erfolgreich {count} Zeichenketten exportiert nach:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5106"/>
+        <location filename="../main_window.py" line="5434"/>
         <source>Failed to export:
 {error}</source>
         <translation>Export fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5236"/>
+        <location filename="../main_window.py" line="5564"/>
         <source>Import from TXT</source>
         <translation>Aus TXT importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5245"/>
+        <location filename="../main_window.py" line="5573"/>
         <source>Importing from {filename}...</source>
         <translation>Importiere aus {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5183"/>
-        <location filename="../main_window.py" line="5214"/>
+        <location filename="../main_window.py" line="5511"/>
+        <location filename="../main_window.py" line="5542"/>
         <source>Importing {current}/{total}...</source>
         <translation>Importiere {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1236"/>
+        <location filename="../main_window.py" line="1380"/>
         <source>Translate Starfield Interface TXT...</source>
         <translation>Starfield Interface TXT übersetzen...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1359"/>
+        <location filename="../main_window.py" line="1503"/>
         <source>Load Translation &amp;Memory...</source>
         <translation>Übersetzungs&amp;speicher laden...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2137"/>
-        <location filename="../main_window.py" line="4695"/>
+        <location filename="../main_window.py" line="2281"/>
+        <location filename="../main_window.py" line="5021"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3278"/>
+        <location filename="../main_window.py" line="3428"/>
         <source>Stopping translation...</source>
         <translation>Übersetzung wird gestoppt...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3844"/>
+        <location filename="../main_window.py" line="4170"/>
         <source>Quality: {errors} error(s), {warnings} warning(s) — open Translation → Quality Check for details</source>
         <translation>Qualität: {errors} Fehler, {warnings} Warnungen — öffnen Sie Übersetzung → Qualitätsprüfung für Details</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5219"/>
+        <location filename="../main_window.py" line="5547"/>
         <source>Importing: {current}/{total}</source>
         <translation>Importiere: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5299"/>
+        <location filename="../main_window.py" line="5627"/>
         <source>Imported {count} translations from {filename} ✓</source>
         <translation>{count} Übersetzungen aus {filename} importiert ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5305"/>
+        <location filename="../main_window.py" line="5633"/>
         <source>Successfully imported {count} translations from:
 {path}</source>
         <translation>Erfolgreich {count} Übersetzungen importiert aus:
 {path}</translation>
     </message>
     <message>
-        <source>
-(Skipped {count} untranslated entries)</source>
-        <translation type="vanished">
-({count} nicht übersetzte Einträge übersprungen)</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="5312"/>
-        <location filename="../main_window.py" line="5367"/>
+        <location filename="../main_window.py" line="5640"/>
+        <location filename="../main_window.py" line="5695"/>
         <source>Import Complete</source>
         <translation>Import abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5321"/>
+        <location filename="../main_window.py" line="5649"/>
         <source>Failed to import:
 {error}</source>
         <translation>Import fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5332"/>
+        <location filename="../main_window.py" line="5660"/>
         <source>Import from XML (SST)</source>
         <translation>Aus XML (SST) importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5334"/>
+        <location filename="../main_window.py" line="5662"/>
         <source>XML Files (*.xml *.sst);;All Files (*)</source>
         <translation>XML-Dateien (*.xml *.sst);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5341"/>
+        <location filename="../main_window.py" line="5669"/>
         <source>Importing from XML {filename}...</source>
         <translation>Importiere aus XML {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5351"/>
+        <location filename="../main_window.py" line="5679"/>
         <source>No Translations</source>
         <translation>Keine Übersetzungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5352"/>
+        <location filename="../main_window.py" line="5680"/>
         <source>No valid translations found in the XML file.</source>
         <translation>Keine gültigen Übersetzungen in der XML-Datei gefunden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5361"/>
+        <location filename="../main_window.py" line="5689"/>
         <source>Imported {count} translations from XML ✓</source>
         <translation>{count} Übersetzungen aus XML importiert ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5368"/>
+        <location filename="../main_window.py" line="5696"/>
         <source>Successfully imported {count} translations from XML.</source>
         <translation>Erfolgreich {count} Übersetzungen aus XML importiert.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5378"/>
+        <location filename="../main_window.py" line="5706"/>
         <source>Failed to import XML:
 {error}</source>
         <translation>XML-Import fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5392"/>
+        <location filename="../main_window.py" line="5720"/>
         <source>Export to XML (SST)</source>
         <translation>Als XML (SST) exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5394"/>
+        <location filename="../main_window.py" line="5722"/>
         <source>XML Files (*.xml);;All Files (*)</source>
         <translation>XML-Dateien (*.xml);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5401"/>
+        <location filename="../main_window.py" line="5729"/>
         <source>Exporting to XML {filename}...</source>
         <translation>Exportiere nach XML {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5424"/>
+        <location filename="../main_window.py" line="5752"/>
         <source>Exported {count} entries to XML ✓</source>
         <translation>{count} Einträge nach XML exportiert ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5431"/>
+        <location filename="../main_window.py" line="5759"/>
         <source>Successfully exported {count} entries to XML.</source>
         <translation>Erfolgreich {count} Einträge nach XML exportiert.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5441"/>
+        <location filename="../main_window.py" line="5769"/>
         <source>Failed to export XML:
 {error}</source>
         <translation>XML-Export fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5497"/>
+        <location filename="../main_window.py" line="5825"/>
         <source>Comparison</source>
         <translation>Vergleich</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5498"/>
+        <location filename="../main_window.py" line="5826"/>
         <source>No string data found in comparison file.</source>
         <translation>Keine Zeichenkettendaten in der Vergleichsdatei gefunden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5504"/>
+        <location filename="../main_window.py" line="5832"/>
         <source>Comparison loaded: {count} strings mapped.</source>
         <translation>Vergleich geladen: {count} Zeichenketten zugeordnet.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5510"/>
+        <location filename="../main_window.py" line="5838"/>
         <source>Comparison Loaded</source>
         <translation>Vergleich geladen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5512"/>
+        <location filename="../main_window.py" line="5840"/>
         <source>Comparison data from {filename} loaded.
 Differences are highlighted in yellow.</source>
         <translation>Vergleichsdaten aus {filename} geladen.
 Unterschiede sind gelb hervorgehoben.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5522"/>
+        <location filename="../main_window.py" line="5850"/>
         <source>Failed to load comparison file:
 {error}</source>
         <translation>Laden der Vergleichsdatei fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5770"/>
+        <location filename="../main_window.py" line="6112"/>
         <source>Config File</source>
         <translation>Konfigurationsdatei</translation>
     </message>
     <message>
-        <source>Config file does not exist yet. Settings will be saved on first use.
-Config path: {path}</source>
-        <translation type="vanished">Konfigurationsdatei existiert noch nicht. Einstellungen werden bei erster Nutzung gespeichert.
-Konfigurationspfad: {path}</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="5782"/>
+        <location filename="../main_window.py" line="6124"/>
         <source>Export Settings</source>
         <translation>Einstellungen exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5794"/>
+        <location filename="../main_window.py" line="6136"/>
         <source>Export Successful</source>
         <translation>Export erfolgreich</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5795"/>
+        <location filename="../main_window.py" line="6137"/>
         <source>Settings exported to:
 {path}</source>
         <translation>Einstellungen exportiert nach:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4362"/>
-        <location filename="../main_window.py" line="5619"/>
-        <location filename="../main_window.py" line="5799"/>
+        <location filename="../main_window.py" line="4688"/>
+        <location filename="../main_window.py" line="5947"/>
+        <location filename="../main_window.py" line="6141"/>
         <source>Export Failed</source>
         <translation>Export fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5799"/>
+        <location filename="../main_window.py" line="6141"/>
         <source>Could not export settings.</source>
         <translation>Einstellungen konnten nicht exportiert werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5807"/>
+        <location filename="../main_window.py" line="6149"/>
         <source>Import Settings</source>
         <translation>Einstellungen importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4220"/>
-        <location filename="../main_window.py" line="5820"/>
+        <location filename="../main_window.py" line="4546"/>
+        <location filename="../main_window.py" line="6162"/>
         <source>Import Failed</source>
         <translation>Import fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5821"/>
+        <location filename="../main_window.py" line="6163"/>
         <source>Could not import settings file.</source>
         <translation>Einstellungsdatei konnte nicht importiert werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5830"/>
+        <location filename="../main_window.py" line="6172"/>
         <source>Validation Warnings</source>
         <translation>Validierungswarnungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5831"/>
+        <location filename="../main_window.py" line="6173"/>
         <source>Imported settings have issues:
 </source>
         <translation>Importierte Einstellungen haben Probleme:
 </translation>
     </message>
     <message>
-        <source>
-Import anyway?</source>
-        <translation type="vanished">
-Trotzdem importieren?</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="5869"/>
+        <location filename="../main_window.py" line="6211"/>
         <source>Import Successful</source>
         <translation>Import erfolgreich</translation>
     </message>
     <message>
-        <source>Settings imported from:
-{path}
-Restart may be required for some changes to take effect.</source>
-        <translation type="vanished">Einstellungen importiert aus:
-{path}
-Ein Neustart kann erforderlich sein, damit einige Änderungen wirksam werden.</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="3153"/>
+        <location filename="../main_window.py" line="3297"/>
         <source>Error: {error}</source>
         <translation>Fehler: {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3211"/>
+        <location filename="../main_window.py" line="3355"/>
         <source>Complete: {count} successful</source>
         <translation>Abgeschlossen: {count} erfolgreich</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3072"/>
-        <location filename="../main_window.py" line="3213"/>
+        <location filename="../main_window.py" line="3216"/>
+        <location filename="../main_window.py" line="3357"/>
         <source>, {count} failed</source>
         <translation>, {count} fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1243"/>
+        <location filename="../main_window.py" line="1387"/>
         <source>&amp;Approve Selected</source>
         <translation>Ausgewählte &amp;bestätigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1247"/>
+        <location filename="../main_window.py" line="1391"/>
         <source>Accept the current AI translation and advance to the next row (Ctrl+Enter)</source>
         <translation>Aktuelle KI-Übersetzung akzeptieren und zur nächsten Zeile wechseln (Strg+Eingabe)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1253"/>
+        <location filename="../main_window.py" line="1397"/>
         <source>&amp;Reject Selected</source>
         <translation>Ausgewählte &amp;ablehnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1257"/>
+        <location filename="../main_window.py" line="1401"/>
         <source>Clear the translation for selected rows and mark them as pending (Ctrl+R)</source>
         <translation>Übersetzung für ausgewählte Zeilen löschen und als ausstehend markieren (Strg+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1264"/>
+        <location filename="../main_window.py" line="1408"/>
         <source>&amp;Next Untranslated</source>
         <translation>&amp;Nächste nicht übersetzte</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1268"/>
+        <location filename="../main_window.py" line="1412"/>
         <source>Jump to the next untranslated string (F7)</source>
         <translation>Zur nächsten nicht übersetzten Zeichenkette springen (F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1274"/>
+        <location filename="../main_window.py" line="1418"/>
         <source>&amp;Previous Untranslated</source>
         <translation>&amp;Vorherige nicht übersetzte</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1278"/>
+        <location filename="../main_window.py" line="1422"/>
         <source>Jump to the previous untranslated string (Shift+F7)</source>
         <translation>Zur vorherigen nicht übersetzten Zeichenkette springen (Umschalt+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1297"/>
+        <location filename="../main_window.py" line="1441"/>
         <source>Run post-translation quality checks (Ctrl+F7)</source>
         <translation>Nach-Übersetzungs-Qualitätsprüfungen ausführen (Strg+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1603"/>
+        <location filename="../main_window.py" line="1747"/>
         <source>&amp;Command Palette…</source>
         <translation>&amp;Befehlspalette…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1607"/>
+        <location filename="../main_window.py" line="1751"/>
         <source>Open the searchable command palette (Ctrl+K)</source>
         <translation>Durchsuchbare Befehlspalette öffnen (Strg+K)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1302"/>
+        <location filename="../main_window.py" line="1446"/>
         <source>Auto-Retranslate &amp;Issues…</source>
         <translation>Probleme &amp;automatisch neu übersetzen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1160"/>
+        <location filename="../main_window.py" line="1281"/>
         <source>String &amp;Diff Viewer...</source>
         <translation>Zeichenketten-&amp;Differenzansicht...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1212"/>
+        <location filename="../main_window.py" line="1345"/>
         <source>Compare Game &amp;Versions…</source>
         <translation>Spiel&amp;versionen vergleichen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1217"/>
+        <location filename="../main_window.py" line="1350"/>
         <source>Compare two game-version source files to see what strings were
 added, removed, or modified, and migrate unchanged translations.</source>
         <translation>Zwei Spielversions-Quelldateien vergleichen, um zu sehen, welche Zeichenketten
 hinzugefügt, entfernt oder geändert wurden, und unveränderte Übersetzungen migrieren.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1224"/>
+        <location filename="../main_window.py" line="1357"/>
         <source>Batch Compare Game &amp;Folders…</source>
         <translation>Spiel&amp;ordner stapelweise vergleichen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1228"/>
+        <location filename="../main_window.py" line="1361"/>
         <source>Compare all .strings files across two game-version folders
 and generate a combined migration report.</source>
         <translation>Alle .strings Dateien in zwei Spielversionsordnern vergleichen
 und einen kombinierten Migrationsbericht erstellen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1284"/>
+        <location filename="../main_window.py" line="1428"/>
         <source>&amp;Batch Translate Folder…</source>
         <translation>Ordner &amp;stapelweise übersetzen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1287"/>
+        <location filename="../main_window.py" line="1431"/>
         <source>Scan a folder of binary string files (.strings/.dlstrings/.ilstrings),
 auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings.</source>
         <translation>Einen Ordner mit binären Zeichenkettendateien (.strings/.dlstrings/.ilstrings) scannen,
 technische Probleme automatisch beheben und nicht übersetzte/minderwertige Zeichenketten per KI übersetzen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1294"/>
+        <location filename="../main_window.py" line="1438"/>
         <source>&amp;Quality Check…</source>
         <translation>&amp;Qualitätsprüfung…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1307"/>
+        <location filename="../main_window.py" line="1451"/>
         <source>Run quality check and automatically retranslate all strings with errors or warnings, sending quality feedback to the AI model. (Ctrl+Shift+F7)</source>
         <translation>Qualitätsprüfung durchführen und alle Zeichenketten mit Fehlern oder Warnungen automatisch neu übersetzen, wobei Qualitätsfeedback an das KI-Modell gesendet wird. (Strg+Umschalt+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1329"/>
+        <location filename="../main_window.py" line="1473"/>
         <source>&amp;Import Quality Report…</source>
         <translation>&amp;Qualitätsbericht importieren…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1334"/>
+        <location filename="../main_window.py" line="1478"/>
         <source>Load a previously exported JSON quality report.
 Row positions are remapped to the current file automatically.
 Use this to restore quality check results after reloading the app.</source>
@@ -3421,12 +3721,12 @@ Zeilenpositionen werden automatisch auf die aktuelle Datei neu zugeordnet.
 Verwenden Sie dies, um Qualitätsergebnisse nach dem Neuladen der App wiederherzustellen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1345"/>
+        <location filename="../main_window.py" line="1489"/>
         <source>Export &amp;Training Data (JSONL)…</source>
         <translation>&amp;Trainingsdaten exportieren (JSONL)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1349"/>
+        <location filename="../main_window.py" line="1493"/>
         <source>Export approved translations as a JSONL fine-tuning dataset.
 Compatible with Unsloth, Axolotl, and LLaMA-Factory.
 Only rows with status &apos;translated&apos; are included.</source>
@@ -3435,521 +3735,489 @@ Kompatibel mit Unsloth, Axolotl und LLaMA-Factory.
 Nur Zeilen mit Status „übersetzt“ werden einbezogen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1366"/>
+        <location filename="../main_window.py" line="1510"/>
         <source>Export Translation Memory as TMX...</source>
         <translation>Übersetzungsspeicher als TMX exportieren...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1370"/>
+        <location filename="../main_window.py" line="1514"/>
         <source>Export the active translation memory (or current file&apos;s translations)
 as a TMX file compatible with OmegaT, SDL Trados, and Memsource.</source>
         <translation>Den aktiven Übersetzungsspeicher (oder Übersetzungen der aktuellen Datei)
 als TMX-Datei exportieren, kompatibel mit OmegaT, SDL Trados und Memsource.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1378"/>
+        <location filename="../main_window.py" line="1522"/>
         <source>&amp;Discover New Terms…</source>
         <translation>&amp;Neue Begriffe entdecken…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1382"/>
+        <location filename="../main_window.py" line="1526"/>
         <source>Scan the loaded strings for candidate protected terms not yet in the
 protection list, then review and approve them before adding.</source>
         <translation>Geladene Zeichenketten nach Kandidaten für geschützte Begriffe scannen, die noch nicht in der
 Schutzliste sind, dann prüfen und genehmigen, bevor sie hinzugefügt werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1390"/>
+        <location filename="../main_window.py" line="1534"/>
         <source>&amp;Check Consistency…</source>
         <translation>&amp;Konsistenz prüfen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1395"/>
+        <location filename="../main_window.py" line="1539"/>
         <source>Scan all translated strings for the same source text rendered
 differently and let you pick a canonical translation for each group.</source>
         <translation>Alle übersetzten Zeichenketten auf denselben Quelltext scannen, der
 unterschiedlich dargestellt wird, und eine kanonische Übersetzung für jede Gruppe auswählen lassen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1471"/>
+        <location filename="../main_window.py" line="1615"/>
         <source>&amp;Glossary</source>
         <translation>&amp;Glossar</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1472"/>
+        <location filename="../main_window.py" line="1616"/>
         <source>&amp;Edit Glossary…</source>
         <translation>Glossar &amp;bearbeiten…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1478"/>
+        <location filename="../main_window.py" line="1622"/>
         <source>&amp;Show Suggestions Panel</source>
         <translation>&amp;Vorschlagsbereich anzeigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1487"/>
+        <location filename="../main_window.py" line="1631"/>
         <source>Check &amp;Glossary Compliance…</source>
         <translation>&amp;Glossar-Konformität prüfen…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1495"/>
+        <location filename="../main_window.py" line="1639"/>
         <source>&amp;Claude AI</source>
         <translation>&amp;Claude KI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1497"/>
+        <location filename="../main_window.py" line="1641"/>
         <source>Show &amp;AI Assistant</source>
         <translation>&amp;KI-Assistent anzeigen</translation>
     </message>
     <message>
-        <source>Show/hide the Claude AI chat assistant panel (Ctrl+Shift+A)</source>
-        <translation type="vanished">Claude KI-Chat-Assistentenbereich anzeigen/verbergen (Strg+Umschalt+A)</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="1510"/>
+        <location filename="../main_window.py" line="1654"/>
         <source>&amp;Review Current Translation</source>
         <translation>Aktuelle &amp;Übersetzung prüfen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1515"/>
+        <location filename="../main_window.py" line="1659"/>
         <source>Ask Claude to review the selected string&apos;s translation for quality issues (Ctrl+Shift+R)</source>
         <translation>Claude bitten, die Übersetzung der ausgewählten Zeichenkette auf Qualitätsmängel zu prüfen (Strg+Umschalt+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1523"/>
+        <location filename="../main_window.py" line="1667"/>
         <source>&amp;Suggest Translation</source>
         <translation>&amp;Übersetzung vorschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1528"/>
+        <location filename="../main_window.py" line="1672"/>
         <source>Ask Claude to translate the current string (result shown in AI Assistant panel) (Ctrl+Shift+T)</source>
         <translation>Claude bitten, die aktuelle Zeichenkette zu übersetzen (Ergebnis wird im KI-Assistentenbereich angezeigt) (Strg+Umschalt+T)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1633"/>
+        <location filename="../main_window.py" line="1777"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1636"/>
+        <location filename="../main_window.py" line="1780"/>
         <source>&amp;What&apos;s This?</source>
         <translation>&amp;Was ist das?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1642"/>
+        <location filename="../main_window.py" line="1786"/>
         <source>&amp;Keyboard Shortcuts…</source>
         <translation>&amp;Tastenkürzel…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1657"/>
+        <location filename="../main_window.py" line="1801"/>
         <source>&amp;About…</source>
         <translation>Ü&amp;ber…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2099"/>
+        <location filename="../main_window.py" line="2243"/>
         <source>(empty)</source>
         <translation>(leer)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2115"/>
+        <location filename="../main_window.py" line="2259"/>
         <source>Clear Recent Files</source>
         <translation>Zuletzt geöffnete Dateien löschen</translation>
     </message>
     <message>
-        <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;All Files (*)</source>
-        <translation type="vanished">Alle unterstützten Dateien (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2);;Zeichenkettendateien (*.strings *.dlstrings *.ilstrings);;Plugin-Dateien (*.esp *.esm *.esl);;BA2-Archive (*.ba2 *.BA2);;Alle Dateien (*)</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="2219"/>
+        <location filename="../main_window.py" line="2363"/>
         <source>{n} files dropped — opened {name}. Open additional files one at a time.</source>
         <translation>{n} Dateien abgelegt – {name} geöffnet. Öffnen Sie zusätzliche Dateien einzeln.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2253"/>
+        <location filename="../main_window.py" line="2397"/>
         <source>Loaded {count} strings from {name} ({enc})</source>
         <translation>{count} Zeichenketten aus {name} geladen ({enc})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2299"/>
+        <location filename="../main_window.py" line="2443"/>
         <source>Load Companion Files</source>
         <translation>Begleitdateien laden</translation>
     </message>
     <message>
-        <source>Found companion string file(s):
-{names}
-Load them together with {loaded} for a complete dictionary?</source>
-        <translation type="vanished">Begleitende Zeichenkettendatei(en) gefunden:
-{names}
-Zusammen mit {loaded} für ein vollständiges Wörterbuch laden?</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="2460"/>
+        <location filename="../main_window.py" line="2604"/>
         <source>Opening archive {filename}...</source>
         <translation>Öffne Archiv {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2469"/>
+        <location filename="../main_window.py" line="2613"/>
         <source>Failed to open archive:
 {error}</source>
         <translation>Öffnen des Archivs fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2477"/>
+        <location filename="../main_window.py" line="2621"/>
         <source>No Strings Found</source>
         <translation>Keine Zeichenketten gefunden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2479"/>
+        <location filename="../main_window.py" line="2623"/>
         <source>{name} does not contain any .strings / .dlstrings / .ilstrings files.</source>
         <translation>{name} enthält keine .strings / .dlstrings / .ilstrings Dateien.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2506"/>
+        <location filename="../main_window.py" line="2650"/>
         <source>Failed to extract strings file from archive:
 {error}</source>
         <translation>Extrahieren der Zeichenkettendatei aus dem Archiv fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2530"/>
+        <location filename="../main_window.py" line="2674"/>
         <source>Loaded {count} strings from {entry} (in {archive})</source>
         <translation>{count} Zeichenketten aus {entry} geladen (in {archive})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2616"/>
+        <location filename="../main_window.py" line="2760"/>
         <source>BA2 Archives (*.ba2 *.BA2);;All Files (*)</source>
         <translation>BA2-Archive (*.ba2 *.BA2);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3076"/>
-        <location filename="../main_window.py" line="3246"/>
+        <location filename="../main_window.py" line="3220"/>
+        <location filename="../main_window.py" line="3390"/>
         <source>Translation complete</source>
         <translation>Übersetzung abgeschlossen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3114"/>
+        <location filename="../main_window.py" line="3258"/>
         <source>ETA: {t}</source>
         <translation>Geschätzte Zeit: {t}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3264"/>
+        <location filename="../main_window.py" line="3408"/>
         <source>Total: {total}  ·  Done: {done} ({pct})  ·  Left: {left}</source>
         <translation>Gesamt: {total}  ·  Fertig: {done} ({pct})  ·  Verbleibend: {left}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3565"/>
+        <location filename="../main_window.py" line="3891"/>
         <source>No glossary matches for this string.</source>
         <translation>Keine Glossar-Übereinstimmungen für diese Zeichenkette.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3569"/>
+        <location filename="../main_window.py" line="3895"/>
         <source>{n} glossary match(es) — double-click to copy target term:</source>
         <translation>{n} Glossar-Übereinstimmung(en) – Doppelklick, um Zielbegriff zu kopieren:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3611"/>
+        <location filename="../main_window.py" line="3937"/>
         <source>Copied &quot;{term}&quot; to clipboard.</source>
         <translation>„{term}“ in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3619"/>
+        <location filename="../main_window.py" line="3945"/>
         <source>Glossary Disabled</source>
         <translation>Glossar deaktiviert</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3620"/>
+        <location filename="../main_window.py" line="3946"/>
         <source>Enable the glossary in Settings → Preferences to use this feature.</source>
         <translation>Aktivieren Sie das Glossar unter Einstellungen → Voreinstellungen, um diese Funktion zu nutzen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3652"/>
+        <location filename="../main_window.py" line="3978"/>
         <source>Glossary Compliance</source>
         <translation>Glossar-Konformität</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3653"/>
+        <location filename="../main_window.py" line="3979"/>
         <source>All translated strings comply with the glossary.</source>
         <translation>Alle übersetzten Zeichenketten entsprechen dem Glossar.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3666"/>
+        <location filename="../main_window.py" line="3992"/>
         <source>Glossary Compliance Issues</source>
         <translation>Glossar-Konformitätsprobleme</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3720"/>
+        <location filename="../main_window.py" line="4046"/>
         <source>Encoding: {enc} (manual override)</source>
         <translation>Kodierung: {enc} (manuell überschrieben)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3721"/>
+        <location filename="../main_window.py" line="4047"/>
         <source>Manually overridden to {enc}</source>
         <translation>Manuell auf {enc} überschrieben</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3723"/>
+        <location filename="../main_window.py" line="4049"/>
         <source>Encoding: {enc} (auto, {conf}%)</source>
         <translation>Kodierung: {enc} (auto, {conf}%)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3726"/>
+        <location filename="../main_window.py" line="4052"/>
         <source>Auto-detected: {method}</source>
         <translation>Automatisch erkannt: {method}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3728"/>
+        <location filename="../main_window.py" line="4054"/>
         <source>Encoding: {enc}</source>
         <translation>Kodierung: {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3744"/>
+        <location filename="../main_window.py" line="4070"/>
         <source>Override File Encoding</source>
         <translation>Dateikodierung überschreiben</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3752"/>
+        <location filename="../main_window.py" line="4078"/>
         <source>&lt;b&gt;Currently:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;Source:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;Method:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;Confidence:&lt;/b&gt; {conf}%</source>
         <translation>&lt;b&gt;Aktuell:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;Quelle:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;Methode:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;Konfidenz:&lt;/b&gt; {conf}%</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3766"/>
+        <location filename="../main_window.py" line="4092"/>
         <source>Select encoding to apply:</source>
         <translation>Wählen Sie die anzuwendende Kodierung:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3781"/>
+        <location filename="../main_window.py" line="4107"/>
         <source>⚠ Changing encoding re-decodes all strings from their raw bytes. If the file is already UTF-8, choosing CP1251 will produce garbled text.</source>
         <translation>⚠ Ändern der Kodierung dekodiert alle Zeichenketten neu aus ihren Rohbytes. Wenn die Datei bereits UTF-8 ist, wird die Wahl von CP1251 zu unleserlichem Text führen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3811"/>
+        <location filename="../main_window.py" line="4137"/>
         <source>Re-decoded {count} strings as {enc}</source>
         <translation>{count} Zeichenketten neu dekodiert als {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4072"/>
+        <location filename="../main_window.py" line="4398"/>
         <source>Claude translation applied to row {row}.</source>
         <translation>Claude-Übersetzung auf Zeile {row} angewendet.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4180"/>
+        <location filename="../main_window.py" line="4506"/>
         <source>Import Quality Report</source>
         <translation>Qualitätsbericht importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4183"/>
+        <location filename="../main_window.py" line="4509"/>
         <source>Quality Reports (*.json *.csv *);;JSON Quality Report (*.json);;CSV Quality Report (*.csv);;All Files (*)</source>
         <translation>Qualitätsberichte (*.json *.csv *);;JSON-Qualitätsbericht (*.json);;CSV-Qualitätsbericht (*.csv);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4221"/>
+        <location filename="../main_window.py" line="4547"/>
         <source>Could not load quality report:
 {error}</source>
         <translation>Qualitätsbericht konnte nicht geladen werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4245"/>
+        <location filename="../main_window.py" line="4571"/>
         <source>Quality report imported — {ok} strings matched, {skip} skipped</source>
         <translation>Qualitätsbericht importiert – {ok} Zeichenketten abgeglichen, {skip} übersprungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4251"/>
+        <location filename="../main_window.py" line="4577"/>
         <source>Quality report imported — {n} strings</source>
         <translation>Qualitätsbericht importiert – {n} Zeichenketten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4284"/>
-        <location filename="../main_window.py" line="4309"/>
-        <location filename="../main_window.py" line="4334"/>
+        <location filename="../main_window.py" line="4610"/>
+        <location filename="../main_window.py" line="4635"/>
+        <location filename="../main_window.py" line="4660"/>
         <source>Export Training Data</source>
         <translation>Trainingsdaten exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4285"/>
-        <location filename="../main_window.py" line="6002"/>
-        <location filename="../main_window.py" line="6035"/>
-        <location filename="../main_window.py" line="6058"/>
+        <location filename="../main_window.py" line="4611"/>
+        <location filename="../main_window.py" line="6344"/>
+        <location filename="../main_window.py" line="6377"/>
+        <location filename="../main_window.py" line="6400"/>
         <source>No translated strings found. Translate some strings first.</source>
         <translation>Keine übersetzten Zeichenketten gefunden. Übersetzen Sie zuerst einige Zeichenketten.</translation>
     </message>
     <message>
-        <source>Ready to export:
-• {total} translated strings total
-• {clean} without quality errors
-Export which set?</source>
-        <translation type="vanished">Bereit zum Exportieren:
-• {total} übersetzte Zeichenketten insgesamt
-• {clean} ohne Qualitätsfehler
-Welchen Satz exportieren?</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="4312"/>
+        <location filename="../main_window.py" line="4638"/>
         <source>Clean only ({n})</source>
         <translation>Nur saubere ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4316"/>
+        <location filename="../main_window.py" line="4642"/>
         <source>All translated ({n})</source>
         <translation>Alle übersetzten ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4336"/>
+        <location filename="../main_window.py" line="4662"/>
         <source>JSONL Dataset (*.jsonl);;All files (*)</source>
         <translation>JSONL-Datensatz (*.jsonl);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4363"/>
+        <location filename="../main_window.py" line="4689"/>
         <source>Could not write file:
 {error}</source>
         <translation>Datei konnte nicht geschrieben werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4368"/>
+        <location filename="../main_window.py" line="4694"/>
         <source>Training data exported — {n} examples → {path}</source>
         <translation>Trainingsdaten exportiert – {n} Beispiele → {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4394"/>
+        <location filename="../main_window.py" line="4720"/>
         <source>Auto-Retranslate</source>
         <translation>Automatisch neu übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4395"/>
+        <location filename="../main_window.py" line="4721"/>
         <source>No errors or warnings found — translations look good.</source>
         <translation>Keine Fehler oder Warnungen gefunden – Übersetzungen sehen gut aus.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4403"/>
+        <location filename="../main_window.py" line="4729"/>
         <source>Auto-Retranslate Issues</source>
         <translation>Probleme automatisch neu übersetzen</translation>
     </message>
     <message>
-        <source>Found {n} string(s) with quality issues ({e} error(s), {w} warning(s)).
-Retranslate them all with quality feedback hints?</source>
-        <translation type="vanished">{n} Zeichenkette(n) mit Qualitätsproblemen gefunden ({e} Fehler, {w} Warnungen).
-Alle mit Qualitäts-Feedback-Hinweisen neu übersetzen?</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="4466"/>
+        <location filename="../main_window.py" line="4792"/>
         <source>Retranslating {n} string(s) with quality feedback…</source>
         <translation>Übersetze {n} Zeichenkette(n) mit Qualitäts-Feedback neu…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4473"/>
+        <location filename="../main_window.py" line="4799"/>
         <source>Retranslating {current}/{total}…</source>
         <translation>Neu übersetze {current}/{total}…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4609"/>
+        <location filename="../main_window.py" line="4935"/>
         <source>Rejected {n} translation(s)</source>
         <translation>{n} Übersetzung(en) abgelehnt</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4629"/>
+        <location filename="../main_window.py" line="4955"/>
         <source>Wrapped to first untranslated</source>
         <translation>Umgebrochen zur ersten nicht übersetzten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4631"/>
-        <location filename="../main_window.py" line="4650"/>
+        <location filename="../main_window.py" line="4957"/>
+        <location filename="../main_window.py" line="4976"/>
         <source>No untranslated strings remaining</source>
         <translation>Keine nicht übersetzten Zeichenketten verbleibend</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4648"/>
+        <location filename="../main_window.py" line="4974"/>
         <source>Wrapped to last untranslated</source>
         <translation>Umgebrochen zur letzten nicht übersetzten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4696"/>
+        <location filename="../main_window.py" line="5022"/>
         <source>Open a string or plugin file</source>
         <translation>Eine Zeichenketten- oder Plugin-Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4699"/>
+        <location filename="../main_window.py" line="5025"/>
         <source>Save the current file</source>
         <translation>Aktuelle Datei speichern</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4702"/>
+        <location filename="../main_window.py" line="5028"/>
         <source>Save the current file to a new location</source>
         <translation>Aktuelle Datei unter neuem Speicherort speichern</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4707"/>
+        <location filename="../main_window.py" line="5033"/>
         <source>Translate the selected strings using AI</source>
         <translation>Ausgewählte Zeichenketten mit KI übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4711"/>
+        <location filename="../main_window.py" line="5037"/>
         <source>Translate all untranslated strings</source>
         <translation>Alle nicht übersetzten Zeichenketten übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4715"/>
+        <location filename="../main_window.py" line="5041"/>
         <source>Accept the AI translation and advance to next row</source>
         <translation>KI-Übersetzung akzeptieren und zur nächsten Zeile wechseln</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4719"/>
+        <location filename="../main_window.py" line="5045"/>
         <source>Clear the translation and mark as pending</source>
         <translation>Übersetzung löschen und als ausstehend markieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4723"/>
+        <location filename="../main_window.py" line="5049"/>
         <source>Stop the in-progress translation batch</source>
         <translation>Laufenden Übersetzungsstapel stoppen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4727"/>
-        <location filename="../main_window.py" line="6653"/>
+        <location filename="../main_window.py" line="5053"/>
+        <location filename="../main_window.py" line="7093"/>
         <source>Jump to the next untranslated string</source>
         <translation>Zur nächsten nicht übersetzten Zeichenkette springen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4731"/>
+        <location filename="../main_window.py" line="5057"/>
         <source>Jump to the previous untranslated string</source>
         <translation>Zur vorherigen nicht übersetzten Zeichenkette springen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4737"/>
+        <location filename="../main_window.py" line="5063"/>
         <source>Search strings by ID, text, or status</source>
         <translation>Zeichenketten nach ID, Text oder Status suchen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4743"/>
+        <location filename="../main_window.py" line="5069"/>
         <source>Run post-translation quality checks</source>
         <translation>Nach-Übersetzungs-Qualitätsprüfungen ausführen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4747"/>
+        <location filename="../main_window.py" line="5073"/>
         <source>Retranslate all rows with quality errors using feedback hints</source>
         <translation>Alle Zeilen mit Qualitätsfehlern unter Verwendung von Feedback-Hinweisen neu übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4753"/>
+        <location filename="../main_window.py" line="5079"/>
         <source>Open the glossary editor</source>
         <translation>Glossar-Editor öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4755"/>
+        <location filename="../main_window.py" line="5081"/>
         <source>Show or hide the glossary suggestions panel</source>
         <translation>Glossar-Vorschlagsbereich anzeigen oder verbergen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4759"/>
+        <location filename="../main_window.py" line="5085"/>
         <source>Open the searchable command palette</source>
         <translation>Durchsuchbare Befehlspalette öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4762"/>
+        <location filename="../main_window.py" line="5088"/>
         <source>Open the Preferences dialog</source>
         <translation>Dialogfeld „Voreinstellungen“ öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5833"/>
+        <location filename="../main_window.py" line="6175"/>
         <source>
 
 Import anyway?</source>
@@ -3958,7 +4226,7 @@ Import anyway?</source>
 Trotzdem importieren?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5871"/>
+        <location filename="../main_window.py" line="6213"/>
         <source>Settings imported from:
 {path}
 
@@ -3969,84 +4237,84 @@ Restart may be required for some changes to take effect.</source>
 Für einige Änderungen ist möglicherweise ein Neustart erforderlich.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5945"/>
-        <location filename="../main_window.py" line="5955"/>
+        <location filename="../main_window.py" line="6287"/>
+        <location filename="../main_window.py" line="6297"/>
         <source>Discover Terms</source>
         <translation>Begriffe entdecken</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5945"/>
+        <location filename="../main_window.py" line="6287"/>
         <source>No strings loaded.</source>
         <translation>Keine Zeichenketten geladen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5956"/>
+        <location filename="../main_window.py" line="6298"/>
         <source>No new candidate terms found in the loaded strings.</source>
         <translation>Keine neuen Kandidatenbegriffe in den geladenen Zeichenketten gefunden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5982"/>
+        <location filename="../main_window.py" line="6324"/>
         <source>Terms Added</source>
         <translation>Begriffe hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5983"/>
+        <location filename="../main_window.py" line="6325"/>
         <source>{n} term(s) added to the protection list.</source>
         <translation>{n} Begriff(e) zur Schutzliste hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6001"/>
-        <location filename="../main_window.py" line="6010"/>
+        <location filename="../main_window.py" line="6343"/>
+        <location filename="../main_window.py" line="6352"/>
         <source>Consistency Check</source>
         <translation>Konsistenzprüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6012"/>
+        <location filename="../main_window.py" line="6354"/>
         <source>No inconsistencies found — all translated strings are consistent.</source>
         <translation>Keine Inkonsistenzen gefunden – alle übersetzten Zeichenketten sind konsistent.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6034"/>
+        <location filename="../main_window.py" line="6376"/>
         <source>Register Check</source>
         <translation>Register-Prüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6057"/>
+        <location filename="../main_window.py" line="6399"/>
         <source>Gender Agreement Check</source>
         <translation>Genus-Kongruenzprüfung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6079"/>
+        <location filename="../main_window.py" line="6421"/>
         <source>(no sessions yet)</source>
         <translation>(noch keine Sitzungen)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6129"/>
+        <location filename="../main_window.py" line="6471"/>
         <source>Session “{name}” started.</source>
         <translation>Sitzung „{name}“ gestartet.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6140"/>
+        <location filename="../main_window.py" line="6482"/>
         <source>Session saved: {name}</source>
         <translation>Sitzung gespeichert: {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6187"/>
+        <location filename="../main_window.py" line="6529"/>
         <source>Session Not Found</source>
         <translation>Sitzung nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6188"/>
+        <location filename="../main_window.py" line="6530"/>
         <source>Session “{name}” could not be loaded.</source>
         <translation>Sitzung „{name}“ konnte nicht geladen werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6202"/>
+        <location filename="../main_window.py" line="6544"/>
         <source>Open Session File?</source>
         <translation>Sitzungsdatei öffnen?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6204"/>
+        <location filename="../main_window.py" line="6546"/>
         <source>This session is for:
 {path}
 
@@ -4057,12 +4325,12 @@ Open that file now?</source>
 Diese Datei jetzt öffnen?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6214"/>
+        <location filename="../main_window.py" line="6556"/>
         <source>File Not Found</source>
         <translation>Datei nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6216"/>
+        <location filename="../main_window.py" line="6558"/>
         <source>The session file no longer exists:
 {path}
 
@@ -4073,173 +4341,170 @@ You can still use the session context, but the file will need to be opened manua
 Sie können den Sitzungskontext weiterhin verwenden, die Datei muss jedoch manuell geöffnet werden.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6239"/>
+        <location filename="../main_window.py" line="6581"/>
         <source>Session “{name}” resumed — {n} strings translated in session.</source>
         <translation>Sitzung „{name}“ fortgesetzt – {n} Zeichenfolgen in der Sitzung übersetzt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6372"/>
+        <location filename="../main_window.py" line="6714"/>
         <source>Loading files for version comparison…</source>
         <translation>Dateien für Versionsvergleich laden…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6383"/>
+        <location filename="../main_window.py" line="6725"/>
+        <location filename="../main_window.py" line="6806"/>
         <source>Load Error</source>
         <translation>Ladefehler</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6384"/>
+        <location filename="../main_window.py" line="6726"/>
         <source>Failed to load one or more files:
 {error}</source>
         <translation>Laden einer oder mehrerer Dateien fehlgeschlagen:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6431"/>
+        <location filename="../main_window.py" line="6773"/>
         <source>Migrated {n} translation(s) from previous version.</source>
         <translation>{n} Übersetzung(en) aus vorheriger Version migriert.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6451"/>
+        <location filename="../main_window.py" line="6891"/>
         <source>Keyboard Shortcuts</source>
         <translation>Tastenkürzel</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6457"/>
+        <location filename="../main_window.py" line="6897"/>
         <source>Action</source>
         <translation>Aktion</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6457"/>
+        <location filename="../main_window.py" line="6897"/>
         <source>Shortcut</source>
         <translation>Kürzel</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6457"/>
+        <location filename="../main_window.py" line="6897"/>
         <source>Category</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6471"/>
+        <location filename="../main_window.py" line="6911"/>
         <source>—</source>
         <translation>—</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6516"/>
+        <location filename="../main_window.py" line="6956"/>
         <source>Up to Date</source>
         <translation>Aktuell</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6517"/>
+        <location filename="../main_window.py" line="6957"/>
         <source>You are already running the latest version ({ver}).</source>
         <translation>Sie verwenden bereits die neueste Version ({ver}).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6523"/>
+        <location filename="../main_window.py" line="6963"/>
         <source>Update Check Failed</source>
         <translation>Update-Prüfung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6524"/>
+        <location filename="../main_window.py" line="6964"/>
         <source>Could not reach the update server:
 </source>
         <translation>Der Update-Server konnte nicht erreicht werden:
 </translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6556"/>
+        <location filename="../main_window.py" line="6996"/>
         <source>About Bethesda Strings AI Translator</source>
         <translation>Über Bethesda Strings KI-Übersetzer</translation>
     </message>
     <message>
-        <source>&lt;b&gt;Bethesda Strings AI Translator&lt;/b&gt;&lt;br&gt;AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;&lt;br&gt;Supports .strings / .dlstrings / .ilstrings and ESP/ESM files.&lt;br&gt;Translation via local Ollama models.&lt;br&gt;&lt;br&gt;&lt;b&gt;Keyboard Shortcuts:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;What&apos;s This?:&lt;/b&gt; Shift+F1, then click any widget</source>
-        <translation type="vanished">&lt;b&gt;Bethesda Strings KI-Übersetzer&lt;/b&gt;&lt;br&gt;KI-gestütztes Lokalisierungstool für Starfield und andere Bethesda-Spiele.&lt;br&gt;&lt;br&gt;Unterstützt .strings / .dlstrings / .ilstrings und ESP/ESM-Dateien.&lt;br&gt;Übersetzung über lokale Ollama-Modelle.&lt;br&gt;&lt;br&gt;&lt;b&gt;Tastenkürzel:&lt;/b&gt; F1&lt;br&gt;&lt;b&gt;Was ist das?:&lt;/b&gt; Umschalt+F1, dann auf ein Widget klicken</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="6645"/>
+        <location filename="../main_window.py" line="7085"/>
         <source>Welcome to Bethesda Strings AI Translator</source>
         <translation>Willkommen beim Bethesda Strings KI-Übersetzer</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6651"/>
+        <location filename="../main_window.py" line="7091"/>
         <source>Open a .strings, .dlstrings, .ilstrings or ESP/ESM file</source>
         <translation>Eine .strings, .dlstrings, .ilstrings oder ESP/ESM-Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6652"/>
+        <location filename="../main_window.py" line="7092"/>
         <source>Translate all untranslated strings with AI</source>
         <translation>Alle nicht übersetzten Zeichenketten mit KI übersetzen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6654"/>
+        <location filename="../main_window.py" line="7094"/>
         <source>Approve the selected translation</source>
         <translation>Ausgewählte Übersetzung bestätigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6655"/>
+        <location filename="../main_window.py" line="7095"/>
         <source>Open the command palette to find any action</source>
         <translation>Befehlspalette öffnen, um eine Aktion zu finden</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6656"/>
+        <location filename="../main_window.py" line="7096"/>
         <source>Show all keyboard shortcuts</source>
         <translation>Alle Tastenkürzel anzeigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6657"/>
+        <location filename="../main_window.py" line="7097"/>
         <source>Enter What&apos;s This? mode — click any widget for help</source>
         <translation>„Was ist das?“-Modus aktivieren – klicken Sie auf ein Widget für Hilfe</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6693"/>
+        <location filename="../main_window.py" line="7133"/>
         <source>Source language of the text to translate.
 Set to Russian for Starfield&apos;s shipped strings.</source>
         <translation>Quellsprache des zu übersetzenden Texts.
 Auf Russisch für die mitgelieferten Starfield-Zeichenketten setzen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6697"/>
+        <location filename="../main_window.py" line="7137"/>
         <source>Target language for AI translation output.
 Typically Ukrainian for this project.</source>
         <translation>Zielsprache für die KI-Übersetzungsausgabe.
 Typisch Ukrainisch für dieses Projekt.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6701"/>
+        <location filename="../main_window.py" line="7141"/>
         <source>Minimum quality score (1–10). Strings already rated at or above this
 threshold are skipped when running Translate All.</source>
         <translation>Mindestqualitätswert (1–10). Zeichenketten, die bereits bei oder über diesem
 Schwellenwert liegen, werden beim Ausführen von „Alle übersetzen“ übersprungen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6705"/>
+        <location filename="../main_window.py" line="7145"/>
         <source>Currently loaded file path and format.
 Drag-and-drop a file here to open it.</source>
         <translation>Aktuell geladener Dateipfad und Format.
 Ziehen Sie eine Datei hierher, um sie zu öffnen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4761"/>
+        <location filename="../main_window.py" line="5087"/>
         <source>Preferences</source>
         <translation>Voreinstellungen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4767"/>
+        <location filename="../main_window.py" line="5093"/>
         <source>Import translations from a TXT file</source>
         <translation>Übersetzungen aus einer TXT-Datei importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4770"/>
+        <location filename="../main_window.py" line="5096"/>
         <source>Export translations to a TXT file</source>
         <translation>Übersetzungen in eine TXT-Datei exportieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4773"/>
+        <location filename="../main_window.py" line="5099"/>
         <source>Import from xTranslator SST XML</source>
         <translation>Aus xTranslator SST XML importieren</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4776"/>
+        <location filename="../main_window.py" line="5102"/>
         <source>Export to xTranslator SST XML</source>
         <translation>Als xTranslator SST XML exportieren</translation>
     </message>
@@ -4308,30 +4573,6 @@ Ziehen Sie eine Datei hierher, um sie zu öffnen.</translation>
         <location filename="../nexusmods_browser_dialog.py" line="521"/>
         <source>🔍  Search</source>
         <translation>🔍  Suchen</translation>
-    </message>
-    <message>
-        <source>Mod Name</source>
-        <translation type="vanished">Mod-Name</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="vanished">Autor</translation>
-    </message>
-    <message>
-        <source>↓</source>
-        <translation type="vanished">↓</translation>
-    </message>
-    <message>
-        <source>★</source>
-        <translation type="vanished">★</translation>
-    </message>
-    <message>
-        <source>Updated</source>
-        <translation type="vanished">Aktualisiert</translation>
-    </message>
-    <message>
-        <source>(select a mod from the list)</source>
-        <translation type="vanished">(wählen Sie einen Mod aus der Liste)</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="560"/>
@@ -4465,10 +4706,6 @@ in die aktuell geöffnete Datei. Vorhandene Übersetzungen bleiben erhalten.</tr
         <translation>✓  {plugins[0].name} wird im Editor geöffnet…</translation>
     </message>
     <message>
-        <source>{len(results)} result(s)</source>
-        <translation type="vanished">{len(results)} Ergebnis(se)</translation>
-    </message>
-    <message>
         <location filename="../nexusmods_browser_dialog.py" line="703"/>
         <source>Search failed: {msg}</source>
         <translation>Suche fehlgeschlagen: {msg}</translation>
@@ -4494,17 +4731,9 @@ in die aktuell geöffnete Datei. Vorhandene Übersetzungen bleiben erhalten.</tr
         <translation>Wird heruntergeladen… {mb_done:.1f} / {mb_total:.1f} MB</translation>
     </message>
     <message>
-        <source>⚠  Direct download requires NexusMods Premium.  The mod page has been opened in your browser — download manually and use &lt;b&gt;Translation → Load Translation Memory…&lt;/b&gt;.</source>
-        <translation type="vanished">⚠  Der Direktdownload erfordert NexusMods Premium. Die Mod-Seite wurde in Ihrem Browser geöffnet – laden Sie sie manuell herunter und verwenden Sie &lt;b&gt;Übersetzung → Übersetzungsspeicher laden…&lt;/b&gt;.</translation>
-    </message>
-    <message>
         <location filename="../nexusmods_browser_dialog.py" line="948"/>
         <source>Download failed: {msg}</source>
         <translation>Download fehlgeschlagen: {msg}</translation>
-    </message>
-    <message>
-        <source>No .strings files found in the downloaded archive.</source>
-        <translation type="vanished">Im heruntergeladenen Archiv wurden keine .strings-Dateien gefunden.</translation>
     </message>
     <message>
         <location filename="../nexusmods_browser_dialog.py" line="973"/>
@@ -4648,18 +4877,6 @@ Sicherungskopie gespeichert unter:
 {bak}</translation>
     </message>
     <message>
-        <source>This will modify the plugin file in-place:
-{path}
-A backup will be saved as:
-{bak}
-Set the Localized flag and continue?</source>
-        <translation type="vanished">Dies wird die Plugin-Datei direkt ändern:
-{path}
-Eine Sicherung wird gespeichert als:
-{bak}
-Lokalisiert-Flag setzen und fortfahren?</translation>
-    </message>
-    <message>
         <location filename="../plugin_validator_dialog.py" line="310"/>
         <source>Patch Failed</source>
         <translation>Patch fehlgeschlagen</translation>
@@ -4675,14 +4892,6 @@ Lokalisiert-Flag setzen und fortfahren?</translation>
         <location filename="../plugin_validator_dialog.py" line="317"/>
         <source>Flag Set</source>
         <translation>Flag gesetzt</translation>
-    </message>
-    <message>
-        <source>Localized flag set successfully.
-Backup saved to:
-{bak}</source>
-        <translation type="vanished">Lokalisiert-Flag erfolgreich gesetzt.
-Sicherung gespeichert unter:
-{bak}</translation>
     </message>
 </context>
 <context>
@@ -5105,26 +5314,6 @@ Verwenden Sie informelle Sprache. Kontraktionen sind natürlich…</translation>
         <translation>Keine Qualitätsprobleme gefunden – alle Übersetzungen sehen gut aus.</translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation type="vanished">Anzeigen:</translation>
-    </message>
-    <message>
-        <source>All issues</source>
-        <translation type="vanished">Alle Probleme</translation>
-    </message>
-    <message>
-        <source>Errors only</source>
-        <translation type="vanished">Nur Fehler</translation>
-    </message>
-    <message>
-        <source>Warnings only</source>
-        <translation type="vanished">Nur Warnungen</translation>
-    </message>
-    <message>
-        <source>Info only</source>
-        <translation type="vanished">Nur Informationen</translation>
-    </message>
-    <message>
         <location filename="../quality_dialog.py" line="518"/>
         <source>{errors} error(s)  ·  {warnings} warning(s)  ·  {infos} info  across {total} string(s)  ({fixable} auto-fixable  ·  {retrans} need retranslation)</source>
         <translation>{errors} Fehler  ·  {warnings} Warnungen  ·  {infos} Info  bei {total} Zeichenkette(n)  ({fixable} automatisch reparierbar  ·  {retrans} benötigen Neuübersetzung)</translation>
@@ -5184,20 +5373,6 @@ damit Sie sich auf andere Probleme konzentrieren können.</translation>
         <location filename="../quality_dialog.py" line="569"/>
         <source>Export Report…</source>
         <translation>Bericht exportieren…</translation>
-    </message>
-    <message>
-        <source>Export the full quality report.
-Choose format by file extension:
-.json — reimportable report (use after reload)
-.csv  — spreadsheet, one row per issue, full text
-.txt  — human-readable log, full text
-.html — formatted HTML report</source>
-        <translation type="vanished">Vollständigen Qualitätsbericht exportieren.
-Format durch Dateierweiterung wählen:
-.json — reimportierbarer Bericht (nach Neuladen verwenden)
-.csv  — Tabellenkalkulation, eine Zeile pro Problem, vollständiger Text
-.txt  — lesbares Protokoll, vollständiger Text
-.html — formatierter HTML-Bericht</translation>
     </message>
     <message>
         <location filename="../quality_dialog.py" line="571"/>
@@ -5499,14 +5674,6 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
         <translation>Ausgeblendet: {codes}</translation>
     </message>
     <message>
-        <source>{added} string(s) added to retranslation queue.
-Total queued: {total}
-Close this dialog to start retranslation.</source>
-        <translation type="vanished">{added} Zeichenkette(n) zur Neuübersetzungswarteschlange hinzugefügt.
-Insgesamt in Warteschlange: {total}
-Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
-    </message>
-    <message>
         <location filename="../quality_dialog.py" line="1175"/>
         <source>Export Quality Report</source>
         <translation>Qualitätsbericht exportieren</translation>
@@ -5776,82 +5943,72 @@ Schließen Sie diesen Dialog, um die Neuübersetzung zu starten.</translation>
         <translation>Kontextfenstergröße in Tokens (num_ctx). Erhöhen verbraucht mehr VRAM.</translation>
     </message>
     <message>
-        <source>translategemma3-st: Fine-tuned for Starfield Ukrainian localization
-translategemma3-st-2: Higher quality, typically slower</source>
-        <translation type="vanished">translategemma3-st: Feinabgestimmt für Starfield-Ukrainisch-Lokalisierung
-translategemma3-st-2: Höhere Qualität, typischerweise langsamer</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="219"/>
+        <location filename="../settings_dialog.py" line="268"/>
         <source>Connection Test</source>
         <translation>Verbindungstest</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="221"/>
+        <location filename="../settings_dialog.py" line="270"/>
         <source>Test Connection</source>
         <translation>Verbindung testen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="223"/>
+        <location filename="../settings_dialog.py" line="272"/>
         <source>● Not tested</source>
         <translation>● Nicht getestet</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="232"/>
+        <location filename="../settings_dialog.py" line="281"/>
         <source>Game Term Protection</source>
         <translation>Spielterminschutz</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="235"/>
+        <location filename="../settings_dialog.py" line="284"/>
         <source>Enable automatic term protection</source>
         <translation>Automatischen Terminschutz aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="237"/>
+        <location filename="../settings_dialog.py" line="286"/>
         <source>Protect game-specific terms, IDs, and names from translation</source>
         <translation>Spielspezifische Begriffe, IDs und Namen vor Übersetzung schützen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="240"/>
+        <location filename="../settings_dialog.py" line="289"/>
         <source>Protect English text from translation</source>
         <translation>Englischen Text vor Übersetzung schützen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="266"/>
+        <location filename="../settings_dialog.py" line="315"/>
         <source>Custom terms file:</source>
         <translation>Benutzerdefinierte Begriffsdatei:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="268"/>
+        <location filename="../settings_dialog.py" line="317"/>
         <source>Path to custom protected terms file</source>
         <translation>Pfad zur benutzerdefinierten Datei geschützter Begriffe</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="273"/>
+        <location filename="../settings_dialog.py" line="322"/>
         <source>Browse...</source>
         <translation>Durchsuchen...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="280"/>
+        <location filename="../settings_dialog.py" line="329"/>
         <source>View/Edit Protected Terms</source>
         <translation>Geschützte Begriffe anzeigen/bearbeiten</translation>
     </message>
     <message>
-        <source>ℹ️ Default protection includes: Location IDs, Form IDs, Faction names, Character names, Resources, Skills, etc.</source>
-        <translation type="vanished">ℹ️ Standardschutz umfasst: Standort-IDs, Form-IDs, Fraktionsnamen, Charakternamen, Ressourcen, Fähigkeiten usw.</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="295"/>
+        <location filename="../settings_dialog.py" line="344"/>
         <source>Appearance</source>
         <translation>Erscheinungsbild</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="306"/>
+        <location filename="../settings_dialog.py" line="355"/>
         <source>Theme:</source>
         <translation>Design:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="305"/>
+        <location filename="../settings_dialog.py" line="354"/>
         <source>Choose a built-in or custom theme</source>
         <translation>Eingebautes oder benutzerdefiniertes Design wählen</translation>
     </message>
@@ -5864,7 +6021,7 @@ Klicken Sie auf „Aktualisieren“, um alle installierten Modelle vom Server zu
     </message>
     <message>
         <location filename="../settings_dialog.py" line="185"/>
-        <location filename="../settings_dialog.py" line="1087"/>
+        <location filename="../settings_dialog.py" line="1214"/>
         <source>Refresh</source>
         <translation>Aktualisieren</translation>
     </message>
@@ -5874,12 +6031,58 @@ Klicken Sie auf „Aktualisieren“, um alle installierten Modelle vom Server zu
         <translation>Ruft installierte Modelle vom Ollama-Server ab</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="250"/>
+        <location filename="../settings_dialog.py" line="219"/>
+        <source>e.g. sv restart ollama  (empty = soft stop only)</source>
+        <translation>z. B. sv restart ollama  (leer = nur sanfter Stopp)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="223"/>
+        <source>Command run when you press Stop, to forcibly restart/kill the Ollama server and free the GPU immediately.
+Closing sockets alone does not interrupt a wedged GPU mid-generation.
+Linux: sv restart ollama · systemctl restart ollama · pkill -x ollama
+Windows: taskkill /F /T /IM ollama.exe  (no admin if Ollama runs as you)
+If it needs root, tick &apos;Requires root&apos; below for a password dialog.</source>
+        <translation>Befehl, der beim Drücken von „Stopp“ ausgeführt wird, um den Ollama-Server zwangsweise neu zu starten/zu beenden und die GPU sofort freizugeben.
+Das bloße Schließen der Sockets unterbricht eine festsitzende GPU mitten in der Generierung nicht.
+Linux: sv restart ollama · systemctl restart ollama · pkill -x ollama
+Windows: taskkill /F /T /IM ollama.exe  (kein Admin nötig, wenn Ollama unter Ihrem Konto läuft)
+Wenn Root erforderlich ist, aktivieren Sie unten „Root erforderlich“ für einen Passwortdialog.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="237"/>
+        <location filename="../settings_dialog.py" line="1170"/>
+        <source>Auto-detect</source>
+        <translation>Automatisch erkennen</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="239"/>
+        <source>Guess the force-stop command for this operating system</source>
+        <translation>Den Zwangsstopp-Befehl für dieses Betriebssystem erraten</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="243"/>
+        <source>Force-stop command:</source>
+        <translation>Zwangsstopp-Befehl:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="246"/>
+        <source>Requires root — show a password dialog (Linux)</source>
+        <translation>Root erforderlich — Passwortdialog anzeigen (Linux)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="251"/>
+        <source>Run the command as root.  When sudo is available you get the app&apos;s own themed password dialog (the password is fed to &apos;sudo -S&apos;); otherwise it falls back to graphical sudo (sudo -A askpass) or pkexec.  No NOPASSWD rule or terminal needed.
+Leave off for a non-root command such as &apos;pkill -x ollama&apos; or, on Windows, &apos;taskkill&apos; (ignored there).</source>
+        <translation>Den Befehl als Root ausführen.  Wenn sudo verfügbar ist, erscheint der eigene gestaltete Passwortdialog der App (das Passwort wird an „sudo -S“ übergeben); andernfalls wird auf grafisches sudo (sudo -A askpass) oder pkexec zurückgegriffen.  Keine NOPASSWD-Regel oder Terminal nötig.
+Für einen Befehl ohne Root wie „pkill -x ollama“ oder unter Windows „taskkill“ deaktiviert lassen (dort ignoriert).</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="299"/>
         <source>Protect proper nouns and lore terms (faction/company/ship/character names, resources, UI terms, loaded term file)</source>
         <translation>Eigennamen und Lore-Begriffe schützen (Fraktions-, Firmen-, Schiffs-, Charakternamen, Ressourcen, UI-Begriffe, geladene Begriffsdatei)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="256"/>
+        <location filename="../settings_dialog.py" line="305"/>
         <source>When enabled, faction names (Freestar Collective, UC…), company names, ship names, character names,
 creature/resource names, UI abbreviations (HUD, GPS…), and terms loaded from the custom terms file
 are replaced with placeholder tokens so the AI cannot modify them.
@@ -5894,47 +6097,47 @@ Wenn deaktiviert (Standard), kann die KI diese Namen frei übersetzen – nützl
 Fraktions-/Ortsnamen gewünscht sind (z. B. «Об&apos;єднані колонії» statt «United Colonies»).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="285"/>
+        <location filename="../settings_dialog.py" line="334"/>
         <source>ℹ️ Format tags, game IDs, XML/alias tokens, and user-added custom terms are always protected regardless of the setting above.</source>
         <translation>ℹ️ Formatierungs-Tags, Spiel-IDs, XML-/Alias-Token und benutzerdefinierte Begriffe sind unabhängig von der obigen Einstellung immer geschützt.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="338"/>
+        <location filename="../settings_dialog.py" line="387"/>
         <source>Interface Language:</source>
         <translation>Oberflächensprache:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="344"/>
+        <location filename="../settings_dialog.py" line="393"/>
         <source>OS default</source>
         <translation>BS-Standard</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="345"/>
+        <location filename="../settings_dialog.py" line="394"/>
         <source> pt</source>
         <translation> pt</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="348"/>
+        <location filename="../settings_dialog.py" line="397"/>
         <source>Set 0 to follow the OS font size. Changes apply after restart.</source>
         <translation>Auf 0 setzen, um die BS-Schriftgröße zu übernehmen. Änderungen gelten nach Neustart.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="350"/>
+        <location filename="../settings_dialog.py" line="399"/>
         <source>Interface font size</source>
         <translation>Schriftgröße der Oberfläche</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="351"/>
+        <location filename="../settings_dialog.py" line="400"/>
         <source>Font Size:</source>
         <translation>Schriftgröße:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="354"/>
+        <location filename="../settings_dialog.py" line="403"/>
         <source>Color-blind friendly status colors</source>
         <translation>Farbenblindenfreundliche Statusfarben</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="358"/>
+        <location filename="../settings_dialog.py" line="407"/>
         <source>Replace green/red status indicators with blue/orange.
 Improves visibility for deuteranopia (red-green color blindness).
 Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
@@ -5943,72 +6146,72 @@ Verbessert die Sichtbarkeit bei Deuteranopie (Rot-Grün-Schwäche).
 Statussymbole (✓ ⚠ ✗) vermitteln den Zustand immer unabhängig von der Farbe.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="363"/>
+        <location filename="../settings_dialog.py" line="412"/>
         <source>Color-blind mode</source>
         <translation>Farbenblind-Modus</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="368"/>
+        <location filename="../settings_dialog.py" line="417"/>
         <source>Manage Themes...</source>
         <translation>Designs verwalten...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="378"/>
+        <location filename="../settings_dialog.py" line="427"/>
         <source>Background / Wallpaper</source>
         <translation>Hintergrund / Hintergrundbild</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="381"/>
+        <location filename="../settings_dialog.py" line="430"/>
         <source>Enable custom background</source>
         <translation>Benutzerdefinierten Hintergrund aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="388"/>
+        <location filename="../settings_dialog.py" line="437"/>
         <source>Path to image or video file…</source>
         <translation>Pfad zur Bild- oder Videodatei…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="393"/>
+        <location filename="../settings_dialog.py" line="442"/>
         <source>File:</source>
         <translation>Datei:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="398"/>
+        <location filename="../settings_dialog.py" line="447"/>
         <source>Cover  (fill, crop edges)</source>
         <translation>Füllen  (füllen, Ränder beschneiden)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="399"/>
+        <location filename="../settings_dialog.py" line="448"/>
         <source>Contain  (fit inside, letterbox)</source>
         <translation>Einpassen  (innen einpassen, Letterbox)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="400"/>
+        <location filename="../settings_dialog.py" line="449"/>
         <source>Stretch  (distort to fill)</source>
         <translation>Strecken  (zum Füllen verzerren)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="401"/>
+        <location filename="../settings_dialog.py" line="450"/>
         <source>Tile  (repeat)</source>
         <translation>Kacheln  (wiederholen)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="402"/>
+        <location filename="../settings_dialog.py" line="451"/>
         <source>Center  (original size, centered)</source>
         <translation>Zentriert  (Originalgröße, zentriert)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="407"/>
+        <location filename="../settings_dialog.py" line="456"/>
         <source>Fit mode:</source>
         <translation>Anpassungsmodus:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="423"/>
+        <location filename="../settings_dialog.py" line="472"/>
         <source>Opacity:</source>
         <translation>Deckkraft:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="427"/>
+        <location filename="../settings_dialog.py" line="476"/>
         <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
 Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
 (Video requires PySide6-Multimedia and GStreamer plugins)</source>
@@ -6017,84 +6220,84 @@ Video: MP4, AVI, MKV, WEBM, MOV, WMV und mehr
 (Video erfordert PySide6-Multimedia und GStreamer-Plugins)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="440"/>
+        <location filename="../settings_dialog.py" line="489"/>
         <source>Translation Preferences</source>
         <translation>Übersetzungsvoreinstellungen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="447"/>
+        <location filename="../settings_dialog.py" line="496"/>
         <source>Default Source:</source>
         <translation>Standardquelle:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="453"/>
+        <location filename="../settings_dialog.py" line="502"/>
         <source>Default Target:</source>
         <translation>Standardziel:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="459"/>
+        <location filename="../settings_dialog.py" line="508"/>
         <source>Default Quality:</source>
         <translation>Standardqualität:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="465"/>
+        <location filename="../settings_dialog.py" line="514"/>
         <source>Long String Threshold:</source>
         <translation>Schwelle für lange Zeichenketten:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="504"/>
+        <location filename="../settings_dialog.py" line="553"/>
         <source>Books</source>
         <translation>Bücher</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="505"/>
+        <location filename="../settings_dialog.py" line="554"/>
         <source>Notes</source>
         <translation>Notizen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="506"/>
+        <location filename="../settings_dialog.py" line="555"/>
         <source>Terminals</source>
         <translation>Terminals</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="507"/>
+        <location filename="../settings_dialog.py" line="556"/>
         <source>Dialogue</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="508"/>
+        <location filename="../settings_dialog.py" line="557"/>
         <source>Quests</source>
         <translation>Quests</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="509"/>
+        <location filename="../settings_dialog.py" line="558"/>
         <source>UI</source>
         <translation>UI</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="510"/>
+        <location filename="../settings_dialog.py" line="559"/>
         <source>System</source>
         <translation>System</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="519"/>
+        <location filename="../settings_dialog.py" line="568"/>
         <source>String types to skip during AI batch translation.
 Skipped strings are left untranslated (marked as pending).</source>
         <translation>Zeichenkettentypen, die bei der KI-Stapelübersetzung übersprungen werden.
 Übersprungene Zeichenketten bleiben unübersetzt (als ausstehend markiert).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="522"/>
+        <location filename="../settings_dialog.py" line="571"/>
         <source>Skip Types:</source>
         <translation>Zu überspringende Typen:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="532"/>
+        <location filename="../settings_dialog.py" line="581"/>
         <source>Translation Memory</source>
         <translation>Übersetzungsspeicher</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="555"/>
+        <location filename="../settings_dialog.py" line="604"/>
         <source>Minimum similarity required for a fuzzy translation memory match.
 Higher = stricter (fewer but more accurate matches).
 100% = exact matches only.  Default: ~46%.</source>
@@ -6103,27 +6306,27 @@ Höher = strenger (weniger, aber genauere Treffer).
 100 % = nur exakte Treffer.  Standard: ~46 %.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="563"/>
+        <location filename="../settings_dialog.py" line="612"/>
         <source>Min. fuzzy similarity:</source>
         <translation>Min. unscharfe Ähnlichkeit:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="598"/>
+        <location filename="../settings_dialog.py" line="647"/>
         <source>Storage</source>
         <translation>Speicher</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="605"/>
+        <location filename="../settings_dialog.py" line="654"/>
         <source>Active config dir:</source>
         <translation>Aktives Konfigurationsverzeichnis:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="609"/>
+        <location filename="../settings_dialog.py" line="658"/>
         <source>(default: ~/.config/BethesdaModTools)</source>
         <translation>(Standard: ~/.config/BethesdaModTools)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="611"/>
+        <location filename="../settings_dialog.py" line="660"/>
         <source>Override the directory where config.json and other app data are stored.
 Leave blank to use the default location.
 Takes effect after restarting the application.</source>
@@ -6132,49 +6335,60 @@ Leer lassen, um den Standardspeicherort zu verwenden.
 Wird nach einem Neustart der Anwendung wirksam.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="826"/>
+        <location filename="../settings_dialog.py" line="742"/>
+        <source>Silently checks the GitHub releases page shortly after launch.
+Shows a dialog only when a new version is found, and lists recent
+release notes in the &apos;What&apos;s New&apos; panel on the welcome screen.
+No personal data is transmitted — only a GET request to the GitHub API.</source>
+        <translation>Prüft kurz nach dem Start im Hintergrund die GitHub-Releases-Seite.
+Zeigt nur dann einen Dialog, wenn eine neue Version gefunden wird, und listet aktuelle
+Versionshinweise im Panel „Neuigkeiten“ auf dem Begrüßungsbildschirm auf.
+Es werden keine persönlichen Daten übertragen — nur eine GET-Anfrage an die GitHub-API.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="876"/>
         <source>NexusMods</source>
         <translation>NexusMods</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="831"/>
+        <location filename="../settings_dialog.py" line="881"/>
         <source>Paste your NexusMods API key here</source>
         <translation>Fügen Sie hier Ihren NexusMods-API-Schlüssel ein</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="834"/>
+        <location filename="../settings_dialog.py" line="884"/>
         <source>Personal API key from nexusmods.com → Settings → API Keys.
 Required for uploading mod files and browsing download links.</source>
         <translation>Persönlicher API-Schlüssel von nexusmods.com → Einstellungen → API Keys.
 Erforderlich zum Hochladen von Mod-Dateien und zum Durchsuchen von Download-Links.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="838"/>
+        <location filename="../settings_dialog.py" line="888"/>
         <source>Show</source>
         <translation>Anzeigen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="847"/>
+        <location filename="../settings_dialog.py" line="897"/>
         <source>API Key:</source>
         <translation>API-Schlüssel:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="852"/>
+        <location filename="../settings_dialog.py" line="902"/>
         <source>Optional: NexusMods file group ID to attach uploaded files to an existing group.</source>
         <translation>Optional: NexusMods-Dateigruppen-ID, um hochgeladene Dateien an eine bestehende Gruppe anzuhängen.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="854"/>
+        <location filename="../settings_dialog.py" line="904"/>
         <source>File Group ID:</source>
         <translation>Dateigruppen-ID:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="858"/>
+        <location filename="../settings_dialog.py" line="908"/>
         <source>(auto-detect from Firefox / Chromium)</source>
         <translation>(automatisch aus Firefox / Chromium erkennen)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="860"/>
+        <location filename="../settings_dialog.py" line="910"/>
         <source>Optional: path to a Cookie-Editor JSON export for free-user NexusMods downloads.
 Export steps: install the &apos;Cookie-Editor&apos; browser extension → visit nexusmods.com
 → open Cookie-Editor → Export → JSON → save the file → select it here.
@@ -6185,51 +6399,51 @@ Export-Schritte: Browser-Erweiterung „Cookie-Editor“ installieren → nexusm
 Leer lassen, um Cookies automatisch aus Firefox oder Chromium zu erkennen.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="870"/>
+        <location filename="../settings_dialog.py" line="920"/>
         <source>Cookies JSON:</source>
         <translation>Cookies-JSON:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="390"/>
-        <location filename="../settings_dialog.py" line="617"/>
-        <location filename="../settings_dialog.py" line="657"/>
-        <location filename="../settings_dialog.py" line="866"/>
+        <location filename="../settings_dialog.py" line="439"/>
+        <location filename="../settings_dialog.py" line="666"/>
+        <location filename="../settings_dialog.py" line="706"/>
+        <location filename="../settings_dialog.py" line="916"/>
         <source>Browse…</source>
         <translation>Durchsuchen…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="619"/>
-        <location filename="../settings_dialog.py" line="659"/>
+        <location filename="../settings_dialog.py" line="668"/>
+        <location filename="../settings_dialog.py" line="708"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="620"/>
+        <location filename="../settings_dialog.py" line="669"/>
         <source>Clear override and use the default config directory</source>
         <translation>Überschreibung löschen und Standard-Konfigurationsverzeichnis verwenden</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="627"/>
+        <location filename="../settings_dialog.py" line="676"/>
         <source>Config directory:</source>
         <translation>Konfigurationsverzeichnis:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="630"/>
+        <location filename="../settings_dialog.py" line="679"/>
         <source>⚠  Restart the application to use the new config directory.</source>
         <translation>⚠  Starten Sie die Anwendung neu, um das neue Konfigurationsverzeichnis zu verwenden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="645"/>
+        <location filename="../settings_dialog.py" line="694"/>
         <source>Active cache dir:</source>
         <translation>Aktives Cache-Verzeichnis:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="649"/>
+        <location filename="../settings_dialog.py" line="698"/>
         <source>(default: SSD if mounted, else config dir)</source>
         <translation>(Standard: SSD, falls eingebunden, sonst Konfigurationsverzeichnis)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="651"/>
+        <location filename="../settings_dialog.py" line="700"/>
         <source>Override the directory for the translation cache and other large data files.
 Leave blank to auto-select: /mnt/ssd/… when the SSD is mounted, otherwise the config dir.
 Takes effect after restarting the application.</source>
@@ -6238,56 +6452,47 @@ Leer lassen für automatische Auswahl: /mnt/ssd/…, wenn die SSD eingebunden is
 Wird nach einem Neustart der Anwendung wirksam.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="660"/>
+        <location filename="../settings_dialog.py" line="709"/>
         <source>Clear override and use the default cache directory</source>
         <translation>Überschreibung löschen und Standard-Cache-Verzeichnis verwenden</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="667"/>
+        <location filename="../settings_dialog.py" line="716"/>
         <source>Cache directory:</source>
         <translation>Cache-Verzeichnis:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="670"/>
+        <location filename="../settings_dialog.py" line="719"/>
         <source>⚠  Restart the application to use the new cache directory.</source>
         <translation>⚠  Starten Sie die Anwendung neu, um das neue Cache-Verzeichnis zu verwenden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="684"/>
+        <location filename="../settings_dialog.py" line="733"/>
         <source>Updates</source>
         <translation>Updates</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="688"/>
+        <location filename="../settings_dialog.py" line="737"/>
         <source>Check for updates automatically on startup</source>
         <translation>Beim Start automatisch nach Updates suchen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="693"/>
-        <source>Silently checks the GitHub releases page 8 seconds after launch.
-Shows a dialog only when a new version is found.
-No personal data is transmitted — only a GET request to the GitHub API.</source>
-        <translation>Prüft 8 Sekunden nach dem Start im Hintergrund die GitHub-Releases-Seite.
-Zeigt nur dann einen Dialog an, wenn eine neue Version gefunden wird.
-Es werden keine personenbezogenen Daten übertragen – nur eine GET-Anfrage an die GitHub-API.</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="700"/>
+        <location filename="../settings_dialog.py" line="750"/>
         <source>Check Now…</source>
         <translation>Jetzt prüfen…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="715"/>
+        <location filename="../settings_dialog.py" line="765"/>
         <source>Security</source>
         <translation>Sicherheit</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="718"/>
+        <location filename="../settings_dialog.py" line="768"/>
         <source>Encrypt translation cache</source>
         <translation>Übersetzungszwischenspeicher verschlüsseln</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="722"/>
+        <location filename="../settings_dialog.py" line="772"/>
         <source>Protect the on-disk translation cache with AES-256-GCM encryption.
 The key is stored in the system keyring or derived from the machine ID.
 Takes effect on the next cache save.</source>
@@ -6296,12 +6501,12 @@ Der Schlüssel wird im Systemschlüsselring gespeichert oder aus der Maschinen-I
 Wirkt beim nächsten Speichern des Zwischenspeichers.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="729"/>
+        <location filename="../settings_dialog.py" line="779"/>
         <source>Enable security audit log</source>
         <translation>Sicherheitsprüfprotokoll aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="733"/>
+        <location filename="../settings_dialog.py" line="783"/>
         <source>Write a JSON-lines audit log of security-relevant events
 (file open/save, translation batches, settings changes).
 No translated text is ever recorded.</source>
@@ -6310,27 +6515,27 @@ No translated text is ever recorded.</source>
 Übersetzter Text wird niemals protokolliert.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="745"/>
+        <location filename="../settings_dialog.py" line="795"/>
         <source>unavailable</source>
         <translation>nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="746"/>
+        <location filename="../settings_dialog.py" line="796"/>
         <source>Key storage: {backend}</source>
         <translation>Schlüsselspeicher: {backend}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="754"/>
+        <location filename="../settings_dialog.py" line="804"/>
         <source>AI Quality Check</source>
         <translation>KI-Qualitätsprüfung</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="757"/>
+        <location filename="../settings_dialog.py" line="807"/>
         <source>Enable AI quality check after rule-based QC</source>
         <translation>KI-Qualitätsprüfung nach regelbasierter QS aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="761"/>
+        <location filename="../settings_dialog.py" line="811"/>
         <source>Run the fine-tuned qcgemma4-st Ollama model on each translated string
 after the rule-based quality check. Slower but catches issues the rules miss.
 Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</source>
@@ -6340,22 +6545,22 @@ Probleme, die die Regeln übersehen.
 Das Modell muss registriert sein: ollama create qcgemma4-st -f Modelfile.qc</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="769"/>
+        <location filename="../settings_dialog.py" line="819"/>
         <source>Ollama model name for AI quality checks</source>
         <translation>Ollama-Modellname für KI-Qualitätsprüfungen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="770"/>
+        <location filename="../settings_dialog.py" line="820"/>
         <source>AI QC model:</source>
         <translation>KI-QS-Modell:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="773"/>
+        <location filename="../settings_dialog.py" line="823"/>
         <source>Automatic self-review after translation</source>
         <translation>Automatische Selbstüberprüfung nach der Übersetzung</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="780"/>
+        <location filename="../settings_dialog.py" line="830"/>
         <source>After each translation batch, automatically run the quality check,
 mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
@@ -6368,17 +6573,17 @@ Kosmetische/visuelle Probleme (UI-Überlauf, hinzugefügte Anführungszeichen,
 Leerzeichen) bleiben unverändert. Endet mit einer einzigen Zusammenfassung.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="793"/>
+        <location filename="../settings_dialog.py" line="843"/>
         <source>Lore RAG (Context Retrieval)</source>
         <translation>Lore-RAG (Kontextabruf)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="797"/>
+        <location filename="../settings_dialog.py" line="847"/>
         <source>Inject lore context into translation prompts</source>
         <translation>Lore-Kontext in Übersetzungs-Prompts einfügen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="802"/>
+        <location filename="../settings_dialog.py" line="852"/>
         <source>When enabled, relevant lore articles (factions, places, characters) are
 retrieved from the local lore database and prepended to each translation
 prompt so the AI uses accurate Starfield terminology.
@@ -6389,175 +6594,137 @@ vorangestellt, damit die KI korrekte Starfield-Terminologie verwendet.
 Verwenden Sie Übersetzung → Lore-RAG-Kontext…, um Artikel von UESP herunterzuladen.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="817"/>
+        <location filename="../settings_dialog.py" line="867"/>
         <source>Maximum characters of lore context injected per prompt.
 Higher values give more context but consume more tokens.</source>
         <translation>Maximale Anzahl an Lore-Kontextzeichen pro Prompt.
 Höhere Werte liefern mehr Kontext, verbrauchen aber mehr Token.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="820"/>
+        <location filename="../settings_dialog.py" line="870"/>
         <source>Max context chars:</source>
         <translation>Max. Kontextzeichen:</translation>
     </message>
     <message>
-        <source>Weblate Community Translation Sync</source>
-        <translation type="vanished">Weblate-Community-Übersetzungssynchronisierung</translation>
-    </message>
-    <message>
-        <source>Base URL of your Weblate instance</source>
-        <translation type="vanished">Basis-URL Ihrer Weblate-Instanz</translation>
-    </message>
-    <message>
-        <source>Weblate URL:</source>
-        <translation type="vanished">Weblate-URL:</translation>
-    </message>
-    <message>
-        <source>Paste your API token here</source>
-        <translation type="vanished">Fügen Sie hier Ihr API-Token ein</translation>
-    </message>
-    <message>
-        <source>API token from your Weblate profile (Settings → API access).</source>
-        <translation type="vanished">API-Token aus Ihrem Weblate-Profil (Einstellungen → API-Zugriff).</translation>
-    </message>
-    <message>
-        <source>API Token:</source>
-        <translation type="vanished">API-Token:</translation>
-    </message>
-    <message>
-        <source>Weblate project slug (from the project URL)</source>
-        <translation type="vanished">Weblate-Projekt-Slug (aus der Projekt-URL)</translation>
-    </message>
-    <message>
-        <source>Project slug:</source>
-        <translation type="vanished">Projekt-Slug:</translation>
-    </message>
-    <message>
-        <source>Weblate component slug (from the component URL)</source>
-        <translation type="vanished">Weblate-Komponenten-Slug (aus der Komponenten-URL)</translation>
-    </message>
-    <message>
-        <source>Component slug:</source>
-        <translation type="vanished">Komponenten-Slug:</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="876"/>
+        <location filename="../settings_dialog.py" line="926"/>
         <source>Audio / TTS Preview</source>
         <translation>Audio-/TTS-Vorschau</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="879"/>
+        <location filename="../settings_dialog.py" line="929"/>
         <source>Enable Audio Preview panel</source>
         <translation>Audiovorschau-Panel aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="884"/>
+        <location filename="../settings_dialog.py" line="934"/>
         <source>Show the Audio Preview dock so you can play the original game audio
 and synthesize a TTS read-out of your translation for timing comparison.</source>
         <translation>Zeigt das Audiovorschau-Dock an, in dem Sie das Original-Spielaudio abspielen
 und eine TTS-Vorlesung Ihrer Übersetzung zum Zeitvergleich erzeugen können.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="891"/>
+        <location filename="../settings_dialog.py" line="941"/>
         <source>eSpeak-NG (built-in)</source>
         <translation>eSpeak-NG (integriert)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="892"/>
+        <location filename="../settings_dialog.py" line="942"/>
         <source>Piper (neural, external binary)</source>
         <translation>Piper (neuronal, externes Programm)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="893"/>
+        <location filename="../settings_dialog.py" line="943"/>
         <source>None (duration estimate only)</source>
         <translation>Keine (nur Dauerschätzung)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="900"/>
+        <location filename="../settings_dialog.py" line="950"/>
         <source>TTS engine:</source>
         <translation>TTS-Engine:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="905"/>
+        <location filename="../settings_dialog.py" line="955"/>
         <source>eSpeak-NG voice code, e.g. uk, ru, de, fr, en-us.
 Run `espeak-ng --voices` for the full list.</source>
         <translation>eSpeak-NG-Stimmencode, z. B. uk, ru, de, fr, en-us.
 Führen Sie `espeak-ng --voices` aus, um die vollständige Liste anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="908"/>
+        <location filename="../settings_dialog.py" line="958"/>
         <source>eSpeak voice:</source>
         <translation>eSpeak-Stimme:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="914"/>
+        <location filename="../settings_dialog.py" line="964"/>
         <source>eSpeak-NG words-per-minute rate (default 130 — slower than natural
 speech to better match game dialogue cadence).</source>
         <translation>eSpeak-NG-Geschwindigkeit in Wörtern pro Minute (Standard 130 – langsamer
 als natürliche Sprache, um besser zum Tempo der Spieldialoge zu passen).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="917"/>
+        <location filename="../settings_dialog.py" line="967"/>
         <source>eSpeak speed (WPM):</source>
         <translation>eSpeak-Geschwindigkeit (WPM):</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="922"/>
+        <location filename="../settings_dialog.py" line="972"/>
         <source>Path to the Piper binary, or just &apos;piper&apos; if on PATH.</source>
         <translation>Pfad zur Piper-Programmdatei oder einfach &apos;piper&apos;, wenn im PATH.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="924"/>
-        <location filename="../settings_dialog.py" line="935"/>
-        <location filename="../settings_dialog.py" line="949"/>
-        <location filename="../settings_dialog.py" line="1058"/>
+        <location filename="../settings_dialog.py" line="974"/>
+        <location filename="../settings_dialog.py" line="985"/>
+        <location filename="../settings_dialog.py" line="999"/>
+        <location filename="../settings_dialog.py" line="1032"/>
+        <location filename="../settings_dialog.py" line="1048"/>
+        <location filename="../settings_dialog.py" line="1185"/>
         <source>…</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="928"/>
+        <location filename="../settings_dialog.py" line="978"/>
         <source>Piper binary:</source>
         <translation>Piper-Programmdatei:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="932"/>
+        <location filename="../settings_dialog.py" line="982"/>
         <source>path/to/model.onnx</source>
         <translation>pfad/zu/modell.onnx</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="933"/>
+        <location filename="../settings_dialog.py" line="983"/>
         <source>Path to the Piper .onnx voice model file.</source>
         <translation>Pfad zur Piper-.onnx-Stimmmodelldatei.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="939"/>
+        <location filename="../settings_dialog.py" line="989"/>
         <source>Piper model:</source>
         <translation>Piper-Modell:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="943"/>
+        <location filename="../settings_dialog.py" line="993"/>
         <source>Root dir of extracted game audio files</source>
         <translation>Stammverzeichnis der extrahierten Spielaudiodateien</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="945"/>
+        <location filename="../settings_dialog.py" line="995"/>
         <source>Directory containing extracted Starfield/Fallout/Skyrim audio files.
 The panel will try to auto-locate files by form ID from the filename.</source>
         <translation>Verzeichnis mit extrahierten Starfield-/Fallout-/Skyrim-Audiodateien.
 Das Panel versucht, Dateien anhand der Form-ID aus dem Dateinamen automatisch zu finden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="953"/>
+        <location filename="../settings_dialog.py" line="1003"/>
         <source>Audio directory:</source>
         <translation>Audioverzeichnis:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="956"/>
+        <location filename="../settings_dialog.py" line="1006"/>
         <source>Auto-synthesize TTS on string selection</source>
         <translation>TTS bei Auswahl einer Zeichenkette automatisch synthetisieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="962"/>
+        <location filename="../settings_dialog.py" line="1012"/>
         <source>Automatically synthesize the TTS read-out whenever you select
 a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
         <translation>Erzeugt die TTS-Vorlesung automatisch, sobald Sie eine neue
@@ -6565,250 +6732,319 @@ Zeichenkette auswählen. Kann die Navigation verlangsamen, wenn
 die Synthese länger als 1 s dauert.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="990"/>
+        <location filename="../settings_dialog.py" line="1018"/>
+        <source>Native game voice playback (Starfield)</source>
+        <translation>Native Spielstimmen-Wiedergabe (Starfield)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1024"/>
+        <source>Game Data dir with *Voices*.ba2 archives</source>
+        <translation>Spiel-Data-Ordner mit *Voices*.ba2-Archiven</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1026"/>
+        <source>Starfield &apos;Data&apos; directory containing the voice archives
+(e.g. &apos;Starfield - Voices01.ba2&apos;).  In ESP/ESM mode the dialogue
+FormID is resolved automatically; in .strings mode enter a FormID
+manually in the Audio Preview panel.</source>
+        <translation>Starfield-Verzeichnis „Data“ mit den Spracharchiven
+(z. B. „Starfield - Voices01.ba2“).  Im ESP/ESM-Modus wird die Dialog-
+FormID automatisch aufgelöst; im .strings-Modus geben Sie eine FormID
+im Audio-Vorschau-Panel manuell ein.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1036"/>
+        <source>Voice Data directory:</source>
+        <translation>Sprachdaten-Verzeichnis:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1044"/>
+        <source>Path to vgmstream-cli, or just &apos;vgmstream-cli&apos; if on PATH.
+Required to decode Wwise .wem voice clips (ffmpeg cannot).</source>
+        <translation>Pfad zu vgmstream-cli oder einfach „vgmstream-cli“, wenn es im PATH liegt.
+Erforderlich zum Dekodieren von Wwise-.wem-Sprachclips (ffmpeg kann das nicht).</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1052"/>
+        <source>vgmstream binary:</source>
+        <translation>vgmstream-Programm:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1056"/>
+        <source>English (Voices01/02)</source>
+        <translation>Englisch (Voices01/02)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1057"/>
+        <source>German (_de)</source>
+        <translation>Deutsch (_de)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1058"/>
+        <source>Spanish (_es)</source>
+        <translation>Spanisch (_es)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1059"/>
+        <source>French (_fr)</source>
+        <translation>Französisch (_fr)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1060"/>
+        <source>Japanese (_ja)</source>
+        <translation>Japanisch (_ja)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1068"/>
+        <source>Which voice language pack to index for playback.</source>
+        <translation>Welches Sprachpaket für die Wiedergabe indiziert werden soll.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1070"/>
+        <source>Voice language:</source>
+        <translation>Sprachausgabe-Sprache:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1095"/>
         <source>Next tip →</source>
         <translation>Nächster Tipp →</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1021"/>
+        <location filename="../settings_dialog.py" line="1126"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
         <translation>💡 Tipp: Verwendet translategemma3-st (benutzerdefiniert angepasst), optimiert für die ukrainische Starfield-Lokalisierung. Verwenden Sie englische Anker: &apos;To Ukrainian:&apos;, &apos;To English:&apos; usw.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1026"/>
+        <location filename="../settings_dialog.py" line="1131"/>
         <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
         <translation>💡 Tipp: Verwendet Gemma 4 Opus 48B (Starfield-optimiert). Höchste Qualität, langsamer. Verwenden Sie englische Anker: &apos;To Ukrainian:&apos;, &apos;To English:&apos; usw.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1031"/>
+        <location filename="../settings_dialog.py" line="1136"/>
         <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
         <translation>💡 Tipp: Claude-Backend ausgewählt. Konfigurieren Sie Ihren API-Schlüssel im Claude-Abschnitt unten.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1035"/>
+        <location filename="../settings_dialog.py" line="1140"/>
         <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
         <translation>💡 Tipp: Benutzerdefiniertes Modell ausgewählt. Stellen Sie sicher, dass es Ihre Zielsprache unterstützt und dem oben konfigurierten System-Prompt folgt.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1075"/>
+        <location filename="../settings_dialog.py" line="1172"/>
+        <source>No known service manager (sv / systemctl / rc-service) was found on PATH. Enter the command manually, e.g. &apos;pkill -x ollama&apos;.</source>
+        <translation>Kein bekannter Dienstmanager (sv / systemctl / rc-service) im PATH gefunden. Geben Sie den Befehl manuell ein, z. B. „pkill -x ollama“.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1202"/>
         <source>● {n} model(s) loaded</source>
         <translation>● {n} Modell(e) geladen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1079"/>
+        <location filename="../settings_dialog.py" line="1206"/>
         <source>● Refresh failed</source>
         <translation>● Aktualisierung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1082"/>
+        <location filename="../settings_dialog.py" line="1209"/>
         <source>Refresh Failed</source>
         <translation>Aktualisierung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1083"/>
+        <location filename="../settings_dialog.py" line="1210"/>
         <source>Could not load models from {url}:
 {error}</source>
         <translation>Modelle konnten nicht von {url} geladen werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1096"/>
+        <location filename="../settings_dialog.py" line="1223"/>
         <source>● Testing Ollama...</source>
         <translation>● Teste Ollama...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1109"/>
+        <location filename="../settings_dialog.py" line="1236"/>
         <source>● Model &apos;{model}&apos; not found</source>
         <translation>● Modell „{model}“ nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1112"/>
+        <location filename="../settings_dialog.py" line="1239"/>
         <source>Model Not Found</source>
         <translation>Modell nicht gefunden</translation>
     </message>
     <message>
-        <source>Model &apos;{model}&apos; is not installed.
-Available models:
-</source>
-        <translation type="vanished">Modell „{model}“ ist nicht installiert.
-Verfügbare Modelle:
-</translation>
-    </message>
-    <message>
-        <source>
-Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</source>
-        <translation type="vanished">
-Installieren mit: ollama create &lt;Modellname&gt; -f Modelfile.&lt;Modellname&gt;</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="1119"/>
+        <location filename="../settings_dialog.py" line="1246"/>
         <source>● Connected ✓</source>
         <translation>● Verbunden ✓</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1121"/>
+        <location filename="../settings_dialog.py" line="1248"/>
         <source>Success</source>
         <translation>Erfolg</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1121"/>
+        <location filename="../settings_dialog.py" line="1248"/>
         <source>Connected to Ollama!
 Model &apos;{model}&apos; is ready.</source>
         <translation>Mit Ollama verbunden!
 Modell „{model}“ ist bereit.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1124"/>
+        <location filename="../settings_dialog.py" line="1251"/>
         <source>● Connection failed</source>
         <translation>● Verbindung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1127"/>
+        <location filename="../settings_dialog.py" line="1254"/>
         <source>Connection Error</source>
         <translation>Verbindungsfehler</translation>
     </message>
     <message>
-        <source>Could not connect to Ollama at {url}
-Make sure Ollama is running:
-• Start with: ollama serve
-• Default URL: http://localhost:11434</source>
-        <translation type="vanished">Verbindung zu Ollama unter {url} fehlgeschlagen
-Stellen Sie sicher, dass Ollama läuft:
-• Starten mit: ollama serve
-• Standard-URL: http://localhost:11434</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="1134"/>
+        <location filename="../settings_dialog.py" line="1261"/>
         <source>● Error</source>
         <translation>● Fehler</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1136"/>
+        <location filename="../settings_dialog.py" line="1263"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1136"/>
+        <location filename="../settings_dialog.py" line="1263"/>
         <source>Unexpected error: {error}</source>
         <translation>Unerwarteter Fehler: {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1143"/>
+        <location filename="../settings_dialog.py" line="1270"/>
         <source>Select Config Directory</source>
         <translation>Konfigurationsverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1158"/>
+        <location filename="../settings_dialog.py" line="1285"/>
         <source>Select Cache Directory</source>
         <translation>Cache-Verzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1183"/>
+        <location filename="../settings_dialog.py" line="1310"/>
         <source>Select Background</source>
         <translation>Hintergrund auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1191"/>
+        <location filename="../settings_dialog.py" line="1318"/>
         <source>Select Protected Terms File</source>
         <translation>Datei geschützter Begriffe auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1192"/>
+        <location filename="../settings_dialog.py" line="1319"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Textdateien (*.txt *.TXT);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1200"/>
+        <location filename="../settings_dialog.py" line="1327"/>
         <source>Select Cookie-Editor JSON Export</source>
         <translation>Cookie-Editor-JSON-Export auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1201"/>
+        <location filename="../settings_dialog.py" line="1328"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>JSON-Dateien (*.json *.JSON);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1216"/>
+        <location filename="../settings_dialog.py" line="1343"/>
         <source>Select Piper Binary</source>
         <translation>Piper-Programmdatei auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1216"/>
+        <location filename="../settings_dialog.py" line="1343"/>
         <source>Executable (*);;All Files (*)</source>
         <translation>Programmdatei (*);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1224"/>
+        <location filename="../settings_dialog.py" line="1351"/>
         <source>Select Piper Voice Model</source>
         <translation>Piper-Stimmmodell auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1225"/>
+        <location filename="../settings_dialog.py" line="1352"/>
         <source>ONNX model (*.onnx);;All Files (*)</source>
         <translation>ONNX-Modell (*.onnx);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1234"/>
+        <location filename="../settings_dialog.py" line="1361"/>
         <source>Select audio files directory</source>
         <translation>Audiodateiverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1248"/>
+        <location filename="../settings_dialog.py" line="1371"/>
+        <source>Select game Data directory (with *Voices*.ba2)</source>
+        <translation>Spiel-Data-Verzeichnis auswählen (mit *Voices*.ba2)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1380"/>
+        <source>Select vgmstream-cli binary</source>
+        <translation>vgmstream-cli-Programm auswählen</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1382"/>
+        <source>All Files (*)</source>
+        <translation>Alle Dateien (*)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="1395"/>
         <source>⚠  Restart the application to apply the new language.</source>
         <translation>⚠  Starten Sie die Anwendung neu, um die neue Sprache anzuwenden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1303"/>
+        <location filename="../settings_dialog.py" line="1450"/>
         <source>Unsaved Changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1304"/>
+        <location filename="../settings_dialog.py" line="1451"/>
         <source>You have unsaved changes.
 Discard them and close?</source>
         <translation>Sie haben ungespeicherte Änderungen.
 Verwerfen und schließen?</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1320"/>
-        <location filename="../settings_dialog.py" line="1337"/>
+        <location filename="../settings_dialog.py" line="1467"/>
+        <location filename="../settings_dialog.py" line="1484"/>
         <source>Cache</source>
         <translation>Zwischenspeicher</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1320"/>
+        <location filename="../settings_dialog.py" line="1467"/>
         <source>No translation cache is active.</source>
         <translation>Kein Übersetzungszwischenspeicher aktiv.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1324"/>
+        <location filename="../settings_dialog.py" line="1471"/>
         <source>Remove all cached translations?
 This cannot be undone.</source>
         <translation>Alle zwischengespeicherten Übersetzungen entfernen?
 Dies kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1337"/>
+        <location filename="../settings_dialog.py" line="1484"/>
         <source>Translation cache cleared.</source>
         <translation>Übersetzungszwischenspeicher geleert.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="464"/>
+        <location filename="../settings_dialog.py" line="513"/>
         <source>Character count threshold for &apos;long&apos; strings</source>
         <translation>Zeichenanzahl-Schwelle für „lange“ Zeichenketten</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="493"/>
+        <location filename="../settings_dialog.py" line="542"/>
         <source>Long String Action:</source>
         <translation>Aktion für lange Zeichenketten:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="469"/>
+        <location filename="../settings_dialog.py" line="518"/>
         <source>Translate</source>
         <translation>Übersetzen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="243"/>
+        <location filename="../settings_dialog.py" line="292"/>
         <source>When translating from non-English source (e.g. Russian) to Ukrainian, keep English words/phrases unchanged.
 Useful for preserving names, titles, and terminology that should remain in English.
 Note: This is automatically disabled when English is the source language.</source>
@@ -6817,58 +7053,58 @@ Nützlich zum Erhalt von Namen, Titeln und Terminologie, die auf Englisch bleibe
 Hinweis: Dies wird automatisch deaktiviert, wenn Englisch die Quellsprache ist.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="336"/>
+        <location filename="../settings_dialog.py" line="385"/>
         <source>✓ = complete translation  ·  others are community work-in-progress</source>
         <translation>✓ = vollständige Übersetzung  ·  andere sind Community-Arbeiten im Gange</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="470"/>
+        <location filename="../settings_dialog.py" line="519"/>
         <source>Original</source>
         <translation>Original</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="471"/>
+        <location filename="../settings_dialog.py" line="520"/>
         <source>Skip</source>
         <translation>Überspringen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="524"/>
+        <location filename="../settings_dialog.py" line="573"/>
         <source>Auto-save after translation</source>
         <translation>Automatisch nach Übersetzung speichern</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="569"/>
+        <location filename="../settings_dialog.py" line="618"/>
         <source>Performance</source>
         <translation>Leistung</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="572"/>
+        <location filename="../settings_dialog.py" line="621"/>
         <source>Enable translation cache</source>
         <translation>Übersetzungszwischenspeicher aktivieren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="575"/>
+        <location filename="../settings_dialog.py" line="624"/>
         <source>Cache completed translations to disk so repeated strings are returned instantly.</source>
         <translation>Abgeschlossene Übersetzungen auf Festplatte zwischenspeichern, damit wiederholte Zeichenketten sofort zurückgegeben werden.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="579"/>
-        <location filename="../settings_dialog.py" line="1323"/>
+        <location filename="../settings_dialog.py" line="628"/>
+        <location filename="../settings_dialog.py" line="1470"/>
         <source>Clear Cache</source>
         <translation>Zwischenspeicher leeren</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="580"/>
+        <location filename="../settings_dialog.py" line="629"/>
         <source>Remove all cached translations from memory and disk</source>
         <translation>Alle zwischengespeicherten Übersetzungen aus Speicher und Festplatte entfernen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="588"/>
+        <location filename="../settings_dialog.py" line="637"/>
         <source>Number of parallel translation threads (1–32). Higher values increase throughput but may overwhelm Ollama. Default: 10.</source>
         <translation>Anzahl paralleler Übersetzungsthreads (1–32). Höhere Werte erhöhen den Durchsatz, können Ollama aber überlasten. Standard: 10.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="592"/>
+        <location filename="../settings_dialog.py" line="641"/>
         <source>Parallel workers:</source>
         <translation>Parallele Prozesse:</translation>
     </message>
@@ -6883,7 +7119,7 @@ Hinweis: Dies wird automatisch deaktiviert, wenn Englisch die Quellsprache ist.<
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="488"/>
+        <location filename="../settings_dialog.py" line="537"/>
         <source>Action to take for strings exceeding the threshold:
 - Translate: Proceed with translation (may take long)
 - Original: Immediately return original text
@@ -6899,11 +7135,7 @@ Hinweis: Dies wird automatisch deaktiviert, wenn Englisch die Quellsprache ist.<
         <translation>An CPU-Threads, die pro Anfrage an Ollama übergeben werden (0 = auto). Passen Sie dies an Ihre CPU-Kernanzahl an, um beste Leistung zu erzielen.</translation>
     </message>
     <message>
-        <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English Anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
-        <translation type="vanished">💡 Tipp: Verwendet translategemma3-st (benutzerdefiniert modifiziert), optimiert für Starfield-Ukrainisch-Lokalisierung. Verwenden Sie englische Anker: „To Ukrainian:“, „To English:“ usw.</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="1113"/>
+        <location filename="../settings_dialog.py" line="1240"/>
         <source>Model &apos;{model}&apos; is not installed.
 
 Available models:
@@ -6914,7 +7146,7 @@ Verfügbare Modelle:
 </translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1116"/>
+        <location filename="../settings_dialog.py" line="1243"/>
         <source>
 
 Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</source>
@@ -6923,7 +7155,7 @@ Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</
 Installieren mit: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1128"/>
+        <location filename="../settings_dialog.py" line="1255"/>
         <source>Could not connect to Ollama at {url}
 
 Make sure Ollama is running:
@@ -6936,26 +7168,92 @@ Stellen Sie sicher, dass Ollama läuft:
   • Standard-URL: http://localhost:11434</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1419"/>
+        <location filename="../settings_dialog.py" line="1571"/>
         <source>Keyboard Shortcuts</source>
         <translation>Tastenkürzel</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1448"/>
+        <location filename="../settings_dialog.py" line="1600"/>
         <source>Reset All to Defaults</source>
         <translation>Alle auf Standardwerte zurücksetzen</translation>
     </message>
 </context>
 <context>
+    <name>SpeakerPanel</name>
+    <message>
+        <location filename="../speaker_panel.py" line="63"/>
+        <source>Speaker</source>
+        <translation>Sprecher</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="77"/>
+        <location filename="../speaker_panel.py" line="151"/>
+        <source>(no dialogue line selected)</source>
+        <translation>(keine Dialogzeile ausgewählt)</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="123"/>
+        <source>FormID:</source>
+        <translation>FormID:</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="125"/>
+        <source>hex, e.g. 0001A2B3</source>
+        <translation>hex, z. B. 0001A2B3</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="128"/>
+        <source>Look up</source>
+        <translation>Nachschlagen</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="168"/>
+        <source>Select a dialogue line in an ESP/ESM, or enter a FormID below to look up the speaker.</source>
+        <translation>Wählen Sie eine Dialogzeile in einer ESP/ESM aus oder geben Sie unten eine FormID ein, um den Sprecher nachzuschlagen.</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="183"/>
+        <source>Voice data not configured. Set the Voice Data directory in Settings → Audio to map speakers.</source>
+        <translation>Sprachdaten nicht konfiguriert. Lege das Sprachdaten-Verzeichnis unter Einstellungen → Audio fest, um Sprecher zuzuordnen.</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="192"/>
+        <source>No voice clip found for FormID 0x%08X.</source>
+        <translation>Kein Sprachclip für FormID 0x%08X gefunden.</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="205"/>
+        <source>(cut content)</source>
+        <translation>(geschnittener Inhalt)</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="222"/>
+        <source>voice type: %s</source>
+        <translation>Stimmtyp: %s</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="231"/>
+        <source>&lt;b&gt;Also voiced by (shared line):&lt;/b&gt;&lt;br&gt;</source>
+        <translation>&lt;b&gt;Auch gesprochen von (geteilte Zeile):&lt;/b&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="253"/>
+        <source>Speaker lookup unavailable.</source>
+        <translation>Sprechersuche nicht verfügbar.</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="255"/>
+        <source>Resolving speaker…</source>
+        <translation>Sprecher wird ermittelt…</translation>
+    </message>
+    <message>
+        <location filename="../speaker_panel.py" line="274"/>
+        <source>Enter a valid hex FormID.</source>
+        <translation>Gültige Hex-FormID eingeben.</translation>
+    </message>
+</context>
+<context>
     <name>StringEditDialog</name>
-    <message>
-        <source>Edit String - ID: 0x{row_id:08X}</source>
-        <translation type="vanished">Zeichenkette bearbeiten - ID: 0x{row_id:08X}</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;String ID:&lt;/b&gt; 0x{row_id:08X} ({row_id})</source>
-        <translation type="vanished">&lt;b&gt;Zeichenketten-ID:&lt;/b&gt; 0x{row_id:08X} ({row_id})</translation>
-    </message>
     <message>
         <location filename="../string_table.py" line="769"/>
         <source>Edit String - ID: {id}</source>
@@ -7066,6 +7364,41 @@ Stellen Sie sicher, dass Ollama läuft:
         <location filename="../string_table.py" line="1051"/>
         <source>Assign Character Profile…</source>
         <translation>Charakterprofil zuweisen…</translation>
+    </message>
+</context>
+<context>
+    <name>SudoPasswordDialog</name>
+    <message>
+        <location filename="../sudo_dialog.py" line="44"/>
+        <source>Administrator password required</source>
+        <translation>Administrator-Passwort erforderlich</translation>
+    </message>
+    <message>
+        <location filename="../sudo_dialog.py" line="64"/>
+        <source>This action needs administrator (root) privileges.
+Enter your password to continue.</source>
+        <translation>Diese Aktion erfordert Administrator-Rechte (root).
+Geben Sie Ihr Passwort ein, um fortzufahren.</translation>
+    </message>
+    <message>
+        <location filename="../sudo_dialog.py" line="86"/>
+        <source>Password</source>
+        <translation>Passwort</translation>
+    </message>
+    <message>
+        <location filename="../sudo_dialog.py" line="91"/>
+        <source>Show password</source>
+        <translation>Passwort anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../sudo_dialog.py" line="98"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../sudo_dialog.py" line="102"/>
+        <source>Authenticate</source>
+        <translation>Authentifizieren</translation>
     </message>
 </context>
 <context>
@@ -7339,92 +7672,92 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
 <context>
     <name>ThemeManager</name>
     <message>
-        <location filename="../theme_manager.py" line="922"/>
+        <location filename="../theme_manager.py" line="932"/>
         <source>Follows the OS light/dark preference. Currently using: {theme}.</source>
         <translation>Folgt der BS-Hell/Dunkel-Einstellung. Aktuell verwendet: {theme}.</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="927"/>
+        <location filename="../theme_manager.py" line="937"/>
         <source>Default dark theme with blue accents (slate colors)</source>
         <translation>Standard-Dunkeldesign mit blauen Akzenten (Schieferfarben)</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="928"/>
+        <location filename="../theme_manager.py" line="938"/>
         <source>Deep dark blue, minimal contrast</source>
         <translation>Tiefes Dunkelblau, minimaler Kontrast</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="929"/>
+        <location filename="../theme_manager.py" line="939"/>
         <source>Arctic blue-gray palette, soft on eyes</source>
         <translation>Arktische Blau-Grau-Palette, augenfreundlich</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="930"/>
+        <location filename="../theme_manager.py" line="940"/>
         <source>Purple-accented dark theme</source>
         <translation>Dunkeldesign mit violetten Akzenten</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="931"/>
+        <location filename="../theme_manager.py" line="941"/>
         <source>Warm dark theme with blue selection</source>
         <translation>Warmes Dunkeldesign mit blauer Auswahl</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="932"/>
+        <location filename="../theme_manager.py" line="942"/>
         <source>Clean light theme with blue accents</source>
         <translation>Sauberes Helldesign mit blauen Akzenten</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="933"/>
+        <location filename="../theme_manager.py" line="943"/>
         <source>Low-contrast dark, optimized for readability</source>
         <translation>Kontrastarmes Dunkel, optimiert für Lesbarkeit</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="934"/>
+        <location filename="../theme_manager.py" line="944"/>
         <source>Warm retro dark with amber/orange accents</source>
         <translation>Warmes Retro-Dunkel mit Bernstein-/Orangeakzenten</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="935"/>
+        <location filename="../theme_manager.py" line="945"/>
         <source>Deep navy cyberpunk with blue highlights</source>
         <translation>Tiefes Marineblau im Cyberpunk-Stil mit blauen Glanzlichtern</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="936"/>
+        <location filename="../theme_manager.py" line="946"/>
         <source>Classic terminal dark with vibrant green accents</source>
         <translation>Klassisches Terminal-Dunkel mit kräftigen grünen Akzenten</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="937"/>
+        <location filename="../theme_manager.py" line="947"/>
         <source>Atom editor inspired, muted blue accents</source>
         <translation>Vom Atom-Editor inspiriert, gedämpfte blaue Akzente</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="938"/>
+        <location filename="../theme_manager.py" line="948"/>
         <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
         <translation>Kontrastarmes Hell, warmes Creme – Ergänzung zu Solarized Dark</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="939"/>
+        <location filename="../theme_manager.py" line="949"/>
         <source>Warm cream light theme, easy on eyes for long sessions</source>
         <translation>Warmes cremefarbenes helles Thema, augenschonend für lange Sitzungen</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="940"/>
+        <location filename="../theme_manager.py" line="950"/>
         <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
         <translation>Spielgetreue dunkelblaue Oberfläche – Farben aus den Starfield-Interface-SWF/GFX-Assets</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="941"/>
+        <location filename="../theme_manager.py" line="951"/>
         <source>Green-on-black terminal/computer screen aesthetic from the game</source>
         <translation>Grün-auf-Schwarz-Terminal-/Computerbildschirm-Ästhetik aus dem Spiel</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="942"/>
+        <location filename="../theme_manager.py" line="952"/>
         <source>WCAG AAA black/white/cyan theme for visually impaired users</source>
         <translation>WCAG AAA Schwarz/Weiß/Cyan-Design für sehbehinderte Nutzer</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="949"/>
+        <location filename="../theme_manager.py" line="959"/>
         <source>Custom theme loaded from {path}.qss</source>
         <translation>Benutzerdefiniertes Design geladen aus {path}.qss</translation>
     </message>
@@ -7581,7 +7914,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../update_dialog.py" line="153"/>
         <source>Downloading {asset[&apos;name&apos;]}…</source>
-        <translation>{asset['name']} wird heruntergeladen…</translation>
+        <translation>{asset[&apos;name&apos;]} wird heruntergeladen…</translation>
     </message>
     <message>
         <location filename="../update_dialog.py" line="164"/>
@@ -7821,12 +8154,6 @@ This will only update strings that are currently untranslated or marked as pendi
 Dies aktualisiert nur Zeichenketten, die derzeit unübersetzt oder als ausstehend markiert sind.</translation>
     </message>
     <message>
-        <source>Copy {n} existing translation(s) for unchanged strings to the current file?
-This will only update strings that are currently untranslated or marked as pending.</source>
-        <translation type="vanished">{n} bestehende Übersetzung(en) für unveränderte Zeichenketten in die aktuelle Datei kopieren?
-Dies aktualisiert nur Zeichenketten, die aktuell nicht übersetzt oder als ausstehend markiert sind.</translation>
-    </message>
-    <message>
         <location filename="../version_compare_dialog.py" line="310"/>
         <source>Migration Complete</source>
         <translation>Migration abgeschlossen</translation>
@@ -7995,158 +8322,199 @@ Dies aktualisiert nur Zeichenketten, die aktuell nicht übersetzt oder als ausst
     </message>
 </context>
 <context>
-    <name>WelateSyncDialog</name>
+    <name>VmadDialog</name>
     <message>
-        <source>Weblate Sync</source>
-        <translation type="vanished">Weblate-Synchronisierung</translation>
+        <location filename="../vmad_dialog.py" line="77"/>
+        <source>Script Property Analysis (VMAD)</source>
+        <translation>Skript-Eigenschaftsanalyse (VMAD)</translation>
     </message>
     <message>
-        <source>Connection</source>
-        <translation type="vanished">Verbindung</translation>
+        <location filename="../vmad_dialog.py" line="93"/>
+        <source>Path to .esp / .esm / .esl plugin file…</source>
+        <translation>Pfad zur Plugin-Datei .esp / .esm / .esl…</translation>
     </message>
     <message>
-        <source>(not configured)</source>
-        <translation type="vanished">(nicht konfiguriert)</translation>
+        <location filename="../vmad_dialog.py" line="97"/>
+        <source>Browse…</source>
+        <translation>Durchsuchen…</translation>
     </message>
     <message>
-        <source>Server:</source>
-        <translation type="vanished">Server:</translation>
+        <location filename="../vmad_dialog.py" line="101"/>
+        <source>Encoding:</source>
+        <translation>Kodierung:</translation>
     </message>
     <message>
-        <source>Component:</source>
-        <translation type="vanished">Komponente:</translation>
+        <location filename="../vmad_dialog.py" line="110"/>
+        <source>Scan</source>
+        <translation>Scannen</translation>
     </message>
     <message>
-        <source>—</source>
-        <translation type="vanished">—</translation>
+        <location filename="../vmad_dialog.py" line="126"/>
+        <source>Hide locked properties</source>
+        <translation>Gesperrte Eigenschaften ausblenden</translation>
     </message>
     <message>
-        <source>Test</source>
-        <translation type="vanished">Test</translation>
+        <location filename="../vmad_dialog.py" line="131"/>
+        <source>Allow editing locked properties (advanced)</source>
+        <translation>Bearbeiten gesperrter Eigenschaften erlauben (erweitert)</translation>
     </message>
     <message>
-        <source>Status:</source>
-        <translation type="vanished">Status:</translation>
+        <location filename="../vmad_dialog.py" line="133"/>
+        <source>Locked properties are script identifiers, event names or resource
+paths. Editing them almost always breaks the mod. Only enable this
+if you are certain a locked value is shown to the player.</source>
+        <translation>Gesperrte Eigenschaften sind Skript-Bezeichner, Ereignisnamen oder
+Ressourcenpfade. Ihre Bearbeitung beschädigt die Mod fast immer. Aktivieren Sie
+dies nur, wenn Sie sicher sind, dass ein gesperrter Wert dem Spieler angezeigt wird.</translation>
     </message>
     <message>
-        <source>Component Statistics</source>
-        <translation type="vanished">Komponentenstatistik</translation>
+        <location filename="../vmad_dialog.py" line="145"/>
+        <source>Script properties</source>
+        <translation>Skript-Eigenschaften</translation>
     </message>
     <message>
-        <source>Fetching…</source>
-        <translation type="vanished">Wird abgerufen…</translation>
+        <location filename="../vmad_dialog.py" line="151"/>
+        <source>Risk</source>
+        <translation>Risiko</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation type="vanished">Aktualisieren</translation>
+        <location filename="../vmad_dialog.py" line="151"/>
+        <source>FormID</source>
+        <translation>FormID</translation>
     </message>
     <message>
-        <source>Push  —  Upload strings to Weblate</source>
-        <translation type="vanished">Push  –  Zeichenketten zu Weblate hochladen</translation>
+        <location filename="../vmad_dialog.py" line="151"/>
+        <source>Type</source>
+        <translation>Typ</translation>
     </message>
     <message>
-        <source>Overwrite existing Weblate translations</source>
-        <translation type="vanished">Vorhandene Weblate-Übersetzungen überschreiben</translation>
+        <location filename="../vmad_dialog.py" line="152"/>
+        <source>Script</source>
+        <translation>Skript</translation>
     </message>
     <message>
-        <source>Checked: replace Weblate translations with local ones.
-Unchecked: only fill in strings not yet translated on Weblate.</source>
-        <translation type="vanished">Aktiviert: Weblate-Übersetzungen durch lokale ersetzen.
-Deaktiviert: nur Zeichenketten ausfüllen, die auf Weblate noch nicht übersetzt sind.</translation>
+        <location filename="../vmad_dialog.py" line="152"/>
+        <source>Property</source>
+        <translation>Eigenschaft</translation>
     </message>
     <message>
-        <source>⬆  Push to Weblate</source>
-        <translation type="vanished">⬆  Zu Weblate hochladen</translation>
+        <location filename="../vmad_dialog.py" line="153"/>
+        <source>Original</source>
+        <translation>Original</translation>
     </message>
     <message>
-        <source>Upload all strings from the current file to Weblate.
-Any local translations are included so community translators
-see them as a starting point.</source>
-        <translation type="vanished">Lädt alle Zeichenketten der aktuellen Datei zu Weblate hoch.
-Lokale Übersetzungen werden mit übertragen, damit Community-Übersetzer
-sie als Ausgangspunkt sehen.</translation>
+        <location filename="../vmad_dialog.py" line="153"/>
+        <source>Translation</source>
+        <translation>Übersetzung</translation>
     </message>
     <message>
-        <source>Pull  —  Download translations from Weblate</source>
-        <translation type="vanished">Pull  –  Übersetzungen von Weblate herunterladen</translation>
+        <location filename="../vmad_dialog.py" line="165"/>
+        <source>Why this classification</source>
+        <translation>Warum diese Einstufung</translation>
     </message>
     <message>
-        <source>Overwrite strings already translated locally</source>
-        <translation type="vanished">Bereits lokal übersetzte Zeichenketten überschreiben</translation>
+        <location filename="../vmad_dialog.py" line="178"/>
+        <source>Apply &amp;&amp; Save</source>
+        <translation>Anwenden und speichern</translation>
     </message>
     <message>
-        <source>Checked: replace local translations with Weblate versions.
-Unchecked: only fill in locally untranslated strings.</source>
-        <translation type="vanished">Aktiviert: lokale Übersetzungen durch Weblate-Versionen ersetzen.
-Deaktiviert: nur lokal unübersetzte Zeichenketten ausfüllen.</translation>
+        <location filename="../vmad_dialog.py" line="180"/>
+        <source>Write edited values back into the plugin. A backup (.bak) is saved
+first; only edited string spans are rewritten — everything else is
+preserved byte-for-byte.</source>
+        <translation>Bearbeitete Werte zurück in das Plugin schreiben. Zuerst wird eine
+Sicherung (.bak) gespeichert; nur die bearbeiteten Zeichenketten-Abschnitte werden
+neu geschrieben — alles andere bleibt Byte für Byte erhalten.</translation>
     </message>
     <message>
-        <source>⬇  Pull from Weblate</source>
-        <translation type="vanished">⬇  Von Weblate abrufen</translation>
+        <location filename="../vmad_dialog.py" line="188"/>
+        <source>Close</source>
+        <translation>Schließen</translation>
     </message>
     <message>
-        <source>Apply to Table</source>
-        <translation type="vanished">Auf Tabelle anwenden</translation>
+        <location filename="../vmad_dialog.py" line="198"/>
+        <source>Select plugin file</source>
+        <translation>Plugin-Datei auswählen</translation>
     </message>
     <message>
-        <source>Write the downloaded translations into the string table.
-Pull first, then click Apply.</source>
-        <translation type="vanished">Schreibt die heruntergeladenen Übersetzungen in die Zeichenkettentabelle.
-Zuerst Pull ausführen, dann auf Anwenden klicken.</translation>
+        <location filename="../vmad_dialog.py" line="200"/>
+        <source>Plugin files (*.esp *.esm *.esl);;All files (*)</source>
+        <translation>Plugin-Dateien (*.esp *.esm *.esl);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <source>Log</source>
-        <translation type="vanished">Protokoll</translation>
+        <location filename="../vmad_dialog.py" line="212"/>
+        <source>File not found: </source>
+        <translation>Datei nicht gefunden: </translation>
     </message>
     <message>
-        <source>Not Configured</source>
-        <translation type="vanished">Nicht konfiguriert</translation>
+        <location filename="../vmad_dialog.py" line="217"/>
+        <source>Error reading file: </source>
+        <translation>Fehler beim Lesen der Datei: </translation>
     </message>
     <message>
-        <source>Configure Weblate URL, API token, project, and component
-in Settings → Weblate before syncing.</source>
-        <translation type="vanished">Konfigurieren Sie Weblate-URL, API-Token, Projekt und Komponente
-vor der Synchronisierung unter Einstellungen → Weblate.</translation>
+        <location filename="../vmad_dialog.py" line="232"/>
+        <source>  —  ⚠ {n} record(s) had VMAD data this tool could not fully parse (their later strings are hidden for safety)</source>
+        <translation>  —  ⚠ {n} Datensatz/Datensätze hatten VMAD-Daten, die dieses Tool nicht vollständig analysieren konnte (ihre weiteren Zeichenketten werden zur Sicherheit ausgeblendet)</translation>
     </message>
     <message>
-        <source>{n} translations ready — click &quot;Apply to Table&quot;</source>
-        <translation type="vanished">{n} Übersetzungen bereit – auf &quot;Auf Tabelle anwenden&quot; klicken</translation>
+        <location filename="../vmad_dialog.py" line="342"/>
+        <source>Nothing to Save</source>
+        <translation>Nichts zu speichern</translation>
     </message>
     <message>
-        <source>Testing…</source>
-        <translation type="vanished">Wird getestet…</translation>
+        <location filename="../vmad_dialog.py" line="343"/>
+        <source>No edited values to write. Edit a Translation cell first.</source>
+        <translation>Keine bearbeiteten Werte zum Schreiben. Bearbeiten Sie zuerst eine Übersetzungszelle.</translation>
     </message>
     <message>
-        <source>Push to Weblate</source>
-        <translation type="vanished">Zu Weblate hochladen</translation>
+        <location filename="../vmad_dialog.py" line="348"/>
+        <source>Apply VMAD Edits</source>
+        <translation>VMAD-Änderungen anwenden</translation>
     </message>
     <message>
-        <source>Upload {n} strings to Weblate?
+        <location filename="../vmad_dialog.py" line="350"/>
+        <source>Write {n} edited script-property string(s) back into:
 
-Community translators will see these strings on the web interface.</source>
-        <translation type="vanished">{n} Zeichenketten zu Weblate hochladen?
+{path}
 
-Community-Übersetzer sehen diese Zeichenketten in der Weboberfläche.</translation>
+A backup will be saved as {bak}.
+Only the edited values are rewritten — all other bytes are preserved.
+
+Continue?</source>
+        <translation>{n} bearbeitete Skript-Eigenschaften-Zeichenkette(n) zurückschreiben in:
+
+{path}
+
+Eine Sicherung wird als {bak} gespeichert.
+Nur die bearbeiteten Werte werden neu geschrieben — alle anderen Bytes bleiben erhalten.
+
+Fortfahren?</translation>
     </message>
     <message>
-        <source>{applied} translation(s) applied to the table.</source>
-        <translation type="vanished">{applied} Übersetzung(en) auf die Tabelle angewendet.</translation>
+        <location filename="../vmad_dialog.py" line="367"/>
+        <source>Save Failed</source>
+        <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
-        <source>Weblate Pull</source>
-        <translation type="vanished">Weblate-Pull</translation>
+        <location filename="../vmad_dialog.py" line="368"/>
+        <source>Could not write changes:
+{error}</source>
+        <translation>Änderungen konnten nicht geschrieben werden:
+{error}</translation>
     </message>
     <message>
-        <source>No statistics available.</source>
-        <translation type="vanished">Keine Statistiken verfügbar.</translation>
+        <location filename="../vmad_dialog.py" line="373"/>
+        <source>Saved</source>
+        <translation>Gespeichert</translation>
     </message>
     <message>
-        <source>Sync in progress</source>
-        <translation type="vanished">Synchronisierung läuft</translation>
-    </message>
-    <message>
-        <source>Please wait for the current operation to finish.</source>
-        <translation type="vanished">Bitte warten Sie, bis der aktuelle Vorgang abgeschlossen ist.</translation>
+        <location filename="../vmad_dialog.py" line="374"/>
+        <source>Wrote {n} edited string(s).
+
+Backup: {bak}</source>
+        <translation>{n} bearbeitete Zeichenkette(n) geschrieben.
+
+Sicherung: {bak}</translation>
     </message>
 </context>
 <context>
@@ -8230,12 +8598,12 @@ Community-Übersetzer sehen diese Zeichenketten in der Weboberfläche.</translat
 <context>
     <name>_TermDiscoveryDialog</name>
     <message>
-        <location filename="../main_window.py" line="6722"/>
+        <location filename="../main_window.py" line="7162"/>
         <source>Discovered Terms — Review &amp; Approve</source>
         <translation>Entdeckte Begriffe — Prüfen &amp; Bestätigen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6730"/>
+        <location filename="../main_window.py" line="7170"/>
         <source>Candidate terms extracted from the loaded strings.
 Check the ones to add to the protection list. Edit category as needed.
 &lt;b&gt;Score&lt;/b&gt; = cross-match count × 3 + frequency (higher = stronger signal).</source>
@@ -8244,52 +8612,52 @@ Markieren Sie diejenigen, die zur Schutzliste hinzugefügt werden sollen. Katego
 &lt;b&gt;Wertung&lt;/b&gt; = Kreuzübereinstimmungen × 3 + Häufigkeit (höher = stärkeres Signal).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6740"/>
+        <location filename="../main_window.py" line="7180"/>
         <source>Filter:</source>
         <translation>Filter:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6742"/>
+        <location filename="../main_window.py" line="7182"/>
         <source>type to filter…</source>
         <translation>Eingeben zum Filtern…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6746"/>
+        <location filename="../main_window.py" line="7186"/>
         <source>Select All</source>
         <translation>Alle auswählen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6748"/>
+        <location filename="../main_window.py" line="7188"/>
         <source>Select None</source>
         <translation>Keine auswählen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6758"/>
+        <location filename="../main_window.py" line="7198"/>
         <source>✓</source>
         <translation>✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6758"/>
+        <location filename="../main_window.py" line="7198"/>
         <source>Term</source>
         <translation>Begriff</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6759"/>
+        <location filename="../main_window.py" line="7199"/>
         <source>Category</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6759"/>
+        <location filename="../main_window.py" line="7199"/>
         <source>Freq</source>
         <translation>Häufigkeit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6759"/>
+        <location filename="../main_window.py" line="7199"/>
         <source>Score</source>
         <translation>Wertung</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6775"/>
+        <location filename="../main_window.py" line="7215"/>
         <source>{len(self._candidates)} candidates found</source>
         <translation>{len(self._candidates)} Kandidaten gefunden</translation>
     </message>
@@ -8297,24 +8665,29 @@ Markieren Sie diejenigen, die zur Schutzliste hinzugefügt werden sollen. Katego
 <context>
     <name>_WelcomeWidget</name>
     <message>
-        <location filename="../main_window.py" line="162"/>
+        <location filename="../main_window.py" line="182"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Bethesda Strings KI-Übersetzer</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="170"/>
+        <location filename="../main_window.py" line="190"/>
         <source>Open a string file or plugin to begin</source>
         <translation>Öffnen Sie eine Zeichenketten- oder Plugin-Datei, um zu beginnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="178"/>
+        <location filename="../main_window.py" line="198"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="203"/>
+        <location filename="../main_window.py" line="223"/>
         <source>or drag &amp; drop files here</source>
         <translation>oder Dateien hierhin &amp; ziehen &amp; ablegen</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="248"/>
+        <source>What&apos;s New</source>
+        <translation>Neuigkeiten</translation>
     </message>
 </context>
 </TS>
