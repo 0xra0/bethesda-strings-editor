@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QMessageBox, QApplication, QSlider, QWidget, QScrollArea, QFrame,
     QFileDialog,
 )
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, QTimer, QThread, Signal
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QKeySequenceEdit
 from typing import TYPE_CHECKING, Optional
@@ -22,6 +22,35 @@ from gui.file_dialog_helper import get_open_filename
 
 if TYPE_CHECKING:
     from gui.term_protector import TermProtector
+
+
+class _OllamaModelsFetcher(QThread):
+    """Fetches the installed-model list from Ollama's /api/tags off the UI thread.
+
+    Used for both the manual 'Refresh' button and the periodic auto-detect
+    timer, so neither ever blocks the dialog (a down/slow server would
+    otherwise freeze the UI for the request timeout).
+    """
+
+    loaded = Signal(list)   # sorted list[str] of model names
+    failed = Signal(str)
+
+    def __init__(self, url: str, timeout: float = 5.0, parent=None):
+        super().__init__(parent)
+        self._url = (url or "").rstrip("/")
+        self._timeout = timeout
+
+    def run(self) -> None:
+        import requests
+        try:
+            resp = requests.get(f"{self._url}/api/tags", timeout=self._timeout)
+            resp.raise_for_status()
+            names = sorted(
+                m["name"] for m in resp.json().get("models", []) if m.get("name")
+            )
+            self.loaded.emit(names)
+        except Exception as exc:  # network error, bad JSON, server down, …
+            self.failed.emit(str(exc))
 
 
 class SettingsDialog(QDialog):
@@ -113,9 +142,15 @@ class SettingsDialog(QDialog):
         self._shortcut_editors: dict = {}  # action_id → QKeySequenceEdit
         self._original_theme: str = settings.theme  # restore on cancel
         self._dirty: bool = False
+        # Ollama model auto-detection state
+        self._model_fetcher: Optional[_OllamaModelsFetcher] = None
+        self._known_models: list[str] = []      # last server-reported model set
+        self._models_seen_once: bool = False     # suppress "new model" toast on first load
+        self._pending_model_apply: bool = False  # combo rebuild deferred (dropdown was open)
         self._setup_ui()
         self._fit_to_screen()
         self._setup_dirty_tracking()
+        self._setup_model_auto_refresh()
 
     def _fit_to_screen(self):
         """Size dialog to screen and keep it centered/usable on 1080p."""
@@ -177,13 +212,16 @@ class SettingsDialog(QDialog):
         self.ollama_model.setToolTip(
             self.tr(
                 "Type any Ollama model name or pick from the list.\n"
-                "Click 'Refresh' to load all installed models from the server."
+                "Installed models are detected automatically and the list refreshes "
+                "while this window is open (e.g. after 'ollama pull')."
             )
         )
         model_row = QHBoxLayout()
         model_row.addWidget(self.ollama_model, stretch=1)
         self.btn_refresh_models = QPushButton(self.tr("Refresh"))
-        self.btn_refresh_models.setToolTip(self.tr("Fetch installed models from the Ollama server"))
+        self.btn_refresh_models.setToolTip(
+            self.tr("Re-scan installed models now (also refreshes automatically)")
+        )
         self.btn_refresh_models.clicked.connect(self._refresh_ollama_models)
         model_row.addWidget(self.btn_refresh_models)
         ollama_layout.addRow(self.tr("Model:"), model_row)
@@ -1175,43 +1213,141 @@ class SettingsDialog(QDialog):
                 ),
             )
 
+    # ── Ollama model auto-detection ───────────────────────────────────────────
+    def _setup_model_auto_refresh(self) -> None:
+        """Auto-load installed models on open and poll for newly-installed ones.
+
+        Catches models pulled (``ollama pull …``) while the dialog is open, so
+        the user never has to click 'Refresh' manually.
+        """
+        self._auto_refresh_timer = QTimer(self)
+        self._auto_refresh_timer.setInterval(8000)  # poll every 8 s
+        self._auto_refresh_timer.timeout.connect(self._auto_refresh_models)
+        self._auto_refresh_timer.start()
+        # Kick off an immediate first fetch so the combo reflects reality on open.
+        QTimer.singleShot(0, self._auto_refresh_models)
+
+    def _start_model_fetch(self, *, manual: bool) -> None:
+        """Spawn a background /api/tags fetch (no-op if one is already running)."""
+        if self._model_fetcher is not None and self._model_fetcher.isRunning():
+            return  # don't pile up overlapping requests
+        url = self.ollama_url.text().strip()
+        if not url:
+            if manual:
+                self.lbl_connection.setText(self.tr("● No API URL set"))
+                self.lbl_connection.setStyleSheet("color: orange;")
+            return
+        if manual:
+            self.btn_refresh_models.setEnabled(False)
+            self.btn_refresh_models.setText(self.tr("…"))
+        fetcher = _OllamaModelsFetcher(url, timeout=5.0 if manual else 4.0, parent=self)
+        fetcher.loaded.connect(lambda names, m=manual: self._on_models_loaded(names, m))
+        fetcher.failed.connect(lambda err, m=manual: self._on_models_failed(err, m))
+        fetcher.finished.connect(fetcher.deleteLater)
+        self._model_fetcher = fetcher
+        fetcher.start()
+
     @Slot()
-    def _refresh_ollama_models(self):
-        """Fetch installed models from Ollama and populate the model combo."""
-        import requests
-        url = self.ollama_url.text().rstrip('/')
-        current = self.ollama_model.currentText().strip()
-        self.btn_refresh_models.setEnabled(False)
-        self.btn_refresh_models.setText(self.tr("…"))
-        QApplication.processEvents()
-        try:
-            resp = requests.get(f"{url}/api/tags", timeout=5)
-            resp.raise_for_status()
-            model_names = [m['name'] for m in resp.json().get('models', [])]
-            model_names.sort()
-            self.ollama_model.blockSignals(True)
-            self.ollama_model.clear()
-            self.ollama_model.addItems(model_names)
-            self.ollama_model.blockSignals(False)
-            idx = self.ollama_model.findText(current)
-            if idx >= 0:
-                self.ollama_model.setCurrentIndex(idx)
-            else:
-                self.ollama_model.setCurrentText(current)
+    def _auto_refresh_models(self) -> None:
+        self._start_model_fetch(manual=False)
+
+    @Slot()
+    def _refresh_ollama_models(self) -> None:
+        """Manual 'Refresh' button: fetch installed models (non-blocking)."""
+        self._start_model_fetch(manual=True)
+
+    def _on_models_loaded(self, names: list, manual: bool) -> None:
+        if manual:
+            self.btn_refresh_models.setEnabled(True)
+            self.btn_refresh_models.setText(self.tr("Refresh"))
+
+        new_models = [m for m in names if m not in self._known_models]
+        changed = names != self._known_models
+        self._known_models = names
+
+        # Rebuild the combo when the list changed, or when a previous rebuild was
+        # deferred because the dropdown was open at the time.
+        if changed or self._pending_model_apply:
+            self._apply_model_list(names)
+
+        # Connection/status feedback
+        if manual:
             self.lbl_connection.setText(
-                self.tr("● {n} model(s) loaded").format(n=len(model_names))
+                self.tr("● {n} model(s) loaded").format(n=len(names))
             )
             self.lbl_connection.setStyleSheet("color: green;")
-        except Exception as exc:
+        elif new_models and self._models_seen_once:
+            # A model appeared while the dialog was open — announce it quietly.
+            self.lbl_connection.setText(
+                self.tr("● New model detected: {name}").format(name=new_models[0])
+            )
+            self.lbl_connection.setStyleSheet("color: green;")
+        self._models_seen_once = True
+
+    def _on_models_failed(self, error: str, manual: bool) -> None:
+        if manual:
+            self.btn_refresh_models.setEnabled(True)
+            self.btn_refresh_models.setText(self.tr("Refresh"))
             self.lbl_connection.setText(self.tr("● Refresh failed"))
             self.lbl_connection.setStyleSheet("color: red;")
             QMessageBox.warning(
                 self, self.tr("Refresh Failed"),
-                self.tr("Could not load models from {url}:\n{error}").format(url=url, error=exc),
+                self.tr("Could not load models from {url}:\n{error}").format(
+                    url=self.ollama_url.text().strip(), error=error
+                ),
             )
-        finally:
-            self.btn_refresh_models.setEnabled(True)
-            self.btn_refresh_models.setText(self.tr("Refresh"))
+        # Auto-refresh failures are silent (server may simply be down) — the next
+        # tick will retry.
+
+    def _apply_model_list(self, names: list) -> None:
+        """Repopulate the model combo, preserving the user's current selection.
+
+        Skips the rebuild while the dropdown is open so we never close it under
+        the user; the next poll (or the popup closing) will pick up the change.
+        """
+        view = self.ollama_model.view()
+        if view is not None and view.isVisible():
+            # Don't yank the popup out from under the user. Defer the rebuild;
+            # the next poll re-applies even if the list itself didn't change.
+            self._pending_model_apply = True
+            return
+        current = self.ollama_model.currentText()
+        items = list(names)
+        # Keep any custom name the user typed/saved that isn't installed (yet).
+        if current and current not in items:
+            items.insert(0, current)
+        self.ollama_model.blockSignals(True)
+        self.ollama_model.clear()
+        self.ollama_model.addItems(items)
+        idx = self.ollama_model.findText(current)
+        if idx >= 0:
+            self.ollama_model.setCurrentIndex(idx)
+        else:
+            self.ollama_model.setCurrentText(current)
+        self.ollama_model.blockSignals(False)
+        self._pending_model_apply = False
+
+    def _stop_model_auto_refresh(self) -> None:
+        """Stop the poll timer and wait for any in-flight fetch (called on close)."""
+        timer = getattr(self, "_auto_refresh_timer", None)
+        if timer is not None:
+            timer.stop()
+        fetcher = self._model_fetcher
+        self._model_fetcher = None
+        if fetcher is not None:
+            try:
+                fetcher.loaded.disconnect()
+                fetcher.failed.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+            if fetcher.isRunning():
+                # The thread is parented to this dialog, so it must finish before
+                # the dialog is destroyed. Worst case waits out the request timeout.
+                fetcher.wait(6000)
+
+    def done(self, result: int) -> None:
+        self._stop_model_auto_refresh()
+        super().done(result)
 
     @Slot()
     def _test_connection(self):
