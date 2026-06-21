@@ -15,6 +15,7 @@ from PySide6.QtCore import (
     QPropertyAnimation,
     QSequentialAnimationGroup,
     QTimer,
+    QVariantAnimation,
     Qt,
 )
 from PySide6.QtWidgets import (
@@ -220,39 +221,72 @@ def fade_in_overlay(widget: QWidget, duration: int = 140) -> None:
 
 # ── Welcome card idle pulse ───────────────────────────────────────────────────
 
+# The welcome card uses a translucent, stylesheet-themed background. A
+# QGraphicsOpacityEffect (or any QGraphicsEffect) renders such a widget into an
+# offscreen buffer *without* the parent painted behind it — so inside the
+# welcome QScrollArea the near-transparent card composited onto a white backing
+# and ignored the active dark theme (the whole card looked white). We therefore
+# pulse the dashed-border colour via the widget stylesheet instead: a stylesheet
+# animation has no offscreen step, so the card stays correctly themed.
+_CARD_PULSE_MIN = 0.30
+_CARD_PULSE_MAX = 0.62
+
+
+def _welcome_card_style(border_alpha: float) -> str:
+    return (
+        "QFrame#WelcomeCard {"
+        f"  border: 2px dashed rgba(99,102,241,{border_alpha:.2f});"
+        "  border-radius: 18px;"
+        "  background: rgba(99,102,241,0.04);"
+        "}"
+    )
+
+
 def start_card_pulse(card: QWidget) -> None:
     """
-    Start a slow, infinite opacity pulse on *card* (0.80 ↔ 1.0, ~2.4 s cycle).
-    Call stop_card_pulse() to cancel before hiding/removing the card.
+    Start a slow, infinite "breathing" pulse on *card*'s dashed border
+    (alpha 0.30 ↔ 0.62, ~2.4 s cycle), driven entirely through the widget
+    stylesheet so the card's theming/transparency is preserved (no
+    QGraphicsEffect — see note above). Call stop_card_pulse() to cancel.
     """
     prev = getattr(card, "_card_pulse", None)
     if prev is not None:
         return  # already running
 
-    effect = QGraphicsOpacityEffect(card)
-    card.setGraphicsEffect(effect)
-    effect.setOpacity(1.0)
-
-    anim = QPropertyAnimation(effect, b"opacity", card)
+    anim = QVariantAnimation(card)
     anim.setDuration(2400)
     anim.setLoopCount(-1)  # infinite
-    anim.setKeyValueAt(0.00, 1.0)
-    anim.setKeyValueAt(0.50, 0.80)
-    anim.setKeyValueAt(1.00, 1.0)
+    anim.setKeyValueAt(0.00, _CARD_PULSE_MIN)
+    anim.setKeyValueAt(0.50, _CARD_PULSE_MAX)
+    anim.setKeyValueAt(1.00, _CARD_PULSE_MIN)
     anim.setEasingCurve(QEasingCurve.Type.InOutSine)
+
+    last = [-1.0]
+
+    def _apply(value):
+        # Quantise to 0.02 steps so we only re-polish the stylesheet a handful
+        # of times per cycle instead of on every ~16 ms animation tick.
+        alpha = round(float(value) / 0.02) * 0.02
+        if abs(alpha - last[0]) >= 0.005:
+            last[0] = alpha
+            card.setStyleSheet(_welcome_card_style(alpha))
+
+    anim.valueChanged.connect(_apply)
     anim.start()
 
     card._card_pulse = anim  # type: ignore[attr-defined]
-    card._card_pulse_effect = effect  # type: ignore[attr-defined]
 
 
 def stop_card_pulse(card: QWidget) -> None:
-    """Stop and remove the idle pulse started by start_card_pulse()."""
+    """Stop the idle pulse started by start_card_pulse().
+
+    Leaves the current stylesheet in place; callers that stop the pulse always
+    set their own card style straight after (drag highlight / default).
+    """
     anim = getattr(card, "_card_pulse", None)
     if anim is not None:
         anim.stop()
         card._card_pulse = None  # type: ignore[attr-defined]
-    card.setGraphicsEffect(None)  # type: ignore[arg-type]
 
 
 # ── In-app toast notifications ────────────────────────────────────────────────
