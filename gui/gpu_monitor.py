@@ -3,6 +3,11 @@
 Reads from AMD sysfs (/sys/class/drm + hwmon) or NVIDIA nvidia-smi.
 No external dependencies required — pure sysfs/subprocess.
 
+AMD stats rely on Linux sysfs, so they're Linux-only.  NVIDIA stats come from
+`nvidia-smi`, which ships with the driver on Windows and macOS as well, so
+NVIDIA GPUs are covered on every platform.  When nothing is found the widget
+hides itself.
+
 Shows: GPU% · VRAMused/VRAMtotal · Temperature°C
 Color: green < 50/70%/70°C · yellow < 80/90%/85°C · red above that.
 Updates every 2 seconds via QTimer.  Hidden automatically if no GPU found.
@@ -12,6 +17,7 @@ from __future__ import annotations
 
 import logging
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -111,10 +117,15 @@ def _read_nvidia() -> Optional[GpuStats]:
 
 
 def read_gpu_stats() -> Optional[GpuStats]:
-    """Return current GPU stats, or None if no supported GPU found."""
-    dev = _find_amd_device()
-    if dev:
-        return _read_amd(dev)
+    """Return current GPU stats, or None if no supported GPU found.
+
+    AMD is read from Linux sysfs (Linux-only); NVIDIA via nvidia-smi (all
+    platforms).  Returns None when neither is present so the widget can hide.
+    """
+    if sys.platform == "linux":
+        dev = _find_amd_device()
+        if dev:
+            return _read_amd(dev)
     return _read_nvidia()
 
 

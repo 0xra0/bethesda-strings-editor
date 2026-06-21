@@ -73,12 +73,14 @@ def main():
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
 
-    # Force Qt's own file dialogs instead of native ones.
+    # Force Qt's own file dialogs instead of native ones — Linux only.
     # Native dialogs (GTK/KDE portal) can deadlock the Qt event loop on Linux,
     # making the app completely unresponsive and blocking the compositor's focus
     # grab — reproducible on tiling WMs (i3, sway, Hyprland) and mixed DE setups.
-    # This must be set before QApplication is created.
-    QApplication.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeDialogs)
+    # On Windows/macOS the native dialogs are well-behaved and far nicer (Explorer
+    # / Finder), so only disable them on Linux. Must be set before QApplication.
+    if sys.platform == "linux":
+        QApplication.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeDialogs)
 
     app = QApplication(sys.argv)
     app.setApplicationName("Bethesda Strings AI Translator")

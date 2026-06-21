@@ -16,8 +16,10 @@ If no backend or dictionary is available the checker silently returns [].
 from __future__ import annotations
 
 import logging
+import os
 import re
 import subprocess
+import sys
 import threading
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -39,16 +41,51 @@ LANG_TO_DICT: Dict[str, str] = {
 }
 
 # ── Standard paths to search for .dic / .aff files ────────────────────────────
-_DICT_SEARCH_PATHS: List[Path] = [
-    Path("/usr/share/hunspell"),
-    Path("/usr/share/myspell/dicts"),
-    Path("/usr/share/myspell"),
-    Path("/usr/lib/hunspell"),
-    Path.home() / ".local/share/hunspell",
-    Path.home() / ".local/share/myspell",
-    Path("/usr/lib/libreoffice/share/extensions"),
-    Path("/usr/share/libreoffice/share/extensions"),
-]
+def _build_dict_search_paths() -> List[Path]:
+    """Locations to search for Hunspell .dic/.aff pairs, per platform.
+
+    Order: app-bundled dicts → per-user dir → OS system locations.  Linux keeps
+    its long-standing paths; Windows and macOS add their conventional Hunspell /
+    LibreOffice directories so spell-check works there too.
+    """
+    home = Path.home()
+    paths: List[Path] = []
+    # App-bundled dictionaries (a packaged build can ship its own under dicts/).
+    paths.append(Path(__file__).resolve().parent.parent / "dicts")
+    if getattr(sys, "frozen", False):  # PyInstaller / frozen build
+        paths.append(Path(sys.executable).resolve().parent / "dicts")
+    # Per-user (works on every OS via Path.home()).
+    paths += [home / ".local/share/hunspell", home / ".local/share/myspell"]
+
+    if sys.platform == "win32":
+        for base in (os.environ.get("PROGRAMFILES"),
+                     os.environ.get("PROGRAMFILES(X86)")):
+            if base:
+                paths.append(Path(base) / "LibreOffice" / "share" / "extensions")
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            paths.append(Path(appdata) / "hunspell")
+    elif sys.platform == "darwin":
+        paths += [
+            Path("/Library/Spelling"),
+            home / "Library" / "Spelling",
+            Path("/opt/homebrew/share/hunspell"),
+            Path("/usr/local/share/hunspell"),
+            Path("/Applications/LibreOffice.app/Contents/Resources/extensions"),
+        ]
+    else:  # Linux / other Unix
+        paths += [
+            Path("/usr/share/hunspell"),
+            Path("/usr/share/myspell/dicts"),
+            Path("/usr/share/myspell"),
+            Path("/usr/lib/hunspell"),
+            Path("/usr/lib/libreoffice/share/extensions"),
+            Path("/usr/share/libreoffice/share/extensions"),
+        ]
+    return paths
+
+
+_DICT_SEARCH_PATHS: List[Path] = _build_dict_search_paths()
 
 # ── Strip game tokens before spell-checking ───────────────────────────────────
 _STRIP_RE = re.compile(

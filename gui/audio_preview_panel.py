@@ -25,6 +25,7 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -80,11 +81,17 @@ class _SubprocessPlayer(QObject):
             return
         cmd = self._build_cmd(self._path)
         if cmd is None:
-            logger.warning("No audio player found (tried paplay, ffplay, aplay)")
+            logger.warning("No audio player available for this platform/file")
             return
+        # Windows: stop the player child (ffplay/powershell) flashing a console.
+        creationflags = (
+            getattr(subprocess, "CREATE_NO_WINDOW", 0)
+            if sys.platform == "win32" else 0
+        )
         try:
             self._proc = subprocess.Popen(
-                cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                creationflags=creationflags,
             )
             self._set_state(self.PlaybackState.PlayingState)
             self._poll_timer.start()
@@ -125,6 +132,31 @@ class _SubprocessPlayer(QObject):
 
     @staticmethod
     def _build_cmd(path: str) -> Optional[list]:  # type: ignore[type-arg]
+        """Return an argv for a WAV player, or None if none is available.
+
+        Each branch yields a process that runs for the clip's duration and then
+        exits, so the existing poll loop detects playback completion uniformly.
+        """
+        if sys.platform == "win32":
+            if shutil.which("ffplay"):
+                return ["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", path]
+            # Built-in fallback: PowerShell's SoundPlayer plays WAV synchronously
+            # (the panel only ever feeds it WAV — decoded voice and TTS output).
+            if path.lower().endswith(".wav"):
+                safe = path.replace("'", "''")  # escape for PS single-quoted string
+                ps = (
+                    "$p = New-Object System.Media.SoundPlayer "
+                    f"-ArgumentList '{safe}'; $p.PlaySync()"
+                )
+                return ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps]
+            return None
+        if sys.platform == "darwin":
+            if shutil.which("afplay"):
+                return ["afplay", path]
+            if shutil.which("ffplay"):
+                return ["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", path]
+            return None
+        # Linux / other Unix
         if shutil.which("paplay"):
             return ["paplay", path]
         if shutil.which("ffplay"):

@@ -432,27 +432,52 @@ def _migrate_config(data: dict, from_version: int) -> dict:
 # Default config file path (in user config dir alongside QSettings)
 CONFIG_FILENAME = "config.json"
 
-# Bootstrap file at the fixed default location — stores a single-line override path.
-# Must always live at the hardcoded default dir so it's findable before we know the override.
-_OVERRIDE_BOOTSTRAP = Path(os.path.expanduser("~/.config/BethesdaModTools/.config_dir_override"))
-_DEFAULT_CONFIG_DIR = Path(os.path.expanduser("~/.config/BethesdaModTools"))
+def _platform_config_home() -> Path:
+    """Base directory for per-user app config, following each OS's convention.
+
+    Windows: ``%APPDATA%``.  macOS: ``~/Library/Application Support``.
+    Linux/other: ``$XDG_CONFIG_HOME`` or ``~/.config``.
+    """
+    if sys.platform == "win32":
+        base = os.environ.get("APPDATA") or os.path.expanduser("~\\AppData\\Roaming")
+        return Path(base)
+    if sys.platform == "darwin":
+        return Path(os.path.expanduser("~/Library/Application Support"))
+    xdg = os.environ.get("XDG_CONFIG_HOME", "").strip()
+    return Path(xdg) if xdg else Path(os.path.expanduser("~/.config"))
+
+
+# Default config directory — OS-native location.
+_DEFAULT_CONFIG_DIR = _platform_config_home() / "BethesdaModTools"
+# Long-standing pre-cross-platform location (always ~/.config). Used to migrate
+# an existing config forward and to keep honouring an override bootstrap that an
+# older build may have written there. On Linux this equals _DEFAULT_CONFIG_DIR.
+_LEGACY_CONFIG_DIR = Path(os.path.expanduser("~/.config/BethesdaModTools"))
+
+# Bootstrap file storing a single-line override path. Must live at the default
+# dir so it's findable before we know the override; the legacy copy is still read.
+_OVERRIDE_BOOTSTRAP = _DEFAULT_CONFIG_DIR / ".config_dir_override"
+_LEGACY_OVERRIDE_BOOTSTRAP = _LEGACY_CONFIG_DIR / ".config_dir_override"
 
 
 def get_config_dir_override() -> Optional[Path]:
     """Return the user-configured config dir, or None when using the default.
 
-    Priority: BSE_CONFIG_DIR env var → bootstrap file → None (use default).
+    Priority: BSE_CONFIG_DIR env var → bootstrap file (default then legacy
+    location) → None (use default).
     """
     env = os.environ.get("BSE_CONFIG_DIR", "").strip()
     if env:
         return Path(env)
-    try:
-        if _OVERRIDE_BOOTSTRAP.exists():
-            text = _OVERRIDE_BOOTSTRAP.read_text(encoding="utf-8").strip()
-            if text:
-                return Path(text)
-    except OSError:
-        pass
+    # dict.fromkeys dedups when default == legacy (Linux).
+    for bootstrap in dict.fromkeys((_OVERRIDE_BOOTSTRAP, _LEGACY_OVERRIDE_BOOTSTRAP)):
+        try:
+            if bootstrap.exists():
+                text = bootstrap.read_text(encoding="utf-8").strip()
+                if text:
+                    return Path(text)
+        except OSError:
+            pass
     return None
 
 
@@ -471,6 +496,29 @@ def set_config_dir_override(path: Optional[Path]) -> None:
         _OVERRIDE_BOOTSTRAP.write_text(str(path), encoding="utf-8")
 
 
+def _migrate_legacy_config_dir() -> None:
+    """One-time: carry a pre-existing ~/.config config into the new default dir.
+
+    No-op on Linux (default == legacy), when the new dir already exists, or when
+    there's nothing to migrate. Stops older Windows/macOS installs from losing
+    their settings now that the default location is the OS-native directory.
+    """
+    if _DEFAULT_CONFIG_DIR == _LEGACY_CONFIG_DIR:
+        return
+    if _DEFAULT_CONFIG_DIR.exists():
+        return
+    if not (_LEGACY_CONFIG_DIR / CONFIG_FILENAME).exists():
+        return
+    try:
+        shutil.copytree(_LEGACY_CONFIG_DIR, _DEFAULT_CONFIG_DIR)
+        logger.info("Migrated config %s → %s", _LEGACY_CONFIG_DIR, _DEFAULT_CONFIG_DIR)
+    except OSError as e:
+        logger.warning(
+            "Config migration failed (%s → %s): %s",
+            _LEGACY_CONFIG_DIR, _DEFAULT_CONFIG_DIR, e,
+        )
+
+
 def get_config_dir() -> Path:
     """Get the directory where the JSON config file is stored."""
     override = get_config_dir_override()
@@ -480,31 +528,37 @@ def get_config_dir() -> Path:
             return override
         except OSError as e:
             logger.warning("Cannot use config dir override %s: %s — using default", override, e)
+    _migrate_legacy_config_dir()
     _DEFAULT_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     return _DEFAULT_CONFIG_DIR
 
 
 _SSD_CACHE_DIR = Path("/mnt/ssd/bethesda-strings-editor")
 
-# Bootstrap file for cache dir override — always at the fixed default location.
-_CACHE_OVERRIDE_BOOTSTRAP = Path(os.path.expanduser("~/.config/BethesdaModTools/.cache_dir_override"))
+# Bootstrap file for cache dir override — at the default dir (legacy still read).
+_CACHE_OVERRIDE_BOOTSTRAP = _DEFAULT_CONFIG_DIR / ".cache_dir_override"
+_LEGACY_CACHE_OVERRIDE_BOOTSTRAP = _LEGACY_CONFIG_DIR / ".cache_dir_override"
 
 
 def get_cache_dir_override() -> Optional[Path]:
     """Return the user-configured cache dir, or None when using the default.
 
-    Priority: BSE_CACHE_DIR env var → bootstrap file → None (use default).
+    Priority: BSE_CACHE_DIR env var → bootstrap file (default then legacy
+    location) → None (use default).
     """
     env = os.environ.get("BSE_CACHE_DIR", "").strip()
     if env:
         return Path(env)
-    try:
-        if _CACHE_OVERRIDE_BOOTSTRAP.exists():
-            text = _CACHE_OVERRIDE_BOOTSTRAP.read_text(encoding="utf-8").strip()
-            if text:
-                return Path(text)
-    except OSError:
-        pass
+    for bootstrap in dict.fromkeys(
+        (_CACHE_OVERRIDE_BOOTSTRAP, _LEGACY_CACHE_OVERRIDE_BOOTSTRAP)
+    ):
+        try:
+            if bootstrap.exists():
+                text = bootstrap.read_text(encoding="utf-8").strip()
+                if text:
+                    return Path(text)
+        except OSError:
+            pass
     return None
 
 

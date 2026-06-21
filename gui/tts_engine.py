@@ -24,6 +24,7 @@ import logging
 import re
 import shutil
 import subprocess
+import tempfile
 import wave
 from pathlib import Path
 from typing import Optional
@@ -216,7 +217,7 @@ def synthesize(
                 return TTSResult(cached, dur, engine_type)
 
     output = (cache_dir / f"{key}.wav") if cache_dir else (
-        Path(f"/tmp/bse_tts_{key}.wav")
+        Path(tempfile.gettempdir()) / f"bse_tts_{key}.wav"
     )
 
     success = False
