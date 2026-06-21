@@ -252,9 +252,14 @@ class _WelcomeWidget(QWidget):
         self._changelog_view = QTextBrowser()
         self._changelog_view.setOpenExternalLinks(True)
         self._changelog_view.setMinimumHeight(220)
+        # NB: do NOT set a background/color here. QTextBrowser is a QTextEdit
+        # subclass, so the active theme's `QTextEdit { background-color/color }`
+        # rule paints it. Forcing a (near-transparent) background here made the
+        # panel fall back to Qt's default white document page, ignoring the
+        # theme. Only border/radius/padding are safe to override per-widget.
         self._changelog_view.setStyleSheet(
             "QTextBrowser { border: 1px solid rgba(127,127,127,0.25);"
-            "  border-radius: 12px; padding: 8px; background: rgba(127,127,127,0.04); }"
+            "  border-radius: 12px; padding: 8px; }"
         )
         cl_layout.addWidget(self._changelog_view)
 
