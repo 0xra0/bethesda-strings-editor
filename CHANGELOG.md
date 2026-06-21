@@ -2,9 +2,58 @@
 
 ## [Unreleased]
 
+---
+
+## [0.2.3] — 2026-06-21
+
 ### Added
-- **Visual Context Preview** (View → Visual Context Preview, Ctrl+Shift+P) — dockable panel that renders the current string inside a faithful recreation of the Bethesda Starfield UI box using the actual game fonts (RF_35_M / RF_55_M Cyrillic body extracted from `fonts_en.swf`/`fonts_uk.swf`); auto-detects context (Dialogue, Quest, Book, Note, Terminal, UI) from the string type and shows box dimensions matching the 1280×720 native Scaleform canvas; colour-coded overflow indicator flags when a translation is too long to fit the target box; side-by-side Source/Translation/Both view modes; context can be overridden manually via the combo box; font files live in `data/fonts/`
-- **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` files directly as a Translation Memory or merge them into the current file; accessible via File → Browse NexusMods for Translations; free-account download restriction handled gracefully (opens mod page in browser as fallback); zip archives are automatically extracted for their strings files
+- **Cross-platform support (Windows & macOS)** — native Explorer/Finder file dialogs on Windows/macOS (the GTK/portal deadlock workaround is now Linux-only); config stored in the OS-native location (`%APPDATA%` on Windows, `~/Library/Application Support` on macOS, `$XDG_CONFIG_HOME`/`~/.config` on Linux) with automatic migration from the legacy path; owner-only config permissions enforced on Windows via `icacls` as well as POSIX `chmod`; per-platform audio playback (macOS `afplay`, Windows `ffplay`/PowerShell WAV player, Linux `paplay`/`ffplay`/`aplay`); machine-id derivation, temp paths, and subprocess console-window suppression all made portable
+- **ESP/ESM Mod Update Migration** (Translation → Mod Update Migration) — xTranslator-style tool that diffs an old and new version of a plugin keyed on `(FormID, record, field, occurrence)` and carries existing translations forward to the updated plugin; risk-coloured 7-column diff with changed-only filter and CSV/HTML export; only fills pending/empty rows so in-progress work is never clobbered
+- **VMAD script-property analysis** (Translation → Script Property Analysis) — pure-Python Papyrus VMAD parser/classifier with safe byte-splice editing; each script-property string is tagged translatable / review / locked (resource paths, identifiers, and event names locked by default); works on both localized and non-localized plugins, recomputes record + GRUP sizes, re-compresses compressed records, and writes a `.bak` before saving
+- **NPC & Speaker Mapping panel** — shows who speaks the selected dialogue line (name, gender, faction, category, raw voice type, and "also voiced by" for shared lines), resolved from the Wwise voice-type folder name via a layered parser with a curated named-NPC table
+- **Native Starfield voice playback** — decodes the original Wwise `.wem` voice clip for a dialogue FormID (via `vgmstream-cli`) straight out of the `*Voices*.ba2` archives and plays it through the audio panel for timing comparison
+- **Ollama force-stop** — frees a wedged GPU by restarting the Ollama service without leaving the app; on Linux a privileged restart uses the app's own Qt-themed `sudo -S` password dialog (askpass/pkexec fallback), on Windows it stops the service via `taskkill` with no console flash
+- **Ollama model auto-detection** — the model dropdown in Settings loads installed models automatically and keeps refreshing while the window is open, so a model pulled with `ollama pull` appears without clicking Refresh
+- **Automatic update checker** — checks the GitHub releases API on startup and offers to download a newer build (toggle in Settings)
+- **"What's New" panel** — recent GitHub release notes are fetched and rendered on the welcome screen
+- **NexusMods Translation Browser** — search NexusMods for existing translation mods (GraphQL v2 search with Elasticsearch fallback), browse their files in a card grid, and import `.strings`/`.dlstrings`/`.ilstrings` directly as a Translation Memory or merge them into the current file; "Download & Open in Editor" auto-opens downloaded `.esp`/`.esm`/`.esl`; archives are auto-extracted; free-account downloads handled via browser cookies (`curl-cffi`)
+- **NexusMods upload** — v3 multipart upload flow (presigned URLs → S3 → finalise → poll → attach metadata) with a dedicated upload dialog
+- **Visual Context Preview** (View → Visual Context Preview, Ctrl+Shift+P) — renders the current string inside a faithful recreation of the Bethesda Starfield UI box using the actual game fonts; auto-detects context (Dialogue, Quest, Book, Note, Terminal, UI), shows box dimensions on the 1280×720 Scaleform canvas, and flags overflow when a translation is too long
+- **Named Translation Sessions** (Ctrl+Shift+N new, Ctrl+Shift+S save) — persistent sessions with saved search/filter state
+- **Vim-style Macro Recording** (Ctrl+M) — record and replay sequences of edit operations as named macros
+- **Ukrainian gender-agreement checker** (Ctrl+Alt+G) and **ти/ви register-consistency checker** (Ctrl+Alt+R)
+- **Starfield interface TXT support** — translate `translate_en.txt` / `translate_ru.txt` interface string files
+- **AI post-translation self-review** — automatically fixes critical issues (skips purely visual ones) after each translation
+- **Obfuscated in-game code locking** — deliberately-garbled codes (encrypted notes, passwords, scrambled terminal text) are detected and locked through translation
+- **8 new themes** — Gruvbox, Tokyo Night, Monokai, One Dark, Solarized Light, Sepia, Starfield, and Starfield Terminal
+- **GPU monitor** — status-bar widget showing GPU utilisation, VRAM, and temperature (AMD via Linux sysfs, NVIDIA via `nvidia-smi` on all platforms; auto-hides if no GPU)
+- **Bundled Hunspell dictionaries** — `scripts/fetch_dictionaries.py` populates `dicts/` so Windows/macOS builds ship working spell-check
+- **Korean (ko_KR) UI translation** and Korean source-language leak detection
+- **Restore dropped Bethesda game tags** — re-inserts `<mag>`, `<dur>`, `<area>`, etc. that the model drops, using fractional-position heuristics
+- **Auto-Fix All** — one-click batch application of all mechanically correctable QC issues
+- **Per-code hide filter** in the QC dialog
+- **UI Constraint Enforcer** — flags translations more than 40% longer than the English original
+- **Custom background / wallpaper support** with theme integration
+- **Full About dialog**, colour-coded `[INFO]`/`[WARN]`/`[ERROR]` logging, a redesigned app icon, and core I/O / fuzzy-match / cache benchmarks
+
+### Changed
+- API keys obfuscated in the JSON config (XOR + base64); Claude key remains in the system keyring / AES-256-GCM store only
+- Protected-terms list trimmed to token names — Starfield in-game terms are translatable
+- Redesigned NexusMods page description and header banner
+- GPG release signing + SHA256 verification added to the release pipeline
+
+### Removed
+- Weblate community-translation integration
+- AUR packaging (desktop integration relocated to `packaging/`)
+- `CONDITIONAL_BLOCKS` QC check and non-existent Starfield bracket/name tokens
+
+### Fixed
+- Numerous mamaylm batch-translation timeout and GPU-wedge issues (stall watchdog, queue-depth-aware timeouts, single-stream / pinned-context, wedge breaker)
+- White/unthemed welcome screen and "What's New" panel (offscreen `QGraphicsEffect` render + transparent viewport)
+- Windows tray icon and post-translation notifications
+- Shutdown hang and `Ctrl+C`/IOT crashes (drain executor threads before terminate; catch `BaseException` in the shutdown path; `gpu_monitor` polling)
+- Many QC false positives — printf format specifiers, `% for`/`% chance`, brackets, guillemets, sentence/newline counts, RU→UK identical short words
+- Several PyInstaller bundle gaps (log path, missing data files, theme dir, `LD_LIBRARY_PATH` pollution)
 
 ---
 
@@ -174,6 +223,7 @@ Initial public release.
 - Sphinx documentation with API reference, format specification, and architecture overview, hosted on GitHub Pages
 - git-cliff structured changelog from free-form commit messages
 
+[0.2.3]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.1.1...v0.2.0
