@@ -134,12 +134,34 @@ class _WelcomeWidget(QWidget):
         page = QVBoxLayout(self)
         page.setContentsMargins(0, 0, 0, 0)
         scroll = QScrollArea()
+        scroll.setObjectName("WelcomeScrollArea")
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # The scroll viewport + body widget aren't covered by the theme's
+        # QScrollArea rule and would otherwise paint with the default (white)
+        # palette base, making the translucent welcome card render on white and
+        # ignore the active theme. Keep them transparent so the themed window
+        # background shows through on every theme. (Same idiom as the settings
+        # dialog's scroll area.)
+        scroll.viewport().setAutoFillBackground(False)
+        scroll.setStyleSheet(
+            """
+            QScrollArea#WelcomeScrollArea {
+                background: transparent;
+                border: none;
+            }
+            QScrollArea#WelcomeScrollArea > QWidget > QWidget {
+                background: transparent;
+            }
+            """
+        )
         page.addWidget(scroll)
 
-        container = QWidget()
+        container = QWidget(scroll)
+        container.setObjectName("WelcomeScrollBody")
+        container.setAttribute(Qt.WA_StyledBackground, True)
+        container.setStyleSheet("QWidget#WelcomeScrollBody { background: transparent; }")
         scroll.setWidget(container)
         outer = QVBoxLayout(container)
         outer.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
