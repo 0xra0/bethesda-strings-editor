@@ -67,7 +67,7 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b]Quality checker[/b] — 20+ automated checks: missing/extra game tags, empty or untranslated strings, source-language leakage, English leak, suspicious length ratios, newline mismatches, truncated AI output, AI artifact prefixes, encoding failures, unclosed guillemets, unmatched brackets, CJK script coverage, and glossary mismatches
 [*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations and chain-of-thought reasoning
 [*][b]Font & Glyph Checker[/b] — parses Scaleform SWF font atlases and TTF/OTF cmap tables; flags translation characters that will render as squares in-game and suggests auto-fixable substitutes
-[*][b]Hunspell spell-check[/b] — optional per-language spell checking using system dictionaries; install with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
+[*][b]Hunspell spell-check[/b] — optional per-language spell checking; Windows/macOS builds ship bundled dictionaries, on Linux install system ones with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
 [*][b]Auto-Fix All[/b] — one-click batch fix for all mechanically correctable issues (whitespace, capitalization, character substitution, missing newlines, unclosed guillemets)
 [*][b]Per-code hide filter[/b] — suppress specific QC issue codes from the results table for the current session
 [*][b]Retranslation queue[/b] — strings flagged by QC are queued and retranslated with a per-string hint describing what went wrong
@@ -107,10 +107,12 @@ The QC model is published on the Ollama hub. Translation models are built from l
 [*][b]Keyboard shortcuts editor[/b] — rebind any action
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
 [*][b]16 built-in themes[/b] — Slate, Midnight, Nord, Dracula, Catppuccin, Light, Solarized Dark, Solarized Light, Gruvbox, Tokyo Night, Monokai, One Dark, Sepia, Starfield, Starfield Terminal, High Contrast; plus custom QSS file support
-[*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; colour-coded green/yellow/red (AMD and NVIDIA)
+[*][b]GPU monitor[/b] — live GPU%, VRAM usage, and temperature in the status bar; colour-coded green/yellow/red (AMD on Linux, NVIDIA on all platforms)
+[*][b]Ollama model auto-detection[/b] — the model picker in Settings loads installed models automatically and keeps refreshing while open, so a freshly [b]ollama pull[/b]ed model appears without clicking Refresh
 [*][b]Ollama force-stop[/b] — free a wedged GPU by restarting the Ollama service without leaving the app; on Linux a privileged restart uses the app's own themed password dialog (sudo -S, with askpass/pkexec fallback), on Windows it stops the service via taskkill
 [*][b]Interface translations[/b] — UI available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
 [*][b]Cross-platform desktop notifications[/b] on batch completion — notify-send/D-Bus on Linux, native system-tray balloons on Windows and macOS
+[*][b]Native OS integration[/b] — native Explorer/Finder file dialogs on Windows and macOS; config stored in the OS-native location (%APPDATA% / Application Support / XDG) with owner-only file permissions
 [*][b]"What's New" panel[/b] — recent release notes are fetched from GitHub and shown on the welcome screen
 [*][b]Automatic update check[/b] — checks for a newer release on startup and offers to download it (toggle in Settings)
 [*][b]Crash recovery[/b] — periodic auto-save; recovery dialog offered at startup if the previous session ended unexpectedly

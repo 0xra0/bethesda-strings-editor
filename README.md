@@ -98,7 +98,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 ### Quality assurance
 - **Quality checker** — 20+ checks: missing/extra game tags, empty or untranslated strings, source-language leakage, English leak, suspicious length ratios, newline mismatches, truncated AI output, AI artifact prefixes, encoding failures, unclosed guillemets, unmatched brackets, script coverage (CJK), and more
 - **RU→UK false-positive reduction** — UNTRANSLATED check uses Russian-exclusive character detection (ы/э/ё/ъ) and minimum word-count threshold to avoid flagging legitimately identical short words; length-ratio skip applies only to short Cyrillic sources (abbreviation expansions)
-- **Hunspell spell-check** — per-language `SPELL_ERROR` warnings using system dictionaries
+- **Hunspell spell-check** — per-language `SPELL_ERROR` warnings; uses system dictionaries on Linux and app-bundled dictionaries on Windows/macOS (populate via `scripts/fetch_dictionaries.py`)
 - **AI quality model** (`qcgemma4-st`) — fine-tuned Gemma 4 E4B that detects 16 issue codes with chain-of-thought reasoning and structured `VERDICT: GOOD / ISSUES_FOUND` output with `AUTOFIX`/`RETRANSLATE` recommendations
 - **Font & Glyph Checker** — parses Scaleform SWF font atlases and TTF/OTF cmap tables; flags translation characters that will render as squares in-game and suggests auto-fixable substitutes
 - **Auto-Fix All** — one-click batch application of all mechanically correctable issues (whitespace, capitalization, character substitution, missing newlines, truncated translations, unclosed guillemets)
@@ -131,10 +131,12 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **F7** → jump to next untranslated; **Ctrl+Enter** → approve; **Ctrl+R** → reject
 - **Encoding detection** — auto-detects UTF-8, CP1251, CP1252, CP1250, GBK/GB2312, BOM variants; override per-file
 - **Themes** — 16 built-in themes: Slate, Midnight, Nord, Dracula, Catppuccin, Light, Solarized Dark, Solarized Light, Gruvbox, Tokyo Night, Monokai, One Dark, Sepia, Starfield, Starfield Terminal, High Contrast; plus custom QSS file support
-- **GPU monitor** — status bar widget showing GPU utilisation, VRAM usage, and temperature (AMD sysfs + NVIDIA nvidia-smi; auto-hides if no GPU found)
+- **GPU monitor** — status bar widget showing GPU utilisation, VRAM usage, and temperature (AMD via Linux sysfs; NVIDIA via `nvidia-smi` on Linux/Windows/macOS; auto-hides if no GPU found)
+- **Ollama model auto-detection** — the model dropdown in Settings loads installed models automatically and keeps refreshing while the window is open, so a model pulled with `ollama pull` shows up without clicking Refresh
 - **Ollama force-stop** — frees a wedged GPU by restarting the Ollama service; on Linux a privileged restart uses the app's own Qt-themed password dialog (`sudo -S`, with askpass/pkexec fallback), on Windows it stops the service via `taskkill` with no console flash
 - **UI translations** — interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
 - **Cross-platform desktop notifications** on batch completion — `notify-send`/D-Bus on Linux, native system-tray balloons on Windows and macOS
+- **Native OS integration** — native Explorer/Finder file dialogs on Windows/macOS; config stored in the OS-native location (`%APPDATA%` on Windows, `~/Library/Application Support` on macOS, `$XDG_CONFIG_HOME`/`~/.config` on Linux) with owner-only file permissions
 - **"What's New" panel** — recent GitHub release notes are fetched and rendered on the welcome screen after the welcome card
 - **Automatic update check** — checks the GitHub releases API on startup and offers to download a newer build (toggle in Settings)
 - **Crash recovery** — periodic auto-save; recovery dialog offered at startup if the previous session ended unexpectedly
@@ -146,7 +148,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 
 - Python 3.10+
 - [Ollama](https://ollama.com) running locally (or a Claude API key for the Claude backend)
-- Audio playback requires `paplay` (PulseAudio), `ffplay`, or `aplay` — any of the three will be auto-detected
+- Audio playback is auto-detected per platform: Linux uses `paplay`, `ffplay`, or `aplay`; macOS uses `afplay` (or `ffplay`); Windows uses `ffplay` or the built-in PowerShell WAV player
 - Native Starfield voice playback requires `vgmstream-cli` on PATH (decodes Wwise `.wem` clips)
 
 ```bash
@@ -157,7 +159,7 @@ Core dependencies: `PySide6>=6.6`, `requests>=2.31`, `cryptography>=43.0`, `anth
 
 Optional:
 - `keyring>=25.0` — API key storage in system keyring
-- `hunspell>=0.5.5` or `spylls>=0.1.7` — spell-check (hunspell CLI used as fallback)
+- `hunspell>=0.5.5` or `spylls>=0.1.7` — spell-check engine (hunspell CLI used as fallback); run `scripts/fetch_dictionaries.py` to bundle Hunspell dictionaries for Windows/macOS
 - `curl-cffi>=0.7` — free-user NexusMods downloads via browser cookies
 
 ---
@@ -257,7 +259,8 @@ scripts/
   extract_sharegpt_dataset.py  Export EN→target string pairs as ShareGPT JSONL
   create_qc_dataset.py         Generate QC training dataset (14,928 examples, 16 issue codes)
   compile_translations.sh      Recompile .ts → .qm UI translation files
-  download_lang_dicts.py       Download Hunspell dictionaries for all supported languages
+  fetch_dictionaries.py        Download Hunspell .aff/.dic dictionaries into dicts/ (Windows/macOS spell-check bundle)
+  download_lang_dicts.py       Download word-frequency lists into data/ (source-language leak detection)
   extract_starfield_glossary.py Build starfield_glossary.json from string files
 
 packaging/
