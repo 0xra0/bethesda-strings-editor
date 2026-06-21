@@ -8,6 +8,8 @@ import json
 import logging
 import os
 import shutil
+import subprocess
+import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -554,6 +556,38 @@ def get_config_path() -> Path:
     return get_config_dir() / CONFIG_FILENAME
 
 
+def _restrict_to_owner(path: Path) -> None:
+    """Best-effort: restrict *path* so only the current user can read it.
+
+    POSIX: ``chmod 0o600``.  On Windows ``os.chmod`` only toggles the read-only
+    bit and cannot express per-user access, so the file is left readable by
+    every account on the machine.  Use ``icacls`` instead to reset the DACL to
+    the current user alone.  The user is granted access *before* inherited ACEs
+    are stripped, so even a partial failure can never lock them out of their
+    own config.  Never raises — this is opportunistic hardening, not a barrier.
+    """
+    if sys.platform == "win32":
+        user = os.environ.get("USERNAME")
+        if not user:
+            return
+        try:
+            subprocess.run(
+                ["icacls", str(path),
+                 "/grant:r", f"{user}:F",    # grant current user first…
+                 "/inheritance:r"],          # …then drop inherited ACEs
+                check=False,
+                capture_output=True,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+            )
+        except (OSError, ValueError) as exc:
+            logger.debug("icacls restriction failed for %s: %s", path, exc)
+        return
+    try:
+        path.chmod(0o600)
+    except OSError as exc:
+        logger.debug("chmod 0o600 failed for %s: %s", path, exc)
+
+
 def load_settings_json() -> AppSettings:
     """Load settings from JSON config file. Falls back to defaults on error."""
     config_path = get_config_path()
@@ -589,11 +623,12 @@ def save_settings_json(settings: AppSettings) -> bool:
 
         # Atomic write: write to temp file, then rename
         tmp_path = config_path.with_suffix(".tmp")
-        tmp_path.touch(mode=0o600)  # owner-only before any data is written
+        tmp_path.touch(mode=0o600)  # POSIX: owner-only before any data is written
+        _restrict_to_owner(tmp_path)  # Windows: apply ACL now (touch mode is ignored there)
         with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(settings.to_dict(), f, indent=2)
         tmp_path.replace(config_path)
-        config_path.chmod(0o600)  # re-apply after rename (umask may have changed it)
+        _restrict_to_owner(config_path)  # re-apply after rename (umask/inheritance may have changed it)
 
         logger.info(f"Saved settings to {config_path}")
         return True
