@@ -232,6 +232,9 @@ translator.log
 # Compiled Qt translations (regenerated from .ts source)
 gui/translations/*.qm
 
+# Bundled Hunspell dictionaries (fetched via scripts/fetch_dictionaries.py)
+dicts/
+
 # Large model files
 *.gguf
 *.bin

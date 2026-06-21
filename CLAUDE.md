@@ -169,6 +169,7 @@ UI translations live in `gui/translations/<locale>.ts` (source) and `.qm` (compi
 ## Scripts
 
 - `scripts/compile_translations.sh` — compiles all `.ts` → `.qm` UI translation files.
+- `scripts/fetch_dictionaries.py` — downloads Hunspell `.aff`/`.dic` pairs (+ their upstream licences) from the LibreOffice dictionaries project into `dicts/`, which `gui/spell_checker.py` searches first. `dicts/` is gitignored; run this at Windows/macOS packaging time so the installer ships working spell-check (Linux usually has system dicts). Defaults to the 7 UI locales minus Korean (`uk_UA de_DE es_ES fr_FR pl_PL cs_CZ`); pass language names or `--all` to override.
 - `scripts/extract_sharegpt_dataset.py` — extracts EN→UK Starfield string pairs as ShareGPT JSONL for fine-tuning a translation model. Output: `scripts/starfield_en_uk_sharegpt.jsonl`.
 - `scripts/create_qc_dataset.py` — generates a QC training dataset (ShareGPT JSONL) by running `QualityChecker` on real EN→UK pairs and injecting synthetic bad examples for all 16 issue codes. Output: `scripts/qc_dataset_sharegpt.jsonl` (14,928 examples).
 - `scripts/train_qc_model.py` — standalone ROCm-compatible QLoRA fine-tuning script for a Gemma 3 1B QC model (bypasses Unsloth Studio). Sets `HSA_ENABLE_SDMA=0`, `PYTORCH_HIP_ALLOC_CONF`, uses `attn_implementation="eager"`. Output: `models/qc_gemma3_1b/`.
