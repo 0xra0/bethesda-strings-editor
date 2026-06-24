@@ -24,19 +24,35 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 | `gemma4-opus48-st` | Gemma 4 12B IT fine-tuned on Claude Opus reasoning data | local GGUF |
 | `qcgemma4-st` | Translation quality checking — Gemma 4 E4B fine-tune (16 issue codes) | [0xra/bethesda-qc](https://ollama.com/0xra/bethesda-qc) |
 
-Pull the QC model from the hub:
+> **The custom translation fine-tunes are not published on any hub** — there is no `ollama pull` for `translategemma3-st`. To translate, use **either** the Claude API backend **or** a local GGUF, as below.
+
+### Option A — Claude API (no local model)
+
+Enter your Anthropic API key in **Settings → Claude AI** and pick Haiku 4.5 / Sonnet 4.6 / Opus 4.8. No Ollama or GPU required — this is the quickest way to get translating.
+
+### Option B — local Ollama model from a GGUF
+
+Any Gemma-3 / instruct GGUF works with the app's prompts (the app supplies its own system prompt and overrides every generation parameter at runtime). For Ukrainian, the publicly available **MamayLM** fine-tune is a good default:
+
+```bash
+# 1. Download a GGUF — e.g. MamayLM (Ukrainian) from HuggingFace:
+#    https://huggingface.co/INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0
+#    (or use any *.gguf you already have)
+
+# 2. Edit the bundled Modelfile and point its FROM line at your file:
+#    FROM /path/to/your-model.Q4_K_M.gguf
+
+# 3. Build the model, then select it in Settings → Ollama:
+ollama create translategemma3-st -f Modelfile
+```
+
+`Modelfile`, `Modelfile.mamaylm`, and `Modelfile.gemma4-opus48` are templates — set the `FROM` path to your GGUF before running `ollama create`. The created model name is arbitrary; just select whatever you created in **Settings → Ollama**.
+
+### Optional — AI quality-check model (published on the hub)
 
 ```bash
 ollama pull 0xra/bethesda-qc
 ollama cp 0xra/bethesda-qc qcgemma4-st
-```
-
-For translation models, edit `Modelfile` / `Modelfile.qc` / `Modelfile.gemma4-opus48` to set the correct `FROM` path to your local GGUF, then:
-
-```bash
-ollama create translategemma3-st -f Modelfile
-ollama create qcgemma4-st -f Modelfile.qc
-ollama create gemma4-opus48-st -f Modelfile.gemma4-opus48
 ```
 
 ---
