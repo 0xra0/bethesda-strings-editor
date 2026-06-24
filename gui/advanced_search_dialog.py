@@ -25,6 +25,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
+from bethesda_strings import format_string_id
+
 logger = logging.getLogger(__name__)
 
 
@@ -208,7 +210,7 @@ class AdvancedSearchDialog(QDialog):
                     if not (self._matches_column(orig, pattern) or self._matches_column(trans, pattern)):
                         continue
                 else:  # all
-                    id_str = f"0x{row_data.get('id', 0):08X}"
+                    id_str = format_string_id(row_data.get('id', 0))
                     if not any([
                         self._matches_column(orig, pattern),
                         self._matches_column(trans, pattern),

@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QSpinBox
 )
 from PySide6.QtCore import Qt, Slot
-from bethesda_strings import BethesdaStringFile
+from bethesda_strings import BethesdaStringFile, format_string_id
 from gui.string_table import StringTableModel
 from gui.ollama_worker import TranslationRequest
 
@@ -130,7 +130,7 @@ class TranslationDialog(QDialog):
             row = self.table.rowCount()
             self.table.insertRow(row)
 
-            id_item = QTableWidgetItem(f"0x{row_data['id']:08X}")
+            id_item = QTableWidgetItem(format_string_id(row_data['id']))
             id_item.setData(Qt.UserRole, i)  # Store model index
             self.table.setItem(row, 0, id_item)
 

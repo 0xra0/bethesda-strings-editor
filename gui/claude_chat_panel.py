@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 from typing import Dict, List, Optional
 
+from bethesda_strings import format_string_id
 from PySide6.QtCore import Qt, QThread, Signal, Slot
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import (
@@ -313,7 +314,7 @@ class ClaudeChatPanel(QDockWidget):
         self._target_lang         = target_lang
 
         self._lbl_context_title.setText(
-            self.tr("String 0x{sid:08X}").format(sid=string_id)
+            self.tr("String {sid}").format(sid=format_string_id(string_id))
         )
         snip = 120
         self._lbl_original.setText(

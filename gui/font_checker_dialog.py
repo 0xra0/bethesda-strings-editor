@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from bethesda_strings import format_string_id
 from bethesda_strings.font_checker import FontCheckResult, FontChecker, GlyphIssue, MissingGlyph
 
 logger = logging.getLogger(__name__)
@@ -411,7 +412,7 @@ class FontCheckerDialog(QDialog):
             if issue is None:
                 continue
 
-            id_hex = f"0x{issue.string_id:08X}" if issue.string_id else str(row_idx)
+            id_hex = format_string_id(issue.string_id) if issue.string_id else str(row_idx)
             id_item = QTableWidgetItem(id_hex)
             id_item.setFont(QFont("monospace"))
             id_item.setData(Qt.ItemDataRole.UserRole, row_idx)
@@ -497,7 +498,7 @@ class FontCheckerDialog(QDialog):
         lines.append("")
         lines.append("Affected strings:")
         for issue in r.issues:
-            lines.append(f"  [0x{issue.string_id:08X}] {issue.translated[:80]!r}")
+            lines.append(f"  [{format_string_id(issue.string_id)}] {issue.translated[:80]!r}")
             lines.append(f"    Missing: {', '.join(f'U+{ord(c):04X}' for c in issue.missing_chars)}")
             if issue.fixed_text:
                 lines.append(f"    Fixed:   {issue.fixed_text[:80]!r}")
@@ -518,7 +519,7 @@ class FontCheckerDialog(QDialog):
             fixed_cell = f"<td>{issue.fixed_text[:100]}</td>" if issue.fixed_text else "<td>—</td>"
             rows_html += (
                 f"<tr>"
-                f"<td><code>0x{issue.string_id:08X}</code></td>"
+                f"<td><code>{format_string_id(issue.string_id)}</code></td>"
                 f"<td>{issue.translated[:120]}</td>"
                 f"<td>{chars_str}</td>"
                 f"{fixed_cell}"
