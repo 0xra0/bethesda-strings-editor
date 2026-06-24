@@ -53,7 +53,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from bethesda_strings import BethesdaStringFile, EncodingConverter, XMLHandler
+from bethesda_strings import BethesdaStringFile, EncodingConverter, XMLHandler, format_string_id
 from bethesda_strings.ba2_handler import BA2File
 from bethesda_strings.esp_handler import EspFile
 from bethesda_strings.txt_handler import TxtStringFile
@@ -5415,7 +5415,7 @@ class MainWindow(QMainWindow):
 
                         # Write in line-numbered format: {line_num} {hex_id} "{original}" "{translated}"
                         f.write(
-                            f'{line_num} 0x{string_id:08X} "{original_escaped}" "{translated_escaped}"\n'
+                            f'{line_num} {format_string_id(string_id)} "{original_escaped}" "{translated_escaped}"\n'
                         )
                         exported_count += 1
                 elif export_mode == "Translated only":
@@ -5437,7 +5437,7 @@ class MainWindow(QMainWindow):
 
                         # Write in line-numbered format: {line_num} {hex_id} "{original}" "{translated}"
                         f.write(
-                            f'{line_num} 0x{string_id:08X} "{original_escaped}" "{translated_escaped}"\n'
+                            f'{line_num} {format_string_id(string_id)} "{original_escaped}" "{translated_escaped}"\n'
                         )
                         exported_count += 1
 

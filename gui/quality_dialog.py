@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
+from bethesda_strings import format_string_id
 from gui.micro_animations import FadeInMixin
 from gui.quality_checker import (
     SEVERITY_ERROR,
@@ -80,7 +81,7 @@ def build_csv(reports: List[QualityReport]) -> str:
         for issue in report.issues:
             writer.writerow([
                 issue.severity.upper(),
-                f"0x{report.string_id:08X}",
+                format_string_id(report.string_id),
                 issue.code,
                 issue.message,
                 issue.detail,
@@ -107,7 +108,7 @@ def build_txt_log(reports: List[QualityReport]) -> str:
     for idx, report in enumerate(reports, 1):
         sev_label = report.severity.upper() if report.severity else "OK"
         lines.append(
-            f"[{idx}/{len(reports)}]  String 0x{report.string_id:08X}  "
+            f"[{idx}/{len(reports)}]  String {format_string_id(report.string_id)}  "
             f"SEVERITY: {sev_label}"
         )
         lines.append("")
@@ -206,7 +207,7 @@ def build_html(reports: List[QualityReport]) -> str:
         parts.append(
             f'<div class="card-header" style="background:{bg}">'
             f'<span style="color:#6b7280">#{idx}</span>'
-            f'<code style="font-size:.9em">0x{report.string_id:08X}</code>'
+            f'<code style="font-size:.9em">{format_string_id(report.string_id)}</code>'
             f'{badge(sev)}'
             f'</div>'
         )
@@ -322,7 +323,7 @@ def load_json(
                 row_index = txt_to_row.get(original)
             if row_index is None:
                 warnings.append(
-                    f"String 0x{string_id:08X} not found in current table — skipped"
+                    f"String {format_string_id(string_id)} not found in current table — skipped"
                 )
                 continue
         else:
@@ -435,7 +436,7 @@ def load_csv(
                 row_index = txt_to_row.get(original)
             if row_index is None:
                 warnings.append(
-                    f"String 0x{string_id:08X} not found in current table — skipped"
+                    f"String {format_string_id(string_id)} not found in current table — skipped"
                 )
                 continue
         else:
@@ -763,7 +764,7 @@ class QualityDialog(FadeInMixin, QDialog):
             sev_item.setData(Qt.ItemDataRole.UserRole, report.row_index)
             self.table.setItem(r, 0, sev_item)
 
-            self.table.setItem(r, 1, QTableWidgetItem(f"0x{report.string_id:08X}"))
+            self.table.setItem(r, 1, QTableWidgetItem(format_string_id(report.string_id)))
             self.table.setItem(
                 r, 2,
                 QTableWidgetItem(
@@ -877,7 +878,7 @@ class QualityDialog(FadeInMixin, QDialog):
             if applied:
                 table_model.set_translated_text(report.row_index, fixed)
                 fix_log.append(
-                    f"  Row {report.row_index} (0x{report.string_id:08X}): "
+                    f"  Row {report.row_index} ({format_string_id(report.string_id)}): "
                     + "; ".join(applied)
                 )
 
