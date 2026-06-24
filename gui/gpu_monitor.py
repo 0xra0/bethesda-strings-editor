@@ -10,7 +10,8 @@ hides itself.
 
 Shows: GPU% · VRAMused/VRAMtotal · Temperature°C
 Color: green < 50/70%/70°C · yellow < 80/90%/85°C · red above that.
-Updates every 2 seconds via QTimer.  Hidden automatically if no GPU found.
+Polls every 2 seconds on a background thread (so a slow/hung nvidia-smi never
+freezes the UI).  Hidden automatically if no GPU found.
 """
 
 from __future__ import annotations
@@ -18,14 +19,19 @@ from __future__ import annotations
 import logging
 import subprocess
 import sys
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
+from PySide6.QtCore import QThread, Signal
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLabel, QWidget
 
 logger = logging.getLogger(__name__)
+
+# Suppress the console window nvidia-smi would otherwise flash on Windows.
+# The constant only exists on Windows, so default to 0 elsewhere.
+_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
 # ── Data ──────────────────────────────────────────────────────────────────────
@@ -100,6 +106,7 @@ def _read_nvidia() -> Optional[GpuStats]:
              "--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu",
              "--format=csv,noheader,nounits"],
             capture_output=True, text=True, timeout=3,
+            creationflags=_NO_WINDOW,
         )
         if r.returncode != 0:
             return None
@@ -163,8 +170,37 @@ def _fmt_mb(mb: int) -> str:
     return f"{mb / 1024:.1f}G" if mb >= 1024 else f"{mb}M"
 
 
+class _GpuPollWorker(QThread):
+    """Polls GPU stats off the UI thread and emits each reading.
+
+    ``read_gpu_stats`` shells out to nvidia-smi (up to a 3 s timeout), so running
+    it on the main thread would stutter the UI every poll.  This worker does the
+    blocking work on its own thread and emits results back via a queued signal.
+    """
+
+    polled = Signal(object)  # GpuStats | None
+
+    def __init__(self, interval_ms: int, parent=None) -> None:
+        super().__init__(parent)
+        self._interval_ms = interval_ms
+        self._stop_evt = threading.Event()
+
+    def run(self) -> None:
+        while not self._stop_evt.is_set():
+            try:
+                stats = read_gpu_stats()
+            except BaseException:  # never let a poll failure kill the thread
+                stats = None
+            self.polled.emit(stats)
+            # Interruptible wait — stop() returns control immediately.
+            self._stop_evt.wait(self._interval_ms / 1000.0)
+
+    def stop(self) -> None:
+        self._stop_evt.set()
+
+
 class GpuMonitorWidget(QWidget):
-    """Compact status-bar widget: GPU% · VRAM · Temp, updated every 2 s."""
+    """Compact status-bar widget: GPU% · VRAM · Temp, polled every 2 s."""
 
     _POLL_MS = 2000
 
@@ -179,23 +215,44 @@ class GpuMonitorWidget(QWidget):
         self._lbl.setStyleSheet("font-size: 11px;")
         lay.addWidget(self._lbl)
 
-        # Hide immediately if no GPU is detectable
-        stats = read_gpu_stats()
-        if stats is None:
-            self.setVisible(False)
-            return
+        # Stay hidden until the worker confirms a GPU on its first reading — the
+        # detection probe itself can block, so we never run it on the UI thread.
+        self._first_reading = True
+        self.setVisible(False)
 
+        self._worker = _GpuPollWorker(self._POLL_MS)
+        self._worker.polled.connect(self._on_polled)  # queued: marshals to UI thread
+        self._worker.start()
+
+        # Make sure the thread is stopped cleanly before the process exits,
+        # otherwise Qt warns/aborts on a still-running QThread at teardown.
+        app = QApplication.instance()
+        if app is not None:
+            app.aboutToQuit.connect(self._stop_worker)
+
+    def _on_polled(self, stats: Optional[GpuStats]) -> None:
+        if stats is None:
+            if self._first_reading:
+                # No GPU detectable — stop polling and stay hidden for good.
+                self._stop_worker()
+            self._first_reading = False
+            return
+        self._first_reading = False
+        if not self.isVisible():
+            self.setVisible(True)
         self._apply(stats)
 
-        self._timer = QTimer(self)
-        self._timer.setInterval(self._POLL_MS)
-        self._timer.timeout.connect(self._poll)
-        self._timer.start()
+    def _stop_worker(self) -> None:
+        worker = getattr(self, "_worker", None)
+        if worker is None:
+            return
+        self._worker = None
+        worker.stop()
+        worker.wait(2000)
 
-    def _poll(self) -> None:
-        stats = read_gpu_stats()
-        if stats:
-            self._apply(stats)
+    def closeEvent(self, event) -> None:  # noqa: N802 (Qt override)
+        self._stop_worker()
+        super().closeEvent(event)
 
     def _apply(self, s: GpuStats) -> None:
         gc = _color_gpu(s.utilization)
