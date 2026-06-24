@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+version_info.txt   # generated at build time by bethesda_strings_editor.spec (Windows)
 build/
 develop-eggs/
 dist/

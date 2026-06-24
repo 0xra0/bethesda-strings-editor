@@ -57,7 +57,16 @@ jobs:
           cache-dependency-path: requirements.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: pip install -r requirements.txt
+
+      - name: Install PyInstaller (bootloader built from source)
+        # The prebuilt PyInstaller wheel ships a bootloader whose exact bytes are
+        # in many AV signature databases (the same wheel is used by real malware),
+        # which is the single biggest driver of generic/ML false positives on
+        # frozen apps. Compiling the bootloader from source produces unique bytes
+        # that those signatures no longer match. The GitHub runners already have a
+        # C toolchain (gcc on Linux, MSVC on Windows), so no extra setup is needed.
+        run: pip install --no-binary pyinstaller "pyinstaller>=6.3"
 
       - name: Inject version from git tag
         shell: bash
@@ -77,26 +86,40 @@ jobs:
       - name: Build with PyInstaller
         run: pyinstaller bethesda_strings_editor.spec
 
-      # ── Windows code signing (optional) ──────────────────────────────────────
-      # To enable: purchase an EV code signing certificate from DigiCert or
-      # Sectigo (~$300-500/year), export it as a PFX file, and store it in
-      # GitHub Secrets as SIGNING_CERTIFICATE (base64-encoded) and
-      # SIGNING_PASSWORD.  Then uncomment the block below.
+      # ── Windows code signing via SignPath (FREE for open source) ─────────────
+      # SignPath.io's Foundation plan signs OSS releases at no cost and is the
+      # real long-term fix for the AV/SmartScreen warnings.  One-time setup:
+      #   1. Sign up at https://signpath.io and connect this GitHub repository.
+      #   2. Apply to the free OSS program: https://signpath.io/open-source —
+      #      SignPath issues a certificate and creates a project + signing policy.
+      #   3. Add repo secret  SIGNPATH_API_TOKEN  and repo variables
+      #      SIGNPATH_ORG_ID / SIGNPATH_PROJECT_SLUG / SIGNPATH_POLICY_SLUG.
+      # Then uncomment the two steps below.  They run after the build and before
+      # packaging, so the *signed* .exe is the one that gets zipped.  (Verify the
+      # action's input names against its README — they evolve between majors.)
       #
-      # - name: Sign Windows executable
+      # - name: Upload unsigned exe for SignPath
       #   if: runner.os == 'Windows' && github.event_name == 'push'
-      #   shell: pwsh
-      #   env:
-      #     SIGNING_CERT: ${{ secrets.SIGNING_CERTIFICATE }}
-      #     SIGNING_PASS: ${{ secrets.SIGNING_PASSWORD }}
-      #   run: |
-      #     $bytes = [Convert]::FromBase64String($env:SIGNING_CERT)
-      #     $pfxPath = "$env:TEMP\cert.pfx"
-      #     [IO.File]::WriteAllBytes($pfxPath, $bytes)
-      #     $exe = "dist\bethesda-strings-editor\bethesda-strings-editor.exe"
-      #     & signtool sign /fd sha256 /f $pfxPath /p $env:SIGNING_PASS `
-      #         /tr http://timestamp.digicert.com /td sha256 $exe
-      #     Remove-Item $pfxPath
+      #   id: unsigned
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: unsigned-windows-exe
+      #     path: dist/bethesda-strings-editor/bethesda-strings-editor.exe
+      #
+      # - name: Sign with SignPath
+      #   if: runner.os == 'Windows' && github.event_name == 'push'
+      #   uses: signpath/github-action-submit-signing-request@v1
+      #   with:
+      #     api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+      #     organization-id: ${{ vars.SIGNPATH_ORG_ID }}
+      #     project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+      #     signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+      #     github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+      #     wait-for-completion: true
+      #     output-artifact-directory: dist/bethesda-strings-editor/
+      #
+      # Linux ELF binaries cannot be Authenticode-signed; the GPG-signed
+      # SHA256SUMS.asc produced by the release job already covers their integrity.
 
       - name: Package (Linux)
         if: runner.os == 'Linux'
