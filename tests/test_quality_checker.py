@@ -175,6 +175,40 @@ def test_no_url_no_flag():
     assert "MISSING_URL" not in codes(r)
 
 
+def test_url_with_trailing_escape_not_flagged():
+    # Real $LoginError case: the source has a malformed "\ n" escape so its URL
+    # token ends in a backslash, while a faithful translation glues a clean "\n"
+    # escape onto the same URL.  Both name the same address — no MISSING_URL.
+    src = r"Войдите. посетите http://help.bethesda.net.\ n\ nОшибка: X"
+    tgt = r"Увійдіть. відвідайте http://help.bethesda.net.\n\nПомилка: X"
+    assert "MISSING_URL" not in codes(check(src, tgt))
+
+
+def test_url_with_trailing_punctuation_not_flagged():
+    src = "See https://bethesda.net/en/document/terms-of-service. Thanks"
+    tgt = "Див. https://bethesda.net/en/document/terms-of-service. Дякуємо"
+    assert "MISSING_URL" not in codes(check(src, tgt))
+
+
+# ── malformed "\ n" source escapes (backslash + space + n) ─────────────────────
+# The game still renders "\ n" as a break and a faithful translation emits a
+# clean "\n"; the tag/newline counters must treat the two forms identically.
+
+def test_malformed_escape_no_extra_tag():
+    src = r"Привязана.\n\nЕсли проблема, посетите сайт.\ n\ nОшибка: X"
+    tgt = r"Прив’язано.\n\nЯкщо проблема, відвідайте сайт.\n\nПомилка: X"
+    c = codes(check(src, tgt))
+    assert "EXTRA_TAG" not in c
+    assert "NEWLINE_COUNT_MISMATCH" not in c
+
+
+def test_clean_escapes_still_counted():
+    # No regression: a genuinely missing line break is still flagged.
+    src = r"Рядок один\nРядок два\nРядок три"
+    tgt = r"Line one Line two Line three"
+    assert "MISSING_NEWLINES" in codes(check(src, tgt))
+
+
 # ── AI artifact detection ─────────────────────────────────────────────────────
 
 def test_ai_artifact_translation_prefix():
