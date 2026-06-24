@@ -86,12 +86,16 @@ jobs:
       - name: Build with PyInstaller
         run: pyinstaller bethesda_strings_editor.spec
 
-      # ── Windows code signing via SignPath (FREE for open source) ─────────────
-      # SignPath.io's Foundation plan signs OSS releases at no cost and is the
-      # real long-term fix for the AV/SmartScreen warnings.  One-time setup:
-      #   1. Sign up at https://signpath.io and connect this GitHub repository.
-      #   2. Apply to the free OSS program: https://signpath.io/open-source —
-      #      SignPath issues a certificate and creates a project + signing policy.
+      # ── Windows code signing via SignPath Foundation (FREE for open source) ──
+      # The SignPath Foundation signs OSS releases at no cost and is the real
+      # long-term fix for the AV/SmartScreen warnings.  This project qualifies:
+      # MIT (OSI-approved), publicly hosted, actively maintained, no proprietary
+      # components.  One-time setup:
+      #   1. Apply to the Foundation: https://signpath.org/  (terms:
+      #      https://signpath.org/terms.html) — they issue a certificate and set
+      #      up a project + signing policy in their SignPath.io tenant for you.
+      #   2. Connect this GitHub repo and create the project/policy per
+      #      https://docs.signpath.io/projects and https://docs.signpath.io/signing-code
       #   3. Add repo secret  SIGNPATH_API_TOKEN  and repo variables
       #      SIGNPATH_ORG_ID / SIGNPATH_PROJECT_SLUG / SIGNPATH_POLICY_SLUG.
       # Then uncomment the two steps below.  They run after the build and before
