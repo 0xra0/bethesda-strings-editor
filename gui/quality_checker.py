@@ -313,6 +313,31 @@ def _find_repeated_ngram(text: str) -> Optional[str]:
     return None
 
 
+# ── Closely-related (East-Slavic) language awareness ──────────────────────────
+# RU/UK/BE share script and a huge amount of vocabulary, so several heuristics
+# written for cross-script pairs (EN→UK) produce false positives: whole short
+# phrases are legitimately identical ("Просто не знаю"), valid words are missing
+# from the lemmatised dictionary, and Russian-shared roots trip the leak check.
+_EAST_SLAVIC_CODES = frozenset({"ru", "uk", "be"})
+# Ukrainian-exclusive Cyrillic characters (absent from Russian) — a definitive
+# "this is Ukrainian" signal.
+_UK_EXCLUSIVE_CHARS = "іїєґІЇЄҐ"
+
+
+def _norm_lang(name: str) -> str:
+    """Normalise a language name/code to a 2-letter code ('Ukrainian' → 'uk')."""
+    s = (name or "").strip().lower()
+    return {
+        "ukrainian": "uk", "russian": "ru", "belarusian": "be", "english": "en",
+    }.get(s, s[:2])
+
+
+def _is_east_slavic_pair(source_lang: str, target_lang: str) -> bool:
+    """True when source and target are different East-Slavic Cyrillic languages."""
+    s, t = _norm_lang(source_lang), _norm_lang(target_lang)
+    return s != t and s in _EAST_SLAVIC_CODES and t in _EAST_SLAVIC_CODES
+
+
 # ── Checker ────────────────────────────────────────────────────────────────────
 
 class QualityChecker:
@@ -837,10 +862,16 @@ class QualityChecker:
                     )
                     return
 
-            # Pass 2: Russian vocabulary
+            # Pass 2: Russian vocabulary.  Ukrainian shares a large vocabulary
+            # with Russian, so the word counter trips on good Ukrainian.  Only
+            # treat matches as a leak when the text shows NO Ukrainian-exclusive
+            # characters (real UK sentences usually carry at least one і/ї/є/ґ),
+            # and require a higher count so short shared-root phrases don't fire.
+            if any(c in _UK_EXCLUSIVE_CHARS for c in translated):
+                return
             try:
                 from gui.ru_word_checker import text_has_russian_words
-                if text_has_russian_words(translated, threshold=5):
+                if text_has_russian_words(translated, threshold=8):
                     report.issues.append(
                         QualityIssue(
                             severity=SEVERITY_WARNING,
@@ -897,6 +928,13 @@ class QualityChecker:
         if self.target_language.lower() not in ("ukrainian", "uk"):
             return
 
+        # Definitive Ukrainian signal: if the text contains ANY Ukrainian-exclusive
+        # character (і/ї/є/ґ) it IS Ukrainian, and the dictionary-coverage metric —
+        # which misses inflected forms and all proper nouns — would only false-
+        # positive (real UK sentences almost always carry at least one).
+        if any(c in _UK_EXCLUSIVE_CHARS for c in translated):
+            return
+
         try:
             from gui.uk_word_checker import word_is_ukrainian, dict_loaded
         except ImportError:
@@ -906,7 +944,7 @@ class QualityChecker:
 
         _ru_only_chars = frozenset("ыэёъЫЭЁЪ")
         # Ukrainian-exclusive characters absent from Russian
-        _uk_chars = frozenset("іїєІЇЄ")
+        _uk_chars = frozenset(_UK_EXCLUSIVE_CHARS)
 
         cyrillic_words: list = []
         for token in translated.split():
@@ -1663,7 +1701,13 @@ class QualityChecker:
                 w for w in orig_s.split()
                 if any(c.isalpha() for c in w)
             ]
-            if has_ru_chars or len(alpha_words) >= 3:
+            # For East-Slavic pairs (RU↔UK) whole short phrases are legitimately
+            # identical ("Просто не знаю", "Я не знаю!", "Ключ на старт!"), so the
+            # ≥3-word coincidence rule produces false positives.  Require Russian-
+            # exclusive letters (ы/э/ё/ъ) — the only unambiguous proof the identical
+            # output is untranslated Russian rather than a shared phrase.
+            related = _is_east_slavic_pair(self.source_language, self.target_language)
+            if has_ru_chars or (len(alpha_words) >= 3 and not related):
                 report.issues.append(
                     QualityIssue(
                         severity=SEVERITY_ERROR,

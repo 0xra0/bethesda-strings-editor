@@ -49,11 +49,19 @@ def test_empty_original_no_flag():
 
 
 def test_untranslated_identical():
-    # UNTRANSLATED only fires when the original contains Cyrillic (Russian source),
-    # because English game terms are intentionally left untranslated.
-    r = check("Привіт як справи", "Привіт як справи")
+    # For RU→UK an identical translation is only UNTRANSLATED when the text is
+    # distinctly Russian (carries ы/э/ё/ъ); shared phrases are handled below.
+    r = check("Это мы уже знаем", "Это мы уже знаем")
     assert "UNTRANSLATED" in codes(r)
     assert r.severity == SEVERITY_ERROR
+
+
+def test_untranslated_identical_shared_phrase_not_flagged():
+    # RU↔UK share whole short phrases verbatim ("Просто не знаю", "Я не знаю!").
+    # Without distinctly-Russian evidence an identical copy must NOT be flagged.
+    assert "UNTRANSLATED" not in codes(check("Просто не знаю.", "Просто не знаю."))
+    assert "UNTRANSLATED" not in codes(check("Я не знаю!", "Я не знаю!"))
+    assert "UNTRANSLATED" not in codes(check("Ключ на старт!", "Ключ на старт!"))
 
 
 def test_untranslated_skip_english_source():
@@ -292,6 +300,28 @@ def test_clean_ukrainian_no_leakage():
     assert "SOURCE_LANGUAGE_LEAK" not in codes(r)
 
 
+def test_uk_with_exclusive_chars_no_leakage():
+    # Good Ukrainian with shared Slavic vocabulary but ≥1 і/ї/є/ґ must not be
+    # flagged as Russian leakage (regression for false positives on real output).
+    r = check(
+        "But it was strange to see them at each other's throats.",
+        "Тому було дивно бачити, як вони вчепилися одне одному за горла.",
+    )
+    assert "SOURCE_LANGUAGE_LEAK" not in codes(r)
+
+
+# ── Ukrainian coverage (false-positive guard) ──────────────────────────────────
+
+def test_low_uk_coverage_suppressed_with_exclusive_char():
+    # Proper-noun-heavy Ukrainian the lemmatised dict can't fully recognise, but
+    # it contains 'і' → definitively Ukrainian, so no LOW_UKRAINIAN_COVERAGE.
+    r = check(
+        "Source text here for the house quest line and more words.",
+        "Я надав допомогу Дому Дул’кеф і Дому Вет’ааль. Залишився останній дім.",
+    )
+    assert "LOW_UKRAINIAN_COVERAGE" not in codes(r)
+
+
 # ── Repetition detection ──────────────────────────────────────────────────────
 
 def test_repetitive_content():
@@ -438,7 +468,7 @@ def test_check_all_returns_only_issues():
     rows = [
         {"id": 1, "original": "Hello", "translated": "Привіт"},
         {"id": 2, "original": "Fire!", "translated": ""},
-        {"id": 3, "original": "Бум бахання тут", "translated": "Бум бахання тут"},  # untranslated Cyrillic
+        {"id": 3, "original": "Это мы уже знаем", "translated": "Это мы уже знаем"},  # untranslated Russian (ы/э)
     ]
     checker = make_checker()
     reports = checker.check_all(rows)
