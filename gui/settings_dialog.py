@@ -53,6 +53,11 @@ class _OllamaModelsFetcher(QThread):
             self.failed.emit(str(exc))
 
 
+# Workers that outlive their dialog (close raced an unresponsive socket) are
+# parked here so Python doesn't GC them mid-run; each removes itself on finish.
+_DETACHED_SSO_WORKERS: set = set()
+
+
 class _NexusSSOWorker(QThread):
     """Runs the NexusMods SSO handshake off the UI thread.
 
@@ -1459,8 +1464,49 @@ class SettingsDialog(QDialog):
                 # the dialog is destroyed. Worst case waits out the request timeout.
                 fetcher.wait(6000)
 
+    def _stop_nexus_sso(self) -> None:
+        """Stop any in-flight SSO worker before the dialog is destroyed.
+
+        A running QThread that is a child of this dialog would abort the process
+        ("QThread: Destroyed while thread is still running") when the dialog is
+        torn down. The SSO worker can block for up to its full timeout waiting
+        for the user to authorise in the browser, so closing the dialog mid
+        sign-in is the common trigger.
+        """
+        worker = getattr(self, "_nexus_sso_worker", None)
+        self._nexus_sso_worker = None
+        if worker is None:
+            return
+        # Drop UI-bound connections first so a late emit can't touch dead widgets.
+        for sig in (worker.url_ready, worker.succeeded, worker.failed):
+            try:
+                sig.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        try:
+            worker.cancel()
+            running = worker.isRunning()
+        except RuntimeError:  # C++ object already gone
+            return
+        if not running:
+            return
+        # cancel() is polled on a ~2s cadence, so this normally returns fast.
+        if worker.wait(4000):
+            return
+        # Still blocked (e.g. mid TLS handshake). Detach from the dialog so its
+        # destruction can't abort the process; let the thread exit on its own.
+        try:
+            worker.setParent(None)
+            _DETACHED_SSO_WORKERS.add(worker)
+            worker.finished.connect(worker.deleteLater)
+            worker.finished.connect(
+                lambda w=worker: _DETACHED_SSO_WORKERS.discard(w))
+        except RuntimeError:
+            pass
+
     def done(self, result: int) -> None:
         self._stop_model_auto_refresh()
+        self._stop_nexus_sso()
         super().done(result)
 
     @Slot()

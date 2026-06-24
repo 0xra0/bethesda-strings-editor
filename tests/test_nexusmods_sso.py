@@ -123,3 +123,44 @@ def test_application_slug_default_without_env(monkeypatch):
     monkeypatch.delenv("NEXUSMODS_SSO_SLUG", raising=False)
     reloaded = importlib.reload(sso)
     assert reloaded.APPLICATION_SLUG == reloaded._DEFAULT_SLUG
+
+
+def test_sso_worker_cancel_stops_running_thread(monkeypatch):
+    """The fix for 'QThread: Destroyed while thread is still running'.
+
+    cancel() must let a worker blocked in the (long) SSO wait finish promptly,
+    so the dialog can wait() for it before being destroyed instead of aborting.
+    """
+    import os
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    import time
+    from PySide6.QtCore import QCoreApplication
+
+    QCoreApplication.instance() or QCoreApplication([])
+    import gui.nexusmods_sso as sso
+    import gui.settings_dialog as sd
+
+    def fake_request_api_key(on_url, slug, connection_token, should_cancel):
+        on_url("https://www.nexusmods.com/sso?id=x")  # emit (no slots → no-op)
+        while not should_cancel():       # emulate the blocking authorise wait
+            time.sleep(0.02)
+        raise ConnectionError("SSO cancelled")
+
+    # run() does `from gui.nexusmods_sso import request_api_key`, resolved at
+    # call time → patching the module attribute is enough.
+    monkeypatch.setattr(sso, "request_api_key", fake_request_api_key)
+
+    worker = sd._NexusSSOWorker(slug="x")
+    worker.start()
+    try:
+        for _ in range(100):             # wait for the thread to actually start
+            if worker.isRunning():
+                break
+            time.sleep(0.01)
+        assert worker.isRunning()
+        worker.cancel()
+        assert worker.wait(3000), "worker did not stop promptly after cancel()"
+    finally:
+        worker.cancel()
+        worker.wait(3000)
