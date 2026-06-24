@@ -8,8 +8,61 @@
 # this automatically on every `v*` tag push.
 
 import sys
+from pathlib import Path
 
 block_cipher = None
+
+# ── Windows version-info resource ──────────────────────────────────────────────
+# A frozen .exe with no embedded version metadata (CompanyName / ProductName /
+# FileVersion) scores higher on antivirus heuristics and SmartScreen.  Generate
+# a VSVersionInfo file from the app version so the binary carries proper
+# metadata.  Windows-only; returns None (ignored) elsewhere.
+def _win_version_info():
+    if sys.platform != 'win32':
+        return None
+    try:
+        from _version import __version__ as _v
+    except Exception:
+        _v = 'dev'
+    nums = []
+    for chunk in str(_v).replace('-', '.').split('.'):
+        if chunk.isdigit():
+            nums.append(int(chunk))
+        if len(nums) == 4:
+            break
+    while len(nums) < 4:
+        nums.append(0)
+    vers = tuple(nums[:4])
+    vstr = '.'.join(str(n) for n in vers)
+    repo = 'https://github.com/0xra0/bethesda-strings-editor'
+    vinfo = f"""VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers={vers}, prodvers={vers},
+    mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1, subtype=0x0, date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable('040904B0', [
+        StringStruct('CompanyName', '0xra'),
+        StringStruct('FileDescription', 'Bethesda Strings Editor'),
+        StringStruct('FileVersion', '{vstr}'),
+        StringStruct('InternalName', 'bethesda-strings-editor'),
+        StringStruct('LegalCopyright', 'Copyright (c) 2026 0xra — MIT License — {repo}'),
+        StringStruct('OriginalFilename', 'bethesda-strings-editor.exe'),
+        StringStruct('ProductName', 'Bethesda Strings Editor'),
+        StringStruct('ProductVersion', '{vstr}'),
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
+"""
+    out = Path('version_info.txt')
+    out.write_text(vinfo, encoding='utf-8')
+    return str(out)
+
+
+_version_file = _win_version_info()
 
 # Data files that must be present at runtime alongside the frozen modules.
 # Format: (source_glob, dest_dir_relative_to_sys._MEIPASS)
@@ -72,6 +125,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    # Embed Windows version metadata to lower AV/SmartScreen heuristic scores.
+    version=_version_file,
     icon='resources/app_icon.ico' if sys.platform == 'win32' else 'resources/app_icon.png',
 )
 
