@@ -24,6 +24,12 @@ using a locally-running `Ollama <https://ollama.ai>`_ model.
 
    contributing
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Deployment
+
+   nexusmods_registration
+
 Quick start
 -----------
 
