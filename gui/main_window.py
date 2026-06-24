@@ -506,6 +506,7 @@ class MainWindow(QMainWindow):
         ("French",               "fr"),
         ("Italian",              "it"),
         ("Japanese",             "ja"),
+        ("Korean",               "ko"),
         ("Polish",               "pl"),
         ("Portuguese (Brazil)",  "ptbr"),
         ("Chinese (Simplified)", "zhhans"),
