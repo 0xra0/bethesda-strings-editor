@@ -3813,7 +3813,7 @@ class MainWindow(QMainWindow):
         lines = [f"Found {len(issues_by_id)} string(s) with glossary mismatches:\n"]
         for sid, iss in issues_by_id[:50]:
             for issue in iss:
-                lines.append(f"• ID 0x{sid:08X}: {issue.message}")
+                lines.append(f"• ID {format_string_id(sid)}: {issue.message}")
         if len(issues_by_id) > 50:
             lines.append(f"… and {len(issues_by_id) - 50} more.")
 

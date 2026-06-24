@@ -20,6 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from bethesda_strings import format_string_id
 from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from PySide6.QtGui import (
     QColor,
@@ -329,7 +330,7 @@ def build_html_report(
                 right_parts.append(f'<span class="repl-ins">{_escape(chunk_b)}</span>')
 
         sim_pct = f"{sm.ratio():.0%}"
-        id_str = f"0x{string_id:08X}"
+        id_str = format_string_id(string_id)
         status = row.get("status", "pending")
         diff_badge = "identical" if is_identical else f"similarity {sim_pct}"
 
@@ -591,7 +592,7 @@ class DiffViewerDialog(QDialog):
             self._lbl_right_header.setText(f"Translation — {self._target_lang}  (editable)")
 
         self._left_text = left_text
-        self._lbl_id.setText(f"ID: 0x{string_id:08X}")
+        self._lbl_id.setText(f"ID: {format_string_id(string_id)}")
 
         # Load right pane text without triggering diff (block temporarily)
         self._updating_format = True

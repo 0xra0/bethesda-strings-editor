@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from bethesda_strings import format_string_id
 from gui.micro_animations import FadeInMixin
 from gui.register_checker import RegisterGroup, RegisterHit
 
@@ -213,7 +214,7 @@ class RegisterDialog(FadeInMixin, QDialog):
             row_item.setData(_ROLE_ROW, hit.row_index)
             row_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            id_item = QTableWidgetItem(f"0x{hit.string_id:08X}")
+            id_item = QTableWidgetItem(format_string_id(hit.string_id))
             id_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
             txt_item = QTableWidgetItem(hit.text[:200])
