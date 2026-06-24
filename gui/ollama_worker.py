@@ -98,6 +98,15 @@ _CYRILLIC_ALPHA_RE = re.compile(r"[А-ЯЁа-яёЄєІіЇїҐґ]")
 # the escape into the `\н` artifact this module heals elsewhere.
 _MIXED_WORD_RE = re.compile(r"(?<!\\)[A-Za-zА-ЯЁа-яёЄєІіЇїҐґ][A-Za-zА-ЯЁа-яёЄєІіЇїҐґʼ'’]*")
 
+# Hallucinated placeholder tokens emitted by some Ollama models (notably MamayLM):
+# runs like "EN900016" or "EN900031EN900032", and the Cyrillic-look-alike form
+# "ЕН900001" (Cyrillic Е+Н) when Cyrillic script bleeds into the token. These
+# never appear in Bethesda source strings — the model emits them in place of
+# segments it failed to translate, so their presence marks a broken translation
+# (they cause MISSING_URL / MISSING_NUMBER / dropped-content QC failures).
+# [EЕ] accepts Latin E or Cyrillic Е; [NН] accepts Latin N or Cyrillic Н.
+_PLACEHOLDER_ARTIFACT_RE = re.compile(r"[EЕ][NН]9\d{4,}")
+
 
 def _fix_mixed_script(text: str) -> str:
     """Convert stray Latin letters inside predominantly-Cyrillic words.
@@ -2144,6 +2153,10 @@ class OllamaWorker(QObject):
 
             # Clean up only if we have text
             if translated:
+                # Capture EN-number placeholder hallucinations BEFORE cleaning —
+                # _clean_translation strips them as a safety net, which would
+                # otherwise hide the signal that a full retranslation is needed.
+                _had_artifact = self._has_placeholder_artifacts(translated, req.original_text)
                 translated = self._clean_translation(
                     translated, req.target_lang, req.original_text, req.string_id,
                     source_lang=req.source_lang,
@@ -2151,7 +2164,7 @@ class OllamaWorker(QObject):
                 if (
                     req.source_lang == "ru"
                     and req.target_lang == "uk"
-                    and self._needs_ru_to_uk_retry(req.original_text, translated)
+                    and (_had_artifact or self._needs_ru_to_uk_retry(req.original_text, translated))
                 ):
                     logger.info(
                         f"String {req.string_id}: detected partial RU leakage, running multi-pass rewrite"
@@ -2175,7 +2188,7 @@ class OllamaWorker(QObject):
                 elif (
                     req.source_lang == "en"
                     and req.target_lang == "uk"
-                    and self._needs_en_to_uk_retry(req.original_text, translated)
+                    and (_had_artifact or self._needs_en_to_uk_retry(req.original_text, translated))
                 ):
                     logger.info(
                         f"String {req.string_id}: detected English echo (untranslated), retranslating"
@@ -2717,11 +2730,61 @@ class OllamaWorker(QObject):
             return translated[: translated.find("[TK:")].rstrip()
         return re.sub(r"\[TK:[^\]]*\]", "", translated).strip()
 
+    @staticmethod
+    def _has_placeholder_artifacts(translated: str, original: str) -> bool:
+        """True when *translated* contains hallucinated EN-number placeholder
+        tokens (see ``_PLACEHOLDER_ARTIFACT_RE``) that the source does not.
+        """
+        if not translated or not _PLACEHOLDER_ARTIFACT_RE.search(translated):
+            return False
+        if original and _PLACEHOLDER_ARTIFACT_RE.search(original):
+            return False  # genuinely present in the source — leave it alone
+        return True
+
+    @classmethod
+    def _strip_placeholder_artifacts(cls, translated: str, original: str) -> str:
+        """Last-resort removal of hallucinated EN-number placeholder tokens.
+
+        The real fix is to *retry* (``_needs_ru_to_uk_retry`` /
+        ``_needs_en_to_uk_retry`` flag these so a fresh pass re-translates the
+        dropped segments from the source). This only runs when every retry still
+        left tokens, so the shipped string never contains literal ``EN900xx``
+        garbage. Also tidies the ``__ … __`` wrappers and doubled spaces the
+        tokens leave behind.
+        """
+        if not cls._has_placeholder_artifacts(translated, original):
+            return translated
+        cleaned = _PLACEHOLDER_ARTIFACT_RE.sub("", translated)
+        cleaned = re.sub(r"_{2,}", "", cleaned)        # leftover __ wrappers
+        cleaned = re.sub(r"[ \t]{2,}", " ", cleaned)   # collapse doubled spaces
+        return cleaned
+
+    @staticmethod
+    def _strip_appended_after_short_label(translated: str, original: str) -> str:
+        """Cut a fabricated heading the model appends after a short UI label.
+
+        A one-word label with no newline in the source (e.g. ``АВТО``, ``КАРТА``)
+        must not gain extra lines. Some models translate the label then append an
+        invented heading (``АВТО\\n\\nКОМПЛЕКТНІСТЬ ТА ХАРАКТЕРИСТИКИ``). When the
+        source is a short, single-line label but the translation grew newlines,
+        keep only the first non-empty line.
+        """
+        if not translated or not original:
+            return translated
+        if "\n" in original or "\n" not in translated:
+            return translated
+        src = original.strip()
+        if len(src) > 16 or len(src.split()) > 2:
+            return translated  # not a short label — could be legit multi-line
+        first = next((ln for ln in translated.splitlines() if ln.strip()), "")
+        return first if first else translated
+
     @classmethod
     def _heal_known_artifacts(cls, text: str, original: str) -> str:
         """Apply the source-deterministic fixups that also heal stale cache hits:
         spurious ``<br>`` tags, bracket-wrapped acronyms, garbled ``\\н`` escapes,
-        hallucinated ``[TK:…]`` markers, dropped internal newlines, and exact
+        hallucinated ``[TK:…]`` markers, EN-number placeholder tokens, fabricated
+        headings appended to short labels, dropped internal newlines, and exact
         trailing-newline count.
         """
         if not text or not original:
@@ -2730,6 +2793,8 @@ class OllamaWorker(QObject):
         text = cls._unwrap_spurious_brackets(text, original)
         text = cls._heal_cyrillic_escapes(text, original)
         text = cls._strip_hallucinated_tk(text, original)
+        text = cls._strip_placeholder_artifacts(text, original)
+        text = cls._strip_appended_after_short_label(text, original)
         text = cls._restore_missing_newlines(text, original)
         text = cls._match_trailing_newlines(text, original)
         return text
@@ -2800,6 +2865,11 @@ class OllamaWorker(QObject):
         text = self._heal_cyrillic_escapes(text, original_text)
         # Drop hallucinated [TK:…] translation-key markers + fabricated tails.
         text = self._strip_hallucinated_tk(text, original_text)
+        # Last-resort removal of EN-number placeholder hallucinations (the retry
+        # path re-translates these from source first; this only catches leftovers).
+        text = self._strip_placeholder_artifacts(text, original_text)
+        # Cut a fabricated heading appended after a short single-line UI label.
+        text = self._strip_appended_after_short_label(text, original_text)
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
         # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).
@@ -3406,6 +3476,11 @@ class OllamaWorker(QObject):
         if not t:
             return False
 
+        # 0. Instant fail: hallucinated EN-number placeholder tokens (the model
+        #    dropped a segment and emitted a placeholder) — retranslate from source.
+        if self._has_placeholder_artifacts(t, original_text):
+            return True
+
         # 1. Instant fail: Russian-exclusive characters.
         if self._RU_CHARS.search(t):
             return True
@@ -3589,6 +3664,10 @@ class OllamaWorker(QObject):
         orig = original_en.strip()
         if not t or not orig:
             return False
+
+        # 0. Hallucinated EN-number placeholder tokens — model dropped a segment.
+        if self._has_placeholder_artifacts(t, original_en):
+            return True
 
         # 1. Exact/near-exact whole-string match — catches short echoes like "Attack"→"Attack".
         #    Require at least 4 alphabetic chars so single-letter strings don't fire.
