@@ -1229,8 +1229,17 @@ class SettingsDialog(QDialog):
 
     def _start_model_fetch(self, *, manual: bool) -> None:
         """Spawn a background /api/tags fetch (no-op if one is already running)."""
-        if self._model_fetcher is not None and self._model_fetcher.isRunning():
-            return  # don't pile up overlapping requests
+        fetcher = self._model_fetcher
+        if fetcher is not None:
+            # The previous fetcher finishes and is deleteLater'd; its Python
+            # wrapper then points at a freed C++ object, so any call (even
+            # isRunning) raises RuntimeError. Treat that as 'not running'.
+            try:
+                if fetcher.isRunning():
+                    return  # don't pile up overlapping requests
+            except RuntimeError:
+                pass
+            self._model_fetcher = None
         url = self.ollama_url.text().strip()
         if not url:
             if manual:
@@ -1243,9 +1252,17 @@ class SettingsDialog(QDialog):
         fetcher = _OllamaModelsFetcher(url, timeout=5.0 if manual else 4.0, parent=self)
         fetcher.loaded.connect(lambda names, m=manual: self._on_models_loaded(names, m))
         fetcher.failed.connect(lambda err, m=manual: self._on_models_failed(err, m))
+        # Drop our reference before the C++ object is freed, so the next poll
+        # never sees a dangling wrapper (calling into it would segfault).
+        fetcher.finished.connect(lambda f=fetcher: self._clear_fetcher(f))
         fetcher.finished.connect(fetcher.deleteLater)
         self._model_fetcher = fetcher
         fetcher.start()
+
+    def _clear_fetcher(self, fetcher) -> None:
+        """Release the stored fetcher reference once its thread has finished."""
+        if self._model_fetcher is fetcher:
+            self._model_fetcher = None
 
     @Slot()
     def _auto_refresh_models(self) -> None:
