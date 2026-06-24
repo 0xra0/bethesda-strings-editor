@@ -100,3 +100,26 @@ def test_build_sso_url_custom_slug():
     assert build_sso_url("the-id", slug="my-app") == (
         "https://www.nexusmods.com/sso?id=the-id&application=my-app"
     )
+
+
+def test_application_slug_env_override(monkeypatch):
+    import importlib
+    import gui.nexusmods_sso as sso
+
+    monkeypatch.setenv("NEXUSMODS_SSO_SLUG", "my-registered-slug")
+    reloaded = importlib.reload(sso)
+    try:
+        assert reloaded.APPLICATION_SLUG == "my-registered-slug"
+        assert reloaded.build_sso_url("id").endswith("application=my-registered-slug")
+    finally:
+        monkeypatch.delenv("NEXUSMODS_SSO_SLUG", raising=False)
+        importlib.reload(reloaded)  # restore the default for other tests
+
+
+def test_application_slug_default_without_env(monkeypatch):
+    import importlib
+    import gui.nexusmods_sso as sso
+
+    monkeypatch.delenv("NEXUSMODS_SSO_SLUG", raising=False)
+    reloaded = importlib.reload(sso)
+    assert reloaded.APPLICATION_SLUG == reloaded._DEFAULT_SLUG

@@ -65,9 +65,10 @@ class _NexusSSOWorker(QThread):
     succeeded = Signal(str, str)   # api_key, connection_token
     failed = Signal(str)
 
-    def __init__(self, connection_token: str = "", parent=None):
+    def __init__(self, connection_token: str = "", slug: str = "", parent=None):
         super().__init__(parent)
         self._token = connection_token
+        self._slug = slug
         self._cancelled = False
 
     def cancel(self) -> None:
@@ -75,9 +76,10 @@ class _NexusSSOWorker(QThread):
 
     def run(self) -> None:
         try:
-            from gui.nexusmods_sso import request_api_key
+            from gui.nexusmods_sso import request_api_key, APPLICATION_SLUG
             result = request_api_key(
                 on_url=self.url_ready.emit,
+                slug=self._slug.strip() or APPLICATION_SLUG,
                 connection_token=self._token or None,
                 should_cancel=lambda: self._cancelled,
             )
@@ -1018,6 +1020,17 @@ class SettingsDialog(QDialog):
         nexus_key_row.addWidget(btn_show_nexus_key)
         nexus_layout.addRow(self.tr("API Key:"), nexus_key_row)
 
+        from gui.nexusmods_sso import APPLICATION_SLUG as _DEFAULT_SSO_SLUG
+        self.nexusmods_sso_slug_edit = QLineEdit(getattr(self._settings, "nexusmods_sso_slug", ""))
+        self.nexusmods_sso_slug_edit.setPlaceholderText(_DEFAULT_SSO_SLUG)
+        self.nexusmods_sso_slug_edit.setToolTip(self.tr(
+            "The registered SSO application slug Nexus Mods assigned you. The "
+            "slug must be approved by Nexus Mods staff — an unregistered value "
+            "makes the sign-in page show \"Application ID was invalid\".\n"
+            "Leave blank to use the built-in default."
+        ))
+        nexus_layout.addRow(self.tr("SSO App Slug:"), self.nexusmods_sso_slug_edit)
+
         self.nexusmods_file_group_edit = QLineEdit(getattr(self._settings, "nexusmods_file_group_id", ""))
         self.nexusmods_file_group_edit.setPlaceholderText("123456")
         self.nexusmods_file_group_edit.setToolTip(self.tr(
@@ -1577,7 +1590,8 @@ class SettingsDialog(QDialog):
         self.btn_nexus_sso.setText(self.tr("Waiting for browser…"))
         self.nexus_sso_status.setText(self.tr("Connecting to Nexus Mods…"))
 
-        worker = _NexusSSOWorker(self._nexus_sso_token, parent=self)
+        slug = self.nexusmods_sso_slug_edit.text().strip()
+        worker = _NexusSSOWorker(self._nexus_sso_token, slug, parent=self)
         self._nexus_sso_worker = worker  # keep a ref so it isn't GC'd mid-run
 
         def _open(url: str):
@@ -1824,6 +1838,7 @@ class SettingsDialog(QDialog):
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
         settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
         settings.nexusmods_sso_token     = self._nexus_sso_token
+        settings.nexusmods_sso_slug      = self.nexusmods_sso_slug_edit.text().strip()
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
         settings.nexusmods_cookies_file  = self.nexusmods_cookies_edit.text().strip()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
