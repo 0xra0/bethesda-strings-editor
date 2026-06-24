@@ -42,6 +42,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from .core import format_string_id
+
 logger = logging.getLogger(__name__)
 
 
@@ -229,10 +231,11 @@ class XMLHandler:
                 translated = item.get("translated", "") or ""
                 list_idx   = item.get("list_index", 0)
 
-                # xTranslator uses 'String' with 6-digit hex sID
+                # xTranslator uses 'String' with 6-digit hex sID; TXT-keyed
+                # string IDs (non-int) are written verbatim and matched by Source.
                 node = ET.SubElement(content, "String")
                 node.set("List", str(list_idx))
-                node.set("sID",  f"{string_id:06X}")
+                node.set("sID",  format_string_id(string_id, width=6, prefix=""))
                 ET.SubElement(node, "Source").text = original
                 ET.SubElement(node, "Dest").text   = translated
 

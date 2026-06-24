@@ -11,6 +11,19 @@ from typing import Callable, List, Optional, Tuple
 logger = logging.getLogger(__name__)
 
 
+def format_string_id(string_id, width: int = 8, prefix: str = "0x") -> str:
+    """Format a record/string ID for display or export.
+
+    Integer IDs (FormIDs, .strings/.dlstrings IDs) render as zero-padded
+    uppercase hex.  Non-integer IDs render verbatim — Starfield interface TXT
+    files key strings by plain-string names, which have no hex representation
+    and would otherwise raise ``ValueError: Unknown format code 'X'``.
+    """
+    if isinstance(string_id, int):
+        return f"{prefix}{string_id:0{width}X}"
+    return str(string_id)
+
+
 @dataclass
 class StringDataObject:
     """
