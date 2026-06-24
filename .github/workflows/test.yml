@@ -29,9 +29,17 @@ jobs:
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
-          # Refresh the package index first: the runner's pre-baked apt lists
-          # pin a libegl-mesa0 point release that has since been superseded in
-          # the archive, so a bare install 404s on the stale URL.
+          # The runner's pre-baked third-party Microsoft apt repos (azure-cli,
+          # packages.microsoft.com) intermittently return 403, and apt-get update
+          # fails the whole step (exit 100) when any single repo errors — even
+          # though we only need the Ubuntu archive. Drop those repos first.
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list \
+                     /etc/apt/sources.list.d/azure-cli.list
+          grep -rlZ packages.microsoft.com /etc/apt/sources.list.d/ 2>/dev/null \
+            | sudo xargs -0r rm -f || true
+          # Refresh the package index: the runner's pre-baked apt lists pin a
+          # libegl-mesa0 point release that has since been superseded in the
+          # archive, so a bare install 404s on the stale URL.
           sudo apt-get update
           sudo apt-get install -y libegl1 libhunspell-dev
           pip install hunspell
