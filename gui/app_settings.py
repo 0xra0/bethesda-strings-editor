@@ -18,12 +18,12 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 35  # Increment when schema changes
+CONFIG_VERSION = 36  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
 # Prefix "enc:" distinguishes obfuscated values from legacy plaintext entries.
-_OBFUSCATED_FIELDS = {"nexusmods_api_key"}
+_OBFUSCATED_FIELDS = {"nexusmods_api_key", "nexusmods_sso_token"}
 _OBF_SALT = b"bethesda_strings_ed_v1"
 
 
@@ -137,6 +137,7 @@ class AppSettings:
 
     # ── NexusMods ────────────────────────────────────────────────────────
     nexusmods_api_key: str = ""
+    nexusmods_sso_token: str = ""  # SSO connection token — lets re-auth skip the browser step
     nexusmods_file_group_id: str = ""
     nexusmods_cookies_file: str = ""  # path to Cookie-Editor JSON export (free-user downloads)
 
@@ -417,6 +418,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("ollama_restart_elevate", False)
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v35: added ollama_restart_elevate setting")
+
+    if from_version < 36:
+        data.setdefault("nexusmods_sso_token", "")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v36: added NexusMods SSO connection token")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

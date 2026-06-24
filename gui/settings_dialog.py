@@ -53,6 +53,39 @@ class _OllamaModelsFetcher(QThread):
             self.failed.emit(str(exc))
 
 
+class _NexusSSOWorker(QThread):
+    """Runs the NexusMods SSO handshake off the UI thread.
+
+    Emits ``url_ready`` once the authorisation URL is known (the dialog opens
+    it in the user's browser), then ``succeeded`` with the issued key + the
+    reusable connection token, or ``failed`` with a human-readable reason.
+    """
+
+    url_ready = Signal(str)
+    succeeded = Signal(str, str)   # api_key, connection_token
+    failed = Signal(str)
+
+    def __init__(self, connection_token: str = "", parent=None):
+        super().__init__(parent)
+        self._token = connection_token
+        self._cancelled = False
+
+    def cancel(self) -> None:
+        self._cancelled = True
+
+    def run(self) -> None:
+        try:
+            from gui.nexusmods_sso import request_api_key
+            result = request_api_key(
+                on_url=self.url_ready.emit,
+                connection_token=self._token or None,
+                should_cancel=lambda: self._cancelled,
+            )
+            self.succeeded.emit(result.api_key, result.connection_token)
+        except Exception as exc:  # noqa: BLE001 — surface any failure to the UI
+            self.failed.emit(str(exc))
+
+
 class SettingsDialog(QDialog):
     """Dialog for configuring Ollama and term protection settings."""
     SUPPORTED_LANGUAGES = [
@@ -940,13 +973,38 @@ class SettingsDialog(QDialog):
         nexus_group = QGroupBox(self.tr("NexusMods"))
         nexus_layout = QFormLayout()
 
+        # Reusable SSO connection token (lets sign-in skip the browser step).
+        # Stored obfuscated in the config; kept in a plain attribute while the
+        # dialog is open and written back in apply_to_settings().
+        self._nexus_sso_token = getattr(self._settings, "nexusmods_sso_token", "")
+
+        # Preferred, policy-compliant path: Single Sign-On.  Nexus Mods'
+        # Acceptable Use Policy forbids public apps from using pasted *personal*
+        # API keys; SSO issues a per-user key through the browser instead.
+        nexus_sso_row = QHBoxLayout()
+        self.btn_nexus_sso = QPushButton(self.tr("Sign in with Nexus Mods"))
+        self.btn_nexus_sso.setToolTip(self.tr(
+            "Authorise this app in your browser to obtain an API key via Nexus "
+            "Mods Single Sign-On — the policy-compliant alternative to pasting "
+            "a personal API key.\nRequires the app to be registered with Nexus "
+            "Mods (API Acceptable Use Policy)."
+        ))
+        self.btn_nexus_sso.clicked.connect(self._nexus_sso_signin)
+        nexus_sso_row.addWidget(self.btn_nexus_sso, stretch=1)
+        self.nexus_sso_status = QLabel("")
+        self.nexus_sso_status.setWordWrap(True)
+        nexus_sso_row.addWidget(self.nexus_sso_status, stretch=1)
+        nexus_layout.addRow(self.tr("Sign in:"), nexus_sso_row)
+
         nexus_key_row = QHBoxLayout()
         self.nexusmods_api_key_edit = QLineEdit(getattr(self._settings, "nexusmods_api_key", ""))
-        self.nexusmods_api_key_edit.setPlaceholderText(self.tr("Paste your NexusMods API key here"))
+        self.nexusmods_api_key_edit.setPlaceholderText(self.tr("Filled automatically after SSO sign-in"))
         self.nexusmods_api_key_edit.setEchoMode(QLineEdit.Password)
         self.nexusmods_api_key_edit.setToolTip(self.tr(
-            "Personal API key from nexusmods.com → Settings → API Keys.\n"
-            "Required for uploading mod files and browsing download links."
+            "Use 'Sign in with Nexus Mods' above to fill this via SSO.\n"
+            "Pasting a personal API key (nexusmods.com → Settings → API Keys) "
+            "works too, but Nexus Mods permits that only for personal/testing "
+            "use — not for public distribution."
         ))
         nexus_key_row.addWidget(self.nexusmods_api_key_edit, stretch=1)
         btn_show_nexus_key = QPushButton(self.tr("Show"))
@@ -1510,6 +1568,52 @@ class SettingsDialog(QDialog):
             self.nexusmods_cookies_edit.setText(file_path)
 
     @Slot()
+    def _nexus_sso_signin(self):
+        """Obtain a NexusMods API key via the SSO browser flow."""
+        from PySide6.QtGui import QDesktopServices
+        from PySide6.QtCore import QUrl
+
+        self.btn_nexus_sso.setEnabled(False)
+        self.btn_nexus_sso.setText(self.tr("Waiting for browser…"))
+        self.nexus_sso_status.setText(self.tr("Connecting to Nexus Mods…"))
+
+        worker = _NexusSSOWorker(self._nexus_sso_token, parent=self)
+        self._nexus_sso_worker = worker  # keep a ref so it isn't GC'd mid-run
+
+        def _open(url: str):
+            self.nexus_sso_status.setText(
+                self.tr("Authorise in your browser, then return here…"))
+            QDesktopServices.openUrl(QUrl(url))
+
+        def _done(api_key: str, token: str):
+            self._nexus_sso_token = token
+            self.nexusmods_api_key_edit.setText(api_key)
+            self.nexus_sso_status.setText(self.tr("✓ Signed in"))
+            self._reset_sso_button()
+
+        def _fail(reason: str):
+            self.nexus_sso_status.setText("")
+            self._reset_sso_button()
+            QMessageBox.warning(
+                self, self.tr("Nexus Mods sign-in failed"),
+                self.tr(
+                    "Could not complete Single Sign-On:\n\n{0}\n\n"
+                    "Note: SSO requires this app to be registered with Nexus "
+                    "Mods (see their API Acceptable Use Policy). Until then you "
+                    "can paste a personal API key for personal use."
+                ).format(reason),
+            )
+
+        worker.url_ready.connect(_open)
+        worker.succeeded.connect(_done)
+        worker.failed.connect(_fail)
+        worker.start()
+
+    def _reset_sso_button(self):
+        self.btn_nexus_sso.setEnabled(True)
+        self.btn_nexus_sso.setText(self.tr("Sign in with Nexus Mods"))
+
+    @Slot()
     def _view_protected_terms(self):
         """Show dialog to view/edit protected terms."""
         from gui.protected_terms_dialog import ProtectedTermsDialog
@@ -1719,6 +1823,7 @@ class SettingsDialog(QDialog):
         settings.enable_lore_rag = self.chk_enable_lore_rag.isChecked()
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
         settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
+        settings.nexusmods_sso_token     = self._nexus_sso_token
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
         settings.nexusmods_cookies_file  = self.nexusmods_cookies_edit.text().strip()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
