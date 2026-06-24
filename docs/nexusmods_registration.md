@@ -42,7 +42,7 @@ Slug"** (or set the `NEXUSMODS_SSO_SLUG` env var). See
 - **Dark-background check:** the emblem is a light silver/cyan compass star over
   a dark navy starfield, so it stays clearly visible on a dark background ✔.
 - Optional banner (if they want a wide image):
-  [`resources/nexusmods_header.png`](../resources/nexusmods_header.png) (650 × 130).
+  [`resources/nexusmods_header.png`](../resources/nexusmods_header.png) (1300 × 300).
 
 ---
 
