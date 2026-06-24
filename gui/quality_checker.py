@@ -177,7 +177,9 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r"<br\s*/?>",                       "br"),
     (r"<p(?:\s[^>]*)?>",                 "paragraph"),
     (r"<font[^>]*>",                     "font_open"),
-    (r"<image[^>]*>",                    "image"),
+    # Scaleform/HTML image tag — Starfield interface TXT uses <img src='…'>;
+    # the pattern also covers the older <image …> spelling.
+    (r"<img[^>]*>",                      "image"),
     (r"</font>",                         "font_close"),
     # xml_close excludes </font> (already counted by font_close above)
     (r"</(?!font>)[A-Za-z][A-Za-z0-9]*>", "xml_close"),
@@ -327,10 +329,16 @@ class QualityChecker:
         target_encoding: str = "utf-8",
         target_language: str = "Ukrainian",
         source_language: str = "Russian",
+        ui_strings: bool = False,
     ) -> None:
         self.target_encoding = target_encoding
         self.target_language = target_language
         self.source_language = source_language
+        # Starfield interface TXT files are almost entirely short UI labels
+        # ($OK, $ABORT, $YES) that legitimately expand 2–3× in other languages.
+        # When set, the routine ratio-based "longer than original" INFO flag is
+        # suppressed (UI_OVERFLOW and SUSPICIOUSLY_LONG outliers still apply).
+        self.ui_strings = ui_strings
 
     # ── Public API ─────────────────────────────────────────────────────────────
 
@@ -711,7 +719,9 @@ class QualityChecker:
                     ),
                 )
             )
-        elif ratio > 2.5:
+        elif ratio > 2.5 and not self.ui_strings:
+            # Skipped for interface TXT: short UI labels routinely expand >2.5×
+            # ("OK" → "Гаразд") and this INFO-level flag would fire on most rows.
             report.issues.append(
                 QualityIssue(
                     severity=SEVERITY_INFO,
