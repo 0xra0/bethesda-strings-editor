@@ -217,6 +217,19 @@ def _extract_tags(text: str) -> Counter:
     return Counter(found)
 
 
+# Some source strings carry malformed line-break escapes — a backslash split from
+# its "n"/"t" by stray spaces ("\\ n", "foo.\\ n\\ nBar").  The game engine still
+# renders them as a break, and a correct translation emits a clean "\\n", so the
+# tag/newline counters must treat both forms identically (otherwise a faithful
+# translation trips EXTRA_TAG / NEWLINE_COUNT_MISMATCH against the broken source).
+_MALFORMED_ESCAPE_RE = re.compile(r"\\[ \t]+([nt])")
+
+
+def _normalize_escapes(text: str) -> str:
+    """Collapse ``\\ n`` / ``\\  t`` (backslash + spaces + n/t) to ``\\n`` / ``\\t``."""
+    return _MALFORMED_ESCAPE_RE.sub(r"\\\1", text)
+
+
 # ── Russian-only characters (signal for source-language leakage) ───────────────
 # ы/Ы included: most common Russian-leakage char; ё/Ё, э/Э, ъ/Ъ don't exist in Ukrainian
 _RUSSIAN_ONLY = re.compile(r"[ёЁэЭъЪыЫ]")
@@ -254,6 +267,18 @@ _URL_RE = re.compile(
     r"|www\.\S+"
     r"|(?<!\w)[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}(?!\w)"
 )
+
+# A whitespace-greedy URL match glues on whatever follows when there is no space
+# — typically a line-break escape ("...net.\n\nError") or sentence punctuation.
+# Trim those so the same URL compares equal between original and translation
+# regardless of the trailing junk each side happens to carry.
+_URL_TRAILING_ESCAPE_RE = re.compile(r"\\[ \t]*[nt].*$")
+
+
+def _normalize_url(url: str) -> str:
+    """Strip a trailing escape sequence and sentence punctuation from a URL."""
+    url = _URL_TRAILING_ESCAPE_RE.sub("", url)
+    return url.rstrip(".,;:!?)»\"'\\")
 
 # ── AI commentary artifact prefixes ────────────────────────────────────────────
 _AI_ARTIFACT_RE = re.compile(
@@ -635,8 +660,10 @@ class QualityChecker:
     def _check_tags(
         self, original: str, translated: str, report: QualityReport
     ) -> None:
-        orig_tags = _extract_tags(original)
-        trans_tags = _extract_tags(translated)
+        # Treat malformed "\ n" source escapes as the clean "\n" a faithful
+        # translation produces, so the tag counts compare fairly.
+        orig_tags = _extract_tags(_normalize_escapes(original))
+        trans_tags = _extract_tags(_normalize_escapes(translated))
 
         # Tags in original missing from translation
         for tag, orig_count in orig_tags.items():
@@ -760,7 +787,11 @@ class QualityChecker:
         self, original: str, translated: str, report: QualityReport
     ) -> None:
         # Count both escaped \\n and real newlines (they represent the same thing
-        # in different contexts — game files use \\n, AI may output \n).
+        # in different contexts — game files use \\n, AI may output \n).  Repair
+        # malformed "\ n" source escapes first so a faithful "\n" translation is
+        # not flagged as a count change against the broken source.
+        original = _normalize_escapes(original)
+        translated = _normalize_escapes(translated)
         orig_nl = original.count("\\n") + original.count("\n")
         trans_nl = translated.count("\\n") + translated.count("\n")
         if orig_nl > 0 and trans_nl == 0:
@@ -1751,10 +1782,10 @@ class QualityChecker:
         self, original: str, translated: str, report: QualityReport
     ) -> None:
         """Error when URLs or email addresses from the original are dropped."""
-        orig_urls = set(_URL_RE.findall(original))
+        orig_urls = {_normalize_url(u) for u in _URL_RE.findall(original)}
         if not orig_urls:
             return
-        trans_urls = set(_URL_RE.findall(translated))
+        trans_urls = {_normalize_url(u) for u in _URL_RE.findall(translated)}
         for url in orig_urls:
             if url not in trans_urls:
                 report.issues.append(
