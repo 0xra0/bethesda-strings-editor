@@ -47,11 +47,16 @@ from typing import Callable, Optional, Tuple
 logger = logging.getLogger(__name__)
 
 # Registered application slug assigned by Nexus Mods at registration time.
-# Until the app is registered (support ticket: name + description + logo, see
-# https://help.nexusmods.com/article/114-api-acceptable-use-policy) the SSO
-# server will not return an api_key for this id and the flow will time out.
-# Override per-call via request_api_key(slug=…) if the assigned slug differs.
-APPLICATION_SLUG = "bethesda-strings-editor"
+# The slug MUST be approved by Nexus Mods staff (support ticket: name +
+# description + logo, see
+# https://help.nexusmods.com/article/114-api-acceptable-use-policy); the SSO
+# web page validates ?application=<slug> and shows "Application ID was invalid"
+# for any unregistered value, after which no api_key is ever sent and the flow
+# times out.  This default is a placeholder — set the real slug in
+# Settings → NexusMods, or via the NEXUSMODS_SSO_SLUG env var, or override
+# per-call with request_api_key(slug=…).
+_DEFAULT_SLUG = "bethesda-strings-editor"
+APPLICATION_SLUG = os.environ.get("NEXUSMODS_SSO_SLUG", "").strip() or _DEFAULT_SLUG
 
 _SSO_WS_HOST = "sso.nexusmods.com"
 _SSO_WS_PORT = 443
@@ -271,8 +276,9 @@ def request_api_key(
             except (ValueError, TypeError):
                 continue
             if parsed.get("success") is False:
+                err = parsed.get("error") or "unknown error"
                 raise ConnectionError(
-                    f"SSO error: {parsed.get('error') or 'unknown'}"
+                    f"Nexus Mods SSO rejected application '{slug}': {err}"
                 )
             data = parsed.get("data") or {}
             if data.get("connection_token"):
@@ -283,9 +289,15 @@ def request_api_key(
             if data.get("api_key"):
                 return SSOResult(api_key=data["api_key"],
                                  connection_token=token or "")
+        # In protocol 2 the slug is validated browser-side, so an unregistered
+        # slug never produces a WebSocket error — it just never sends a key and
+        # we land here.  Name the slug so the cause is obvious.
         raise TimeoutError(
-            "Timed out waiting for Nexus Mods authorisation. If the browser "
-            "page showed an error, this app may not be registered for SSO yet."
+            f"Timed out waiting for Nexus Mods authorisation for application "
+            f"'{slug}'. If the browser showed \"Application ID was invalid\", "
+            f"that slug is not registered with Nexus Mods — register the app "
+            f"(name + description + logo) or enter the slug they assigned you "
+            f"in Settings → NexusMods."
         )
     finally:
         ws.close()
