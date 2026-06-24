@@ -10,10 +10,15 @@
 #   active, including during API calls:
 #     min_p, repeat_last_n
 #
-# To rebuild from this file:
-#   ollama create translategemma3-st -f Modelfile
+# To build from this file:
+#   1. Set the FROM path below to a GGUF on your machine.  The custom fine-tune
+#      is not published; use any compatible Gemma-3 / instruct GGUF — e.g. the
+#      public MamayLM Ukrainian model:
+#        https://huggingface.co/INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0
+#   2. ollama create translategemma3-st -f Modelfile
+#   3. Select the model in the app's Settings -> Ollama.
 
-FROM /mnt/ssd/models/blobs/sha256-c8c3c4cef65c8d229c16cb257e3ee88d6a1ceb1aa52f70129cf310c4790b48c2
+FROM /path/to/your-translation-model.Q4_K_M.gguf
 
 # ── Chat template (Gemma 3 format) ──────────────────────────────────────────
 TEMPLATE "{{ if .System }}<start_of_turn>system

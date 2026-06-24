@@ -13,17 +13,25 @@ Designed around the real localization workflow: integrates with xTranslator XML 
 [*]Run [b]bethesda-strings-editor[/b] (Linux) or [b]bethesda-strings-editor.exe[/b] (Windows)
 [/list]
 
-[b]Optional — AI quality checker model (Ollama hub):[/b][code]ollama pull 0xra/bethesda-qc
-ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
-
-[b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU required.
+[b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU or Ollama model required — the quickest way to start translating.
 
 [heading]Ollama Models[/heading]
 
-The QC model is published on the Ollama hub. Translation models are built from local GGUF files using the included Modelfiles.
+The custom translation fine-tunes are [b]not published on any hub[/b] — there is no [b]ollama pull[/b] for them. To translate with a local model, use the Claude API backend (above) or build a model from a GGUF:
+
+[list=1]
+[*]Download a GGUF — e.g. the public [b]MamayLM[/b] (Ukrainian) from HuggingFace: INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0 — or use any Gemma-3 / instruct [b].gguf[/b] you already have
+[*]Edit the bundled [b]Modelfile[/b] and point its [b]FROM[/b] line at your downloaded file
+[*]Build the model, then select it in Settings → Ollama:[code]ollama create translategemma3-st -f Modelfile[/code]
+[/list]
+
+The app supplies its own system prompt and overrides every generation parameter at runtime, so any model you create works once you select it in Settings → Ollama.
+
+Only the quality-check model is published on the hub (optional):
 
 [list]
-[*][url=https://ollama.com/0xra/bethesda-qc][b]0xra/bethesda-qc[/b][/url] — Gemma 4 E4B fine-tuned specifically for Bethesda string quality checking. Detects 16 issue codes and returns structured VERDICT blocks with AUTOFIX/RETRANSLATE recommendations.
+[*][url=https://ollama.com/0xra/bethesda-qc][b]0xra/bethesda-qc[/b][/url] — Gemma 4 E4B fine-tuned specifically for Bethesda string quality checking. Detects 16 issue codes and returns structured VERDICT blocks with AUTOFIX/RETRANSLATE recommendations.[code]ollama pull 0xra/bethesda-qc
+ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [/list]
 
 [heading]Features[/heading]
