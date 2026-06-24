@@ -92,7 +92,11 @@ _LATIN_TO_UKR = str.maketrans(
 _LATIN_ALPHA_RE    = re.compile(r"[A-Za-z]")
 _CYRILLIC_ALPHA_RE = re.compile(r"[А-ЯЁа-яёЄєІіЇїҐґ]")
 # Word = run of letters from either script, possibly joined by an apostrophe.
-_MIXED_WORD_RE = re.compile(r"[A-Za-zА-ЯЁа-яёЄєІіЇїҐґ][A-Za-zА-ЯЁа-яёЄєІіЇїҐґʼ'’]*")
+# A word must not begin with a Latin letter that is an escape char (immediately
+# preceded by a backslash): the `n` in a literal `\n` escape stuck to a following
+# Cyrillic word ("\nПомилка") would otherwise be "fixed" to Cyrillic, re-breaking
+# the escape into the `\н` artifact this module heals elsewhere.
+_MIXED_WORD_RE = re.compile(r"(?<!\\)[A-Za-zА-ЯЁа-яёЄєІіЇїҐґ][A-Za-zА-ЯЁа-яёЄєІіЇїҐґʼ'’]*")
 
 
 def _fix_mixed_script(text: str) -> str:
@@ -2670,16 +2674,62 @@ class OllamaWorker(QObject):
                 translated = translated.replace(bracketed, tok)
         return translated
 
+    @staticmethod
+    def _heal_cyrillic_escapes(translated: str, original: str) -> str:
+        """Restore the Latin ``n`` in ``\\n`` escapes the model garbled to the
+        Cyrillic look-alike ``н``/``Н`` (``\\н`` / ``\\Н``).
+
+        Starfield interface TXT strings carry line breaks as literal two-character
+        ``\\n`` escapes.  The Cyrillic substitution that turns ``Number``→``Нумбер``
+        sometimes also rewrites the escape's ``n`` as the look-alike ``н``,
+        yielding ``\\н``.  Left in place this reads wrong and — because the broken
+        escape no longer separates tokens — glues the following word onto a
+        preceding URL, tripping MISSING_URL.  Restore the form the *source* uses:
+        a literal ``\\n`` escape when the source has literal escapes, otherwise a
+        real newline.
+        """
+        if not translated or "\\" not in translated:
+            return translated
+        if "\\н" not in translated and "\\Н" not in translated:
+            return translated
+        nl = "\\n" if (original and "\\n" in original) else "\n"
+        return translated.replace("\\н", nl).replace("\\Н", nl)
+
+    @staticmethod
+    def _strip_hallucinated_tk(translated: str, original: str) -> str:
+        """Drop hallucinated ``[TK:…]`` translation-key markers and the fabricated
+        text that trails them.
+
+        On very short title inputs (e.g. ``ЛУНА``, ``ПОСАДКА``) the model sometimes
+        invents an encyclopedia entry tagged with a ``[TK:00002986]`` /
+        ``[TK:0001256_00000004]`` key — a training-data placeholder that never
+        appears in Bethesda strings.  When the source carries no such marker:
+        for a short single-line source, cut everything from the first marker
+        onward (the whole tail is fabricated); otherwise just delete the bare
+        marker tokens and keep the surrounding text.
+        """
+        if not translated or "[TK:" not in translated:
+            return translated
+        if original and "[TK:" in original:
+            return translated  # legitimately present in the source
+        src = (original or "").strip()
+        if src and "\n" not in src and len(src) <= 40:
+            return translated[: translated.find("[TK:")].rstrip()
+        return re.sub(r"\[TK:[^\]]*\]", "", translated).strip()
+
     @classmethod
     def _heal_known_artifacts(cls, text: str, original: str) -> str:
         """Apply the source-deterministic fixups that also heal stale cache hits:
-        spurious ``<br>`` tags, bracket-wrapped acronyms, dropped internal
-        newlines, and exact trailing-newline count.
+        spurious ``<br>`` tags, bracket-wrapped acronyms, garbled ``\\н`` escapes,
+        hallucinated ``[TK:…]`` markers, dropped internal newlines, and exact
+        trailing-newline count.
         """
         if not text or not original:
             return text
         text = cls._strip_spurious_br(text, original)
         text = cls._unwrap_spurious_brackets(text, original)
+        text = cls._heal_cyrillic_escapes(text, original)
+        text = cls._strip_hallucinated_tk(text, original)
         text = cls._restore_missing_newlines(text, original)
         text = cls._match_trailing_newlines(text, original)
         return text
@@ -2745,9 +2795,11 @@ class OllamaWorker(QObject):
         # Strip any remaining [[...]] artifact tokens the model may have hallucinated
         text = re.sub(r'\[\[\w+\]{2,}', '', text)
         # Model sometimes writes \н (backslash + Cyrillic н) instead of \n when Cyrillic
-        # script substitution bleeds into the newline escape token.
-        if '\\н' in text:  # \н
-            text = text.replace('\\н', '\n')
+        # script substitution bleeds into the newline escape token; restore the form
+        # (literal escape vs real newline) the source actually uses.
+        text = self._heal_cyrillic_escapes(text, original_text)
+        # Drop hallucinated [TK:…] translation-key markers + fabricated tails.
+        text = self._strip_hallucinated_tk(text, original_text)
 
         # Strip thinking blocks emitted by reasoning-capable models (Gemma 4, QwQ, etc.).
         # Pass 1: remove properly closed blocks (non-greedy, requires closing tag).

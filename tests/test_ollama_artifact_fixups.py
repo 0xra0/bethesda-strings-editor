@@ -276,6 +276,102 @@ def test_heal_noop_on_clean_text():
     assert heal(tgt, src) == "Чисте джерело."
 
 
+# ── \н escape healing (Cyrillic н bled into the \n escape) ─────────────────────
+# Real mamaylm RU→UK interface-TXT run: "…account.\n\нПомилка" tripped MISSING_URL
+# because the broken escape glued "нПомилка" onto the preceding URL.  The source
+# uses literal two-character \n escapes, so the restored form must be literal too.
+
+heal_esc = OllamaWorker._heal_cyrillic_escapes
+
+
+def test_heal_cyrillic_escape_literal_form():
+    # Source carries literal \n escapes → restore a literal \n (not a real newline).
+    src = "Go to http://help.bethesda.net.\\n\\nError"
+    tgt = "Перейдіть на http://help.bethesda.net.\\n\\нПомилка"
+    out = heal_esc(tgt, src)
+    assert out == "Перейдіть на http://help.bethesda.net.\\n\\nПомилка"
+    assert "\\н" not in out and "\n" not in out  # no real newline introduced
+
+
+def test_heal_cyrillic_escape_real_newline_form():
+    # Source uses real newlines (.strings) → restore a real newline.
+    src = "Line one\nLine two"
+    tgt = "Рядок один\\нРядок два"
+    assert heal_esc(tgt, src) == "Рядок один\nРядок два"
+
+
+def test_heal_cyrillic_escape_uppercase():
+    src = "A\\nB"
+    assert heal_esc("А\\НБ", src) == "А\\nБ"
+
+
+def test_heal_cyrillic_escape_noop_without_backslash():
+    # A bare Cyrillic н with no preceding backslash must never be touched.
+    assert heal_esc("Небо", "Sky") == "Небо"
+
+
+def test_heal_runs_cyrillic_escape_in_pipeline():
+    src = "See http://x.io.\\n\\nDone"
+    tgt = "Дивись http://x.io.\\n\\нГотово"
+    assert heal(tgt, src) == "Дивись http://x.io.\\n\\nГотово"
+
+
+def test_clean_translation_heals_escape_survives_mixed_script_fix():
+    # Full _clean_translation path: the \н heal must survive _fix_mixed_script,
+    # which used to convert the restored Latin "n" in "\nПомилка" back to "н".
+    src = r"Посетите http://help.bethesda.net.\n\nОшибка: X"
+    tgt = r"Відвідайте http://help.bethesda.net.\n\нПомилка: X"
+    out = _W._clean_translation(tgt, "uk", src, 1, source_lang="ru")
+    assert "\\н" not in out
+    assert "http://help.bethesda.net." in out and "\\nПомилка" in out
+
+
+def test_fix_mixed_script_protects_literal_escape():
+    from gui.ollama_worker import _fix_mixed_script
+    # Genuine stray Latin still fixed …
+    assert _fix_mixed_script("dослідницький") == "дослідницький"
+    # … but a literal \n escape stuck to a Cyrillic word is left intact.
+    assert _fix_mixed_script("текст\\nПродовження") == "текст\\nПродовження"
+
+
+# ── hallucinated [TK:…] markers (invented on short titles) ─────────────────────
+# Real run: "ЛУНА"→"МІСЯЦЬ\n\n[TK:0001256_00000004]\n\n<made-up lore>" and
+# "ПОСАДКА"→"ПРИЗИЩЕННЯ\n\n[TK:00002986] …".  [TK:…] never appears in Bethesda
+# strings — strip the marker and the fabricated tail it introduces.
+
+strip_tk = OllamaWorker._strip_hallucinated_tk
+
+
+def test_strip_tk_short_title_cuts_fabricated_tail():
+    src = "ЛУНА"
+    tgt = "МІСЯЦЬ\n\n[TK:0001256_00000004]\n\nМісяць – це супутник.\n\n[TK:0001]"
+    assert strip_tk(tgt, src) == "МІСЯЦЬ"
+
+
+def test_strip_tk_short_title_inline_marker():
+    src = "ПОСАДКА"
+    tgt = "ПРИЗИЩЕННЯ\n\n[TK:00002986] Завершено"
+    assert strip_tk(tgt, src) == "ПРИЗИЩЕННЯ"
+
+
+def test_strip_tk_long_source_removes_bare_marker_only():
+    src = "A reasonably long source sentence that the model translated fully."
+    tgt = "Достатньо довге джерельне речення [TK:42], яке модель переклала повністю."
+    out = strip_tk(tgt, src)
+    assert "[TK:" not in out
+    assert "Достатньо довге" in out and "переклала повністю" in out
+
+
+def test_strip_tk_preserved_when_in_source():
+    src = "Key [TK:99] reference"
+    tgt = "Посилання [TK:99]"
+    assert strip_tk(tgt, src) == "Посилання [TK:99]"
+
+
+def test_strip_tk_noop_without_marker():
+    assert strip_tk("Звичайний текст", "Plain text") == "Звичайний текст"
+
+
 # ── RU→UK cleaning: don't blank valid short translations ───────────────────────
 #
 # mamaylm translates these correctly, but _clean_translation (written for EN→UK)
