@@ -631,10 +631,6 @@ class MainWindow(QMainWindow):
         self.ollama_thread = None
         self.ollama_worker = None
         self._ollama_restart_proc = None  # QProcess for the force-stop command
-        self._is_translating_txt = False
-        self._txt_translation_data = []
-        self._translatable_items = []
-        self._txt_target_path = None
 
         # Automatic post-translation self-review state (see _self_review_*).
         self._self_review_active = False
@@ -1402,14 +1398,6 @@ class MainWindow(QMainWindow):
         ))
         self.esp_migrate_action.triggered.connect(self._migrate_esp_versions)
         trans_menu.addAction(self.esp_migrate_action)
-
-        trans_menu.addSeparator()
-        self.translate_interface_action = QAction(
-            self.tr("Translate Starfield Interface TXT..."), self
-        )
-        self.translate_interface_action.setIcon(QIcon.fromTheme("edit-translate"))
-        self.translate_interface_action.triggered.connect(self.translate_starfield_txt)
-        trans_menu.addAction(self.translate_interface_action)
 
         trans_menu.addSeparator()
         self.approve_action = QAction(self.tr("&Approve Selected"), self)
@@ -3085,179 +3073,6 @@ class MainWindow(QMainWindow):
 
         return dlg.exec() == QDialog.Accepted
 
-    @Slot()
-    def translate_starfield_txt(self):
-        """Translate Starfield interface TXT file (e.g. translate_en.txt)."""
-        file_path, _ = get_open_filename(
-            self,
-            self.tr("Open Starfield Interface TXT"),
-            "",
-            self.tr("Text Files (*.txt *.TXT);;All Files (*)"),
-        )
-        if not file_path:
-            return
-
-        # Auto-detect source language from filename
-        filename = Path(file_path).name.lower()
-        if "translate_ru" in filename:
-            idx = self.combo_source_lang.findData("ru")
-            if idx >= 0:
-                self.combo_source_lang.setCurrentIndex(idx)
-        elif "translate_en" in filename:
-            idx = self.combo_source_lang.findData("en")
-            if idx >= 0:
-                self.combo_source_lang.setCurrentIndex(idx)
-
-        # Determine default output path
-        path = Path(file_path)
-        default_output = path.parent / f"{path.stem}_uk.txt"
-
-        target_path, _ = get_save_filename(
-            self,
-            self.tr("Save Translated TXT As"),
-            str(default_output),
-            self.tr("Text Files (*.txt *.TXT);;All Files (*)"),
-        )
-        if not target_path:
-            return
-
-        self._translation_stopping = False
-        try:
-            # Read input file (UTF-16 with BOM is typical for these files)
-            # Try utf-16 first, fallback to utf-8
-            try:
-                with open(file_path, "r", encoding="utf-16") as f:
-                    lines = f.readlines()
-            except UnicodeError:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
-
-            requests = []
-            self._txt_translation_data = []  # Store [is_translatable, key_or_line, clean_text, translated_text]
-            self._translatable_items = []
-
-            source_lang = self.combo_source_lang.currentData()
-            target_lang = self.combo_target_lang.currentData()
-            quality = self.spin_quality.value()
-
-            for line in lines:
-                # Bethesda TXT format: $ID\tText
-                if line.startswith("$") and "\t" in line:
-                    parts = line.split("\t", 1)
-                    key = parts[0]
-                    text = parts[1] if len(parts) > 1 else ""
-
-                    # text still has line endings
-                    clean_text = text.strip("\r\n")
-
-                    if clean_text:
-                        # Disable English protection if source is English
-                        protect_english = self.settings.protect_english_text
-                        if source_lang == "en":
-                            protect_english = False
-
-                        req_index = len(requests)
-                        requests.append(
-                            TranslationRequest(
-                                index=req_index,
-                                original_text=clean_text,
-                                string_id=req_index,
-                                source_lang=source_lang,
-                                target_lang=target_lang,
-                                quality_level=quality,
-                                locale_hint=self._get_locale_code(target_lang),
-                                protected_terms_enabled=self.settings.enable_term_protection,
-                                protect_english_text=protect_english,
-                            )
-                        )
-                        item = [True, key, clean_text, ""]
-                        self._txt_translation_data.append(item)
-                        self._translatable_items.append(item)
-                    else:
-                        self._txt_translation_data.append([False, line, "", ""])
-                else:
-                    self._txt_translation_data.append([False, line, "", ""])
-
-            if not requests:
-                QMessageBox.information(
-                    self,
-                    self.tr("Nothing to Translate"),
-                    self.tr("No translatable lines found in the TXT file."),
-                )
-                return
-
-            self._is_translating_txt = True
-            self._txt_target_path = target_path
-
-            self.progress_bar.setVisible(True)
-            self.progress_bar.setRange(0, len(requests))
-            self.progress_bar.setValue(0)
-            self.lbl_progress.setText(
-                self.tr("Translating TXT {current}/{total}...").format(
-                    current=0, total=len(requests)
-                )
-            )
-            self._set_ui_enabled(False)
-            self._eta_start_time = time.monotonic()
-            self._eta_batch_total = len(requests)
-            self.translation_requested.emit(requests)
-
-        except Exception as e:
-            logger.error(f"Failed to read TXT: {e}", exc_info=True)
-            QMessageBox.critical(
-                self,
-                self.tr("Error"),
-                self.tr("Failed to read TXT:\n{error}").format(error=e),
-            )
-
-    def _finish_txt_translation(self, successful, failed):
-        """Reconstruct and save the translated TXT file."""
-        self.progress_bar.setVisible(False)
-        self._set_ui_enabled(True)
-        self._is_translating_txt = False
-
-        try:
-            assert self._txt_target_path is not None
-            with open(self._txt_target_path, "w", encoding="utf-16-le") as f:
-                # Write BOM manually for utf-16-le
-                f.write("\ufeff")
-                for item in self._txt_translation_data:
-                    if item[0]:  # Translatable
-                        key = item[1]
-                        translated = (
-                            item[3] if item[3] else item[2]
-                        )  # Fallback to original
-                        f.write(f"{key}\t{translated}\r\n")
-                    else:  # Not translatable
-                        line = item[1]
-                        # Ensure line ends with \r\n if it didn't
-                        if not line.endswith("\n"):
-                            line += "\r\n"
-                        elif line.endswith("\n") and not line.endswith("\r\n"):
-                            line = line[:-1] + "\r\n"
-                        f.write(line)
-
-            msg = self.tr("TXT Translation Complete: {count} successful").format(
-                count=successful
-            )
-            if failed > 0:
-                msg += self.tr(", {count} failed").format(count=failed)
-            QMessageBox.information(self, self.tr("Success"), msg)
-            self.statusBar().showMessage(msg, 10000)
-            send_notification(
-                self.tr("Translation complete"),
-                msg,
-                tray_icon=self._tray_icon,
-            )
-
-        except Exception as e:
-            logger.error(f"Failed to save translated TXT: {e}", exc_info=True)
-            QMessageBox.critical(
-                self,
-                self.tr("Error"),
-                self.tr("Failed to save translated TXT:\n{error}").format(error=e),
-            )
-
     def _get_locale_code(self, lang_code: str) -> str:
         """Return the locale code for a language.
 
@@ -3299,7 +3114,7 @@ class MainWindow(QMainWindow):
         """Buffer translated string; flushed to the model at 60fps by the timer."""
         if self._translation_stopping:
             return
-        self._pending_translation_updates.append((index, translated, self._is_translating_txt))
+        self._pending_translation_updates.append((index, translated))
 
     def _flush_translation_updates(self):
         """Apply all buffered translation results to the model in one batch."""
@@ -3307,16 +3122,7 @@ class MainWindow(QMainWindow):
             return
         updates = self._pending_translation_updates
         self._pending_translation_updates = []
-
-        txt_updates = [(i, t) for i, t, is_txt in updates if is_txt]
-        model_updates = [(i, t) for i, t, is_txt in updates if not is_txt]
-
-        for index, translated in txt_updates:
-            if 0 <= index < len(self._translatable_items):
-                self._translatable_items[index][3] = translated
-
-        if model_updates:
-            self.table_model.set_translated_text_batch(model_updates)
+        self.table_model.set_translated_text_batch(updates)
 
     @Slot(str)
     def _on_ollama_error(self, error_msg: str):
@@ -3329,10 +3135,6 @@ class MainWindow(QMainWindow):
     @Slot(int, int)
     def _on_ollama_finished(self, successful: int, failed: int):
         """Translation batch completed."""
-        if self._is_translating_txt:
-            self._finish_txt_translation(successful, failed)
-            return
-
         self._update_flush_timer.stop()
         self._flush_translation_updates()  # drain any remaining buffered updates
         self._eta_start_time = 0.0
