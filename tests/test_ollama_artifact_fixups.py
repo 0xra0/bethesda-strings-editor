@@ -274,3 +274,62 @@ def test_heal_noop_on_clean_text():
     src = "Clean source."
     tgt = "Чисте джерело."
     assert heal(tgt, src) == "Чисте джерело."
+
+
+# ── RU→UK cleaning: don't blank valid short translations ───────────────────────
+#
+# mamaylm translates these correctly, but _clean_translation (written for EN→UK)
+# used to blank them because UK is a prefix/substring of RU or much shorter, or
+# because the source legitimately repeats.  Regression guard for those 156 empties
+# seen in a real full-game RU→UK run.
+
+from gui.ollama_worker import (  # noqa: E402
+    _are_closely_related,
+    _source_has_repetition,
+)
+
+_W = OllamaWorker(model="test-model")
+
+
+def _clean_ruuk(src, model_out):
+    return _W._clean_translation(model_out, "uk", src, 1, source_lang="ru").strip()
+
+
+def test_ruuk_prefix_word_not_blanked():
+    # UK = RU + suffix; echo-prefix strip used to leave "ь" then blank it.
+    assert _clean_ruuk("Торговец", "Торговець") == "Торговець"
+
+
+def test_ruuk_substring_word_not_blanked():
+    # UK word is a substring of the RU word.
+    assert _clean_ruuk("Небесная", "Небесна") == "Небесна"
+
+
+def test_ruuk_shorter_word_not_blanked():
+    # Legitimately much shorter UK rendering of a ≤6-char RU source.
+    assert _clean_ruuk("Есть!", "Є!") == "Є!"
+
+
+def test_ruuk_repeated_source_preserved():
+    # Source legitimately repeats — must NOT be de-duplicated.
+    assert _clean_ruuk("Давай! Давай!", "Давай! Давай!") == "Давай! Давай!"
+    assert _clean_ruuk("Думай, думай, думай!", "Думай, думай, думай!") == "Думай, думай, думай!"
+
+
+def test_enuk_one_char_garbage_still_blanked():
+    # Unrelated pair: the garbage heuristics must still fire (no regression).
+    assert _W._clean_translation("H", "uk", "Hello world", 1, source_lang="en").strip() == ""
+
+
+def test_closely_related_detection():
+    assert _are_closely_related("ru", "uk")
+    assert _are_closely_related("Russian", "Ukrainian")   # full names
+    assert not _are_closely_related("en", "uk")
+    assert not _are_closely_related("uk", "uk")
+
+
+def test_source_repetition_detection():
+    assert _source_has_repetition("Давай! Давай!")
+    assert _source_has_repetition("go go go")
+    assert not _source_has_repetition("Небесная")
+    assert not _source_has_repetition("Майкл Гаррет")

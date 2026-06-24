@@ -36,6 +36,51 @@ logger = logging.getLogger(__name__)
 # Signal for long strings that should be skipped
 SKIP_SIGNAL = "__SKIP_TRANSLATION__"
 
+# Language-name → ISO-639-1 code, so callers can pass either "uk"/"ru" (combo
+# data) or "Ukrainian"/"Russian" (full names) interchangeably.
+_LANG_ALIASES = {
+    "ukrainian": "uk", "russian": "ru", "belarusian": "be",
+    "english": "en", "polish": "pl",
+}
+
+
+def _norm_lang(name: str) -> str:
+    """Normalise a language name or code to a 2-letter code ('Ukrainian' → 'uk')."""
+    s = (name or "").strip().lower()
+    return _LANG_ALIASES.get(s, s[:2])
+
+
+# East-Slavic Cyrillic languages share scripts and a huge amount of vocabulary,
+# so a translation that is a prefix/substring of the source — or much shorter —
+# is normal (RU "Торговец" → UK "Торговець", "Есть!" → "Є!"), NOT garbage.
+# Several output-cleaning heuristics, written for EN→UK/RU, must be relaxed for
+# these pairs or they blank perfectly good short translations.
+_EAST_SLAVIC = frozenset({"ru", "uk", "be"})
+
+
+def _are_closely_related(source_lang: str, target_lang: str) -> bool:
+    """True when source and target are different East-Slavic Cyrillic languages."""
+    s, t = _norm_lang(source_lang), _norm_lang(target_lang)
+    return s != t and s in _EAST_SLAVIC and t in _EAST_SLAVIC
+
+
+def _source_has_repetition(text: str) -> bool:
+    """True if *text* already contains an adjacent duplicated word or 2-word phrase.
+
+    Used so the repetition de-duplicator never collapses output whose *source*
+    legitimately repeats (e.g. "Давай! Давай!", "Думай, думай, думай!").
+    """
+    words = text.split()
+    for i in range(len(words) - 1):
+        if words[i].lower() == words[i + 1].lower():
+            return True
+    for i in range(len(words) - 3):
+        if (words[i].lower(), words[i + 1].lower()) == (
+            words[i + 2].lower(), words[i + 3].lower()
+        ):
+            return True
+    return False
+
 # ── Mixed-script repair ────────────────────────────────────────────────────────
 # Maps Latin letters to their Ukrainian Cyrillic equivalents.
 # Visual homoglyphs first (a→а, e→е, o→о, …), then phonetic approximations
@@ -1528,7 +1573,7 @@ class OllamaWorker(QObject):
                 result = result.replace("[[STRUCT_BREAK_SGL_N]]", "\n")
 
         if result:
-            result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id)
+            result = self._clean_translation(result, req.target_lang, req.original_text, req.string_id, source_lang=req.source_lang)
             result = self._restore_dropped_tags(result, req.original_text)
             result = self._strip_spurious_br(result, req.original_text)
             result = self._unwrap_spurious_brackets(result, req.original_text)
@@ -1983,7 +2028,8 @@ class OllamaWorker(QObject):
                 )
                 if _fb:
                     translated = self._clean_translation(
-                        _fb, req.target_lang, req.original_text, req.string_id
+                        _fb, req.target_lang, req.original_text, req.string_id,
+                        source_lang=req.source_lang,
                     )
 
             if not translated:
@@ -2095,7 +2141,8 @@ class OllamaWorker(QObject):
             # Clean up only if we have text
             if translated:
                 translated = self._clean_translation(
-                    translated, req.target_lang, req.original_text, req.string_id
+                    translated, req.target_lang, req.original_text, req.string_id,
+                    source_lang=req.source_lang,
                 )
                 if (
                     req.source_lang == "ru"
@@ -2108,7 +2155,8 @@ class OllamaWorker(QObject):
                     rewritten = self._force_ukrainian_rewrite(req, translated)
                     if rewritten:
                         cleaned_rewrite = self._clean_translation(
-                            rewritten, req.target_lang, req.original_text, req.string_id
+                            rewritten, req.target_lang, req.original_text, req.string_id,
+                            source_lang=req.source_lang,
                         )
                         if cleaned_rewrite:
                             translated = cleaned_rewrite
@@ -2676,11 +2724,18 @@ class OllamaWorker(QObject):
         return translated
 
     def _clean_translation(
-        self, text: str, target_lang: str, original_text: str = "", string_id: int = 0
+        self, text: str, target_lang: str, original_text: str = "", string_id: int = 0,
+        source_lang: str = "",
     ) -> str:
         """Remove common AI artifacts from translation output."""
         if not text:
             return ""
+
+        # East-Slavic source→target (RU↔UK↔BE): the translation legitimately
+        # shares prefixes/substrings with the source and may be much shorter, so
+        # several echo/garbage heuristics below must be relaxed to avoid blanking
+        # valid short output ("Торговець", "Небесна", "Є!").
+        closely_related = _are_closely_related(source_lang, target_lang)
 
         # Safety net: restore structural newline tokens (all model-garbled variants).
         if "STRUCT" in text and "]]" in text:
@@ -2908,8 +2963,10 @@ class OllamaWorker(QObject):
 
         # Remove duplicate leading terms, but preserve paragraph/newline layout.
         # Previous split/join on full text collapsed line breaks for long book-like strings.
+        # Skip entirely when the *source* legitimately repeats (e.g. "Давай! Давай!",
+        # "Думай, думай, думай!") — collapsing those would corrupt a correct translation.
         lines = text.splitlines(keepends=True)
-        if lines:
+        if lines and not _source_has_repetition(original_text):
             # Find first non-empty content line to apply lightweight dedupe only there.
             for idx, line in enumerate(lines):
                 content = line.strip()
@@ -2945,7 +3002,11 @@ class OllamaWorker(QObject):
             orig_lower = original_text.lower().strip()
             temp_text = text.strip()
             _echo_stripped = False
-            if temp_text.lower().startswith(orig_lower):
+            # For East-Slavic pairs the translation routinely starts with the
+            # source's leading characters (RU "Торговец" → UK "Торговець"); the
+            # prefix-strip would leave a one-char fragment ("ь") that is then
+            # blanked.  Only strip an echoed prefix for unrelated language pairs.
+            if not closely_related and temp_text.lower().startswith(orig_lower):
                 text = temp_text[len(orig_lower) :].strip()
                 _echo_stripped = True
 
@@ -3010,13 +3071,21 @@ class OllamaWorker(QObject):
 
             if text_len == 1 and orig_len > 1:
                 return ""
+            # Short-source shrink: a \u22646-char source rendering much shorter is
+            # usually garbage \u2014 EXCEPT between East-Slavic langs, where "\u0415\u0441\u0442\u044c!"
+            # \u2192 "\u0404!" is a correct, genuinely shorter translation.
             if (
-                orig_len <= 6
+                not closely_related
+                and orig_len <= 6
                 and text_len < max(2, int(orig_len * 0.75))
                 and not (orig_len == 1 and text_len == 1)
             ):
                 return ""
-            if text_len >= 2 and orig_len > text_len and orig_len <= 20:
+            # Translation is a substring of the source: a truncation/echo for
+            # unrelated languages, but normal for East-Slavic pairs where the UK
+            # word is often a prefix/substring of the RU word ("\u041d\u0435\u0431\u0435\u0441\u043d\u0430" \u2282
+            # "\u041d\u0435\u0431\u0435\u0441\u043d\u0430\u044f").
+            if not closely_related and text_len >= 2 and orig_len > text_len and orig_len <= 20:
                 text_is_cyrillic = any("\u0400" <= c <= "\u04ff" for c in text)
                 orig_is_cyrillic = any("\u0400" <= c <= "\u04ff" for c in original_text)
                 if (
@@ -3541,7 +3610,7 @@ class OllamaWorker(QObject):
             )
             result = self._call_ollama_rewrite(BASE_SYSTEM, p1_prompt, input_len, 0.2)
             if result:
-                cleaned = self._clean_translation(result, req.target_lang, orig, string_id)
+                cleaned = self._clean_translation(result, req.target_lang, orig, string_id, source_lang=req.source_lang)
                 if cleaned and not self._needs_en_to_uk_retry(orig, cleaned):
                     logger.debug(f"String {string_id}: EN retranslate succeeded")
                     return cleaned
