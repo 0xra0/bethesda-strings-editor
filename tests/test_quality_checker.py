@@ -23,6 +23,7 @@ def make_checker(**kw) -> QualityChecker:
         target_encoding=kw.get("target_encoding", "utf-8"),
         target_language=kw.get("target_language", "Ukrainian"),
         source_language=kw.get("source_language", "Russian"),
+        ui_strings=kw.get("ui_strings", False),
     )
 
 
@@ -228,6 +229,42 @@ def test_suspiciously_short():
 def test_suspiciously_long():
     r = check("Hi", "Це дуже довгий і деталізований текст, що не відповідає короткому оригіналу в жодному сенсі взагалі.")
     assert "SUSPICIOUSLY_LONG" in codes(r)
+
+
+# ── Starfield interface TXT (ui_strings) ────────────────────────────────────────
+
+def test_short_label_length_increase_flagged_by_default():
+    # Short UI labels expand naturally; the default (.strings/ESP) checker still
+    # surfaces this as an INFO-level note.
+    r = check("OK", "Гаразд")
+    assert "LENGTH_INCREASE" in codes(r)
+
+
+def test_short_label_length_increase_suppressed_for_interface_txt():
+    # Interface TXT is overwhelmingly short labels — the INFO noise is suppressed.
+    r = check("OK", "Гаразд", ui_strings=True)
+    assert "LENGTH_INCREASE" not in codes(r)
+
+
+def test_interface_txt_still_flags_extreme_expansion():
+    # A >5× blow-up is a real outlier even for UI labels and stays flagged.
+    r = check(
+        "Hi",
+        "Це дуже довгий і деталізований текст що зовсім не відповідає короткому оригіналу взагалі ніяк",
+        ui_strings=True,
+    )
+    assert "SUSPICIOUSLY_LONG" in codes(r)
+
+
+def test_interface_txt_dropped_img_tag_flagged():
+    # Scaleform <img src='…'> markup must be preserved; dropping it is MISSING_TAG.
+    r = check("Press <img src='Activate'> to use", "Натисніть, щоб використати", ui_strings=True)
+    assert "MISSING_TAG" in codes(r)
+
+
+def test_img_tag_recognised_by_extractor():
+    tags = _extract_tags("Use <img src='Activate'> now")
+    assert any("<img" in t for t in tags)
 
 
 # ── Newlines ──────────────────────────────────────────────────────────────────

@@ -3981,6 +3981,8 @@ class MainWindow(QMainWindow):
             target_encoding=self.table_model._encoding,
             target_language=self.combo_target_lang.currentData(),
             source_language=self.combo_source_lang.currentData(),
+            # Interface TXT files are short UI labels — relax length-expansion noise.
+            ui_strings=isinstance(self.current_file, TxtStringFile),
         )
         reports = checker.check_all(self.table_model._data)
         quality_map = {r.row_index: r.severity for r in reports if r.severity}
