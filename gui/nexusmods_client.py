@@ -11,7 +11,11 @@ DL link : GET /v1/games/{domain}/mods/{mod_id}/files/{file_id}/download_link.jso
 PopUp   : https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp
           (requires browser session cookies; returns NXM key+expires for free accounts)
 
-All calls need the ``apikey`` header (Settings → NexusMods API key).
+All calls need the ``apikey`` header.  Per NexusMods' API Acceptable Use Policy
+(https://help.nexusmods.com/article/114), a public-facing app must obtain that
+key through Single Sign-On (see ``nexusmods_sso.py`` — Settings → "Sign in with
+Nexus Mods"), not by asking the user to paste a *personal* API key.  Pasting a
+personal key is tolerated only for personal/testing use.
 Free-user downloads additionally require ``curl_cffi`` (pip install curl-cffi)
 and an active NexusMods login in Firefox or a Chromium-based browser.
 """
