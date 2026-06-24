@@ -429,3 +429,93 @@ def test_source_repetition_detection():
     assert _source_has_repetition("go go go")
     assert not _source_has_repetition("Небесная")
     assert not _source_has_repetition("Майкл Гаррет")
+
+
+# ── EN-number placeholder hallucinations (mamaylm) ──────────────────────────────
+# Real cases from quality_report_20260624_152755 ($LegalScreen): the model emits
+# "EN900016" / "EN900031EN900032…" (and the Cyrillic look-alike "ЕН900001") in
+# place of segments it failed to translate, dropping a URL and a number.
+
+_has_ph = OllamaWorker._has_placeholder_artifacts
+_strip_ph = OllamaWorker._strip_placeholder_artifacts
+
+
+def test_placeholder_detected_latin_and_cyrillic():
+    assert _has_ph("Havok є EN900016 Microsoft", "Havok is Microsoft")
+    assert _has_ph("EN900031EN900032EN900033EN900034 [PC]", "Warning text [PC]")
+    # Cyrillic look-alike ЕН (Cyrillic Е+Н)
+    assert _has_ph("політику конфіденційностіЕН900001", "privacy policy")
+
+
+def test_placeholder_not_flagged_when_clean():
+    assert not _has_ph("Чистий переклад без токенів", "Clean source")
+    assert not _has_ph("", "src")
+
+
+def test_placeholder_left_alone_when_in_source():
+    # If the source genuinely carries such a token, don't touch it.
+    assert not _has_ph("код EN900016 тут", "code EN900016 here")
+    assert _strip_ph("код EN900016 тут", "code EN900016 here") == "код EN900016 тут"
+
+
+def test_placeholder_stripped_and_residue_tidied():
+    tgt = "Програмне забезпечення __ и/или EN900016__ є ©2016 Microsoft."
+    out = _strip_ph(tgt, "Программное обеспечение Havok является ©2016 Microsoft.")
+    assert "EN900016" not in out
+    assert "__" not in out
+    assert "  " not in out          # doubled spaces collapsed
+    assert "©2016 Microsoft." in out
+
+
+def test_placeholder_run_stripped():
+    out = _strip_ph("EN900031EN900032EN900033EN900034 [PC]", "Warning [PC]")
+    assert "EN9000" not in out
+    assert "[PC]" in out
+
+
+def test_needs_ru_uk_retry_fires_on_placeholder():
+    # The signal that drives a full retranslation from source.
+    assert _W._needs_ru_to_uk_retry("Программное обеспечение Havok", "ПЗ EN900016")
+
+
+def test_clean_translation_strips_placeholder_as_safety_net():
+    out = _W._clean_translation(
+        "EN900035EN900036 [PC]", "uk", "Перевод [PC]", 1, source_lang="ru"
+    )
+    assert "EN9000" not in out
+    assert "[PC]" in out
+
+
+# ── Fabricated heading appended to a short UI label ─────────────────────────────
+# Real cases: $AUTO BUILD "АВТО" -> "АВТО\n\nКОМПЛЕКТНІСТЬ…"; $MAP "КАРТА" -> …
+
+_strip_app = OllamaWorker._strip_appended_after_short_label
+
+
+def test_appended_heading_cut_from_short_label():
+    assert _strip_app("АВТО\n\nКОМПЛЕКТНІСТЬ ТА ХАРАКТЕРИСТИКИ", "АВТО") == "АВТО"
+    assert _strip_app("КАРТА\n\nКОМПЛЕ́ТНИЙ УКРАЇНСЬКИЙ ПЕРЕКЛАД:", "КАРТА") == "КАРТА"
+
+
+def test_appended_label_leaves_multiline_source_alone():
+    # Source genuinely multi-line — must not be truncated.
+    src = "Рядок один\nРядок два"
+    tgt = "Line one\nLine two"
+    assert _strip_app(tgt, src) == tgt
+
+
+def test_appended_label_leaves_long_source_alone():
+    # Longer source could legitimately wrap to multiple lines.
+    src = "Це досить довге джерело з кількома словами"
+    tgt = "Translated line one\nTranslated line two"
+    assert _strip_app(tgt, src) == tgt
+
+
+def test_appended_label_noop_without_extra_newlines():
+    assert _strip_app("АВТО", "АВТО") == "АВТО"
+
+
+def test_heal_known_artifacts_covers_both_new_fixups():
+    assert heal("АВТО\n\nКОМПЛЕКТНІСТЬ", "АВТО") == "АВТО"
+    out = heal("текст EN900016 кінець", "source text end")
+    assert "EN900016" not in out
