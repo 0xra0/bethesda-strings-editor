@@ -177,9 +177,7 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r"<br\s*/?>",                       "br"),
     (r"<p(?:\s[^>]*)?>",                 "paragraph"),
     (r"<font[^>]*>",                     "font_open"),
-    # Scaleform/HTML image tag — Starfield interface TXT uses <img src='…'>;
-    # the pattern also covers the older <image …> spelling.
-    (r"<img[^>]*>",                      "image"),
+    (r"<image[^>]*>",                    "image"),
     (r"</font>",                         "font_close"),
     # xml_close excludes </font> (already counted by font_close above)
     (r"</(?!font>)[A-Za-z][A-Za-z0-9]*>", "xml_close"),

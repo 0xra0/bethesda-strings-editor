@@ -256,15 +256,16 @@ def test_interface_txt_still_flags_extreme_expansion():
     assert "SUSPICIOUSLY_LONG" in codes(r)
 
 
-def test_interface_txt_dropped_img_tag_flagged():
-    # Scaleform <img src='…'> markup must be preserved; dropping it is MISSING_TAG.
-    r = check("Press <img src='Activate'> to use", "Натисніть, щоб використати", ui_strings=True)
+def test_interface_txt_dropped_brace_placeholder_flagged():
+    # Real interface TXT uses {0}/{1}/{2} numbered placeholders (not <img>);
+    # dropping one is a MISSING_TAG, in ui mode too.
+    r = check("{0} Credits", "кредитів", ui_strings=True)
     assert "MISSING_TAG" in codes(r)
 
 
-def test_img_tag_recognised_by_extractor():
-    tags = _extract_tags("Use <img src='Activate'> now")
-    assert any("<img" in t for t in tags)
+def test_interface_txt_preserved_brace_placeholder_clean():
+    r = check("{0} Credits", "{0} кредитів", ui_strings=True)
+    assert "MISSING_TAG" not in codes(r)
 
 
 # ── Newlines ──────────────────────────────────────────────────────────────────
