@@ -6928,9 +6928,23 @@ class MainWindow(QMainWindow):
         ]
 
         scroll = QScrollArea()
+        scroll.setObjectName("TipsScrollArea")
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
+        # QScrollArea and its viewport default to the light palette base, which
+        # ignores the active theme and renders the tips as light text on a white
+        # background (unreadable on dark themes). Keep them transparent so the
+        # themed dialog background shows through. (Same idiom as the welcome
+        # widget / settings dialog scroll areas.)
+        scroll.viewport().setAutoFillBackground(False)
+        scroll.setStyleSheet(
+            "QScrollArea#TipsScrollArea { background: transparent; border: none; }"
+            "QScrollArea#TipsScrollArea > QWidget > QWidget { background: transparent; }"
+        )
         inner = QWidget()
+        inner.setObjectName("TipsScrollBody")
+        inner.setAttribute(Qt.WA_StyledBackground, True)
+        inner.setStyleSheet("QWidget#TipsScrollBody { background: transparent; }")
         inner_layout = QVBoxLayout(inner)
         inner_layout.setSpacing(6)
 
