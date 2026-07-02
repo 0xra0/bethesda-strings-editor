@@ -348,8 +348,11 @@ _TARGET_STYLE: dict[str, str] = {
     ),
     "uk": (
         "Write authentic, distinctly Ukrainian — not a transliteration of Russian. "
+        "The output MUST be entirely Ukrainian: never leave a Russian word or a "
+        "Russian-only letter (ы, э, ё, ъ) in the result. "
         "Use Ukrainian-specific vocabulary where it diverges from Russian "
-        "(наразі not сейчас, завдяки not благодаря, але not однако). "
+        "(наразі not сейчас, завдяки not благодаря, але not однако, "
+        "щоб not чтобы, тільки not только, між not между, тут not здесь). "
         "Technical readouts use present tense ('Системи в нормі'). "
         "Avoid magic/fantasy vocabulary and archaic phrasing in a sci-fi context. "
         "Quotation marks: always use «» guillemets for Ukrainian (not \" or '). "
@@ -3459,6 +3462,71 @@ class OllamaWorker(QObject):
     # Ukrainian-specific characters that confirm the text is already (partially) Ukrainian
     _UK_SPECIFIC = re.compile(r"[іїєІЇЄ]")
 
+    # Russian function words (conjunctions, particles, adverbs, prepositions,
+    # negatives) that leak from Gemma-family models — notably MamayLM — into
+    # otherwise-Ukrainian output.  Each has a single fixed Ukrainian equivalent
+    # that needs NO gender/case agreement, so a whole-word 1:1 replacement is
+    # always safe (unlike это→це/цей/ця or который→який/яка, which do).  Only
+    # words that are unambiguously Russian (never a valid Ukrainian word) are
+    # listed, so a Russian word can be swapped even when it "pops up" inside an
+    # otherwise-Ukrainian sentence.  Applied in _fix_known_errors BEFORE the
+    # ы/э/ё/ъ character substitution, so spellings like "чтобы"/"поэтому" match.
+    _RU_FUNCTION_WORDS = {
+        # conjunctions / particles
+        "чтобы": "щоб", "чтоб": "щоб", "хотя": "хоча", "также": "також",
+        "тоже": "теж", "даже": "навіть", "только": "тільки", "лишь": "лише",
+        "ведь": "адже", "разве": "хіба", "если": "якщо", "конечно": "звичайно",
+        "но": "але", "или": "або", "что": "що", "это": "це",
+        # adverbs of degree / manner
+        "очень": "дуже", "совсем": "зовсім", "вдруг": "раптом",
+        "снова": "знову", "опять": "знову",
+        # cause / reason / result
+        "потому": "тому", "поэтому": "тому", "почему": "чому", "зачем": "навіщо",
+        "однако": "однак", "впрочем": "втім", "наконец": "нарешті",
+        # time
+        "сейчас": "зараз", "сегодня": "сьогодні", "вчера": "вчора",
+        "тогда": "тоді", "всегда": "завжди", "иногда": "іноді", "когда": "коли",
+        # place / direction
+        "здесь": "тут", "туда": "туди", "сюда": "сюди",
+        "оттуда": "звідти", "отсюда": "звідси", "везде": "скрізь",
+        # prepositions
+        "между": "між", "среди": "серед", "около": "близько", "против": "проти",
+        "вместо": "замість", "вместе": "разом", "кроме": "крім", "сквозь": "крізь",
+        # negatives
+        "никто": "ніхто", "ничего": "нічого", "никогда": "ніколи",
+        "нигде": "ніде", "никуда": "нікуди", "нельзя": "не можна",
+    }
+    # Longest-first alternation so multi-token keys can never be pre-empted by a
+    # shorter prefix; \b is Unicode-aware for Cyrillic in Python's re.
+    _RU_FUNCTION_WORDS_RE = re.compile(
+        r"\b(" + "|".join(sorted(_RU_FUNCTION_WORDS, key=len, reverse=True)) + r")\b",
+        re.IGNORECASE,
+    )
+
+    @staticmethod
+    def _match_case(src_word: str, repl: str) -> str:
+        """Apply *src_word*'s capitalisation pattern to *repl* (ALL-CAPS,
+        Titlecase, or lowercase)."""
+        if src_word.isupper():
+            return repl.upper()
+        if src_word[:1].isupper():
+            return repl[:1].upper() + repl[1:]
+        return repl
+
+    @classmethod
+    def _fix_russian_function_words(cls, text: str) -> str:
+        """Replace leaked Russian function words with their Ukrainian equivalents,
+        preserving capitalisation.  Zero-cost deterministic cleanup — the primary
+        fix for single Russian words that surface in otherwise-Ukrainian output."""
+        if not text:
+            return text
+        return cls._RU_FUNCTION_WORDS_RE.sub(
+            lambda m: cls._match_case(
+                m.group(0), cls._RU_FUNCTION_WORDS[m.group(0).lower()]
+            ),
+            text,
+        )
+
     @staticmethod
     def _norm_for_echo(s: str) -> str:
         """Whitespace-collapsed, case-folded form for echo comparison."""
@@ -3698,6 +3766,20 @@ class OllamaWorker(QObject):
         if self._has_placeholder_artifacts(t, original_en):
             return True
 
+        # 0b. Russian leakage.  MamayLM (trained on Ukrainian) still emits Russian
+        #     more often than translategemma, sometimes producing Ukrainian mixed
+        #     with Russian.  The deterministic fixups in _fix_known_errors already
+        #     converted ы/э/ё/ъ and swapped common Russian function words before we
+        #     get here, so any Russian that survives is residual (content words) and
+        #     warrants a clean retranslation from the English source.  text_has_
+        #     russian_words is self-guarded by Ukrainian-specific letters, so this
+        #     fires only when the residual is substantially Russian — it will not
+        #     re-trigger on a single word the function-word map already fixed.
+        if self._RU_CHARS.search(t):
+            return True
+        if text_has_russian_words(t, threshold=3):
+            return True
+
         # 1. Exact/near-exact whole-string match — catches short echoes like "Attack"→"Attack".
         #    Require at least 4 alphabetic chars so single-letter strings don't fire.
         orig_alpha = sum(1 for c in orig if c.isalpha())
@@ -3760,6 +3842,8 @@ class OllamaWorker(QObject):
             "Translate the English text into natural, polished Ukrainian.\n"
             "Output ONLY the Ukrainian translation — no English words except game tags and proper nouns, "
             "no preamble, no commentary.\n"
+            "The result must be entirely Ukrainian: no Russian words and no Russian-only "
+            "letters (ы, э, ё, ъ).\n"
             "Preserve all game tags (<Alias=…>, <font>), escape sequences (\\n \\t), and structure exactly."
         )
 
@@ -3984,6 +4068,11 @@ class OllamaWorker(QObject):
         for wrong, correct in semantic_fixes:
             if wrong in text:
                 text = text.replace(wrong, correct)
+
+        # ── Step 0: Russian function-word leakage (MamayLM & other Gemma tunes).
+        # Runs before the ы/э/ё/ъ substitution so spellings like "чтобы"/"поэтому"
+        # match on their original Russian form.  Case-preserving, agreement-free.
+        text = self._fix_russian_function_words(text)
 
         # ── Step 1: Position-aware ё substitution.
         # Ukrainian rule: ё → йо at word-start or after a vowel; → ьо after a consonant.
