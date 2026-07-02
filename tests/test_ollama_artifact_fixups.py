@@ -561,3 +561,60 @@ def test_clean_translation_strips_stress_accent():
 
 def test_heal_known_artifacts_strips_stress_accent():
     assert heal("робо́та", "work") == "робота"
+
+
+# ── Russian function-word leakage (mamaylm leaks RU more than translategemma) ────
+# MamayLM is Ukrainian-trained but still sprinkles Russian words into otherwise-
+# Ukrainian output. _fix_russian_function_words swaps the closed-class, agreement-
+# free ones deterministically (zero GPU); heavier residual Russian trips the retry
+# detectors so a clean retranslation runs.
+
+fix_ru = OllamaWorker._fix_russian_function_words
+
+
+def test_ru_function_word_swapped_inline():
+    assert fix_ru("Він піде сейчас додому") == "Він піде зараз додому"
+    assert fix_ru("десь між зірок, но тихо") == "десь між зірок, але тихо"
+
+
+def test_ru_function_word_case_preserved():
+    assert fix_ru("Сейчас усе спокійно") == "Зараз усе спокійно"   # Titlecase
+    assert fix_ru("НИКОГДА не здавайся") == "НІКОЛИ не здавайся"    # ALL-CAPS
+
+
+def test_ru_function_word_boundary_guards():
+    # 'коло' (Ukrainian) must not be treated as 'около'; substrings never match.
+    assert fix_ru("Це коло досліджень") == "Це коло досліджень"
+    assert fix_ru("нора у стіні") == "нора у стіні"
+    assert fix_ru("вонючий газ") == "вонючий газ"
+
+
+def test_ru_function_word_multiword_equivalent():
+    assert fix_ru("Нельзя туда") == "Не можна туди"
+
+
+def test_ru_function_word_leaves_clean_ukrainian():
+    txt = "Місто було тихим цього вечора, тож ми пішли далі"
+    assert fix_ru(txt) == txt
+
+
+def test_fix_known_errors_swaps_before_char_substitution():
+    # Words carrying ы/э ("чтобы", "поэтому") must match on their Russian form,
+    # i.e. the function-word swap runs before the ы→и / э→е substitution.
+    assert "щоб" in _W._fix_known_errors("Тільки чтобы ти знав", "src")
+    assert _W._fix_known_errors("Поэтому я тут", "src").startswith("Тому")
+
+
+def test_en_to_uk_retry_fires_on_russian_leakage():
+    # Heavy Russian (no Ukrainian-specific letters) in an EN→UK result → retry.
+    assert _W._needs_en_to_uk_retry(
+        "The city was quiet", "Город был тихим сегодня вечером здесь"
+    )
+    # Russian-only letters → retry.
+    assert _W._needs_en_to_uk_retry("Test", "Тест ы э больше")
+
+
+def test_en_to_uk_retry_ignores_clean_ukrainian():
+    assert not _W._needs_en_to_uk_retry(
+        "The city was quiet", "Місто було тихим цього вечора"
+    )
