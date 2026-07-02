@@ -987,45 +987,34 @@ class SettingsDialog(QDialog):
         # dialog is open and written back in apply_to_settings().
         self._nexus_sso_token = getattr(self._settings, "nexusmods_sso_token", "")
 
-        # Preferred, policy-compliant path: Single Sign-On.  Nexus Mods'
-        # Acceptable Use Policy forbids public apps from using pasted *personal*
-        # API keys; SSO issues a per-user key through the browser instead.
+        # The API key is obtained ONLY through Single Sign-On.  Nexus Mods' API
+        # Acceptable Use Policy forbids public apps from asking users to paste a
+        # personal API key, so there is deliberately no manual key-entry field.
+        # SSO issues a per-user, app-scoped key; we hold it in a plain attribute
+        # (never an editable widget) and persist it in apply_to_settings().
+        self._nexus_api_key = getattr(self._settings, "nexusmods_api_key", "")
+
         nexus_sso_row = QHBoxLayout()
         self.btn_nexus_sso = QPushButton(self.tr("Sign in with Nexus Mods"))
         self.btn_nexus_sso.setToolTip(self.tr(
             "Authorise this app in your browser to obtain an API key via Nexus "
-            "Mods Single Sign-On — the policy-compliant alternative to pasting "
-            "a personal API key.\nRequires the app to be registered with Nexus "
-            "Mods (API Acceptable Use Policy)."
+            "Mods Single Sign-On. This is the only supported sign-in method — "
+            "Nexus Mods' API Acceptable Use Policy forbids public apps from using "
+            "a pasted personal API key."
         ))
         self.btn_nexus_sso.clicked.connect(self._nexus_sso_signin)
         nexus_sso_row.addWidget(self.btn_nexus_sso, stretch=1)
+        self.btn_nexus_sso_signout = QPushButton(self.tr("Sign out"))
+        self.btn_nexus_sso_signout.setToolTip(self.tr(
+            "Forget the Nexus Mods API key and SSO token stored on this device."))
+        self.btn_nexus_sso_signout.clicked.connect(self._nexus_sso_signout)
+        nexus_sso_row.addWidget(self.btn_nexus_sso_signout)
+        nexus_layout.addRow(self.tr("Nexus Mods:"), nexus_sso_row)
+
         self.nexus_sso_status = QLabel("")
         self.nexus_sso_status.setWordWrap(True)
-        nexus_sso_row.addWidget(self.nexus_sso_status, stretch=1)
-        nexus_layout.addRow(self.tr("Sign in:"), nexus_sso_row)
-
-        nexus_key_row = QHBoxLayout()
-        self.nexusmods_api_key_edit = QLineEdit(getattr(self._settings, "nexusmods_api_key", ""))
-        self.nexusmods_api_key_edit.setPlaceholderText(self.tr("Filled automatically after SSO sign-in"))
-        self.nexusmods_api_key_edit.setEchoMode(QLineEdit.Password)
-        self.nexusmods_api_key_edit.setToolTip(self.tr(
-            "Use 'Sign in with Nexus Mods' above to fill this via SSO.\n"
-            "Pasting a personal API key (nexusmods.com → Settings → API Keys) "
-            "works too, but Nexus Mods permits that only for personal/testing "
-            "use — not for public distribution."
-        ))
-        nexus_key_row.addWidget(self.nexusmods_api_key_edit, stretch=1)
-        btn_show_nexus_key = QPushButton(self.tr("Show"))
-        btn_show_nexus_key.setMaximumWidth(52)
-        btn_show_nexus_key.setCheckable(True)
-        btn_show_nexus_key.toggled.connect(
-            lambda checked: self.nexusmods_api_key_edit.setEchoMode(
-                QLineEdit.Normal if checked else QLineEdit.Password
-            )
-        )
-        nexus_key_row.addWidget(btn_show_nexus_key)
-        nexus_layout.addRow(self.tr("API Key:"), nexus_key_row)
+        nexus_layout.addRow("", self.nexus_sso_status)
+        self._update_nexus_sso_status()
 
         from gui.nexusmods_sso import APPLICATION_SLUG as _DEFAULT_SSO_SLUG
         self.nexusmods_sso_slug_edit = QLineEdit(getattr(self._settings, "nexusmods_sso_slug", ""))
@@ -1649,20 +1638,20 @@ class SettingsDialog(QDialog):
 
         def _done(api_key: str, token: str):
             self._nexus_sso_token = token
-            self.nexusmods_api_key_edit.setText(api_key)
-            self.nexus_sso_status.setText(self.tr("✓ Signed in"))
+            self._nexus_api_key = api_key
             self._reset_sso_button()
+            self._update_nexus_sso_status()
 
         def _fail(reason: str):
-            self.nexus_sso_status.setText("")
             self._reset_sso_button()
+            self._update_nexus_sso_status()
             QMessageBox.warning(
                 self, self.tr("Nexus Mods sign-in failed"),
                 self.tr(
                     "Could not complete Single Sign-On:\n\n{0}\n\n"
-                    "Note: SSO requires this app to be registered with Nexus "
-                    "Mods (see their API Acceptable Use Policy). Until then you "
-                    "can paste a personal API key for personal use."
+                    "Please try again. If your browser showed \"Application ID "
+                    "was invalid\", the SSO app slug is not registered — check "
+                    "Settings → NexusMods → SSO App Slug."
                 ).format(reason),
             )
 
@@ -1670,6 +1659,22 @@ class SettingsDialog(QDialog):
         worker.succeeded.connect(_done)
         worker.failed.connect(_fail)
         worker.start()
+
+    def _nexus_sso_signout(self):
+        """Forget the stored Nexus Mods API key and SSO token on this device."""
+        self._nexus_api_key = ""
+        self._nexus_sso_token = ""
+        self._update_nexus_sso_status()
+
+    def _update_nexus_sso_status(self):
+        signed_in = bool(self._nexus_api_key)
+        self.nexus_sso_status.setText(
+            self.tr("✓ Signed in — an API key is stored for this device.")
+            if signed_in else
+            self.tr("Not signed in. Click “Sign in with Nexus Mods” to authorise.")
+        )
+        if hasattr(self, "btn_nexus_sso_signout"):
+            self.btn_nexus_sso_signout.setEnabled(signed_in)
 
     def _reset_sso_button(self):
         self.btn_nexus_sso.setEnabled(True)
@@ -1884,7 +1889,7 @@ class SettingsDialog(QDialog):
         settings.auto_self_review = self.chk_auto_self_review.isChecked()
         settings.enable_lore_rag = self.chk_enable_lore_rag.isChecked()
         settings.lore_rag_max_snippet_chars = self.lore_rag_max_chars_spin.value()
-        settings.nexusmods_api_key       = self.nexusmods_api_key_edit.text().strip()
+        settings.nexusmods_api_key       = self._nexus_api_key
         settings.nexusmods_sso_token     = self._nexus_sso_token
         settings.nexusmods_sso_slug      = self.nexusmods_sso_slug_edit.text().strip()
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
