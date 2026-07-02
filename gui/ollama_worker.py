@@ -4163,16 +4163,29 @@ class OllamaWorker(QObject):
         """
         Detect and protect English text segments from being translated.
 
-        Called during RU→UK translation to shield English proper nouns, brand
-        names, and game-specific terms.  Uses the English word dictionary
+        Called during e.g. RU→UK translation to shield English terminology,
+        game codes, and technical acronyms.  Uses the English word dictionary
         (en_word_checker) when available so the decision is based on 370 k
         real English words instead of a tiny hardcoded exclusion list.
 
-        Protection rules (in priority order):
-          1. Skip already-tokenised segments (__PROT…, <PT…).
+        Character and planet names are DELIBERATELY not protected here — a full
+        localization wants "Sarah Morgan" / "New Homestead" transliterated into
+        the target script, not left as English.  Two mechanisms make that work:
+
+          * Phase 0 (glossary) — any term the user pinned in the glossary is
+            replaced with its prescribed target-language form (e.g.
+            "Sarah Morgan" → "Сара Морган") *deterministically*, then hidden
+            behind a restore token so the AI can never mangle it.  This is where
+            multi-word names are handled (the per-word scan only sees one word).
+          * Phase 1 (per-word) — a bare capitalised proper noun with NO glossary
+            entry is left untouched so the AI transliterates it.
+
+        Per-word protection rules (in priority order):
+          1. Skip already-tokenised segments (__PROT…, <PT…, __EN…).
           2. Skip single-letter tokens.
           3. Protect if the segment is all-uppercase (game code / acronym).
-          4. Protect if the segment starts with an uppercase letter (proper noun).
+          4. Capitalised proper noun (name/place): DO NOT protect — leave it for
+             the AI to transliterate (pin a fixed spelling via the glossary).
           5. If the English dictionary is loaded:
                - Skip if it IS a function word (EN_FUNCTION_WORDS).
                - Protect if it IS a real English content word (in dictionary).
@@ -4183,9 +4196,14 @@ class OllamaWorker(QObject):
         from gui.en_word_checker import EN_FUNCTION_WORDS, word_is_english
 
         token_map: Dict[str, str] = {}
+        counter = 0
+
+        # Phase 0 — glossary localization (before the per-word scan so multi-word
+        # names collapse to one token mapped to their target-language form).
+        text, counter = self._glossary_localize(text, token_map, counter)
+
         protected_text = text
         offset = 0
-        counter = 0
 
         for match in self._EN_WORD_RE.finditer(text):
             seg = match.group(1)
@@ -4200,13 +4218,15 @@ class OllamaWorker(QObject):
 
             word_lower = seg.lower()
 
-            # Rule 3 – game codes / acronyms: always protect
+            # Rule 3 – game codes / acronyms (ALL-CAPS): always protect
             if seg.isupper() and len(seg) >= 2:
                 pass  # fall through to protect
 
-            # Rule 4 – proper nouns (Capitalised): always protect
+            # Rule 4 – Capitalised proper noun (name/place): do NOT protect.
+            # Leave it for the AI to transliterate into the target script; a
+            # prescribed spelling can be pinned via the glossary (Phase 0).
             elif seg[0].isupper():
-                pass  # fall through to protect
+                continue
 
             # Rules 5 / 6 – lowercase word: use dictionary when available
             else:
@@ -4232,6 +4252,45 @@ class OllamaWorker(QObject):
             offset += len(token) - len(seg)
 
         return protected_text, token_map
+
+    def _glossary_localize(
+        self, text: str, token_map: Dict[str, str], counter: int
+    ) -> Tuple[str, int]:
+        """Replace glossary terms with their prescribed target-language form.
+
+        Each matched span becomes an ``__EN……__`` restore token whose value is
+        the glossary *target* term, so the localized name is reinserted verbatim
+        after translation and the AI never sees (and cannot alter) it.  Reuses
+        the same token machinery as :meth:`_protect_english_text`, so it costs no
+        extra model call.
+
+        Only entries with a non-empty ``target_term`` are applied.  Matching is
+        word-boundary and case-insensitive with overlaps already resolved
+        (longest-first) by ``GlossaryManager.find_terms_in_text``.  Returns the
+        rewritten text and the updated token counter; on any error (or no
+        glossary loaded) the text is returned unchanged.
+        """
+        gm = getattr(self, "glossary_manager", None)
+        if gm is None:
+            return text, counter
+        try:
+            hits = gm.find_terms_in_text(text)
+        except Exception:  # noqa: BLE001 — never let glossary lookup break a batch
+            return text, counter
+        if not hits:
+            return text, counter
+
+        # Splice right-to-left so earlier (start,end) spans keep their indices.
+        for start, end, entry in sorted(hits, key=lambda h: h[0], reverse=True):
+            target = (getattr(entry, "target_term", "") or "").strip()
+            if not target:
+                continue  # protect-only entry: leave for the per-word scan
+            counter += 1
+            token = f"__EN{900000 + counter:06d}__"
+            token_map[token] = target
+            text = text[:start] + token + text[end:]
+
+        return text, counter
 
     @Slot()
     def stop(self):

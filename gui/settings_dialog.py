@@ -393,8 +393,10 @@ class SettingsDialog(QDialog):
         self.chk_protect_english_text = QCheckBox(self.tr("Protect English text from translation"))
         self.chk_protect_english_text.setChecked(self._settings.protect_english_text)
         self.chk_protect_english_text.setToolTip(
-            self.tr("When translating from non-English source (e.g. Russian) to Ukrainian, keep English words/phrases unchanged.\n"
-                    "Useful for preserving names, titles, and terminology that should remain in English.\n"
+            self.tr("When translating from a non-English source (e.g. Russian) to Ukrainian, keep English terminology,\n"
+                    "game codes, and ALL-CAPS acronyms unchanged.\n"
+                    "Character and planet names are still transliterated into the target script — pin a fixed\n"
+                    "spelling for any name via the Glossary (its target form is substituted deterministically).\n"
                     "Note: This is automatically disabled when English is the source language.")
         )
         protection_layout.addWidget(self.chk_protect_english_text)
