@@ -116,7 +116,7 @@ class SettingsDialog(QDialog):
         "The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.",
         "Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.",
         "Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.",
-        "Ctrl+Alt+R checks ти/ви register consistency so the player is always addressed the same way.",
+        "ти/ви register consistency is handled in the translation prompt — the AI keeps informal ти or formal ви consistent per speaker automatically.",
         "Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.",
         "The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.",
         "Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.",
