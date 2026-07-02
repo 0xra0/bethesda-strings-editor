@@ -18,6 +18,46 @@ Slug"** (or set the `NEXUSMODS_SSO_SLUG` env var). See
 
 ---
 
+## 0. Current status — under moderation ⚠️
+
+The mod page is currently **quarantined (hidden) and under moderation review**.
+Nexus Mods staff (Myrddin) set it to hidden with the reason:
+
+> **Violation of API policy.**
+
+The moderation notice reads:
+
+> *This file is currently under review by the moderation staff. This means that
+> the staff have set this file to be hidden to the users of this site while they
+> review your file and ensure that it is within the rules of the site. You will
+> not be able to modify your file entry until the staff have completed their
+> review.*
+>
+> *Please be patient during this process. Refrain from posting on the public
+> forums regarding this issue as it is looked upon very badly by the staff here.*
+
+**What this means and how to proceed:**
+
+- The violation is the [API Acceptable Use Policy](https://help.nexusmods.com/article/114-api-acceptable-use-policy)
+  point that a public-facing app **must not** store or use **personal** API
+  keys. That is exactly what this registration package resolves — the app now
+  implements **SSO** (per-user keys issued through the browser) and only needs a
+  staff-issued **slug** to switch fully off personal keys.
+- **Do not modify the mod entry** while it is under review — the site blocks
+  edits anyway.
+- **Do not post on the public forums** about the quarantine; handle it entirely
+  through the support thread.
+- **Be civil and patient** in all correspondence — conduct during review can
+  affect account standing.
+- **Reply to the support/moderation thread**, acknowledge the API-policy
+  violation, and send the registration request below (§6). State that the app
+  already ships the SSO flow and is only waiting on a slug so it no longer uses
+  personal API keys.
+- Once the slug is issued and entered (§7), the personal-key requirement is
+  removed and the mod can be re-reviewed for un-quarantine.
+
+---
+
 ## 1. Application name
 
 > **Bethesda Strings Editor**
