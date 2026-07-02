@@ -12,9 +12,15 @@ permissions:
   pages: write
   id-token: write
 
+# Only the newest commit's docs matter, so let a fresh push supersede an
+# in-flight deploy instead of queueing behind it. Without this, a slow or stalled
+# GitHub Pages backend makes every push stack a full 10-minute deploy-timeout
+# behind the previous one (a pile-up of failed runs). Superseding a not-yet-live
+# deploy is safe — the last successful deployment stays published until the new
+# one flips over.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
