@@ -529,6 +529,10 @@ class MainWindow(QMainWindow):
         # State variables
         self.current_file = None
         self.current_path = None
+        # Read-only companion .strings/.dlstrings/.ilstrings triplet reference.
+        # Kept separate from current_file so the three independent ID spaces never
+        # contaminate a save (see _offer_triplet_load / bethesda_strings.triplet).
+        self._companion_reference = None  # Optional[TripletReference]
         # Session tracking (WorkSession + baseline set of already-translated IDs)
         self._current_session = None          # Optional[WorkSession]
         self._session_baseline: set = set()   # string IDs translated before this session
@@ -1398,6 +1402,30 @@ class MainWindow(QMainWindow):
         ))
         self.esp_migrate_action.triggered.connect(self._migrate_esp_versions)
         trans_menu.addAction(self.esp_migrate_action)
+
+        self.validate_folder_action = QAction(
+            self.tr("&Validate Translation Folder…"), self
+        )
+        self.validate_folder_action.setIcon(QIcon.fromTheme("dialog-warning"))
+        self.validate_folder_action.setToolTip(self.tr(
+            "Scan a Strings folder for files/IDs that will show\n"
+            "'Unknown lstring ID' in-game (missing, empty, or incomplete\n"
+            "translations) by comparing against the English sources."
+        ))
+        self.validate_folder_action.triggered.connect(self._validate_translation_folder)
+        trans_menu.addAction(self.validate_folder_action)
+
+        self._companion_view_action = QAction(
+            self.tr("Companion &Strings…"), self
+        )
+        self._companion_view_action.setIcon(QIcon.fromTheme("view-list-text"))
+        self._companion_view_action.setToolTip(self.tr(
+            "Browse the read-only companion .strings/.dlstrings/.ilstrings\n"
+            "reference loaded alongside the current file."
+        ))
+        self._companion_view_action.setEnabled(False)
+        self._companion_view_action.triggered.connect(self._show_companion_strings)
+        trans_menu.addAction(self._companion_view_action)
 
         trans_menu.addSeparator()
         self.approve_action = QAction(self.tr("&Approve Selected"), self)
@@ -2312,6 +2340,10 @@ class MainWindow(QMainWindow):
 
     def _open_file_path(self, file_path: str) -> None:
         """Open any supported file by path (used by drag & drop and welcome screen)."""
+        # Drop any companion-triplet reference from a previously opened file.
+        self._companion_reference = None
+        if hasattr(self, "_companion_view_action"):
+            self._companion_view_action.setEnabled(False)
         ext = Path(file_path).suffix.lower()
         if ext in (".esp", ".esm", ".esl"):
             self._open_esp_file(file_path)
@@ -2441,7 +2473,17 @@ class MainWindow(QMainWindow):
             self._update_ui_state()
 
     def _offer_triplet_load(self, loaded_path: Path) -> None:
-        """If sibling .strings/.dlstrings/.ilstrings files exist, offer to load them."""
+        """If sibling .strings/.dlstrings/.ilstrings files exist, offer to load them
+        as a *read-only* companion reference.
+
+        The three files have INDEPENDENT string-ID spaces (the same numeric ID is a
+        different string in each — the engine picks the file from the field type),
+        so they must never be merged into the open file: doing so drops
+        same-ID/different-type strings and writes a file contaminated with foreign
+        IDs, which the game then reports as ``<Error: Unknown lstring ID …>``.  We
+        therefore keep companions in a read-only :class:`TripletReference` that never
+        touches the file being edited, so saves stay pure.
+        """
         stem = loaded_path.stem
         folder = loaded_path.parent
         loaded_ext = loaded_path.suffix.lower()
@@ -2459,41 +2501,42 @@ class MainWindow(QMainWindow):
             self.tr("Load Companion Files"),
             self.tr(
                 "Found companion string file(s):\n{names}\n\n"
-                "Load them together with {loaded} for a complete dictionary?"
+                "Load them as a read-only reference dictionary? They keep their own "
+                "independent ID spaces and are never written into {loaded}, so saving "
+                "stays safe.  View them any time via Translation ▸ Companion Strings."
             ).format(names=names, loaded=loaded_path.name),
             QMessageBox.Yes | QMessageBox.No,  # type: ignore[attr-defined]
             QMessageBox.Yes,  # type: ignore[attr-defined]
         )
-        if reply == QMessageBox.Yes:  # type: ignore[attr-defined]
-            assert isinstance(self.current_file, BethesdaStringFile)
-            existing_ids = {s.id for s in self.current_file.strings}
-            total_added = 0
-            for sib in siblings:
-                try:
-                    extra = BethesdaStringFile(str(sib))
-                    added = 0
-                    for string_obj in extra.strings:
-                        if string_obj.id not in existing_ids:
-                            self.current_file.strings.append(string_obj)
-                            existing_ids.add(string_obj.id)
-                            added += 1
-                    self.current_file._invalidate_index()  # pyright: ignore[reportPrivateUsage]
-                    total_added += added
-                    logger.info(
-                        "Merged %d strings from %s into %s",
-                        added, sib.name, loaded_path.name,
-                    )
-                except Exception as e:
-                    logger.warning("Failed to merge %s: %s", sib.name, e)
-            # Reload table with merged data
-            if total_added:
-                self.table_model.load_from_bethesda_file(
-                    self.current_file,
-                    locale=self.combo_target_lang.currentData(),
+        if reply != QMessageBox.Yes:  # type: ignore[attr-defined]
+            return
+
+        from bethesda_strings.triplet import TripletReference
+        ref = TripletReference()
+        for sib in siblings:
+            try:
+                extra = BethesdaStringFile(str(sib))
+                added = ref.add_file(sib, extra)
+                logger.info(
+                    "Loaded %d companion reference strings from %s (read-only)",
+                    added, sib.name,
                 )
-                self.lbl_string_count.setText(
-                    self.tr("Strings: {count}").format(count=len(self.current_file))
-                )
+            except Exception as e:
+                logger.warning("Failed to load companion %s: %s", sib.name, e)
+
+        if len(ref):
+            self._companion_reference = ref
+            if hasattr(self, "_companion_view_action"):
+                self._companion_view_action.setEnabled(True)
+            from gui.micro_animations import show_toast
+            show_toast(
+                self,
+                self.tr("Loaded {n} companion reference strings (read-only)").format(
+                    n=len(ref)
+                ),
+                kind="success",
+                timeout_ms=3000,
+            )
 
     def _open_esp_file(self, file_path: str):
         """Load an ESP/ESM/ESL plugin file."""
@@ -6608,6 +6651,39 @@ class MainWindow(QMainWindow):
                 5000,
             )
             logger.info("Version migration applied: %d rows updated", len(updates))
+
+    def _show_companion_strings(self) -> None:
+        """Open the read-only companion-triplet reference viewer."""
+        if not self._companion_reference:
+            QMessageBox.information(
+                self,
+                self.tr("Companion Strings"),
+                self.tr(
+                    "No companion reference is loaded.\nOpen a .strings/.dlstrings/"
+                    ".ilstrings file that has sibling files and accept the prompt to "
+                    "load them as a read-only reference."
+                ),
+            )
+            return
+        from gui.companion_strings_dialog import CompanionStringsDialog
+        CompanionStringsDialog(self._companion_reference, parent=self).exec()
+
+    def _validate_translation_folder(self) -> None:
+        """Scan a translated Strings folder for files/IDs that will error in-game."""
+        from gui.validate_translation_dialog import ValidateTranslationDialog
+
+        translated_dir = ""
+        if self.current_path:
+            translated_dir = str(Path(self.current_path).parent)
+
+        target_lang = self.combo_target_lang.currentData() or "uk"
+        dlg = ValidateTranslationDialog(
+            parent=self,
+            translated_dir=translated_dir,
+            source_lang="en",
+            target_lang=str(target_lang),
+        )
+        dlg.exec()
 
     def _migrate_esp_versions(self) -> None:
         """Open the ESP/ESM mod-update migration setup, then show the diff."""
