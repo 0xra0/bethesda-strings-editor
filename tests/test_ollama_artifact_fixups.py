@@ -519,3 +519,45 @@ def test_heal_known_artifacts_covers_both_new_fixups():
     assert heal("АВТО\n\nКОМПЛЕКТНІСТЬ", "АВТО") == "АВТО"
     out = heal("текст EN900016 кінець", "source text end")
     assert "EN900016" not in out
+
+
+# ── Ukrainian stress/accent marks (mamaylm наголос artifacts) ───────────────────
+# MamayLM glues grave/acute accents onto Ukrainian vowels to mark stress
+# (наголос). Bethesda strings never carry them, so they must be stripped from
+# fresh output and from cached hits alike — unless the source used the character.
+
+_strip_acc = OllamaWorker._strip_stress_accents
+
+
+def test_stress_grave_backtick_removed():
+    assert _strip_acc("робо`та почалася", "work has begun") == "робота почалася"
+
+
+def test_stress_acute_and_combining_forms_removed():
+    assert _strip_acc("робо´та", "work") == "робота"   # standalone acute ´ U+00B4
+    assert _strip_acc("робо́та", "work") == "робота"   # combining acute  U+0301
+    assert _strip_acc("робо̀та", "work") == "робота"   # combining grave  U+0300
+
+
+def test_stress_accent_left_alone_when_in_source():
+    # A backtick genuinely in the source (code/terminal text) is preserved.
+    assert _strip_acc("`код` тут", "`code` here") == "`код` тут"
+
+
+def test_stress_accent_noop_on_clean_text():
+    assert _strip_acc("Чистий переклад", "Clean source") == "Чистий переклад"
+    assert _strip_acc("", "src") == ""
+
+
+def test_stress_accent_tidies_orphan_space():
+    # A standalone mark left as its own token collapses the doubled space.
+    assert _strip_acc("слово ` тут", "word here") == "слово тут"
+
+
+def test_clean_translation_strips_stress_accent():
+    out = _W._clean_translation("робо`та", "uk", "work", 1, source_lang="en")
+    assert "`" not in out and "робота" in out
+
+
+def test_heal_known_artifacts_strips_stress_accent():
+    assert heal("робо́та", "work") == "робота"
