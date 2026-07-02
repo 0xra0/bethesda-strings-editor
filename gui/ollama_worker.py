@@ -107,6 +107,13 @@ _MIXED_WORD_RE = re.compile(r"(?<!\\)[A-Za-zА-ЯЁа-яёЄєІіЇїҐґ][A-Za
 # [EЕ] accepts Latin E or Cyrillic Е; [NН] accepts Latin N or Cyrillic Н.
 _PLACEHOLDER_ARTIFACT_RE = re.compile(r"[EЕ][NН]9\d{4,}")
 
+# Stress/accent marks some models (notably MamayLM) inject into Ukrainian words
+# to mark наголос: a standalone grave (`, U+0060) or acute (´, U+00B4) accent, or
+# their combining forms (◌̀ U+0300, ◌́ U+0301) placed on a vowel — e.g. "робо`та"
+# or "робо́та". Bethesda game strings never carry stress accents, so these are
+# artifacts unless the source itself used the character.
+_STRESS_ACCENT_RE = re.compile("[`´̀́]")
+
 
 def _fix_mixed_script(text: str) -> str:
     """Convert stray Latin letters inside predominantly-Cyrillic words.
@@ -2760,6 +2767,25 @@ class OllamaWorker(QObject):
         return cleaned
 
     @staticmethod
+    def _strip_stress_accents(translated: str, original: str) -> str:
+        """Remove stress/accent marks the model injects into Ukrainian words.
+
+        MamayLM (and some other models) marks наголос with a grave accent
+        (``робо`та``), an acute accent (``робо´та``) or their combining forms
+        (``робо̀та`` / ``робо́та``). Bethesda strings never carry stress accents,
+        so any such mark is an artifact — unless the source itself used the
+        character (e.g. backticks in a code/terminal string), in which case it is
+        left untouched.
+        """
+        if not translated or not _STRESS_ACCENT_RE.search(translated):
+            return translated
+        if original and _STRESS_ACCENT_RE.search(original):
+            return translated  # genuinely present in the source
+        cleaned = _STRESS_ACCENT_RE.sub("", translated)
+        cleaned = re.sub(r"[ \t]{2,}", " ", cleaned)  # tidy spaces a mark leaves
+        return cleaned
+
+    @staticmethod
     def _strip_appended_after_short_label(translated: str, original: str) -> str:
         """Cut a fabricated heading the model appends after a short UI label.
 
@@ -2794,6 +2820,7 @@ class OllamaWorker(QObject):
         text = cls._heal_cyrillic_escapes(text, original)
         text = cls._strip_hallucinated_tk(text, original)
         text = cls._strip_placeholder_artifacts(text, original)
+        text = cls._strip_stress_accents(text, original)
         text = cls._strip_appended_after_short_label(text, original)
         text = cls._restore_missing_newlines(text, original)
         text = cls._match_trailing_newlines(text, original)
@@ -2868,6 +2895,8 @@ class OllamaWorker(QObject):
         # Last-resort removal of EN-number placeholder hallucinations (the retry
         # path re-translates these from source first; this only catches leftovers).
         text = self._strip_placeholder_artifacts(text, original_text)
+        # Strip stress/accent marks (наголос) the model glues onto Ukrainian words.
+        text = self._strip_stress_accents(text, original_text)
         # Cut a fabricated heading appended after a short single-line UI label.
         text = self._strip_appended_after_short_label(text, original_text)
 
