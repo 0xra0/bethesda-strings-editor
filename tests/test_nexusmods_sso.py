@@ -125,6 +125,17 @@ def test_application_slug_default_without_env(monkeypatch):
     assert reloaded.APPLICATION_SLUG == reloaded._DEFAULT_SLUG
 
 
+def test_default_slug_is_the_registered_one(monkeypatch):
+    # The slug Nexus Mods staff approved for this app. Changing it silently would
+    # break SSO ("Application ID was invalid"), so pin it here.
+    import importlib
+    import gui.nexusmods_sso as sso
+
+    monkeypatch.delenv("NEXUSMODS_SSO_SLUG", raising=False)
+    reloaded = importlib.reload(sso)
+    assert reloaded._DEFAULT_SLUG == "0xra-bethesdastringseditor"
+
+
 def test_sso_worker_cancel_stops_running_thread(monkeypatch):
     """The fix for 'QThread: Destroyed while thread is still running'.
 

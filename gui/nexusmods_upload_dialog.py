@@ -151,32 +151,12 @@ class NexusModsUploadDialog(QDialog):
         box = QGroupBox("Authentication")
         layout = QFormLayout(box)
 
-        row = QWidget()
-        h = QHBoxLayout(row)
-        h.setContentsMargins(0, 0, 0, 0)
-        self._key_edit = QLineEdit()
-        self._key_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)
-        self._key_edit.setPlaceholderText("Paste your NexusMods API key…")
-        toggle = QPushButton("Show")
-        toggle.setCheckable(True)
-        toggle.setFixedWidth(54)
-        toggle.toggled.connect(
-            lambda on: (
-                self._key_edit.setEchoMode(
-                    QLineEdit.Normal if on else QLineEdit.PasswordEchoOnEdit
-                ),
-                toggle.setText("Hide" if on else "Show"),
-            )
-        )
-        h.addWidget(self._key_edit)
-        h.addWidget(toggle)
-        layout.addRow("API key:", row)
-
-        note = QLabel(
-            '<a href="https://www.nexusmods.com/users/myaccount?tab=api">Get your API key</a>'
-        )
-        note.setOpenExternalLinks(True)
-        layout.addRow("", note)
+        # No manual API-key entry: Nexus Mods' API Acceptable Use Policy forbids
+        # public apps from asking users to paste a personal API key. The key is
+        # obtained via Single Sign-On (Settings → NexusMods) and read from there.
+        self._auth_status = QLabel()
+        self._auth_status.setWordWrap(True)
+        layout.addRow("API key:", self._auth_status)
         return box
 
     def _make_file_group(self, initial_file: Optional[Path]) -> QGroupBox:
@@ -254,17 +234,29 @@ class NexusModsUploadDialog(QDialog):
     # ── settings persistence ───────────────────────────────────────────────
 
     def _load_from_settings(self) -> None:
-        if not self._settings:
-            return
-        if self._settings.nexusmods_api_key:
-            self._key_edit.setText(self._settings.nexusmods_api_key)
-        if self._settings.nexusmods_file_group_id:
-            self._group_edit.setText(self._settings.nexusmods_file_group_id)
+        self._api_key = ""
+        if self._settings:
+            self._api_key = getattr(self._settings, "nexusmods_api_key", "") or ""
+            if self._settings.nexusmods_file_group_id:
+                self._group_edit.setText(self._settings.nexusmods_file_group_id)
+        self._update_auth_status()
+
+    def _update_auth_status(self) -> None:
+        if getattr(self, "_api_key", ""):
+            self._auth_status.setText(
+                "✓ Signed in to Nexus Mods (via SSO in Settings → NexusMods)."
+            )
+        else:
+            self._auth_status.setText(
+                "⚠ Not signed in. Open Settings → NexusMods and use "
+                "“Sign in with Nexus Mods” before uploading."
+            )
 
     def _save_to_settings(self) -> None:
         if not self._settings:
             return
-        self._settings.nexusmods_api_key = self._key_edit.text().strip()
+        # The API key is owned by the SSO sign-in flow (Settings → NexusMods),
+        # never entered or written here.
         self._settings.nexusmods_file_group_id = self._group_edit.text().strip()
         try:
             from gui.app_settings import save_settings
@@ -285,7 +277,7 @@ class NexusModsUploadDialog(QDialog):
             self._file_edit.setText(path)
 
     def _start_upload(self) -> None:
-        api_key = self._key_edit.text().strip()
+        api_key = getattr(self, "_api_key", "")
         file_path = Path(self._file_edit.text().strip())
         group_id = self._group_edit.text().strip()
         version = self._version_edit.text().strip()
@@ -296,7 +288,7 @@ class NexusModsUploadDialog(QDialog):
         # Validate
         errors = []
         if not api_key:
-            errors.append("API key is required.")
+            errors.append("Not signed in to Nexus Mods — sign in via Settings → NexusMods first.")
         if not file_path.name or not file_path.exists():
             errors.append("File to upload does not exist.")
         if not group_id:
@@ -351,7 +343,6 @@ class NexusModsUploadDialog(QDialog):
 
     def _set_uploading(self, uploading: bool) -> None:
         self._upload_btn.setEnabled(not uploading)
-        self._key_edit.setEnabled(not uploading)
         self._file_edit.setEnabled(not uploading)
         self._group_edit.setEnabled(not uploading)
 

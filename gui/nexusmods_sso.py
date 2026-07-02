@@ -46,16 +46,14 @@ from typing import Callable, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-# Registered application slug assigned by Nexus Mods at registration time.
-# The slug MUST be approved by Nexus Mods staff (support ticket: name +
-# description + logo, see
-# https://help.nexusmods.com/article/114-api-acceptable-use-policy); the SSO
-# web page validates ?application=<slug> and shows "Application ID was invalid"
-# for any unregistered value, after which no api_key is ever sent and the flow
-# times out.  This default is a placeholder — set the real slug in
-# Settings → NexusMods, or via the NEXUSMODS_SSO_SLUG env var, or override
-# per-call with request_api_key(slug=…).
-_DEFAULT_SLUG = "bethesda-strings-editor"
+# Registered application slug assigned by Nexus Mods staff (registration
+# approved 2026 — see help.nexusmods.com/article/114-api-acceptable-use-policy).
+# The SSO web page validates ?application=<slug> and shows "Application ID was
+# invalid" for any *unregistered* value, after which no api_key is ever sent and
+# the flow times out.  This is the real, approved slug; it can still be
+# overridden in Settings → NexusMods, via the NEXUSMODS_SSO_SLUG env var, or
+# per-call with request_api_key(slug=…) (e.g. if the app is ever re-registered).
+_DEFAULT_SLUG = "0xra-bethesdastringseditor"
 APPLICATION_SLUG = os.environ.get("NEXUSMODS_SSO_SLUG", "").strip() or _DEFAULT_SLUG
 
 _SSO_WS_HOST = "sso.nexusmods.com"
