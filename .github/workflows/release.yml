@@ -12,7 +12,7 @@ jobs:
     name: Generate changelog
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # full history required by git-cliff
 
@@ -28,7 +28,7 @@ jobs:
       # A large release body exceeds the per-env-var size limit and makes
       # softprops/action-gh-release fail to spawn node ("Argument list too long").
       - name: Upload changelog
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-notes
           path: CHANGES.md
@@ -48,9 +48,9 @@ jobs:
             artifact: bethesda-strings-editor-windows-x64.zip
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: pip
@@ -135,7 +135,7 @@ jobs:
         run: Compress-Archive -Path dist\bethesda-strings-editor\* -DestinationPath ${{ matrix.artifact }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}
@@ -155,10 +155,10 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -201,10 +201,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
