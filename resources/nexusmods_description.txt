@@ -4,6 +4,24 @@ Reads the binary string formats used by the Creation Engine ([b].strings[/b], [b
 
 Designed around the real localization workflow: integrates with xTranslator XML files, protects thousands of Starfield-specific proper nouns from mistranslation, remembers every string you've already approved, and flags quality issues automatically so you can review or re-translate them one by one.
 
+[heading]⚠️ "This file has been automatically quarantined and may be unsafe"[/heading]
+
+If Nexus Mods or your own antivirus flags the download, it is a [b]false positive[/b] — not malware. This affects almost every app packaged with [b]PyInstaller[/b]: the small launcher stub that unpacks the bundled Python runtime looks, to signature- and ML-based scanners, like the self-extracting stubs that some malware also uses. There is nothing malicious anywhere in this project — no telemetry, no hidden downloads, no payloads.
+
+And you do not have to take my word for it. The whole point of releasing this as [b]free, open-source software (MIT licence)[/b] is that anyone can check for themselves:
+
+[list]
+[*][b]Read the code[/b] — every line is public at [url=https://github.com/0xra0/bethesda-strings-editor]github.com/0xra0/bethesda-strings-editor[/url]. Nothing is obfuscated, encrypted, or hidden.
+[*][b]Skip the binary and run from source[/b] — there is no packaged executable to trip a heuristic scanner:[code]git clone https://github.com/0xra0/bethesda-strings-editor
+pip install -r requirements.txt
+python main.py[/code]
+[*][b]Scan it with an open-source antivirus[/b] — don't rely on a single closed, proprietary engine. [url=https://www.clamav.net]ClamAV[/url] is fully open source, so its detection logic is auditable rather than a black box:[code]clamscan -r bethesda-strings-editor/[/code]
+[*][b]Check it on VirusTotal[/b] — upload the zip and you'll see only a couple of heuristic/ML engines react (the classic signature of a PyInstaller false positive) while the large majority pass it clean.
+[*][b]Verify the build is authentic[/b] — every release ships a [b]GPG-signed SHA256SUMS[/b] file, so you can prove your download is byte-for-byte what the public GitHub Actions CI built from the tagged commit, with nothing altered afterward. Full steps are in [b]VERIFICATION.md[/b] in the repo.
+[/list]
+
+To cut these flags off at the source, the PyInstaller launcher is [b]compiled from source[/b] on the CI runners (producing unique bytes rather than the widely-blocklisted prebuilt stub) instead of being shipped as-is. If you still hit a warning, please post the exact file name and its SHA-256 hash so I can submit it to the antivirus vendor as a false positive.
+
 [heading]Installation[/heading]
 
 [list=1]
