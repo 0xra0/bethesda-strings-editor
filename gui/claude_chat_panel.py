@@ -44,6 +44,7 @@ class _ChatWorker(QThread):
 
     token_ready  = Signal(str)   # incremental text delta
     reply_ready  = Signal(str)   # full reply (for history storage)
+    tool_note    = Signal(str)   # name of an MCP tool Claude invoked
     error_signal = Signal(str)
 
     def __init__(
@@ -52,23 +53,41 @@ class _ChatWorker(QThread):
         model: str,
         messages: List[Dict],
         system: str,
+        mcp_servers: Optional[List[Dict]] = None,
         parent=None,
     ) -> None:
         super().__init__(parent)
-        self.api_key  = api_key
-        self.model    = model
-        self.messages = messages
-        self.system   = system
+        self.api_key     = api_key
+        self.model       = model
+        self.messages    = messages
+        self.system      = system
+        self.mcp_servers = mcp_servers or []
 
     def run(self) -> None:
         try:
             from gui.claude_client import ClaudeClient
-            client = ClaudeClient(self.api_key, self.model)
-            parts: List[str] = []
-            for chunk in client.chat_stream(self.messages, system=self.system):
-                parts.append(chunk)
-                self.token_ready.emit(chunk)
-            self.reply_ready.emit("".join(parts))
+            if self.mcp_servers:
+                # MCP tool calls run server-side and can span several rounds
+                # (pause_turn), which the streaming helper doesn't continue —
+                # so use the non-streaming MCP loop and deliver the reply once.
+                client = ClaudeClient(
+                    self.api_key, self.model, mcp_servers=self.mcp_servers
+                )
+                reply = client.chat_mcp(
+                    self.messages,
+                    system=self.system,
+                    on_tool=self.tool_note.emit,
+                )
+                if reply:
+                    self.token_ready.emit(reply)
+                self.reply_ready.emit(reply)
+            else:
+                client = ClaudeClient(self.api_key, self.model)
+                parts: List[str] = []
+                for chunk in client.chat_stream(self.messages, system=self.system):
+                    parts.append(chunk)
+                    self.token_ready.emit(chunk)
+                self.reply_ready.emit("".join(parts))
         except Exception as exc:
             self.error_signal.emit(str(exc))
 
@@ -142,6 +161,7 @@ class ClaudeChatPanel(QDockWidget):
         self._history:  List[Dict] = []   # [{"role": …, "content": …}]
         self._current_original:    str = ""
         self._current_translation: str = ""
+        self._mcp_servers: List[Dict] = []  # remote MCP servers Claude may use
         self._worker:   Optional[_ChatWorker]   = None
         self._reviewer: Optional[_ReviewWorker] = None
 
@@ -338,6 +358,15 @@ class ClaudeChatPanel(QDockWidget):
                 break
         self._model = model_id
 
+    def set_mcp_servers(self, servers: Optional[List[Dict]]) -> None:
+        """Configure the remote MCP servers Claude may call tools on.
+
+        Pass an empty list (the default) to disable MCP for the chat panel.
+        MainWindow calls this from the loaded settings and after Settings is
+        applied, so the value tracks the ``enable_mcp`` / ``mcp_servers`` config.
+        """
+        self._mcp_servers = list(servers or [])
+
     # ── Key / model slots ─────────────────────────────────────────────────────
 
     @Slot(str)
@@ -480,12 +509,14 @@ class ClaudeChatPanel(QDockWidget):
             model=self._model,
             messages=list(self._history),
             system=self._system_prompt(),
+            mcp_servers=list(self._mcp_servers),
             parent=self,
         )
         # Prepare the streaming block before the worker starts
         self._begin_claude_stream()
         self._worker.token_ready.connect(self._on_token)
         self._worker.reply_ready.connect(self._on_reply)
+        self._worker.tool_note.connect(self._on_tool_note)
         self._worker.error_signal.connect(self._on_error)
         self._worker.finished.connect(lambda: self._set_busy(False))
         self._worker.start()
@@ -545,6 +576,14 @@ class ClaudeChatPanel(QDockWidget):
         self._append_claude(text, prefix="📋 Translation Review")
 
     @Slot(str)
+    def _on_tool_note(self, name: str) -> None:
+        """Show which remote MCP tool Claude is currently calling."""
+        if name:
+            self._lbl_thinking.setText(
+                self.tr("Claude is using tool: {name}…").format(name=name)
+            )
+
+    @Slot(str)
     def _on_error(self, msg: str) -> None:
         self._append_system(f"Error: {msg}")
         logger.error("Claude chat error: %s", msg)
@@ -590,6 +629,8 @@ class ClaudeChatPanel(QDockWidget):
         return html.escape(text)
 
     def _set_busy(self, busy: bool) -> None:
+        if busy:
+            self._lbl_thinking.setText(self.tr("Claude is thinking…"))
         self._lbl_thinking.setVisible(busy)
         self._btn_send.setEnabled(not busy)
         self._btn_review.setEnabled(not busy)

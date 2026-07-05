@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QLineEdit, QComboBox, QSpinBox, QCheckBox,
     QPushButton, QDialogButtonBox, QGroupBox, QLabel,
     QMessageBox, QApplication, QSlider, QWidget, QScrollArea, QFrame,
-    QFileDialog,
+    QFileDialog, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView,
 )
 from PySide6.QtCore import Qt, Slot, QTimer, QThread, Signal
 from PySide6.QtGui import QKeySequence
@@ -1053,6 +1053,57 @@ class SettingsDialog(QDialog):
         nexus_group.setLayout(nexus_layout)
         layout.addWidget(nexus_group)
 
+        # Claude MCP Servers (Messages API MCP connector)
+        mcp_group = QGroupBox(self.tr("Claude MCP Servers"))
+        mcp_layout = QVBoxLayout()
+
+        self.chk_enable_mcp = QCheckBox(
+            self.tr("Let Claude call tools on remote MCP servers (chat panel)")
+        )
+        self.chk_enable_mcp.setChecked(bool(getattr(self._settings, "enable_mcp", False)))
+        self.chk_enable_mcp.setToolTip(self.tr(
+            "When enabled, the Claude AI Assistant chat panel connects Claude to the\n"
+            "remote MCP servers below (Messages API MCP connector). Claude can call\n"
+            "their tools during a conversation — e.g. a glossary, lore database, or\n"
+            "web-search server. Anthropic makes the MCP connection server-side.\n"
+            "Only add servers you trust; their tools run with any token you provide."
+        ))
+        mcp_layout.addWidget(self.chk_enable_mcp)
+
+        self.mcp_table = QTableWidget(0, 3)
+        self.mcp_table.setHorizontalHeaderLabels([
+            self.tr("Name"), self.tr("Server URL"), self.tr("Auth token (optional)"),
+        ])
+        self.mcp_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.mcp_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.mcp_table.setToolTip(self.tr(
+            "Name: a short unique label referenced internally (letters/digits/_).\n"
+            "Server URL: the MCP server endpoint (Streamable HTTP / SSE).\n"
+            "Auth token: optional bearer token; stored obfuscated on disk.\n"
+            "Rows missing a name or URL are ignored."
+        ))
+        for entry in getattr(self._settings, "mcp_servers", []) or []:
+            if isinstance(entry, dict):
+                self._mcp_add_row(
+                    entry.get("name", ""),
+                    entry.get("url", ""),
+                    entry.get("authorization_token", ""),
+                )
+        mcp_layout.addWidget(self.mcp_table)
+
+        mcp_btn_row = QHBoxLayout()
+        btn_mcp_add = QPushButton(self.tr("Add Server"))
+        btn_mcp_add.clicked.connect(lambda: self._mcp_add_row("", "", ""))
+        mcp_btn_row.addWidget(btn_mcp_add)
+        btn_mcp_remove = QPushButton(self.tr("Remove Selected"))
+        btn_mcp_remove.clicked.connect(self._mcp_remove_selected)
+        mcp_btn_row.addWidget(btn_mcp_remove)
+        mcp_btn_row.addStretch(1)
+        mcp_layout.addLayout(mcp_btn_row)
+
+        mcp_group.setLayout(mcp_layout)
+        layout.addWidget(mcp_group)
+
         # Audio / TTS Preview
         audio_group = QGroupBox(self.tr("Audio / TTS Preview"))
         audio_layout = QFormLayout()
@@ -1853,6 +1904,39 @@ class SettingsDialog(QDialog):
             return self.combo_theme.currentText()
         return self._settings.theme
 
+    # ── MCP server table helpers ────────────────────────────────────────────
+
+    def _mcp_add_row(self, name: str = "", url: str = "", token: str = "") -> None:
+        r = self.mcp_table.rowCount()
+        self.mcp_table.insertRow(r)
+        self.mcp_table.setItem(r, 0, QTableWidgetItem(name))
+        self.mcp_table.setItem(r, 1, QTableWidgetItem(url))
+        self.mcp_table.setItem(r, 2, QTableWidgetItem(token))
+
+    def _mcp_remove_selected(self) -> None:
+        rows = sorted(
+            {idx.row() for idx in self.mcp_table.selectedIndexes()}, reverse=True
+        )
+        for r in rows:
+            self.mcp_table.removeRow(r)
+
+    def _collect_mcp_servers(self) -> list:
+        """Read the MCP table into a list of server dicts (incomplete rows skipped)."""
+        servers = []
+        for r in range(self.mcp_table.rowCount()):
+            def _cell(c: int) -> str:
+                item = self.mcp_table.item(r, c)
+                return item.text().strip() if item else ""
+
+            name, url, token = _cell(0), _cell(1), _cell(2)
+            if not name or not url:
+                continue
+            entry = {"name": name, "url": url}
+            if token:
+                entry["authorization_token"] = token
+            servers.append(entry)
+        return servers
+
     def apply_to_settings(self, settings: AppSettings) -> None:
         """Apply dialog values to the given AppSettings instance."""
         settings.ollama_url = self.ollama_url.text().rstrip('/')
@@ -1894,6 +1978,8 @@ class SettingsDialog(QDialog):
         settings.nexusmods_sso_slug      = self.nexusmods_sso_slug_edit.text().strip()
         settings.nexusmods_file_group_id = self.nexusmods_file_group_edit.text().strip()
         settings.nexusmods_cookies_file  = self.nexusmods_cookies_edit.text().strip()
+        settings.enable_mcp   = self.chk_enable_mcp.isChecked()
+        settings.mcp_servers  = self._collect_mcp_servers()
         settings.enable_audio_preview = self.chk_enable_audio_preview.isChecked()
         settings.tts_engine_type = self.combo_tts_engine.currentData()
         settings.espeak_voice = self.espeak_voice_edit.text().strip() or "uk"

@@ -1134,6 +1134,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self._claude_panel)
         self._claude_panel.hide()
         self._claude_panel.apply_translation.connect(self._apply_claude_translation)
+        self._apply_claude_mcp_settings()
 
         # ── Audio / TTS Preview dock ──────────────────────────────────────────
         from gui.audio_preview_panel import AudioPreviewPanel
@@ -4211,6 +4212,22 @@ class MainWindow(QMainWindow):
             self.claude_panel_action.setChecked(True)
             self._push_string_to_claude_panel()
 
+    def _apply_claude_mcp_settings(self) -> None:
+        """Push the configured MCP servers to the Claude chat panel.
+
+        Passes an empty list when MCP is disabled, so the panel simply falls
+        back to a plain Claude conversation.
+        """
+        servers = []
+        if getattr(self.settings, "enable_mcp", False):
+            servers = [
+                dict(s)
+                for s in (getattr(self.settings, "mcp_servers", []) or [])
+                if isinstance(s, dict)
+            ]
+        if hasattr(self, "_claude_panel"):
+            self._claude_panel.set_mcp_servers(servers)
+
     def _push_string_to_claude_panel(self) -> None:
         """Send the currently selected string to the Claude chat panel."""
         if not self.current_file:
@@ -5093,6 +5110,9 @@ class MainWindow(QMainWindow):
                 self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             # Propagate color-blind mode to the table model immediately
             self.table_model.set_color_blind_mode(self.settings.color_blind_mode)
+
+            # Propagate Claude MCP-server config to the chat panel
+            self._apply_claude_mcp_settings()
 
             # Apply audio preview settings to panel
             self._apply_audio_settings()

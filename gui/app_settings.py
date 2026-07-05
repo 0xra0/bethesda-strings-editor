@@ -18,7 +18,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 37  # Increment when schema changes
+CONFIG_VERSION = 38  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -44,6 +44,33 @@ def _deobfuscate(value: str) -> str:
         return bytes(a ^ b for a, b in zip(raw, salt)).decode("utf-8")
     except Exception:
         return ""
+
+
+def _obfuscate_mcp_entry(entry: dict) -> dict:
+    """Return a copy of an MCP-server entry with its auth token obfuscated.
+
+    ``mcp_servers`` is a nested list, not a top-level field, so it can't use the
+    ``_OBFUSCATED_FIELDS`` path — the per-entry ``authorization_token`` is
+    wrapped here at serialization time (like the NexusMods key).
+    """
+    if not isinstance(entry, dict):
+        return entry
+    out = dict(entry)
+    token = out.get("authorization_token")
+    if token:
+        out["authorization_token"] = _obfuscate(token)
+    return out
+
+
+def _deobfuscate_mcp_entry(entry: dict) -> dict:
+    """Inverse of :func:`_obfuscate_mcp_entry` (legacy plaintext tokens pass through)."""
+    if not isinstance(entry, dict):
+        return entry
+    out = dict(entry)
+    token = out.get("authorization_token")
+    if isinstance(token, str) and token:
+        out["authorization_token"] = _deobfuscate(token)
+    return out
 
 
 @dataclass
@@ -142,6 +169,14 @@ class AppSettings:
     nexusmods_file_group_id: str = ""
     nexusmods_cookies_file: str = ""  # path to Cookie-Editor JSON export (free-user downloads)
 
+    # ── Claude MCP servers (Messages API MCP connector) ──────────────────
+    # When enabled, the Claude chat panel connects Claude to these remote MCP
+    # servers so it can call their tools mid-conversation. Each entry is a dict
+    # {"name", "url", "authorization_token" (optional)}; tokens are
+    # XOR-obfuscated on disk via _obfuscate_mcp_entry (see to_dict/from_dict).
+    enable_mcp: bool = False
+    mcp_servers: list = field(default_factory=list)
+
     # ── Help ─────────────────────────────────────────────────────────────
     tips_shown: bool = False
 
@@ -200,6 +235,12 @@ class AppSettings:
             if field_name in filtered and isinstance(filtered[field_name], str):
                 filtered[field_name] = _deobfuscate(filtered[field_name])
 
+        # Decode per-entry MCP auth tokens (nested list, not a top-level field)
+        if isinstance(filtered.get("mcp_servers"), list):
+            filtered["mcp_servers"] = [
+                _deobfuscate_mcp_entry(s) for s in filtered["mcp_servers"]
+            ]
+
         # Migrate if version is old
         version = filtered.get("config_version", 1)
         if version < CONFIG_VERSION:
@@ -213,6 +254,8 @@ class AppSettings:
         for field_name in _OBFUSCATED_FIELDS:
             if d.get(field_name):
                 d[field_name] = _obfuscate(d[field_name])
+        if isinstance(d.get("mcp_servers"), list):
+            d["mcp_servers"] = [_obfuscate_mcp_entry(s) for s in d["mcp_servers"]]
         return d
 
     def validate(self) -> list[str]:
@@ -429,6 +472,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("nexusmods_sso_slug", "")
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v37: added NexusMods SSO application slug")
+
+    if from_version < 38:
+        data.setdefault("enable_mcp", False)
+        data.setdefault("mcp_servers", [])
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v38: added Claude MCP server settings")
 
     if from_version < CONFIG_VERSION:
         logger.warning(
