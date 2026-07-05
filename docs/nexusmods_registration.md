@@ -18,43 +18,23 @@ Slug"** (or set the `NEXUSMODS_SSO_SLUG` env var). See
 
 ---
 
-## 0. Current status — under moderation ⚠️
+## 0. Current status — registered & approved ✅
 
-The mod page is currently **quarantined (hidden) and under moderation review**.
-Nexus Mods staff (Myrddin) set it to hidden with the reason:
+**Resolved.** The application is **registered with Nexus Mods** and the mod page
+is **public again (un-quarantined)**. Nexus Mods staff issued the SSO
+application slug **`0xra-bethesdastringseditor`**, which now ships as the
+built-in `_DEFAULT_SLUG` in [`gui/nexusmods_sso.py`](../gui/nexusmods_sso.py).
 
-> **Violation of API policy.**
+The app no longer stores or uses **personal** API keys anywhere — the only
+key-acquisition path is the browser-based **SSO** flow (Settings → NexusMods →
+"Sign in with Nexus Mods"), which issues a per-user, app-scoped key held only on
+the user's machine. That clears the [API Acceptable Use Policy](https://help.nexusmods.com/article/114-api-acceptable-use-policy)
+violation (a public-facing app must not use personal API keys) the page was
+originally quarantined for.
 
-The moderation notice reads:
-
-> *This file is currently under review by the moderation staff. This means that
-> the staff have set this file to be hidden to the users of this site while they
-> review your file and ensure that it is within the rules of the site. You will
-> not be able to modify your file entry until the staff have completed their
-> review.*
->
-> *Please be patient during this process. Refrain from posting on the public
-> forums regarding this issue as it is looked upon very badly by the staff here.*
-
-**What this means and how to proceed:**
-
-- The violation is the [API Acceptable Use Policy](https://help.nexusmods.com/article/114-api-acceptable-use-policy)
-  point that a public-facing app **must not** store or use **personal** API
-  keys. That is exactly what this registration package resolves — the app now
-  implements **SSO** (per-user keys issued through the browser) and only needs a
-  staff-issued **slug** to switch fully off personal keys.
-- **Do not modify the mod entry** while it is under review — the site blocks
-  edits anyway.
-- **Do not post on the public forums** about the quarantine; handle it entirely
-  through the support thread.
-- **Be civil and patient** in all correspondence — conduct during review can
-  affect account standing.
-- **Reply to the support/moderation thread**, acknowledge the API-policy
-  violation, and send the registration request below (§6). State that the app
-  already ships the SSO flow and is only waiting on a slug so it no longer uses
-  personal API keys.
-- Once the slug is issued and entered (§7), the personal-key requirement is
-  removed and the mod can be re-reviewed for un-quarantine.
+> The sections below are retained as a **historical record** of the registration
+> package that was sent to Nexus Mods staff; nothing in them is an outstanding
+> action.
 
 ---
 
@@ -118,8 +98,11 @@ request volume:
 
 ## 5. Testing build (so they can verify with a personal API key)
 
-Until SSO is registered, the app still accepts a **personal API key** for
-testing (Settings → NexusMods → API Key). To exercise the integration:
+> **Historical.** This described the pre-registration testing path. SSO is now
+> registered, so the current app has **no** personal-API-key field — sign-in is
+> SSO-only. The steps below are how staff verified the build during review.
+
+To exercise the integration (as it stood during review):
 
 1. Get the build:
    - **Prebuilt:** GitHub Releases —
@@ -202,6 +185,10 @@ Please let me know if you need any changes before issuing a slug. Thank you!
 ---
 
 ## 7. After they issue the slug
+
+> ✅ **Done.** The slug `0xra-bethesdastringseditor` was issued and is set as the
+> `_DEFAULT_SLUG` in `gui/nexusmods_sso.py`; sign-in works and the mod is
+> un-quarantined. The original steps are kept for reference:
 
 1. Open **Settings → NexusMods → "SSO App Slug"** and paste the issued slug
    (or set the `NEXUSMODS_SSO_SLUG` environment variable, or change the

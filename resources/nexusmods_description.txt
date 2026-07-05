@@ -81,7 +81,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Retranslation queue[/b] — strings flagged by QC are queued and retranslated with a per-string hint describing what went wrong
 [*][b]Consistency checker[/b] — finds identical source strings translated differently; pick a canonical form and batch-replace ([b]Ctrl+Alt+K[/b])
 [*][b]Ukrainian gender checker[/b] — detects adjective/noun gender agreement mismatches ([b]Ctrl+Alt+G[/b])
-[*][b]ти/ви register checker[/b] — detects mixed formal/informal address within a file ([b]Ctrl+Alt+R[/b])
+[*][b]ти/ви register consistency[/b] — informal ти / formal ви is kept consistent per speaker directly by the translation prompt (both the Ollama and Claude backends), so mixed address never enters the output in the first place
 [*][b]Plugin validator[/b] — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies
 [*][b]Version diff[/b] — compare two game versions and migrate unchanged translations; export CSV/HTML reports
 [/list]
@@ -99,6 +99,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 
 [b]NexusMods Integration[/b]
 [list]
+[*][b]Sign in with Nexus Mods[/b] — one-click account sign-in via the official browser-based Single Sign-On flow (Settings → NexusMods); no API key to paste, and your per-user key never leaves your machine
 [*][b]Mod browser[/b] — search NexusMods directly from the app (File → Browse NexusMods…); card-grid results with thumbnails, endorsements, and download counts
 [*][b]Free-user downloads[/b] — downloads work without a Premium subscription by reusing your active browser session (Firefox or Chromium); no NXM handler or manual clicks needed
 [*][b]Archive extraction[/b] — automatically extracts .esp/.esm/.esl files from .zip, .7z, and .rar mod archives and opens them directly in the editor
@@ -110,7 +111,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [list]
 [*][b]Zen / Focus Mode[/b] ([b]F11[/b]) — full-screen overlay showing one string at a time for distraction-free translation; pending-string counter and per-string status badge
 [*][b]Multi-monitor support[/b] — Translation Editor dock ([b]Ctrl+Shift+E[/b]) floats to any monitor; Pop Out String List ([b]Ctrl+Shift+L[/b]) opens a mirrored table window
-[*][b]Claude AI Assistant dock[/b] ([b]Ctrl+Shift+C[/b]) — chat about the current string and apply Claude's suggested translation with one click
+[*][b]Claude AI Assistant dock[/b] ([b]Ctrl+Shift+C[/b]) — chat about the current string and apply Claude's suggested translation with one click; optionally connect remote [b]MCP servers[/b] (Settings → Claude MCP Servers) so Claude can call external tools while you chat
 [*][b]Command palette[/b] ([b]Ctrl+K[/b]) and vim-style navigation (j/k, G)
 [*][b]Keyboard shortcuts editor[/b] — rebind any action
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
