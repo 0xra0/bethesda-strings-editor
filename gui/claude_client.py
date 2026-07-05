@@ -107,6 +107,9 @@ def estimate_batch_cost(model: str, requests: list) -> Dict[str, float]:
 # Key used in the app's SecretStore
 _SECRET_KEY = "anthropic-api-key"
 
+# Beta flag required by the Messages API MCP connector (remote MCP servers).
+_MCP_BETA = "mcp-client-2025-11-20"
+
 
 def is_claude_model(model_name: str) -> bool:
     """Return True when *model_name* identifies a Claude model."""
@@ -155,10 +158,19 @@ class ClaudeClient:
     until the API responds — call from a worker thread, not the GUI thread.
     """
 
-    def __init__(self, api_key: str, model: str = DEFAULT_MODEL) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_MODEL,
+        mcp_servers: "Optional[List[Dict]]" = None,
+    ) -> None:
         import anthropic  # late import — only needed when actually used
         self._client = anthropic.Anthropic(api_key=api_key)
         self.model = model
+        # Remote MCP servers Claude may call tools on via the Messages API MCP
+        # connector.  Each entry: {"name": str, "url": str,
+        # "authorization_token": str (optional)}.  Empty = no MCP tools.
+        self.mcp_servers: List[Dict] = list(mcp_servers or [])
 
     # ── Translation ────────────────────────────────────────────────────────────
 
@@ -258,6 +270,90 @@ class ClaudeClient:
 
         with self._client.messages.stream(**kwargs) as stream:
             yield from stream.text_stream
+
+    # ── MCP connector (remote MCP-server tools) ─────────────────────────────────
+
+    def _mcp_request_kwargs(self) -> dict:
+        """Build the MCP-connector request kwargs, or ``{}`` when unconfigured.
+
+        Returns the ``betas`` / ``mcp_servers`` / ``tools`` trio the Messages
+        API needs so Claude can call tools on remote MCP servers.  Every server
+        in ``mcp_servers`` must be paired with an ``mcp_toolset`` tool that
+        references it by name, or the API rejects the whole request — so both
+        halves are built here together.  Rows missing a name or URL are skipped
+        rather than sent (they would 400).
+        """
+        servers: List[Dict] = []
+        tools: List[Dict] = []
+        for entry in self.mcp_servers:
+            name = (entry.get("name") or "").strip()
+            url = (entry.get("url") or "").strip()
+            if not name or not url:
+                continue
+            server: Dict = {"type": "url", "url": url, "name": name}
+            token = (entry.get("authorization_token") or "").strip()
+            if token:
+                server["authorization_token"] = token
+            servers.append(server)
+            tools.append({"type": "mcp_toolset", "mcp_server_name": name})
+        if not servers:
+            return {}
+        return {"betas": [_MCP_BETA], "mcp_servers": servers, "tools": tools}
+
+    def chat_mcp(
+        self,
+        messages: List[Dict],
+        system: str = "",
+        max_tokens: int = 2048,
+        on_tool=None,
+    ) -> str:
+        """Multi-turn chat in which Claude may call tools on the configured
+        remote MCP servers (Messages API MCP connector).
+
+        Falls back to a plain :meth:`chat` when no MCP servers are configured,
+        so callers can use it unconditionally.  The connector runs server-side:
+        Anthropic connects to each server and executes the tools, returning
+        ``mcp_tool_use`` / ``mcp_tool_result`` blocks in the response.  A
+        ``pause_turn`` stop reason means the server-side tool loop reached its
+        per-request iteration cap — we re-send the accumulated turn to resume.
+        ``on_tool(name)`` is invoked for each MCP tool Claude calls (UI hook).
+        Returns the assistant's final reply text.
+        """
+        mcp = self._mcp_request_kwargs()
+        if not mcp:
+            return self.chat(messages, system=system, max_tokens=max_tokens)
+
+        convo: List[Dict] = list(messages)
+        text_parts: List[str] = []
+        for _ in range(8):  # bound pause_turn continuations
+            kwargs: dict = {
+                "model": self.model,
+                "max_tokens": max_tokens,
+                "messages": convo,
+                **mcp,
+            }
+            if system:
+                kwargs["system"] = [{"type": "text", "text": system,
+                                     "cache_control": {"type": "ephemeral"}}]
+
+            response = self._client.beta.messages.create(**kwargs)
+            for block in response.content:
+                btype = getattr(block, "type", "")
+                if btype == "text":
+                    text_parts.append(block.text)
+                elif btype == "mcp_tool_use" and on_tool is not None:
+                    try:
+                        on_tool(getattr(block, "name", "") or "")
+                    except Exception:
+                        pass
+
+            if getattr(response, "stop_reason", None) == "pause_turn":
+                # Resume the server-side tool loop by echoing the paused turn.
+                convo = convo + [{"role": "assistant", "content": response.content}]
+                continue
+            break
+
+        return "".join(text_parts).strip()
 
     # ── Quality review ─────────────────────────────────────────────────────────
 
