@@ -108,7 +108,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Starfield interface TXT**: `translate_en.txt` / `translate_ru.txt` key=value interface string files
 - **xTranslator SST XML**: import/export in xTranslator format (match by `sID`, fallback to source text)
 - **Drag-and-drop** file loading with format validation
-- **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` directly as a Translation Memory or merge into the current file; zip, 7z, and rar archives are automatically extracted; free-account downloads via browser cookies (`curl-cffi`)
+- **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` directly as a Translation Memory or merge into the current file; zip, 7z, and rar archives are automatically extracted; free-account downloads via browser cookies (`curl-cffi`); account sign-in uses the official browser-based **Single Sign-On** flow (no API key to paste — the app is a registered NexusMods application)
 - **NexusMods upload** — v3 multipart upload client with presigned S3 URLs (File → Upload to NexusMods)
 
 ### Quality assurance
@@ -123,7 +123,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Error-code filter** — filter QC results by code (MISSING_TAGS, NEWLINE_COUNT_MISMATCH, etc.)
 - **Consistency checker** (Ctrl+Alt+K) — finds the same source string translated differently across the file, with canonical-form picker and batch replace
 - **Ukrainian gender agreement checker** (Ctrl+Alt+G) — detects adjective/noun gender mismatches using a noun-gender dictionary, with inline fix suggestions
-- **ти/ви register checker** (Ctrl+Alt+R) — finds mixed formal/informal address within a file and reports each violation with context
+- **ти/ви register consistency** — informal ти / formal ви is kept consistent per speaker inline by the translation system prompt (shared by the Ollama and Claude backends), so mixed address never enters the output in the first place
 - **Plugin validator** — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies
 
 ### Review tools
@@ -139,7 +139,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 ### UI / workflow
 - **Zen / Focus Mode** (F11) — full-screen distraction-free editor with large source and translation panels, pending-string counter, per-string status badge
 - **Multi-monitor / detached panes** — Translation Editor dock (Ctrl+Shift+E) floats to any monitor; Pop Out String List (Ctrl+Shift+L) opens a second table window sharing the same selection model
-- **Claude AI Assistant dock** (Ctrl+Shift+C) — chat about the current string and apply Claude's suggested translation with one click
+- **Claude AI Assistant dock** (Ctrl+Shift+C) — chat about the current string and apply Claude's suggested translation with one click; optionally connect remote **MCP servers** (Settings → Claude MCP Servers) so Claude can call external tools while you chat, via the Messages API MCP connector
 - **Command palette** (Ctrl+K) and vim-style navigation (j/k, G)
 - **Translation sessions** — named work sessions with persistent search/filter state (Ctrl+Shift+N new, Ctrl+Shift+S save)
 - **Macro recorder** (Ctrl+M) — record and replay sequences of edit operations as named macros
@@ -238,7 +238,6 @@ gui/                           PySide6 application layer
   glossary.py                  Glossary data model, CSV/TBX/JSON I/O
   consistency_checker.py       Finds inconsistent translations of identical source strings
   gender_checker.py            Ukrainian adjective/noun gender agreement checker
-  register_checker.py          ти/ви formal/informal register consistency checker
   vmad_dialog.py               VMAD script-property analysis UI (risk-coloured, byte-splice apply)
   esp_migrate_dialog.py        ESP/ESM mod-update migration UI (FormID-keyed diff)
   version_compare_dialog.py    Game-version diff UI, migration, CSV/HTML export
