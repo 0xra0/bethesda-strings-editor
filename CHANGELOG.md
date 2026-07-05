@@ -4,6 +4,32 @@
 
 ---
 
+## [0.2.4] — 2026-07-05
+
+### Added
+- **Claude MCP connector** — the Claude AI Assistant chat panel can now call tools on remote MCP servers through the Messages API MCP connector (Anthropic makes the connection and runs the tools server-side); servers are configured in Settings → Claude MCP Servers (name / URL / optional auth token, XOR-obfuscated on disk), multi-round tool turns resume automatically, and each tool invocation is surfaced live in the chat panel. Chat-only — the deterministic translation pipeline never issues server-side tool calls
+- **Translation-folder validator** (Translation → Validate Translation Folder) — scans a translated Strings folder against the game Data folder (loose files **and** `.ba2` archives) and flags the files/IDs that will show an in-game `<Error: Unknown lstring ID …>` before you launch the game
+- **Companion Strings viewer** (Translation → Companion Strings) — read-only viewer for a loaded `.strings`/`.dlstrings`/`.ilstrings` triplet, with file-type and text/ID filters
+- **NexusMods SSO sign-in** — replaces pasted personal API keys with the browser-based Single Sign-On flow required by the NexusMods API Acceptable Use Policy; the per-user SSO key is stored obfuscated and used for search, download, and upload (the SSO app slug is configurable and ships pinned to the registered, staff-approved value)
+
+### Changed
+- **ти/ви register consistency** is now enforced inline by the translation system prompt (shared by both the Ollama and Claude backends) instead of a separate post-hoc checker — the model keeps informal ти / formal ви consistent per speaker and never mixes the two
+- **"Protect English text" (RU→UK)** now transliterates bare capitalised proper nouns (character/planet names) into the target script instead of leaving them English; exact spellings can be pinned deterministically via the glossary (no model call), which beats even ALL-CAPS protection
+- **`.strings`/`.dlstrings`/`.ilstrings` companions load as a read-only reference** and are never merged into the saved file — the three file types have independent string-ID spaces, so merging them contaminated the output with foreign IDs
+- Korean added to the language dropdown; server-side Ollama GPU environment variables documented in the Settings help; a real local-GGUF install path documented for the translation model
+- Build hardening to reduce antivirus false positives (source bootloader, embedded version-info, SignPath Foundation code-signing links)
+
+### Fixed
+- **MamayLM (RU→UK) output healing** — strips stray Ukrainian stress/accent marks, heals Russian-word leakage into Ukrainian output, and repairs EN-number placeholder plus appended-label artifacts
+- **Triplet-merge contamination** — companion files are no longer deduped into one ID space, eliminating `<Error: Unknown lstring ID …>` from foreign IDs
+- Numerous RU→UK quality-checker false positives — coverage, untranslated, and leak checks; malformed `\ n` / `\н` escapes and `[TK:]` hallucinations; glued-URL `MISSING_URL`/`EXTRA_TAG`; and valid short RU→UK output being blanked by `_clean_translation`
+- Crashes formatting string-keyed IDs as hex in Starfield interface TXT mode; a redundant "Translate Starfield Interface TXT" menu action removed; quality checker tuned for interface TXT `{0}`-brace placeholders
+- Segfault when the Settings model poll touched a freed fetcher thread; GPU stats now polled off the UI thread (no Windows console flashing)
+- Unreadable white first-run "Quick-start tips" dialog on themed UI
+- `QThread: Destroyed while thread is still running` crash on SSO sign-in
+
+---
+
 ## [0.2.3] — 2026-06-21
 
 ### Added
@@ -223,6 +249,7 @@ Initial public release.
 - Sphinx documentation with API reference, format specification, and architecture overview, hosted on GitHub Pages
 - git-cliff structured changelog from free-form commit messages
 
+[0.2.4]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/0xra0/bethesda-strings-editor/compare/v0.2.0...v0.2.1
