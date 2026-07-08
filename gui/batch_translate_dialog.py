@@ -422,7 +422,7 @@ class BatchTranslateWorker(QThread):
             token_map = {}
             if term_protector:
                 try:
-                    protected, token_map = term_protector.protect(ru_text)
+                    protected, token_map = term_protector.protect_text(ru_text)
                 except Exception:
                     protected = ru_text
                     token_map = {}
@@ -440,15 +440,16 @@ class BatchTranslateWorker(QThread):
                 if result is None:
                     return row_idx, None, "empty"
 
-                # Restore protected terms
+                # Restore protected terms (restore_text; there is no restore()).
+                # Pass the protected source as the whitespace-preserving template.
                 if token_map and term_protector:
                     try:
-                        result = term_protector.restore(result, token_map)
+                        result = term_protector.restore_text(result, token_map, protected)
                     except Exception:
                         pass
 
-                # Cache the result
-                cache.put(cache_key, result)
+                # Cache the result (the write method is set(), not put())
+                cache.set(cache_key, result)
                 return row_idx, result, "ok"
             except Exception as exc:
                 return row_idx, None, str(exc)
