@@ -1294,6 +1294,14 @@ class SettingsDialog(QDialog):
     def _default_ollama_model_list(self) -> list:
         """Return models to pre-populate the combo on dialog open."""
         models = list(self._DEFAULT_OLLAMA_MODELS)
+        # Offer the subscription-backed Claude Code CLI models when the CLI is
+        # installed — no API key or per-token cost, unlike the metered API.
+        try:
+            from gui.claude_code_client import CLAUDE_CODE_MODELS, claude_code_available
+            if claude_code_available():
+                models += [m for m in CLAUDE_CODE_MODELS if m not in models]
+        except Exception:
+            pass
         current = self._settings.ollama_model
         if current and current not in models:
             models.insert(0, current)
@@ -1312,6 +1320,12 @@ class SettingsDialog(QDialog):
             text = self.tr(
                 "💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. "
                 "Use English anchors: 'To Ukrainian:', 'To English:', etc."
+            )
+        elif "claude-code" in m:
+            text = self.tr(
+                "💡 Tip: Claude Code backend selected — runs on your Claude Code "
+                "subscription with no Claude API cost. Requires the 'claude' CLI "
+                "installed and logged in (run 'claude' once). No API key needed."
             )
         elif "claude" in m:
             text = self.tr(
@@ -1551,12 +1565,84 @@ class SettingsDialog(QDialog):
         self._stop_nexus_sso()
         super().done(result)
 
+    def _test_claude_code(self, model: str) -> None:
+        """Verify the ``claude`` CLI is installed & logged in (no tokens spent)."""
+        import subprocess
+        from gui.claude_code_client import find_claude_cli, cli_alias_for
+
+        self.lbl_connection.setText(self.tr("● Checking Claude Code CLI..."))
+        self.lbl_connection.setStyleSheet("color: blue;")
+        QApplication.processEvents()
+
+        cli = find_claude_cli(refresh=True)
+        if not cli:
+            self.lbl_connection.setText(self.tr("● 'claude' CLI not found"))
+            self.lbl_connection.setStyleSheet("color: red;")
+            QMessageBox.critical(
+                self, self.tr("Claude Code Not Found"),
+                self.tr(
+                    "The 'claude' command could not be found.\n\n"
+                    "• Install Claude Code, then run 'claude' once to log in.\n"
+                    "• Or set the CLAUDE_CLI_PATH environment variable to its path."
+                ),
+            )
+            return
+
+        version = ""
+        try:
+            proc = subprocess.run(
+                [cli, "--version"], capture_output=True, text=True, timeout=15
+            )
+            version = (proc.stdout or proc.stderr or "").strip().splitlines()[0] if proc.stdout or proc.stderr else ""
+        except Exception:
+            version = ""
+
+        self.lbl_connection.setText(self.tr("● Claude Code ready ✓"))
+        self.lbl_connection.setStyleSheet("color: green;")
+        QMessageBox.information(
+            self, self.tr("Claude Code Ready"),
+            self.tr(
+                "Found the 'claude' CLI:\n  {cli}\n{version}\n\n"
+                "Model '{model}' will run as --model {alias} on your Claude Code "
+                "subscription (no Claude API cost).\n\n"
+                "If requests fail, run 'claude' in a terminal once to ensure you "
+                "are logged in."
+            ).format(
+                cli=cli,
+                version=f"  {version}" if version else "",
+                model=model,
+                alias=cli_alias_for(model),
+            ),
+        )
+
     @Slot()
     def _test_connection(self):
-        """Test connection to Ollama."""
+        """Test the active AI backend (Claude Code CLI, Claude API, or Ollama)."""
         import requests
         url = self.ollama_url.text().rstrip('/')
-        model = self.ollama_model.currentText()
+        model = self.ollama_model.currentText().strip()
+
+        # Claude Code CLI backend — verify the CLI is present (no tokens spent).
+        from gui.claude_code_client import is_claude_code_model
+        if is_claude_code_model(model):
+            self._test_claude_code(model)
+            return
+        # Metered Claude API backend — it uses the key from the Claude section,
+        # not the Ollama server, so pinging Ollama would be misleading.
+        from gui.claude_client import is_claude_model
+        if is_claude_model(model):
+            self.lbl_connection.setText(self.tr("● Uses Claude API key"))
+            self.lbl_connection.setStyleSheet("color: blue;")
+            QMessageBox.information(
+                self, self.tr("Claude API Backend"),
+                self.tr(
+                    "Model '{model}' uses the metered Claude API.\n\n"
+                    "Set your Anthropic API key in the Claude section below. "
+                    "To avoid API costs, pick a 'Claude Code' model instead — it "
+                    "runs on your Claude Code subscription."
+                ).format(model=model),
+            )
+            return
 
         self.lbl_connection.setText(self.tr("● Testing Ollama..."))
         self.lbl_connection.setStyleSheet("color: blue;")

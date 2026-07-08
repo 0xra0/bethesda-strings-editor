@@ -1,6 +1,6 @@
 # Bethesda Strings Editor
 
-AI-assisted localization tool for Bethesda game files (Starfield). Translates `.strings`, `.dlstrings`, `.ilstrings`, BA2 archives, ESP/ESM plugin files, and Starfield interface TXT files between all 12 supported languages using a locally-running Ollama model or the Claude API, with a full quality-checking and review workflow.
+AI-assisted localization tool for Bethesda game files (Starfield). Translates `.strings`, `.dlstrings`, `.ilstrings`, BA2 archives, ESP/ESM plugin files, and Starfield interface TXT files between all 12 supported languages using a locally-running Ollama model, the Claude API, or your **Claude Code subscription** (via the bundled `claude` CLI — no per-token API cost), with a full quality-checking and review workflow.
 
 ![NexusMods Header](resources/nexusmods_header.png)
 
@@ -24,13 +24,17 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 | `gemma4-opus48-st` | Gemma 4 12B IT fine-tuned on Claude Opus reasoning data | local GGUF |
 | `qcgemma4-st` | Translation quality checking — Gemma 4 E4B fine-tune (16 issue codes) | [0xra/bethesda-qc](https://ollama.com/0xra/bethesda-qc) |
 
-> **The custom translation fine-tunes are not published on any hub** — there is no `ollama pull` for `translategemma3-st`. To translate, use **either** the Claude API backend **or** a local GGUF, as below.
+> **The custom translation fine-tunes are not published on any hub** — there is no `ollama pull` for `translategemma3-st`. To translate, use your **Claude Code subscription**, the **Claude API**, or a **local GGUF**, as below.
 
-### Option A — Claude API (no local model)
+### Option A — Claude Code (your subscription, no API cost)
 
-Enter your Anthropic API key in **Settings → Claude AI** and pick Haiku 4.5 / Sonnet 4.6 / Opus 4.8. No Ollama or GPU required — this is the quickest way to get translating.
+If you already pay for a Claude **Pro / Max** subscription, install [Claude Code](https://claude.com/claude-code), run `claude` once to log in, then pick a **Claude Code** model (`claude-code:haiku` / `claude-code:sonnet` / `claude-code:opus`) in **Settings → model**. Translation, the chat assistant, and quality review shell out to the local `claude` CLI, so they run on your subscription — **no Anthropic API key and no per-token billing**. Each tier tracks the newest model your plan includes (e.g. `sonnet` currently resolves to **Sonnet 5**). No Ollama or GPU required.
 
-### Option B — local Ollama model from a GGUF
+### Option B — Claude API (no local model)
+
+Enter your Anthropic API key in **Settings → Claude AI** and pick Haiku 4.5 / Sonnet 4.6 / Opus 4.8. No Ollama or GPU required — the quickest way to get translating, but billed per token.
+
+### Option C — local Ollama model from a GGUF
 
 Any Gemma-3 / instruct GGUF works with the app's prompts (the app supplies its own system prompt and overrides every generation parameter at runtime). For Ukrainian, the publicly available **MamayLM** fine-tune is a good default:
 
@@ -85,6 +89,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 ### Translation
 - **Parallel AI translation** via [Ollama](https://ollama.com) with configurable concurrency (default 10 workers)
 - **Claude API backend** — drop-in alternative to Ollama; select Haiku 4.5, Sonnet 4.6, or Opus 4.8 in Settings
+- **Claude Code backend** — run translation, chat, and review on your Claude Code **subscription** instead of the metered API, via the local `claude` CLI (`claude-code:haiku` / `:sonnet` / `:opus`); no API key, no per-token cost. The CLI's subscription (OAuth) auth is used and `ANTHROPIC_API_KEY` is stripped from the subprocess so it can never silently fall back to API billing
 - **AI-fix mode** — instead of retranslating from source, sends the existing flawed translation + QC issue descriptions to the model for targeted correction; faster and more precise than a full retranslation
 - **Language-pair prompts** — dedicated system prompts for every source→target combination with register rules, script conventions, and native examples
 - **Translation memory** — known strings are looked up before calling the model, so they are never retranslated
@@ -97,7 +102,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Pre-translation estimator** — scores each string 0–100 to predict translation difficulty before the AI runs
 - **Skip string types** — exclude Book, Note, or other categories from AI batch translation
 - **Protect named entities** — opt-in setting to extend term protection to faction/ship/character names inferred from the loaded file
-- **Claude pre-flight cost estimator** — shows token count and estimated cost before starting a batch translation
+- **Claude pre-flight estimator** — shows token count and estimated USD cost before starting a batch on the Claude API; on the Claude Code (subscription) backend it shows token counts only (no misleading cost) and reports the **actual** tokens used after the batch completes
 
 ### File support
 - **Binary string files**: `.strings` (null-terminated), `.dlstrings` / `.ilstrings` (length-prefixed)
@@ -163,7 +168,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 ## Requirements
 
 - Python 3.10+
-- [Ollama](https://ollama.com) running locally (or a Claude API key for the Claude backend)
+- One AI backend: [Ollama](https://ollama.com) running locally, **or** a Claude API key, **or** the [Claude Code](https://claude.com/claude-code) CLI logged in to your Pro/Max subscription (no API cost)
 - Audio playback is auto-detected per platform: Linux uses `paplay`, `ffplay`, or `aplay`; macOS uses `afplay` (or `ffplay`); Windows uses `ffplay` or the built-in PowerShell WAV player
 - Native Starfield voice playback requires `vgmstream-cli` on PATH (decodes Wwise `.wem` clips)
 
@@ -214,7 +219,8 @@ gui/                           PySide6 application layer
   ollama_worker.py             QThread worker — parallel calls, per-language prompts, AI-fix mode
   ollama_control.py            Ollama service force-stop/restart helper (sudo/taskkill)
   sudo_dialog.py               Qt-themed sudo password prompt (sudo -S over stdin)
-  claude_translation_worker.py Claude API drop-in replacement for OllamaWorker
+  claude_translation_worker.py Claude API / Claude Code drop-in replacement for OllamaWorker
+  claude_code_client.py        Claude Code CLI backend (subscription, no API cost) — ClaudeClient drop-in
   claude_chat_panel.py         Dockable AI assistant chat panel
   gpu_monitor.py               Status bar GPU utilisation widget (AMD sysfs + NVIDIA nvidia-smi)
   visual_context_preview.py    Game-accurate string rendering using extracted SWF fonts/assets

@@ -1,4 +1,4 @@
-Desktop tool for translating Starfield localization files across 12 languages using a locally-running AI model or the Claude API.
+Desktop tool for translating Starfield localization files across 12 languages using a locally-running AI model, the Claude API, or your Claude Code subscription (no per-token API cost).
 
 Reads the binary string formats used by the Creation Engine ([b].strings[/b], [b].dlstrings[/b], [b].ilstrings[/b], [b]BA2 archives[/b], [b]ESP/ESM plugins[/b], and [b]Starfield interface TXT[/b] files), sends text to Ollama or Claude, and writes the translated files back in the original format — ready to drop into your mod or game data folder.
 
@@ -31,7 +31,9 @@ To cut these flags off at the source, the PyInstaller launcher is [b]compiled fr
 [*]Run [b]bethesda-strings-editor[/b] (Linux) or [b]bethesda-strings-editor.exe[/b] (Windows)
 [/list]
 
-[b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU or Ollama model required — the quickest way to start translating.
+[b]Optional — Claude Code backend (no API cost):[/b] If you already pay for a Claude [b]Pro / Max[/b] subscription, install [url=https://claude.com/claude-code]Claude Code[/url], run [b]claude[/b] once to log in, then pick a [b]Claude Code[/b] model ([b]claude-code:haiku[/b] / [b]:sonnet[/b] / [b]:opus[/b]) in Settings. Translation, chat, and review run on your subscription through the local [b]claude[/b] CLI — no Anthropic API key and no per-token billing. Each tier tracks the newest model your plan includes (e.g. [b]sonnet[/b] currently resolves to Sonnet 5).
+
+[b]Optional — Claude API backend:[/b] Enter your Anthropic API key in Settings → Claude AI. No local GPU or Ollama model required — the quickest way to start translating (billed per token).
 
 [heading]Ollama Models[/heading]
 
@@ -58,6 +60,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [list]
 [*][b]Parallel AI translation[/b] — configurable concurrency, 10 simultaneous requests by default
 [*][b]Claude API backend[/b] — use Haiku 4.5, Sonnet 4.6, or Opus 4.8 as a drop-in alternative to Ollama; no local GPU needed
+[*][b]Claude Code backend[/b] — run translation, chat, and review on your Claude Code [b]subscription[/b] instead of the metered API, via the local [b]claude[/b] CLI ([b]claude-code:haiku / :sonnet / :opus[/b]); no API key, no per-token cost
 [*][b]AI-fix mode[/b] — instead of retranslating from scratch, sends the existing flawed translation + QC issue description to the model for targeted correction; faster and more precise than a full retranslation
 [*][b]Language-pair prompts[/b] — dedicated system prompt for every source→target combination with register rules, script conventions, and native examples
 [*][b]Pipeline post-processing[/b] — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline repair, guillemet close-quote enforcement
@@ -149,7 +152,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 
 [heading]Requirements[/heading]
 
-[url=https://ollama.com]Ollama[/url] must be running locally when you use AI translation features ([b]localhost:11434[/b]). Alternatively, use the [b]Claude API[/b] backend — no local GPU required, just enter your Anthropic API key in Settings.
+[url=https://ollama.com]Ollama[/url] must be running locally when you use AI translation features ([b]localhost:11434[/b]). Alternatively, use the [b]Claude API[/b] backend (enter your Anthropic API key in Settings) or the [b]Claude Code[/b] backend (install [url=https://claude.com/claude-code]Claude Code[/url] and log in — runs on your subscription, no API cost) — neither needs a local GPU.
 
 [b]Minimum hardware:[/b] 8 GB VRAM recommended for a Gemma 3 12B Q4 translation model. The standalone builds include everything else (Python runtime, Qt libraries) — no separate install needed.
 

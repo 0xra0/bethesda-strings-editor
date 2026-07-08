@@ -65,6 +65,18 @@ class _ChatWorker(QThread):
 
     def run(self) -> None:
         try:
+            from gui.claude_code_client import is_claude_code_model
+            if is_claude_code_model(self.model):
+                # Subscription-backed CLI: no MCP connector, non-streaming reply.
+                from gui.claude_code_client import ClaudeCodeClient
+                client = ClaudeCodeClient(model=self.model)
+                parts: List[str] = []
+                for chunk in client.chat_stream(self.messages, system=self.system):
+                    parts.append(chunk)
+                    self.token_ready.emit(chunk)
+                self.reply_ready.emit("".join(parts))
+                return
+
             from gui.claude_client import ClaudeClient
             if self.mcp_servers:
                 # MCP tool calls run server-side and can span several rounds
@@ -83,7 +95,7 @@ class _ChatWorker(QThread):
                 self.reply_ready.emit(reply)
             else:
                 client = ClaudeClient(self.api_key, self.model)
-                parts: List[str] = []
+                parts = []
                 for chunk in client.chat_stream(self.messages, system=self.system):
                     parts.append(chunk)
                     self.token_ready.emit(chunk)
@@ -118,8 +130,13 @@ class _ReviewWorker(QThread):
 
     def run(self) -> None:
         try:
-            from gui.claude_client import ClaudeClient
-            client = ClaudeClient(self.api_key, self.model)
+            from gui.claude_code_client import is_claude_code_model
+            if is_claude_code_model(self.model):
+                from gui.claude_code_client import ClaudeCodeClient
+                client = ClaudeCodeClient(model=self.model)
+            else:
+                from gui.claude_client import ClaudeClient
+                client = ClaudeClient(self.api_key, self.model)
             review = client.review_translation(
                 self.original, self.translation, self.source_lang, self.target_lang
             )
@@ -194,6 +211,11 @@ class ClaudeChatPanel(QDockWidget):
         from gui.claude_client import CLAUDE_MODELS
         for model_id, label in CLAUDE_MODELS.items():
             self._combo_model.addItem(label, model_id)
+        # Subscription-backed CLI models (no API key / no per-token cost).
+        from gui.claude_code_client import CLAUDE_CODE_MODELS, claude_code_available
+        if claude_code_available():
+            for model_id, label in CLAUDE_CODE_MODELS.items():
+                self._combo_model.addItem(label, model_id)
         self._combo_model.currentIndexChanged.connect(self._on_model_changed)
         key_row.addWidget(self._combo_model)
 
@@ -383,14 +405,33 @@ class ClaudeChatPanel(QDockWidget):
     # ── Chat / review actions ─────────────────────────────────────────────────
 
     def _check_ready(self) -> bool:
-        """Return True if API key is set, show a warning otherwise."""
+        """Return True when the selected backend is usable, warn otherwise.
+
+        The Claude Code CLI backend runs on the subscription and needs no API
+        key — only the ``claude`` CLI installed and logged in.
+        """
+        from gui.claude_code_client import is_claude_code_model, claude_code_available
+        if is_claude_code_model(self._model):
+            if not claude_code_available():
+                QMessageBox.warning(
+                    self,
+                    self.tr("Claude Code CLI Not Found"),
+                    self.tr(
+                        "The 'claude' command was not found.\n"
+                        "Install Claude Code and run 'claude' once to log in, "
+                        "or set CLAUDE_CLI_PATH."
+                    ),
+                )
+                return False
+            return True
         if not self._api_key:
             QMessageBox.warning(
                 self,
                 self.tr("API Key Required"),
                 self.tr(
-                    "Please enter your Anthropic API key in the field above.\n"
-                    "You can get one at console.anthropic.com"
+                    "Please enter your Anthropic API key in the field above,\n"
+                    "or pick a 'Claude Code' model to use your subscription instead.\n"
+                    "You can get an API key at console.anthropic.com"
                 ),
             )
             return False

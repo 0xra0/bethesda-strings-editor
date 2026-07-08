@@ -71,6 +71,7 @@ from gui.file_dialog_helper import get_open_filename, get_save_filename
 from gui.keyboard_manager import ActionEntry, KeyboardManager
 from gui.macro_recorder import MacroRecorder
 from gui.claude_client import is_claude_model, estimate_batch_cost
+from gui.claude_code_client import is_claude_code_model
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
 from gui.dialogue_tree_dialog import DialogueTreeDialog
@@ -808,15 +809,25 @@ class MainWindow(QMainWindow):
         self.ollama_thread = QThread()
 
         if is_claude_model(model):
-            from gui.claude_client import get_api_key
             from gui.claude_translation_worker import ClaudeTranslationWorker
-            api_key = get_api_key() or ""
+            # Claude Code CLI uses the subscription (no API key); the metered API
+            # backend reads the stored key.  The CLI spawns one process per
+            # request, so keep its concurrency lower than the HTTP API's.
+            if is_claude_code_model(model):
+                api_key = ""
+                worker_cap = min(self.settings.max_workers, 3)
+                backend_label = "Claude Code CLI"
+            else:
+                from gui.claude_client import get_api_key
+                api_key = get_api_key() or ""
+                worker_cap = min(self.settings.max_workers, 5)
+                backend_label = "Claude API"
             self.ollama_worker = ClaudeTranslationWorker(
                 api_key=api_key,
                 model=model,
                 source_lang=self.settings.default_source_lang,
                 target_lang=self.settings.default_target_lang,
-                max_workers=min(self.settings.max_workers, 5),
+                max_workers=worker_cap,
                 term_protector=self.term_protector if enable_protection else None,
                 translation_cache=self.translation_cache if self.settings.enable_cache else None,
                 protect_named_entities=self.settings.protect_named_entities,
@@ -826,7 +837,7 @@ class MainWindow(QMainWindow):
             self.ollama_worker.profile_manager = self._profile_manager
             self.ollama_worker.profile_assignments = self._profile_assignments
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
-            logger.info("Translation worker initialized (Claude: %s)", model)
+            logger.info("Translation worker initialized (%s: %s)", backend_label, model)
         else:
             self.ollama_worker = OllamaWorker(
                 base_url=self.settings.ollama_url,
@@ -1926,6 +1937,9 @@ class MainWindow(QMainWindow):
             self.ollama_worker.progress.connect(self._on_ollama_progress)
             self.ollama_worker.error.connect(self._on_ollama_error)
             self.ollama_worker.finished.connect(self._on_ollama_finished)
+            # Real token usage — only the Claude Code CLI worker emits this.
+            if hasattr(self.ollama_worker, "usage_ready"):
+                self.ollama_worker.usage_ready.connect(self._on_translation_usage)
             self._worker_signals_connected = True
 
     def _disconnect_worker_signals(self):
@@ -2983,8 +2997,13 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Pre-flight cost estimate for Claude backend
-        if is_claude_model(self.settings.ollama_model):
+        # Pre-flight estimate for the Claude backends.  The metered API shows a
+        # USD cost; the Claude Code CLI (subscription) shows token counts only.
+        _pf_model = self.settings.ollama_model
+        if is_claude_code_model(_pf_model):
+            if not self._claude_preflight_check(requests, subscription=True):
+                return
+        elif is_claude_model(_pf_model):
             if not self._claude_preflight_check(requests):
                 return
 
@@ -3012,10 +3031,14 @@ class MainWindow(QMainWindow):
         # CRITICAL FIX: Emit signal instead of direct method call
         self.translation_requested.emit(requests)
 
-    def _claude_preflight_check(self, requests: list) -> bool:
+    def _claude_preflight_check(self, requests: list, subscription: bool = False) -> bool:
         """
-        Show a token-cost estimate dialog before a Claude batch translation.
+        Show a pre-flight estimate dialog before a Claude batch translation.
         Returns True if the user wants to proceed, False to cancel.
+
+        When *subscription* is True (Claude Code CLI backend), the dialog shows
+        token counts only and omits the USD cost — the batch runs on the user's
+        subscription, so there is no per-token charge to preview.
         """
         from PySide6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QDialogButtonBox, QLabel, QFrame
         model = self.settings.ollama_model
@@ -3034,11 +3057,17 @@ class MainWindow(QMainWindow):
             return f"${usd:.3f}"
 
         dlg = QDialog(self)
-        dlg.setWindowTitle(self.tr("Pre-flight Cost Estimate"))
+        dlg.setWindowTitle(
+            self.tr("Pre-flight Token Estimate") if subscription
+            else self.tr("Pre-flight Cost Estimate")
+        )
         dlg.setMinimumWidth(380)
         root = QVBoxLayout(dlg)
 
-        title = QLabel(self.tr("<b>Claude API — estimated cost for this batch</b>"))
+        title = QLabel(
+            self.tr("<b>Claude Code — token estimate for this batch</b>") if subscription
+            else self.tr("<b>Claude API — estimated cost for this batch</b>")
+        )
         title.setWordWrap(True)
         root.addWidget(title)
 
@@ -3069,23 +3098,31 @@ class MainWindow(QMainWindow):
         sep3.setFrameShadow(QFrame.Sunken)
         root.addWidget(sep3)
 
-        form3 = QFormLayout()
-        form3.setLabelAlignment(Qt.AlignRight)
-        cost_lbl = QLabel(
-            f"<b>{_fmt_cost(est['cost_with_cache'])}</b>"
-            f"  <span style='color:#6b7280;font-size:.9em'>"
-            f"(without cache: {_fmt_cost(est['cost_without_cache'])})</span>"
-        )
-        cost_lbl.setTextFormat(Qt.RichText)
-        form3.addRow(self.tr("Est. cost (USD):"), cost_lbl)
-        form3.addRow(
-            self.tr("Cache savings:"),
-            QLabel(self.tr("~{pct:.0f}% via prompt caching").format(pct=est["cache_savings_pct"])),
-        )
-        root.addLayout(form3)
+        if subscription:
+            sub_lbl = QLabel(self.tr(
+                "<b>Runs on your Claude Code subscription — no per-token cost.</b>"
+            ))
+            sub_lbl.setWordWrap(True)
+            sub_lbl.setTextFormat(Qt.RichText)
+            root.addWidget(sub_lbl)
+        else:
+            form3 = QFormLayout()
+            form3.setLabelAlignment(Qt.AlignRight)
+            cost_lbl = QLabel(
+                f"<b>{_fmt_cost(est['cost_with_cache'])}</b>"
+                f"  <span style='color:#6b7280;font-size:.9em'>"
+                f"(without cache: {_fmt_cost(est['cost_without_cache'])})</span>"
+            )
+            cost_lbl.setTextFormat(Qt.RichText)
+            form3.addRow(self.tr("Est. cost (USD):"), cost_lbl)
+            form3.addRow(
+                self.tr("Cache savings:"),
+                QLabel(self.tr("~{pct:.0f}% via prompt caching").format(pct=est["cache_savings_pct"])),
+            )
+            root.addLayout(form3)
 
         note = QLabel(self.tr(
-            "<i>Estimates use ~3.5 chars/token. Actual cost depends on "
+            "<i>Estimates use ~3.5 chars/token. Actual usage depends on "
             "prompt caching state and output length.</i>"
         ))
         note.setWordWrap(True)
@@ -3162,6 +3199,33 @@ class MainWindow(QMainWindow):
         logger.error(f"Ollama error: {error_msg}")
 
     @Slot(int, int)
+    def _on_translation_usage(self, usage: object):
+        """Store the real token usage reported by the Claude Code CLI worker.
+
+        Emitted just before ``finished`` so ``_on_ollama_finished`` can display
+        the actual totals for the batch that just completed.
+        """
+        if isinstance(usage, dict):
+            self._last_translation_usage = usage
+            logger.info(
+                "Claude Code batch usage: %s input / %s output tokens across "
+                "%s calls (~$%.4f equivalent, not billed)",
+                usage.get("input_tokens", 0), usage.get("output_tokens", 0),
+                usage.get("calls", 0), usage.get("cost_usd", 0.0),
+            )
+
+    @staticmethod
+    def _format_usage_message(usage: dict) -> str:
+        """Human-readable one-line summary of accumulated token usage."""
+        inp = int(usage.get("input_tokens", 0) or 0)
+        out = int(usage.get("output_tokens", 0) or 0)
+        cost = float(usage.get("cost_usd", 0.0) or 0.0)
+        cost_str = "< $0.01" if 0 < cost < 0.01 else f"${cost:.2f}"
+        return (
+            f"Claude Code: {inp:,} in · {out:,} out tokens"
+            f" · ~{cost_str} equiv (not billed)"
+        )
+
     def _on_ollama_finished(self, successful: int, failed: int):
         """Translation batch completed."""
         self._update_flush_timer.stop()
@@ -3207,6 +3271,15 @@ class MainWindow(QMainWindow):
         else:
             self.progress_bar.setVisible(False)
 
+        # Actual token usage for the Claude Code (subscription) backend, if the
+        # worker reported any for this batch.
+        usage = getattr(self, "_last_translation_usage", None)
+        self._last_translation_usage = None
+        usage_msg = ""
+        if isinstance(usage, dict) and usage.get("calls"):
+            usage_msg = self._format_usage_message(usage)
+            show_toast(self, usage_msg, kind="info")
+
         self._audit_log.translation_complete(
             total=successful + failed, translated=successful, errors=failed
         )
@@ -3214,7 +3287,9 @@ class MainWindow(QMainWindow):
         msg = self.tr("Complete: {count} successful").format(count=successful)
         if failed > 0:
             msg += self.tr(", {count} failed").format(count=failed)
-        self.statusBar().showMessage(msg, 10000)
+        if usage_msg:
+            msg += " · " + usage_msg
+        self.statusBar().showMessage(msg, 12000)
 
         self.translation_complete.emit(successful, failed)
 
