@@ -164,19 +164,28 @@ class ClaudeTranslationWorker(QObject):
                 if classify(source_text).name in self.skipped_types:
                     return req.index, None, req.string_id
 
-            # Check translation cache (keyed the same way as OllamaWorker's cache)
+            # Retranslation requests (retry_hint from a failed QC pass, or an AI-fix)
+            # MUST reach the model — returning a cached/TM hit would hand back the exact
+            # flawed string the retry is trying to replace, silently defeating it.
+            is_retry = bool(req.retry_hint) or bool(req.fix_translation)
+
+            # Check translation cache (keyed the same way as OllamaWorker's cache).
+            # Use `is not None`, not truthiness: TranslationCache defines __len__, so an
+            # empty cache is falsy — `if self.translation_cache:` would skip both read
+            # and write and the cache could never populate.
             cache_key = None
-            if self.translation_cache:
+            if self.translation_cache is not None:
                 cache_key = hashlib.sha256(
                     f"{source_text}\x00{self.model}\x00"
                     f"{self.source_lang}\x00{self.target_lang}".encode()
                 ).hexdigest()
-                cached = self.translation_cache.get(cache_key)
-                if cached:
-                    return req.index, cached, req.string_id
+                if not is_retry:
+                    cached = self.translation_cache.get(cache_key)
+                    if cached:
+                        return req.index, cached, req.string_id
 
-            # Check translation memory
-            if hasattr(self, "translation_memory") and self.translation_memory:
+            # Check translation memory (skipped on retry for the same reason)
+            if not is_retry and hasattr(self, "translation_memory") and self.translation_memory:
                 tm_result = self.translation_memory.get(req.string_id)
                 if tm_result:
                     return req.index, tm_result, req.string_id
@@ -235,10 +244,12 @@ class ClaudeTranslationWorker(QObject):
                 )
                 return req.index, None, req.string_id
 
-            # Restore protected terms
+            # Restore protected terms. The method is restore_text() — there is no
+            # restore(); passing the protected source as the template preserves
+            # whitespace/paragraph structure exactly (same as OllamaWorker).
             if token_map and self.term_protector:
                 try:
-                    result = self.term_protector.restore(result, token_map)
+                    result = self.term_protector.restore_text(result, token_map, protected)
                 except Exception as exc:
                     logger.warning("Term restore failed: %s", exc)
 
@@ -247,9 +258,11 @@ class ClaudeTranslationWorker(QObject):
             # Restore [ dropped by the model when ] was kept
             result = _restore_dropped_opening_brackets(result, req.original_text)
 
-            # Store in cache
-            if cache_key and self.translation_cache:
-                self.translation_cache.put(cache_key, result)
+            # Store in cache (also on retry — the corrected result should replace the
+            # stale entry). `is not None` for the same __len__-falsy reason as above.
+            # The write method is set(), not put() (matches OllamaWorker).
+            if cache_key and self.translation_cache is not None:
+                self.translation_cache.set(cache_key, result)
 
             return req.index, result, req.string_id
 
