@@ -18,7 +18,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 38  # Increment when schema changes
+CONFIG_VERSION = 39  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -109,6 +109,16 @@ class AppSettings:
     quality_level: int = 7
     long_string_threshold: int = 1000
     long_string_action: str = "Translate"  # Options: Translate, Original, Skip
+
+    # ── Prompt customization (Translation Prompt Editor) ─────────────
+    # Per-target-language overrides for "Rule 1" (the style/register rule) of the
+    # translation system prompt, keyed by Starfield locale code (e.g. "uk"). Only
+    # languages the user edited appear here; others fall back to the built-in rule.
+    # `custom_prompt_addendum` is free-text appended to every translation system
+    # prompt (all languages). Both feed ollama_worker.set_prompt_customizations()
+    # so every backend (Ollama, Claude API, Claude Code CLI) honours them.
+    custom_style_rules: dict = field(default_factory=dict)
+    custom_prompt_addendum: str = ""
 
     # ── Term protection ──────────────────────────────────────────
     enable_term_protection: bool = True
@@ -478,6 +488,12 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("mcp_servers", [])
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v38: added Claude MCP server settings")
+
+    if from_version < 39:
+        data.setdefault("custom_style_rules", {})
+        data.setdefault("custom_prompt_addendum", "")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v39: added translation prompt customization")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

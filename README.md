@@ -92,6 +92,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Claude Code backend** — run translation, chat, and review on your Claude Code **subscription** instead of the metered API, via the local `claude` CLI (`claude-code:haiku` / `:sonnet` / `:opus`); no API key, no per-token cost. The CLI's subscription (OAuth) auth is used and `ANTHROPIC_API_KEY` is stripped from the subprocess so it can never silently fall back to API billing
 - **AI-fix mode** — instead of retranslating from source, sends the existing flawed translation + QC issue descriptions to the model for targeted correction; faster and more precise than a full retranslation
 - **Language-pair prompts** — dedicated system prompts for every source→target combination with register rules, script conventions, and native examples
+- **Translation Prompt Editor** (Translation → Translation Prompt Editor) — customize the system prompt without editing code: override the per-language style/register rule and append project-wide instructions, with a live preview of the fully-assembled prompt. Applies to every backend (Ollama, Claude API, Claude Code CLI); the formatting-token protection rules stay fixed so placeholders can't be broken
 - **Translation memory** — known strings are looked up before calling the model, so they are never retranslated
 - **Translation cache** — SHA-256-keyed JSON cache (up to 50,000 entries) persisted across sessions
 - **Term protector** — 8,000+ Starfield-specific terms are replaced with placeholder tokens before the AI sees the text and restored afterward, preventing mistranslation of proper nouns
@@ -244,6 +245,7 @@ gui/                           PySide6 application layer
   glossary.py                  Glossary data model, CSV/TBX/JSON I/O
   consistency_checker.py       Finds inconsistent translations of identical source strings
   gender_checker.py            Ukrainian adjective/noun gender agreement checker
+  prompt_editor_dialog.py      Translation system-prompt editor (per-language style rule + addendum, live preview)
   vmad_dialog.py               VMAD script-property analysis UI (risk-coloured, byte-splice apply)
   esp_migrate_dialog.py        ESP/ESM mod-update migration UI (FormID-keyed diff)
   version_compare_dialog.py    Game-version diff UI, migration, CSV/HTML export

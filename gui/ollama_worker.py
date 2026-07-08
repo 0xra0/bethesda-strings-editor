@@ -373,6 +373,61 @@ _TARGET_STYLE: dict[str, str] = {
     ),
 }
 
+# ── User prompt customizations (Translation Prompt Editor) ───────────────────
+# Runtime overrides driven from AppSettings via set_prompt_customizations(). They
+# live at module scope (not on TranslationRequest) so every construction site — and
+# every backend that calls to_system_prompt() (Ollama, Claude API, Claude Code CLI)
+# — picks them up without threading the values through dozens of callers.
+_CUSTOM_STYLE_OVERRIDES: dict[str, str] = {}  # target_lang code → replacement Rule 1
+_CUSTOM_PROMPT_ADDENDUM: str = ""             # appended to every translation prompt
+
+
+def default_style_rule(target_lang: str) -> str:
+    """The built-in Rule 1 (style/register) for a target language.
+
+    Falls back to a generic Starfield-tone rule for languages without a curated
+    entry — the same fallback the normal translation path uses.
+    """
+    tgt_name = _LANG_DISPLAY.get(target_lang, target_lang)
+    return _TARGET_STYLE.get(
+        target_lang,
+        f"Write natural, polished {tgt_name} appropriate to Starfield's "
+        f"NASApunk sci-fi setting. Match the register: formal stays formal, "
+        f"casual stays casual.",
+    )
+
+
+def effective_style_rule(target_lang: str) -> str:
+    """Rule 1 for a target language — the user override if set, else the default."""
+    override = _CUSTOM_STYLE_OVERRIDES.get(target_lang)
+    if override and override.strip():
+        return override.strip()
+    return default_style_rule(target_lang)
+
+
+def set_prompt_customizations(
+    style_overrides: Optional[dict] = None, addendum: str = ""
+) -> None:
+    """Install the user's prompt customizations (from AppSettings).
+
+    ``style_overrides`` maps target-language code → replacement Rule 1; blank/empty
+    values are ignored so a cleared box reverts to the built-in rule. ``addendum``
+    is appended verbatim to every translation system prompt.
+    """
+    global _CUSTOM_PROMPT_ADDENDUM
+    _CUSTOM_STYLE_OVERRIDES.clear()
+    if style_overrides:
+        for lang, rule in style_overrides.items():
+            if lang and isinstance(rule, str) and rule.strip():
+                _CUSTOM_STYLE_OVERRIDES[lang] = rule.strip()
+    _CUSTOM_PROMPT_ADDENDUM = (addendum or "").strip()
+
+
+def get_prompt_customizations() -> tuple[dict, str]:
+    """Snapshot the currently-installed customizations (for save/restore in UI)."""
+    return dict(_CUSTOM_STYLE_OVERRIDES), _CUSTOM_PROMPT_ADDENDUM
+
+
 # Extra notes inserted after the universal rules — for source languages that
 # need special handling instructions.
 _SOURCE_EXTRA: dict[str, str] = {
@@ -553,10 +608,7 @@ class TranslationRequest:
         tgt_name = _LANG_DISPLAY.get(self.target_lang, self.target_lang)
 
         if self.fix_translation:
-            style_rule = _TARGET_STYLE.get(
-                self.target_lang,
-                f"Write natural, polished {tgt_name} appropriate to Starfield's NASApunk sci-fi setting.",
-            )
+            style_rule = effective_style_rule(self.target_lang)
             issues_block = self.retry_hint.strip() if self.retry_hint else "General quality issues."
             fix_base = (
                 f"You are a professional Bethesda Starfield game localization proofreader.\n"
@@ -577,14 +629,11 @@ class TranslationRequest:
             )
             if self.glossary_snippet:
                 fix_base += "\nGlossary (use these exact translations):\n" + self.glossary_snippet
+            if _CUSTOM_PROMPT_ADDENDUM:
+                fix_base += f"\n\n{_CUSTOM_PROMPT_ADDENDUM}"
             return fix_base
 
-        style_rule = _TARGET_STYLE.get(
-            self.target_lang,
-            f"Write natural, polished {tgt_name} appropriate to Starfield's "
-            f"NASApunk sci-fi setting. Match the register: formal stays formal, "
-            f"casual stays casual.",
-        )
+        style_rule = effective_style_rule(self.target_lang)
 
         base = (
             f"You are a professional Bethesda Starfield game localization translator.\n"
@@ -672,6 +721,8 @@ class TranslationRequest:
             result += self.retry_hint
         if self.character_profile and self.character_profile.system_addendum:
             result += f"\n\n## Character Voice\n{self.character_profile.system_addendum}"
+        if _CUSTOM_PROMPT_ADDENDUM:
+            result += f"\n\n{_CUSTOM_PROMPT_ADDENDUM}"
         return result
 
 
