@@ -348,6 +348,14 @@ def _substring_score(
 
 # ── public convenience API ───────────────────────────────────────────────────
 
+_DIGIT_RUN_RE = re.compile(r"\d+")
+
+
+def _digit_runs(s: str) -> list[str]:
+    """Ordered list of consecutive-digit runs in *s* (e.g. '28LY→30LY' → ['28','30'])."""
+    return _DIGIT_RUN_RE.findall(s)
+
+
 def best_fuzzy_match(
     source: str,
     candidates: Iterable[tuple[str, str]],
@@ -362,11 +370,19 @@ def best_fuzzy_match(
 
     Returns:
         (translation, score) of the best match, or None if nothing is close enough.
+
+    A digit guard rejects any candidate whose numeric runs differ from the
+    source's, in order: a fuzzy match is textually close but semantically wrong
+    when the numbers disagree (e.g. reusing "28LY" for "30LY", or "Level 3" for
+    "Level 5"). Candidates with mismatched digits are skipped entirely.
     """
+    src_digits = _digit_runs(source)
     best_score: float = max_score + 1.0
     best_translation: Optional[str] = None
 
     for cnd_src, cnd_tr in candidates:
+        if _digit_runs(cnd_src) != src_digits:
+            continue
         score = fuzzy_score(source, cnd_src, cnd_tr)
         if score is not None and score < best_score:
             best_score = score

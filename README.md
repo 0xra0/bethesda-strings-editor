@@ -90,10 +90,12 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Parallel AI translation** via [Ollama](https://ollama.com) with configurable concurrency (default 10 workers)
 - **Claude API backend** — drop-in alternative to Ollama; select Haiku 4.5, Sonnet 4.6, or Opus 4.8 in Settings
 - **Claude Code backend** — run translation, chat, and review on your Claude Code **subscription** instead of the metered API, via the local `claude` CLI (`claude-code:haiku` / `:sonnet` / `:opus`); no API key, no per-token cost. The CLI's subscription (OAuth) auth is used and `ANTHROPIC_API_KEY` is stripped from the subprocess so it can never silently fall back to API billing
+- **Rate-limit resilience** — the Claude API client retries 429/5xx responses with exponential backoff (honouring `Retry-After`), so a large batch rides out transient rate limits instead of failing rows
 - **AI-fix mode** — instead of retranslating from source, sends the existing flawed translation + QC issue descriptions to the model for targeted correction; faster and more precise than a full retranslation
 - **Language-pair prompts** — dedicated system prompts for every source→target combination with register rules, script conventions, and native examples
 - **Translation Prompt Editor** (Translation → Translation Prompt Editor) — customize the system prompt without editing code: set **tuning dials** (language style, formality, vocabulary, grammar, expression/localization, translation rigor), override the per-language style/register rule, and append project-wide instructions, with a live preview of the fully-assembled prompt. Applies to every backend (Ollama, Claude API, Claude Code CLI); the formatting-token protection rules stay fixed so placeholders can't be broken
-- **Translation memory** — known strings are looked up before calling the model, so they are never retranslated
+- **Translation memory** — known strings are looked up before calling the model, so they are never retranslated; a loaded TM is persisted as a JSON snapshot and auto-loaded next session, shown by a status-bar indicator, and inspectable via a searchable **TM browser** (Translation → Browse Translation Memory). Fuzzy matches whose numbers differ from the source (`28LY` ≠ `30LY`) are rejected
+- **Apply to All Identical Originals** (Ctrl+Alt+D) — propagate one row's translation to every row with the same source text in one shot; **Delete** clears a translation and reverts the row to pending
 - **Translation cache** — SHA-256-keyed JSON cache (up to 50,000 entries) persisted across sessions
 - **Term protector** — 8,000+ Starfield-specific terms are replaced with placeholder tokens before the AI sees the text and restored afterward, preventing mistranslation of proper nouns
 - **Pipeline post-processing** — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline structure repair, mixed-script repair, guillemet close-quote enforcement
@@ -108,7 +110,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 ### File support
 - **Binary string files**: `.strings` (null-terminated), `.dlstrings` / `.ilstrings` (length-prefixed)
 - **BA2 archives**: read and write Starfield v2 BA2 files (GNRL type, zlib-compressed); picker dialog for multi-entry archives
-- **ESP/ESM plugins**: non-localized plugins where text is stored directly in field buffers
+- **ESP/ESM plugins**: non-localized plugins where text is stored directly in field buffers; covers GameplayOption settings-menu titles (GPOF/GPOG), skips asset paths that masquerade as text (e.g. DOOR/CNAM animation paths), and adds an anti-hallucination context note to quest titles (QUST/FULL)
 - **ESP/ESM Mod Update Migration** (Translation → Mod Update Migration) — diff an old and new version of a plugin keyed on FormID and carry existing translations forward to the updated release (xTranslator-style); risk-coloured 7-column diff with changed-only filter and CSV/HTML export
 - **VMAD script-property analysis** (Translation → Script Property Analysis) — parses the Papyrus script-property strings attached to records, classifies each value as translatable / review / locked (resource paths, event names, identifiers), and byte-splices only the edited values so unmodelled script structures survive untouched; works on both localized and non-localized plugins
 - **Starfield interface TXT**: `translate_en.txt` / `translate_ru.txt` key=value interface string files
@@ -241,7 +243,8 @@ gui/                           PySide6 application layer
   string_table.py              QAbstractTableModel for strings, ESP, and TXT modes
   term_protector.py            Placeholder-based term protection (8000+ terms)
   translation_cache.py         SHA-256-keyed persistent translation cache
-  translation_memory.py        Pre-loaded map of string ID → known-good translation
+  translation_memory.py        Pre-loaded map of string ID → known-good translation (+ JSON snapshot)
+  tm_browser_dialog.py         Searchable read-only Translation Memory browser
   glossary.py                  Glossary data model, CSV/TBX/JSON I/O
   consistency_checker.py       Finds inconsistent translations of identical source strings
   gender_checker.py            Ukrainian adjective/noun gender agreement checker

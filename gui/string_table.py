@@ -388,6 +388,60 @@ class StringTableModel(QAbstractTableModel):
         )
         self._start_flash(rows_changed)
 
+    def _emit_trans_status_range(self, rows: list) -> None:
+        """Emit one dataChanged spanning the Translated+Status columns for *rows*."""
+        if not rows:
+            return
+        lo, hi = min(rows), max(rows)
+        first = min(self.COLUMNS.index("Translated"), self.COLUMNS.index("Status"))
+        last = max(self.COLUMNS.index("Translated"), self.COLUMNS.index("Status"))
+        self.dataChanged.emit(
+            self.index(lo, first), self.index(hi, last),
+            [Qt.DisplayRole, Qt.ForegroundRole],
+        )
+
+    def clear_translations(self, rows: list) -> int:
+        """Clear the Translated text of *rows* and revert their status to pending.
+
+        Returns the number of rows changed. Used by the Delete-key handler.
+        """
+        changed = []
+        for r in rows:
+            if 0 <= r < len(self._data) and (
+                self._data[r].get("translated") or self._data[r].get("status") != "pending"
+            ):
+                self._data[r]["translated"] = ""
+                self._data[r]["status"] = "pending"
+                changed.append(r)
+        self._emit_trans_status_range(changed)
+        return len(changed)
+
+    def apply_to_identical(self, row_index: int) -> int:
+        """Copy *row_index*'s translation to every other row with the same source.
+
+        Returns the number of rows updated (0 if the source is empty, the row has
+        no translation, or no other row shares its source). One-shot fix for the
+        "same sentence translated differently" problem.
+        """
+        if not (0 <= row_index < len(self._data)):
+            return 0
+        src = self._data[row_index].get("original", "")
+        text = self._data[row_index].get("translated", "")
+        if not src or not text:
+            return 0
+        changed = []
+        for i, row in enumerate(self._data):
+            if i == row_index:
+                continue
+            if row.get("original", "") == src and row.get("translated", "") != text:
+                row["translated"] = text
+                row["status"] = "translated"
+                changed.append(i)
+        if changed:
+            self._emit_trans_status_range(changed)
+            self._start_flash(changed)
+        return len(changed)
+
     def import_translations(
         self,
         translation_map: dict[int, str],
@@ -880,6 +934,13 @@ class StringTableView(QTableView):
                 return
             if key == Qt.Key.Key_V:
                 self._fill_translated_from_source()
+                return
+
+        # ── Delete: clear the translation of the selected rows → pending ────
+        if mods == Qt.KeyboardModifier.NoModifier and key == Qt.Key.Key_Delete:
+            rows = self._selected_source_rows()
+            if rows:
+                self._source_model().clear_translations(rows)
                 return
 
         # ── Vim-style navigation ────────────────────────────────────────────

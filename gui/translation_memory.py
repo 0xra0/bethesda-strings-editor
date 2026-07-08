@@ -9,11 +9,17 @@ strings are never retranslated.
 
 from __future__ import annotations
 
+import json
+import logging
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+_SNAPSHOT_VERSION = 1
 
 # Matches the app's TXT export format:
 #   {line_num} 0x{ID} "{Original}" "{Translated}"
@@ -251,6 +257,73 @@ class TranslationMemory:
     def as_id_dict(self) -> dict[int, str]:
         """Return a copy of the ID→translation mapping."""
         return dict(self._by_id)
+
+    def entries(self) -> list[tuple[str, str, str]]:
+        """All (id_hex, source, translation) rows for the browser dialog.
+
+        ID-keyed entries whose source text is also known are merged; source-only
+        entries (from TMX) get a blank ID. Sorted by source text.
+        """
+        # Reverse map translation→source is ambiguous; instead expose both views.
+        src_by_trans: dict[str, str] = {}
+        for src, tr in self._by_src.items():
+            src_by_trans.setdefault(tr, src)
+        rows: list[tuple[str, str, str]] = []
+        seen_src: set[str] = set()
+        for sid, tr in self._by_id.items():
+            src = src_by_trans.get(tr, "")
+            if src:
+                seen_src.add(src)
+            rows.append((f"0x{sid:08X}", src, tr))
+        for src, tr in self._by_src.items():
+            if src not in seen_src:
+                rows.append(("", src, tr))
+        rows.sort(key=lambda r: (r[1] or r[2]).lower())
+        return rows
+
+    # ── JSON snapshot persistence ───────────────────────────────────────────────
+
+    def save_snapshot(self, path: str | Path) -> None:
+        """Persist the memory as a compact JSON snapshot (id + source maps).
+
+        Lets a loaded TM survive across sessions without re-importing the source
+        TXT/TMX every launch (mirrors how the glossary persists).
+        """
+        path = Path(path)
+        data = {
+            "version": _SNAPSHOT_VERSION,
+            "source_path": self.source_path,
+            # JSON keys must be strings — store ids as hex.
+            "by_id": {f"{k:x}": v for k, v in self._by_id.items()},
+            "by_src": self._by_src,
+        }
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        tmp.replace(path)
+
+    def load_snapshot(self, path: str | Path) -> int:
+        """Load a JSON snapshot written by :meth:`save_snapshot`. Merges.
+
+        Returns the number of ID-keyed entries after loading. Returns 0 and logs
+        (never raises) if the file is missing or malformed.
+        """
+        path = Path(path)
+        if not path.exists():
+            return 0
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            for k, v in (data.get("by_id") or {}).items():
+                if isinstance(v, str):
+                    self._by_id[int(k, 16)] = v
+            for k, v in (data.get("by_src") or {}).items():
+                if isinstance(v, str):
+                    self._by_src[k] = v
+            self.source_path = data.get("source_path", "") or self.source_path
+        except (ValueError, OSError, TypeError) as exc:
+            logger.warning("Failed to load TM snapshot %s: %s", path, exc)
+            return 0
+        self.loaded_count = len(self._by_id)
+        return len(self._by_id)
 
     def __len__(self) -> int:
         return len(self._by_id)

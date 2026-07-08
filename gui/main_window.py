@@ -646,6 +646,18 @@ class MainWindow(QMainWindow):
         self._self_review_retranslated = 0
         self._self_review_initial = (0, 0)
 
+        # Translation memory lives on the window (so it survives every worker
+        # rebuild) and is auto-loaded from a JSON snapshot, so a TM loaded in a
+        # previous session persists without re-importing the source file.
+        self.translation_memory = TranslationMemory()
+        self._tm_snapshot_path = get_config_dir() / "translation_memory.json"
+        try:
+            n = self.translation_memory.load_snapshot(self._tm_snapshot_path)
+            if n:
+                logger.info("Loaded %d translation-memory entries from snapshot", n)
+        except Exception as exc:
+            logger.warning("TM snapshot load failed: %s", exc)
+
         self._init_translation_worker()
 
         # Install saved translation-prompt customizations (per-language style rule
@@ -866,6 +878,12 @@ class MainWindow(QMainWindow):
             self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             logger.info("Translation worker initialized (Ollama: %s)", model)
 
+        # Re-attach the loaded translation memory. The TM lives on MainWindow (not
+        # the worker) so it survives every worker rebuild — otherwise a settings
+        # change would silently drop a loaded TM.
+        if getattr(self, "translation_memory", None):
+            self.ollama_worker.translation_memory = self.translation_memory
+
         self.ollama_worker.moveToThread(self.ollama_thread)
         self.ollama_thread.start()
 
@@ -1085,6 +1103,20 @@ class MainWindow(QMainWindow):
         # ── Permanent stats widgets (right side of status bar) ─────────────
         _stat_sep = QLabel("  ")
         status_bar.addPermanentWidget(_stat_sep)
+
+        # Translation-memory indicator — visible only when a TM is loaded.
+        self._tm_lbl = QLabel()
+        self._tm_lbl.setObjectName("TMStatusLabel")
+        self._tm_lbl.setStyleSheet(
+            "font-size: 11px; font-weight: 600; color: #22c55e; padding: 0 8px;"
+        )
+        self._tm_lbl.setToolTip(self.tr("Translation memory loaded — click to browse"))
+        self._tm_lbl.setVisible(False)
+        self._tm_lbl.setCursor(Qt.PointingHandCursor)
+        # Clicking the indicator opens the browser.
+        self._tm_lbl.mousePressEvent = lambda _e: self._browse_translation_memory()
+        status_bar.addPermanentWidget(self._tm_lbl)
+        self._update_tm_indicator()  # reflect any auto-loaded TM snapshot
 
         self._stat_lbl = QLabel()
         self._stat_lbl.setObjectName("StatCountsLabel")
@@ -1577,6 +1609,16 @@ class MainWindow(QMainWindow):
         self.load_memory_action.triggered.connect(self._load_translation_memory)
         trans_menu.addAction(self.load_memory_action)
 
+        self.browse_memory_action = QAction(
+            self.tr("&Browse Translation Memory…"), self
+        )
+        self.browse_memory_action.setIcon(QIcon.fromTheme("system-search"))
+        self.browse_memory_action.setToolTip(self.tr(
+            "Open a searchable, read-only view of the loaded translation memory."
+        ))
+        self.browse_memory_action.triggered.connect(self._browse_translation_memory)
+        trans_menu.addAction(self.browse_memory_action)
+
         self.export_memory_action = QAction(
             self.tr("Export Translation Memory as TMX..."), self
         )
@@ -1613,6 +1655,20 @@ class MainWindow(QMainWindow):
         self.check_consistency_action.triggered.connect(self._check_consistency)
         self.check_consistency_action.setEnabled(False)
         trans_menu.addAction(self.check_consistency_action)
+
+        self.apply_identical_action = QAction(
+            self.tr("Apply Translation to All &Identical Originals"), self
+        )
+        self.apply_identical_action.setIcon(QIcon.fromTheme("edit-copy"))
+        self.apply_identical_action.setShortcut("Ctrl+Alt+D")
+        self.apply_identical_action.setToolTip(self.tr(
+            "Copy the current row's translation to every other row whose source\n"
+            "text is identical — a one-shot fix for the same sentence translated\n"
+            "differently."
+        ))
+        self.apply_identical_action.triggered.connect(self._apply_to_identical)
+        self.apply_identical_action.setEnabled(False)
+        trans_menu.addAction(self.apply_identical_action)
 
         self.gender_check_action = QAction(
             self.tr("Check &Gender Agreement…"), self
@@ -2025,6 +2081,8 @@ class MainWindow(QMainWindow):
             self.discover_terms_action.setEnabled(has_file and self.term_protector is not None)
         if hasattr(self, "check_consistency_action"):
             self.check_consistency_action.setEnabled(has_file)
+        if hasattr(self, "apply_identical_action"):
+            self.apply_identical_action.setEnabled(has_file)
         if hasattr(self, "gender_check_action"):
             self.gender_check_action.setEnabled(has_file)
         if hasattr(self, "font_checker_action"):
@@ -3585,6 +3643,32 @@ class MainWindow(QMainWindow):
         """Return the source model row for the current selection, or 0."""
         indexes = self.table_view.selectionModel().selectedRows()
         return indexes[0].row() if indexes else 0
+
+    @Slot()
+    def _apply_to_identical(self) -> None:
+        """Propagate the current row's translation to all rows with the same source."""
+        if self.current_file is None:
+            return
+        indexes = self.table_view.selectionModel().selectedRows()
+        if not indexes:
+            self.statusBar().showMessage(self.tr("Select a translated row first"), 4000)
+            return
+        row = indexes[0].row()
+        row_data = self.table_model.get_row_data(row)
+        if not row_data.get("translated"):
+            self.statusBar().showMessage(
+                self.tr("The selected row has no translation to apply"), 4000
+            )
+            return
+        count = self.table_model.apply_to_identical(row)
+        if count:
+            self.statusBar().showMessage(
+                self.tr("Applied translation to {n} identical row(s)").format(n=count), 5000
+            )
+        else:
+            self.statusBar().showMessage(
+                self.tr("No other rows share this source text"), 4000
+            )
 
     def _toggle_audio_panel(self) -> None:
         visible = self._audio_panel.isVisible()
@@ -5294,6 +5378,13 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logger.warning(f"Failed to save translation cache: {e}")
 
+            # Persist the translation-memory snapshot so it auto-loads next launch
+            try:
+                if self.translation_memory and len(self.translation_memory):
+                    self.translation_memory.save_snapshot(self._tm_snapshot_path)
+            except Exception as e:
+                logger.warning(f"Failed to save TM snapshot: {e}")
+
             # Save settings to disk (both JSON and QSettings)
             try:
                 save_settings(self.settings)
@@ -5856,7 +5947,28 @@ class MainWindow(QMainWindow):
 
     # ─── Config management methods ──────────────────────────────────────
 
+    def _update_tm_indicator(self) -> None:
+        """Show/hide the status-bar TM indicator based on the loaded memory."""
+        if not hasattr(self, "_tm_lbl"):
+            return
+        n = len(self.translation_memory) if self.translation_memory else 0
+        if n:
+            self._tm_lbl.setText(self.tr("TM: {n:,}").format(n=n))
+            self._tm_lbl.setVisible(True)
+        else:
+            self._tm_lbl.setVisible(False)
+
     @Slot()
+    def _browse_translation_memory(self) -> None:
+        """Open the searchable Translation Memory browser."""
+        if not self.translation_memory or not len(self.translation_memory):
+            self.statusBar().showMessage(
+                self.tr("No translation memory loaded"), 4000
+            )
+            return
+        from gui.tm_browser_dialog import TMBrowserDialog
+        TMBrowserDialog(self.translation_memory, self).exec()
+
     @Slot()
     def _load_translation_memory(self):
         """Load a TXT or TMX translation memory and pre-fill the table with known translations."""
@@ -5870,7 +5982,8 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            memory = TranslationMemory()
+            # Merge into the window-level TM (persists across worker rebuilds).
+            memory = self.translation_memory or TranslationMemory()
             fp = file_path.lower()
             if fp.endswith(".tmx"):
                 src = self.settings.default_source_lang[:2].lower()
@@ -5879,12 +5992,21 @@ class MainWindow(QMainWindow):
             else:
                 loaded = memory.load(file_path, use_original=True)
 
+            self.translation_memory = memory
             if self.ollama_worker:
                 self.ollama_worker.translation_memory = memory
 
             applied = 0
             if self.current_file is not None:
                 applied = self.table_model.import_translations(memory.as_id_dict())
+
+            # Persist as a JSON snapshot so it auto-loads next session, and surface
+            # the loaded state in the status bar.
+            try:
+                memory.save_snapshot(self._tm_snapshot_path)
+            except Exception as exc:
+                logger.warning("Failed to save TM snapshot: %s", exc)
+            self._update_tm_indicator()
 
             self.statusBar().showMessage(
                 self.tr(
@@ -5905,7 +6027,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def _export_translation_memory(self):
         """Export the active translation memory to a TMX file."""
-        memory: TranslationMemory | None = (
+        memory: TranslationMemory | None = self.translation_memory or (
             self.ollama_worker.translation_memory if self.ollama_worker else None
         )
         # If no TM is loaded, build one from the current file's approved translations
