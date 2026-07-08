@@ -74,6 +74,7 @@ from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.claude_code_client import is_claude_code_model
 from gui.ollama_worker import OllamaWorker, TranslationRequest
 from gui.settings_dialog import SettingsDialog
+from gui.prompt_editor_dialog import PromptEditorDialog
 from gui.dialogue_tree_dialog import DialogueTreeDialog
 from gui.vmad_dialog import VmadDialog
 from gui.translation_memory import TranslationMemory
@@ -646,6 +647,10 @@ class MainWindow(QMainWindow):
         self._self_review_initial = (0, 0)
 
         self._init_translation_worker()
+
+        # Install saved translation-prompt customizations (per-language style rule
+        # + global addendum) so they take effect even before the editor is opened.
+        self._apply_prompt_customizations()
 
         # Keyboard shortcut registry
         self.keyboard_manager = KeyboardManager()
@@ -1348,6 +1353,16 @@ class MainWindow(QMainWindow):
         ))
         self.vmad_action.triggered.connect(self._open_vmad_dialog)
         trans_menu.addAction(self.vmad_action)
+
+        self.prompt_editor_action = QAction(self.tr("Translation &Prompt Editor…"), self)
+        self.prompt_editor_action.setIcon(QIcon.fromTheme("accessories-text-editor"))
+        self.prompt_editor_action.setToolTip(self.tr(
+            "Customize the translation system prompt: override the per-language style/\n"
+            "register rule and append project-wide instructions. Applies to every backend\n"
+            "(Ollama, Claude API, Claude Code CLI) with a live preview."
+        ))
+        self.prompt_editor_action.triggered.connect(self._open_prompt_editor)
+        trans_menu.addAction(self.prompt_editor_action)
 
         self.lore_rag_action = QAction(self.tr("Lore &RAG Context…"), self)
         self.lore_rag_action.setIcon(QIcon.fromTheme("document-properties"))
@@ -5088,6 +5103,36 @@ class MainWindow(QMainWindow):
             enabled_check=has,
         ))
 
+    def _apply_prompt_customizations(self) -> None:
+        """Install the user's translation prompt customizations into ollama_worker.
+
+        Mutates module-level state that ``TranslationRequest.to_system_prompt()``
+        reads, so it takes effect for every backend without rebuilding the worker.
+        """
+        try:
+            from gui.ollama_worker import set_prompt_customizations
+            set_prompt_customizations(
+                getattr(self.settings, "custom_style_rules", {}) or {},
+                getattr(self.settings, "custom_prompt_addendum", "") or "",
+            )
+        except Exception as exc:
+            logger.warning("Failed to apply prompt customizations: %s", exc)
+
+    @Slot()
+    def _open_prompt_editor(self):
+        """Open the translation prompt editor (per-language style rule + addendum)."""
+        dialog = PromptEditorDialog(
+            self.settings,
+            self,
+            source_lang=self.combo_source_lang.currentData() or self.settings.default_source_lang,
+            target_lang=self.combo_target_lang.currentData() or self.settings.default_target_lang,
+        )
+        if dialog.exec() == QDialog.Accepted:
+            dialog.apply_to_settings(self.settings)
+            self._apply_prompt_customizations()
+            save_settings(self.settings)
+            self.statusBar().showMessage(self.tr("Translation prompt updated"), 5000)
+
     @Slot()
     def open_settings(self):
         """Open settings dialog."""
@@ -5188,6 +5233,9 @@ class MainWindow(QMainWindow):
 
             # Propagate Claude MCP-server config to the chat panel
             self._apply_claude_mcp_settings()
+
+            # Re-install translation prompt customizations (in case they changed)
+            self._apply_prompt_customizations()
 
             # Apply audio preview settings to panel
             self._apply_audio_settings()
