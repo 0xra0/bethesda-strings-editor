@@ -3,12 +3,16 @@ Translation Prompt Editor.
 
 Lets the user customize the translation *system prompt* without touching code:
 
+* **Tuning dials** — structured knobs (language style, formality, vocabulary,
+  grammar, expression/localization, translation rigor) that add a "Translation
+  preferences" block to the prompt. Only the knobs the user turns contribute
+  text; neutral/default choices add nothing. Driven from
+  ``ollama_worker.PROMPT_DIALS`` so the UI and the prompt builder never drift.
 * **Rule 1 (style/register)** can be overridden per target language. This is the
   layer that carries the language's voice — formal vs casual, script/quotation
   conventions, terminology preferences.
 * **Extra instructions** are appended verbatim to every translation prompt, for
-  any language, so the user can add project-wide guidance (e.g. "prefer the
-  established fan-translation vocabulary", "never use exclamation marks").
+  any language, so the user can add project-wide guidance.
 
 A live preview shows the fully-assembled system prompt so the user sees exactly
 what the model will receive. The customizations are stored on ``AppSettings`` and
@@ -26,14 +30,18 @@ from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
     QDialogButtonBox,
+    QFormLayout,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QSplitter,
     QVBoxLayout,
     QWidget,
@@ -41,6 +49,7 @@ from PySide6.QtWidgets import (
 
 from gui.ollama_worker import (
     _LANG_DISPLAY,
+    PROMPT_DIALS,
     TranslationRequest,
     default_style_rule,
     get_prompt_customizations,
@@ -66,12 +75,12 @@ def _ordered_langs() -> list[tuple[str, str]]:
 
 
 class PromptEditorDialog(QDialog):
-    """Editor for per-language style rules and a global prompt addendum."""
+    """Editor for tuning dials, per-language style rules, and a global addendum."""
 
     def __init__(self, settings, parent=None, source_lang: str = "ru", target_lang: str = "uk"):
         super().__init__(parent)
         self.setWindowTitle(self.tr("Translation Prompt Editor"))
-        self.setMinimumSize(920, 620)
+        self.setMinimumSize(1040, 700)
 
         self._settings = settings
         # Working copy of the per-language overrides — committed to settings only on Save.
@@ -80,8 +89,11 @@ class PromptEditorDialog(QDialog):
             if isinstance(v, str)
         }
         self._current_target: str | None = None
+        # key → ("single", QComboBox) | ("multi", {option_key: QCheckBox})
+        self._dial_widgets: dict = {}
 
         self._build_ui(source_lang, target_lang)
+        self._load_dials(dict(getattr(settings, "custom_prompt_dials", {}) or {}))
         # Load the initial target's rule and render the first preview.
         self._on_target_changed()
 
@@ -120,12 +132,14 @@ class PromptEditorDialog(QDialog):
         lang_row.addStretch(1)
         root.addLayout(lang_row)
 
-        # Splitter: editors on the left, live preview on the right.
+        # Splitter: editors on the left (scrollable), live preview on the right.
         splitter = QSplitter(Qt.Horizontal)
 
         left = QWidget()
         left_col = QVBoxLayout(left)
         left_col.setContentsMargins(0, 0, 0, 0)
+
+        left_col.addWidget(self._build_dials_group())
 
         style_box = QGroupBox(self.tr("Style rule for target language (Rule 1)"))
         style_layout = QVBoxLayout(style_box)
@@ -133,6 +147,7 @@ class PromptEditorDialog(QDialog):
         self.style_edit.setPlaceholderText(self.tr(
             "Register, script, quotation and terminology guidance for this language…"
         ))
+        self.style_edit.setMinimumHeight(120)
         self.style_edit.textChanged.connect(self._render_preview)
         style_layout.addWidget(self.style_edit)
 
@@ -145,7 +160,7 @@ class PromptEditorDialog(QDialog):
         self.btn_reset_lang.clicked.connect(self._reset_current_language)
         style_btns.addWidget(self.btn_reset_lang)
         style_layout.addLayout(style_btns)
-        left_col.addWidget(style_box, 3)
+        left_col.addWidget(style_box)
 
         add_box = QGroupBox(self.tr("Extra instructions — appended to every prompt (all languages)"))
         add_layout = QVBoxLayout(add_box)
@@ -154,12 +169,17 @@ class PromptEditorDialog(QDialog):
             "Optional project-wide guidance, e.g. “Prefer established fan-translation "
             "vocabulary.” Leave blank for none."
         ))
+        self.addendum_edit.setMinimumHeight(80)
         self.addendum_edit.setPlainText(getattr(self._settings, "custom_prompt_addendum", "") or "")
         self.addendum_edit.textChanged.connect(self._render_preview)
         add_layout.addWidget(self.addendum_edit)
-        left_col.addWidget(add_box, 2)
+        left_col.addWidget(add_box)
+        left_col.addStretch(1)
 
-        splitter.addWidget(left)
+        left_scroll = QScrollArea()
+        left_scroll.setWidgetResizable(True)
+        left_scroll.setWidget(left)
+        splitter.addWidget(left_scroll)
 
         preview_box = QGroupBox(self.tr("Preview — assembled system prompt"))
         preview_layout = QVBoxLayout(preview_box)
@@ -189,11 +209,70 @@ class PromptEditorDialog(QDialog):
         btn_row.addWidget(buttons)
         root.addLayout(btn_row)
 
+    def _build_dials_group(self) -> QGroupBox:
+        """Build the 'Translation preferences' group from the PROMPT_DIALS spec."""
+        box = QGroupBox(self.tr("Translation preferences"))
+        form = QFormLayout(box)
+        for spec in PROMPT_DIALS:
+            label = self.tr(spec["label"]) + ":"
+            if spec["multi"]:
+                container = QWidget()
+                grid = QGridLayout(container)
+                grid.setContentsMargins(0, 0, 0, 0)
+                checks: dict = {}
+                for i, (okey, olabel, _instr) in enumerate(spec["options"]):
+                    cb = QCheckBox(self.tr(olabel))
+                    cb.toggled.connect(self._render_preview)
+                    grid.addWidget(cb, i // 2, i % 2)
+                    checks[okey] = cb
+                self._dial_widgets[spec["key"]] = ("multi", checks)
+                form.addRow(label, container)
+            else:
+                combo = QComboBox()
+                for okey, olabel, _instr in spec["options"]:
+                    combo.addItem(self.tr(olabel), okey)
+                combo.currentIndexChanged.connect(self._render_preview)
+                self._dial_widgets[spec["key"]] = ("single", combo)
+                form.addRow(label, combo)
+        return box
+
     @staticmethod
     def _select_code(combo: QComboBox, code: str) -> None:
         idx = combo.findData(code)
         if idx >= 0:
             combo.setCurrentIndex(idx)
+
+    # ── Dials ──────────────────────────────────────────────────────────────
+    def _load_dials(self, dials: dict) -> None:
+        """Set the dial widgets from a saved dials dict (signals blocked)."""
+        for key, (kind, widget) in self._dial_widgets.items():
+            val = dials.get(key)
+            if kind == "single":
+                widget.blockSignals(True)
+                idx = widget.findData(val) if val else -1
+                widget.setCurrentIndex(idx if idx >= 0 else 0)
+                widget.blockSignals(False)
+            else:  # multi
+                selected = set(val or [])
+                for okey, cb in widget.items():
+                    cb.blockSignals(True)
+                    cb.setChecked(okey in selected)
+                    cb.blockSignals(False)
+
+    def _collect_dials(self) -> dict:
+        """Read the dial widgets into a dict, omitting default/empty choices."""
+        out: dict = {}
+        for spec in PROMPT_DIALS:
+            kind, widget = self._dial_widgets[spec["key"]]
+            if kind == "single":
+                val = widget.currentData()
+                if val and val != spec["default"]:
+                    out[spec["key"]] = val
+            else:  # multi
+                selected = [okey for okey, cb in widget.items() if cb.isChecked()]
+                if selected:
+                    out[spec["key"]] = selected
+        return out
 
     # ── Editing behaviour ──────────────────────────────────────────────────
     def _flush_current_target(self) -> None:
@@ -227,6 +306,7 @@ class PromptEditorDialog(QDialog):
         self.addendum_edit.blockSignals(True)
         self.addendum_edit.setPlainText("")
         self.addendum_edit.blockSignals(False)
+        self._load_dials({})
         tgt = self.combo_target.currentData()
         self.style_edit.blockSignals(True)
         self.style_edit.setPlainText(default_style_rule(tgt))
@@ -253,9 +333,11 @@ class PromptEditorDialog(QDialog):
         src = self.combo_source.currentData()
         self._update_status(tgt)
 
-        saved_rules, saved_addendum = get_prompt_customizations()
+        saved_rules, saved_addendum, saved_dials = get_prompt_customizations()
         try:
-            set_prompt_customizations(self._rules, self.addendum_edit.toPlainText())
+            set_prompt_customizations(
+                self._rules, self.addendum_edit.toPlainText(), self._collect_dials()
+            )
             req = TranslationRequest(
                 index=0,
                 original_text="",
@@ -265,7 +347,7 @@ class PromptEditorDialog(QDialog):
             )
             text = req.to_system_prompt()
         finally:
-            set_prompt_customizations(saved_rules, saved_addendum)
+            set_prompt_customizations(saved_rules, saved_addendum, saved_dials)
         self.preview_edit.setPlainText(text)
 
     # ── Commit ─────────────────────────────────────────────────────────────
@@ -282,9 +364,11 @@ class PromptEditorDialog(QDialog):
         self._flush_current_target()
         self.result_style_rules = self._pruned_rules()
         self.result_addendum = self.addendum_edit.toPlainText().strip()
+        self.result_dials = self._collect_dials()
         self.accept()
 
     def apply_to_settings(self, settings) -> None:
         """Write the committed customizations onto an AppSettings instance."""
         settings.custom_style_rules = dict(getattr(self, "result_style_rules", {}))
         settings.custom_prompt_addendum = getattr(self, "result_addendum", "")
+        settings.custom_prompt_dials = dict(getattr(self, "result_dials", {}))
