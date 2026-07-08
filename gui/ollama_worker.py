@@ -380,6 +380,117 @@ _TARGET_STYLE: dict[str, str] = {
 # — picks them up without threading the values through dozens of callers.
 _CUSTOM_STYLE_OVERRIDES: dict[str, str] = {}  # target_lang code → replacement Rule 1
 _CUSTOM_PROMPT_ADDENDUM: str = ""             # appended to every translation prompt
+_CUSTOM_PROMPT_DIALS: dict = {}               # structured tuning knobs (see PROMPT_DIALS)
+
+# ── Translation tuning dials ─────────────────────────────────────────────────
+# Single source of truth for both the prompt builder (build_dials_prompt) and the
+# Prompt Editor UI (prompt_editor_dialog builds its combos/checkboxes from this).
+# Each dial: key, label, multi (checkbox group vs single-choice), default option
+# key (single-select only), and options as (key, label, instruction). An empty
+# instruction means "no guidance" — the default/neutral choice contributes nothing
+# to the prompt, so only the knobs the user actually turned add text.
+PROMPT_DIALS: list[dict] = [
+    {
+        "key": "style", "label": "Language style", "multi": False, "default": "natural",
+        "options": [
+            ("natural",    "Natural",              ""),
+            ("narrative",  "Narrative / literary", "Favor a narrative, literary register — richer, more evocative phrasing where the source allows it."),
+            ("functional", "Direct / functional",  "Favor direct, functional phrasing — clear and concise, without embellishment."),
+        ],
+    },
+    {
+        "key": "formality", "label": "Formality", "multi": False, "default": "standard",
+        "options": [
+            ("standard", "Standard", ""),
+            ("informal", "Informal", "Lean informal in address and tone unless the context is clearly official."),
+            ("formal",   "Formal",   "Lean formal in address and tone; avoid slang and contractions."),
+        ],
+    },
+    {
+        "key": "vocabulary", "label": "Vocabulary", "multi": False, "default": "universe",
+        "options": [
+            ("universe",  "Universe default", ""),
+            ("standard",  "Standard",         "Use standard, everyday vocabulary; avoid rare or ornate words."),
+            ("complex",   "Complex / high",   "Use a rich, elevated vocabulary where the source supports it."),
+            ("simple",    "Simple / direct",  "Use simple, plain vocabulary; prefer short, common words."),
+            ("technical", "Technical",        "Prefer precise technical terminology; keep domain terms exact."),
+        ],
+    },
+    {
+        "key": "grammar", "label": "Grammar", "multi": False, "default": "universe",
+        "options": [
+            ("universe", "Universe default", ""),
+            ("standard", "Standard",         "Use standard contemporary grammar and sentence structure."),
+            ("formal",   "Formal / archaic", "Use formal, slightly archaic grammar and constructions where fitting."),
+            ("casual",   "Casual / fluid",   "Use casual, fluid grammar — contractions and looser sentence flow are fine."),
+        ],
+    },
+    {
+        "key": "expression", "label": "Expression / localization", "multi": True, "default": "",
+        "options": [
+            ("keep_cultural",   "Keep cultural references", "Keep cultural references from the source rather than replacing them."),
+            ("translate_idioms","Translate idioms",         "Render idioms with an equivalent target-language idiom, not a literal gloss."),
+            ("adapt_jokes",     "Adapt jokes",              "Adapt humor and wordplay so the joke lands in the target language, even if it must be reworded."),
+            ("localize_refs",   "Localize references",      "Localize references (units, names, allusions) to what the target audience will recognize."),
+        ],
+    },
+    {
+        "key": "rigor", "label": "Translation rigor", "multi": False, "default": "balanced",
+        "options": [
+            ("balanced", "Balanced", ""),
+            ("fidelity", "Fidelity", "Prioritize fidelity to the source meaning over stylistic smoothness when the two conflict."),
+            ("fluidity", "Fluidity", "Prioritize a smooth, fluent target reading over literal fidelity when the two conflict."),
+            ("critical", "Critical", "Translate critically: resolve source ambiguity toward the most sensible in-context meaning and keep terminology internally consistent."),
+            ("fast",     "Fast",     "Produce a direct, efficient translation without extra polish."),
+        ],
+    },
+]
+
+# Fast lookup: dial key → {option key → instruction} and dial key → default.
+_DIAL_INSTRUCTIONS: dict[str, dict] = {
+    d["key"]: {opt[0]: opt[2] for opt in d["options"]} for d in PROMPT_DIALS
+}
+_DIAL_DEFAULTS: dict[str, str] = {d["key"]: d["default"] for d in PROMPT_DIALS}
+_DIAL_MULTI: dict[str, bool] = {d["key"]: d["multi"] for d in PROMPT_DIALS}
+
+
+def _copy_dials(dials: Optional[dict]) -> dict:
+    """Deep-ish copy of a dials dict (list values duplicated) for snapshot safety."""
+    if not dials:
+        return {}
+    out: dict = {}
+    for key, val in dials.items():
+        out[key] = list(val) if isinstance(val, (list, tuple)) else val
+    return out
+
+
+def build_dials_prompt(dials: Optional[dict]) -> str:
+    """Assemble the 'Translation preferences' instruction block from the dials.
+
+    Only non-default single-select choices and checked multi-select options
+    contribute a line, so an all-default selection yields an empty string.
+    """
+    if not dials:
+        return ""
+    lines: list[str] = []
+    for spec in PROMPT_DIALS:
+        key = spec["key"]
+        instructions = _DIAL_INSTRUCTIONS[key]
+        val = dials.get(key)
+        if spec["multi"]:
+            selected = val if isinstance(val, (list, tuple)) else []
+            for opt_key in selected:
+                instr = instructions.get(opt_key, "")
+                if instr:
+                    lines.append(f"- {instr}")
+        else:
+            if val and val != spec["default"]:
+                instr = instructions.get(val, "")
+                if instr:
+                    lines.append(f"- {instr}")
+    if not lines:
+        return ""
+    return "Translation preferences:\n" + "\n".join(lines)
 
 
 def default_style_rule(target_lang: str) -> str:
@@ -406,26 +517,31 @@ def effective_style_rule(target_lang: str) -> str:
 
 
 def set_prompt_customizations(
-    style_overrides: Optional[dict] = None, addendum: str = ""
+    style_overrides: Optional[dict] = None,
+    addendum: str = "",
+    dials: Optional[dict] = None,
 ) -> None:
     """Install the user's prompt customizations (from AppSettings).
 
     ``style_overrides`` maps target-language code → replacement Rule 1; blank/empty
     values are ignored so a cleared box reverts to the built-in rule. ``addendum``
-    is appended verbatim to every translation system prompt.
+    is appended verbatim to every translation system prompt. ``dials`` are the
+    structured tuning knobs (see PROMPT_DIALS), rendered into a 'Translation
+    preferences' block by build_dials_prompt().
     """
-    global _CUSTOM_PROMPT_ADDENDUM
+    global _CUSTOM_PROMPT_ADDENDUM, _CUSTOM_PROMPT_DIALS
     _CUSTOM_STYLE_OVERRIDES.clear()
     if style_overrides:
         for lang, rule in style_overrides.items():
             if lang and isinstance(rule, str) and rule.strip():
                 _CUSTOM_STYLE_OVERRIDES[lang] = rule.strip()
     _CUSTOM_PROMPT_ADDENDUM = (addendum or "").strip()
+    _CUSTOM_PROMPT_DIALS = _copy_dials(dials)
 
 
-def get_prompt_customizations() -> tuple[dict, str]:
+def get_prompt_customizations() -> tuple[dict, str, dict]:
     """Snapshot the currently-installed customizations (for save/restore in UI)."""
-    return dict(_CUSTOM_STYLE_OVERRIDES), _CUSTOM_PROMPT_ADDENDUM
+    return dict(_CUSTOM_STYLE_OVERRIDES), _CUSTOM_PROMPT_ADDENDUM, _copy_dials(_CUSTOM_PROMPT_DIALS)
 
 
 # Extra notes inserted after the universal rules — for source languages that
@@ -629,6 +745,9 @@ class TranslationRequest:
             )
             if self.glossary_snippet:
                 fix_base += "\nGlossary (use these exact translations):\n" + self.glossary_snippet
+            dials_block = build_dials_prompt(_CUSTOM_PROMPT_DIALS)
+            if dials_block:
+                fix_base += f"\n\n{dials_block}"
             if _CUSTOM_PROMPT_ADDENDUM:
                 fix_base += f"\n\n{_CUSTOM_PROMPT_ADDENDUM}"
             return fix_base
@@ -721,6 +840,9 @@ class TranslationRequest:
             result += self.retry_hint
         if self.character_profile and self.character_profile.system_addendum:
             result += f"\n\n## Character Voice\n{self.character_profile.system_addendum}"
+        dials_block = build_dials_prompt(_CUSTOM_PROMPT_DIALS)
+        if dials_block:
+            result += f"\n\n{dials_block}"
         if _CUSTOM_PROMPT_ADDENDUM:
             result += f"\n\n{_CUSTOM_PROMPT_ADDENDUM}"
         return result

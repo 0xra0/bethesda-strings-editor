@@ -5114,6 +5114,7 @@ class MainWindow(QMainWindow):
             set_prompt_customizations(
                 getattr(self.settings, "custom_style_rules", {}) or {},
                 getattr(self.settings, "custom_prompt_addendum", "") or "",
+                getattr(self.settings, "custom_prompt_dials", {}) or {},
             )
         except Exception as exc:
             logger.warning("Failed to apply prompt customizations: %s", exc)

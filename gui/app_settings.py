@@ -18,7 +18,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 39  # Increment when schema changes
+CONFIG_VERSION = 40  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -119,6 +119,11 @@ class AppSettings:
     # so every backend (Ollama, Claude API, Claude Code CLI) honours them.
     custom_style_rules: dict = field(default_factory=dict)
     custom_prompt_addendum: str = ""
+    # Structured tuning dials (style/formality/vocabulary/grammar/expression/rigor),
+    # keyed by dial name; values are option keys (or a list for the multi-select
+    # "expression" dial). Only non-default choices are stored. See
+    # ollama_worker.PROMPT_DIALS / build_dials_prompt().
+    custom_prompt_dials: dict = field(default_factory=dict)
 
     # ── Term protection ──────────────────────────────────────────
     enable_term_protection: bool = True
@@ -494,6 +499,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("custom_prompt_addendum", "")
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v39: added translation prompt customization")
+
+    if from_version < 40:
+        data.setdefault("custom_prompt_dials", {})
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v40: added translation tuning dials")
 
     if from_version < CONFIG_VERSION:
         logger.warning(
