@@ -98,6 +98,9 @@ _FIELD_DEFS: list[tuple[str, str, int, bool, int]] = [
     ("EPF2", "PERK", 0, False, 0),  # Perk entry-point button label (EPFT=4)
     ("LNAM", "INGR", 0, False, 0),  # Ingredient plural name
     ("SHRT", "INGR", 0, False, 0),  # Ingredient short name
+    # GameplayOption records — Settings menu option titles/labels & category groups
+    ("NNAM", "GPOF", 0, False, 0),  # GameplayOption Form — option title/label
+    ("NNAM", "GPOG", 0, False, 0),  # GameplayOption Group — settings category title
 ]
 
 # Fast lookup tables built at import time
@@ -126,6 +129,46 @@ _DANGEROUS_RECORD_SIGS: frozenset[bytes] = frozenset([
     b"SCEN",  # Scene — directly controls camera & actor positioning
     b"INFO",  # Dialogue Response — per-response staging data
 ])
+
+# Resource-path safety filter. Some fields that look textual actually hold asset
+# paths (e.g. DOOR/CNAM is an animation/marker resource, not "Alternate Text") —
+# translating them silently breaks the mod. A value is treated as a resource path
+# (and skipped) when it carries a path separator or ends in a known asset
+# extension. Genuine display text effectively never does either, so this is a
+# conservative net applied to every field.
+_ASSET_EXTS: frozenset[str] = frozenset([
+    ".nif", ".dds", ".hkx", ".hkb", ".wav", ".xwm", ".lip", ".fuz", ".wem",
+    ".bgsm", ".bgem", ".mat", ".psc", ".pex", ".swf", ".tga", ".png", ".cdx",
+    ".esp", ".esm", ".esl", ".ba2", ".seq", ".bto", ".btr", ".mesh",
+])
+
+
+def _looks_like_resource_path(text: str) -> bool:
+    """True when *text* is an asset path rather than translatable display text."""
+    s = text.strip()
+    if not s or len(s) > 260:
+        return False
+    # A backslash almost never appears in display text but is the norm in paths.
+    if "\\" in s:
+        return True
+    # A single token (no spaces) ending in a known asset extension.
+    if " " not in s:
+        low = s.lower()
+        if any(low.endswith(ext) for ext in _ASSET_EXTS):
+            return True
+    return False
+
+
+# Synthetic context notes for field/record pairs the model tends to mishandle,
+# applied only when the record carries no real NLDT developer note. QUST/FULL
+# utility quest names in particular get "expanded" into invented content.
+_SYNTHETIC_CONTEXT: dict[tuple[str, str], str] = {
+    ("FULL", "QUST"): (
+        "This is a quest title shown in the quest log. Translate it as a short, "
+        "literal title — do not invent, expand, describe, or add any content that "
+        "is not in the source."
+    ),
+}
 
 
 # ── Data classes ─────────────────────────────────────────────────────────────
@@ -319,11 +362,17 @@ class EspFile:
             except Exception:
                 text = raw.decode("latin-1", errors="replace")
 
+            # Skip asset paths that masquerade as text (translating them breaks
+            # animations/meshes — e.g. DOOR/CNAM is a resource path, not "text").
+            if _looks_like_resource_path(text):
+                continue
+
             self.strings.append(EspStringEntry(
                 form_id=form_id, edid=edid,
                 record_sig=rec_str, field_sig=fsig_str,
                 list_index=list_index, string_id=0,
                 original=text, _raw=bytes(fdata),
+                context_note=_SYNTHETIC_CONTEXT.get((fsig_str, rec_str), ""),
             ))
 
         # Attach NLDT context note to all entries added by this record

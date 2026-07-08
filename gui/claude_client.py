@@ -12,12 +12,50 @@ for the stable system-prompt portion.
 from __future__ import annotations
 
 import logging
+import random
+import time
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional
 
 if TYPE_CHECKING:
     from bethesda_strings.character_profiles import CharacterProfile
 
 logger = logging.getLogger(__name__)
+
+# ── Rate-limit / transient-error backoff ─────────────────────────────────────
+# The Anthropic API returns 429 (rate limit) and 5xx (transient) under load. We
+# retry those with exponential backoff + jitter, honouring a Retry-After header
+# when present. Non-retriable errors (auth, bad-request, 4xx≠429) propagate
+# immediately. The SDK's own auto-retry is disabled (max_retries=0) so retries
+# aren't doubled.
+_RETRY_STATUSES: frozenset[int] = frozenset({408, 409, 429, 500, 502, 503, 504, 529})
+_RETRY_EXC_NAMES: frozenset[str] = frozenset({
+    "RateLimitError", "InternalServerError", "APIConnectionError",
+    "APITimeoutError", "APIConnectionTimeoutError", "OverloadedError",
+})
+_MAX_RETRIES = 5
+_BASE_DELAY = 1.0    # seconds
+_MAX_DELAY = 30.0    # cap per sleep
+
+
+def _retry_after_seconds(exc: object) -> Optional[float]:
+    """Extract a Retry-After header (seconds) from an API error, if present."""
+    resp = getattr(exc, "response", None)
+    headers = getattr(resp, "headers", None)
+    if not headers:
+        return None
+    try:
+        val = headers.get("retry-after")
+        return float(val) if val is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _is_retriable_error(exc: BaseException) -> bool:
+    """True for rate-limit / transient errors that are worth retrying."""
+    status = getattr(exc, "status_code", None)
+    if isinstance(status, int) and status in _RETRY_STATUSES:
+        return True
+    return type(exc).__name__ in _RETRY_EXC_NAMES
 
 # ── Model registry ─────────────────────────────────────────────────────────────
 
@@ -165,12 +203,48 @@ class ClaudeClient:
         mcp_servers: "Optional[List[Dict]]" = None,
     ) -> None:
         import anthropic  # late import — only needed when actually used
-        self._client = anthropic.Anthropic(api_key=api_key)
+        # max_retries=0: we do our own 429/5xx backoff in _create_message() so the
+        # two mechanisms don't compound into very long stalls.
+        self._client = anthropic.Anthropic(api_key=api_key, max_retries=0)
         self.model = model
         # Remote MCP servers Claude may call tools on via the Messages API MCP
         # connector.  Each entry: {"name": str, "url": str,
         # "authorization_token": str (optional)}.  Empty = no MCP tools.
         self.mcp_servers: List[Dict] = list(mcp_servers or [])
+
+    # ── Request helper with backoff ──────────────────────────────────────────────
+
+    def _create_message(self, beta: bool = False, **kwargs):
+        """Call messages.create with exponential-backoff retry on 429/5xx.
+
+        Honours a Retry-After header when the server sends one; otherwise uses
+        exponential backoff with jitter, capped at _MAX_DELAY per sleep and
+        _MAX_RETRIES attempts. Non-retriable errors propagate on the first try.
+        """
+        create = (
+            self._client.beta.messages.create if beta
+            else self._client.messages.create
+        )
+        delay = _BASE_DELAY
+        for attempt in range(_MAX_RETRIES):
+            try:
+                return create(**kwargs)
+            except BaseException as exc:
+                if not _is_retriable_error(exc) or attempt == _MAX_RETRIES - 1:
+                    raise
+                wait = _retry_after_seconds(exc)
+                if wait is None:
+                    wait = min(delay, _MAX_DELAY) + random.uniform(0, 0.5)
+                    delay *= 2
+                else:
+                    wait = min(wait, _MAX_DELAY)
+                logger.warning(
+                    "Claude API %s — retry %d/%d in %.1fs",
+                    type(exc).__name__, attempt + 1, _MAX_RETRIES - 1, wait,
+                )
+                time.sleep(wait)
+        # Unreachable: the final attempt either returns or re-raises above.
+        raise RuntimeError("Claude request retry loop exited without a result")
 
     # ── Translation ────────────────────────────────────────────────────────────
 
@@ -219,7 +293,7 @@ class ClaudeClient:
         if character_profile and character_profile.temperature is not None:
             api_kwargs["temperature"] = character_profile.temperature
 
-        response = self._client.messages.create(**api_kwargs)
+        response = self._create_message(**api_kwargs)
         return response.content[0].text.strip()
 
     # ── Chat ───────────────────────────────────────────────────────────────────
@@ -246,7 +320,7 @@ class ClaudeClient:
             kwargs["system"] = [{"type": "text", "text": system,
                                   "cache_control": {"type": "ephemeral"}}]
 
-        response = self._client.messages.create(**kwargs)
+        response = self._create_message(**kwargs)
         return response.content[0].text
 
     def chat_stream(
@@ -336,7 +410,7 @@ class ClaudeClient:
                 kwargs["system"] = [{"type": "text", "text": system,
                                      "cache_control": {"type": "ephemeral"}}]
 
-            response = self._client.beta.messages.create(**kwargs)
+            response = self._create_message(beta=True, **kwargs)
             for block in response.content:
                 btype = getattr(block, "type", "")
                 if btype == "text":
@@ -390,7 +464,7 @@ class ClaudeClient:
             f"and if needed provide an improved version."
         )
 
-        response = self._client.messages.create(
+        response = self._create_message(
             model=self.model,
             max_tokens=1024,
             system=[{"type": "text", "text": system,
