@@ -73,6 +73,7 @@ class ClaudeTranslationWorker(QObject):
     progress = Signal(int, int)
     error = Signal(str)
     finished = Signal(int, int)
+    usage_ready = Signal(object)  # dict of real token usage (Claude Code CLI only)
 
     def __init__(
         self,
@@ -106,8 +107,15 @@ class ClaudeTranslationWorker(QObject):
         # Shared client — one connection pool reused across all worker threads.
         # Creating a new ClaudeClient per request was wasteful and broke prompt
         # caching (each new client has a fresh cache-write on the first call).
-        from gui.claude_client import ClaudeClient
-        self._claude = ClaudeClient(api_key, model)
+        # A ``claude-code:*`` model selects the subscription-backed CLI client
+        # (no API billing); anything else uses the metered Anthropic API client.
+        from gui.claude_code_client import is_claude_code_model
+        if is_claude_code_model(model):
+            from gui.claude_code_client import ClaudeCodeClient
+            self._claude = ClaudeCodeClient(api_key, model)
+        else:
+            from gui.claude_client import ClaudeClient
+            self._claude = ClaudeClient(api_key, model)
 
     def stop(self) -> None:
         """Signal the worker to stop after the current request."""
@@ -131,6 +139,11 @@ class ClaudeTranslationWorker(QObject):
 
         with QMutexLocker(self._mutex):
             self._stop_flag = False
+
+        # Claude Code CLI reports real per-call token usage — start each batch
+        # from zero so the totals emitted at the end reflect only this batch.
+        if hasattr(self._claude, "reset_usage"):
+            self._claude.reset_usage()
 
         total = len(requests)
         done = 0
@@ -271,5 +284,15 @@ class ClaudeTranslationWorker(QObject):
 
                 done += 1
                 self.progress.emit(done, total)
+
+        # Report real token usage (Claude Code CLI) before signalling completion,
+        # so the finished handler can display the actual totals for this batch.
+        if hasattr(self._claude, "get_usage"):
+            try:
+                usage = self._claude.get_usage()
+                if usage.get("calls"):
+                    self.usage_ready.emit(usage)
+            except Exception:
+                pass
 
         self.finished.emit(success, errors)
