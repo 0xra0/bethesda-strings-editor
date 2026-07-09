@@ -323,7 +323,17 @@ _TARGET_STYLE: dict[str, str] = {
         "Render sci-fi proper nouns in Hangul transliteration "
         "(e.g. 뉴 애틀랜티스 for New Atlantis, 사라 for Sarah). "
         "Technical readouts use present tense (시스템 정상). "
-        "Avoid unnecessary English loanwords when a natural Korean equivalent exists."
+        "Avoid unnecessary English loanwords when a natural Korean equivalent exists. "
+        "Choose particle allomorphs by the 받침 (final consonant) of the syllable "
+        "they attach to: with a 받침 use 은/이/을/과/으로 (사람은, 사람이, 사람을), "
+        "without one use 는/가/를/와/로 (나는, 내가, 나를). A ㄹ 받침 takes 로, not "
+        "으로 (서울로). For a Latin acronym or number, decide from how it is READ "
+        "ALOUD in Hangul, not from its Latin spelling: O2 reads 오투 and 투 has no "
+        "받침, so write O2는/O2를/O2가; SFSE reads 에스에프에스이 and 이 has no 받침, "
+        "so write SFSE는; H3 read as 에이치삼 ends in 삼, whose ㅁ is a 받침, so write "
+        "H3은/H3을/H3이. When a particle follows a placeholder whose value is only "
+        "known at run time (<Alias=…>, <mag>, %s, {name}), its 받침 is unknowable, "
+        "so write BOTH forms: <Alias=Player>은(는), %s이(가), <mag>을(를), (으)로."
     ),
     "pl": (
         "Write standard Polish with correct grammatical gender and case agreement. "

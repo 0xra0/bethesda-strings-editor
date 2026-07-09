@@ -58,6 +58,10 @@ AUTOFIX_CODES: frozenset = frozenset({
     "SIZE_TAG_RESTRUCTURED",
     # Leading "-" stripped from header lines (e.g. "-Costs" → "Вартість")
     "LINE_PREFIX_DROPPED",
+    # Korean 조사 disagreeing with the stem's 받침 → computed, not guessed
+    "KO_PARTICLE_MISMATCH",
+    # Korean 조사 in single form after a runtime placeholder → both-form 은(는)
+    "KO_PARTICLE_PLACEHOLDER",
     # Opening «guillemet without matching closing »
     "UNCLOSED_GUILLEMET",
     # Closing ] present but opening [ was dropped by the model
@@ -430,6 +434,7 @@ class QualityChecker:
         self._check_ukrainian_coverage(translated, report)
         self._check_latin_coverage(translated, report)
         self._check_script_coverage(translated, report)
+        self._check_ko_particles(translated, report)
         self._check_english_leak(original, translated, report)
         self._check_repetition(original, translated, report)
         self._check_ai_artifacts(original, translated, report)
@@ -597,6 +602,14 @@ class QualityChecker:
                 if first_line != text:
                     text = first_line
                     applied.append("truncated hallucinated multi-string output to first line")
+
+        # Last: tag repairs above can move a placeholder next to a particle, so
+        # the particles are settled once the surrounding text has stopped moving.
+        if {"KO_PARTICLE_MISMATCH", "KO_PARTICLE_PLACEHOLDER"} & codes:
+            from gui.ko_particle_checker import fix_particles
+
+            text, msgs = fix_particles(text)
+            applied.extend(msgs)
 
         return text, applied
 
@@ -1187,6 +1200,33 @@ class QualityChecker:
                         f"Translation contains no {script_name} characters "
                         f"— text may be untranslated or in wrong language"
                     ),
+                )
+            )
+
+    def _check_ko_particles(self, translated: str, report: QualityReport) -> None:
+        """Korean 조사 agreement — see ``gui.ko_particle_checker`` for the rules.
+
+        The particle for a given stem is derived from Hangul syllable arithmetic,
+        so every issue reported here carries the exact replacement text and is
+        repaired mechanically rather than by retranslation.
+        """
+        if self.target_language.lower() not in _HANGUL_TARGETS:
+            return
+
+        # Deferred so the Korean word list is never loaded for other targets.
+        from gui.ko_particle_checker import check_particles
+
+        for issue in check_particles(translated):
+            report.issues.append(
+                QualityIssue(
+                    severity=SEVERITY_WARNING,
+                    code=(
+                        "KO_PARTICLE_PLACEHOLDER"
+                        if issue.kind == "placeholder"
+                        else "KO_PARTICLE_MISMATCH"
+                    ),
+                    message=issue.message,
+                    detail=f"{issue.context}{issue.found} → {issue.context}{issue.expected}",
                 )
             )
 
