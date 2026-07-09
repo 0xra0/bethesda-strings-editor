@@ -552,7 +552,7 @@ class DialogueTreeDialog(QDialog):
                 color: #c0c8d8;
                 border: 1px solid rgba(255,255,255,24);
                 border-radius: 0px;
-                margin-top: 6px;
+                margin-top: 1.4em;
                 padding-top: 4px;
             }
             QGroupBox::title {
