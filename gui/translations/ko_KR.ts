@@ -3521,7 +3521,7 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="4080"/>
         <source>Manually overridden to {enc}</source>
-        <translation>{enc}으로 수동 재정의됨</translation>
+        <translation>{enc}(으)로 수동 재정의됨</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4082"/>
@@ -3561,7 +3561,7 @@ Check log for details.</source>
     <message>
         <location filename="../main_window.py" line="4170"/>
         <source>Re-decoded {count} strings as {enc}</source>
-        <translation>{count}개 문자열을 {enc}으로 다시 디코딩함</translation>
+        <translation>{count}개 문자열을 {enc}(으)로 다시 디코딩함</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="4205"/>
@@ -3959,7 +3959,7 @@ Retranslate them all with quality feedback hints?</source>
     <message>
         <location filename="../main_window.py" line="5447"/>
         <source>Exporting to {filename}...</source>
-        <translation>{filename}으로 내보내기 중...</translation>
+        <translation>{filename}(으)로 내보내기 중...</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5512"/>
@@ -4096,7 +4096,7 @@ Retranslate them all with quality feedback hints?</source>
     <message>
         <location filename="../main_window.py" line="5824"/>
         <source>Exporting to XML {filename}...</source>
-        <translation>XML {filename}으로 내보내기 중...</translation>
+        <translation>XML {filename}(으)로 내보내기 중...</translation>
     </message>
     <message>
         <location filename="../main_window.py" line="5847"/>
@@ -8030,7 +8030,7 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
     <message>
         <location filename="../theme_dialog.py" line="258"/>
         <source>Exported to {path}</source>
-        <translation>{path}으로 내보냄</translation>
+        <translation>{path}(으)로 내보냄</translation>
     </message>
     <message>
         <location filename="../theme_dialog.py" line="260"/>
