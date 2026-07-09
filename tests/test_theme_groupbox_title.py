@@ -41,12 +41,14 @@ def test_theme_styles_groupbox_and_title(theme):
 @pytest.mark.parametrize("theme", sorted(THEMES))
 def test_title_in_margin_band_has_room_for_its_text(theme):
     qss = THEMES[theme]
-    title_body = _TITLE_RE.search(qss).group(1)
-    if "subcontrol-origin: margin" not in title_body:
+    title = _TITLE_RE.search(qss)
+    assert title, f"{theme}: no QGroupBox::title rule"
+    if "subcontrol-origin: margin" not in title.group(1):
         pytest.skip(f"{theme}: title is not drawn in the margin band")
 
-    box_body = _GROUPBOX_RE.search(qss).group(1)
-    m = _MARGIN_TOP_RE.search(box_body)
+    box = _GROUPBOX_RE.search(qss)
+    assert box, f"{theme}: no QGroupBox rule"
+    m = _MARGIN_TOP_RE.search(box.group(1))
     assert m, f"{theme}: QGroupBox has no margin-top — the border will cross the title"
 
     value, unit = float(m.group(1)), m.group(2)
