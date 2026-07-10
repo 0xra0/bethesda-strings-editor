@@ -7540,6 +7540,238 @@ Stellen Sie sicher, dass Ollama läuft:
         <source>Reset All to Defaults</source>
         <translation>Alle auf Standardwerte zurücksetzen</translation>
     </message>
+    <message>
+        <source>Press F7 to jump instantly to the next untranslated string.</source>
+        <translation>Drücken Sie F7, um sofort zur nächsten nicht übersetzten Zeichenkette zu springen.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Enter approves the current translation and advances to the next string.</source>
+        <translation>Ctrl+Enter bestätigt die aktuelle Übersetzung und springt zur nächsten Zeichenkette.</translation>
+    </message>
+    <message>
+        <source>Ctrl+R rejects the current translation and marks it for retranslation.</source>
+        <translation>Ctrl+R verwirft die aktuelle Übersetzung und markiert sie zur erneuten Übersetzung.</translation>
+    </message>
+    <message>
+        <source>Ctrl+K opens the Command Palette — fuzzy-search any action without touching the mouse.</source>
+        <translation>Ctrl+K öffnet die Befehlspalette — durchsuchen Sie jede Aktion unscharf, ohne die Maus zu benutzen.</translation>
+    </message>
+    <message>
+        <source>Translation Memory pre-loads known translations from a previous file — matched strings are never sent to the AI.</source>
+        <translation>Der Übersetzungsspeicher lädt bekannte Übersetzungen aus einer früheren Datei vor — passende Zeichenketten werden nie an die KI gesendet.</translation>
+    </message>
+    <message>
+        <source>Batch Translate Folder (File menu) retranslates an entire directory of string files in one run.</source>
+        <translation>„Ordner stapelweise übersetzen“ (Menü „Datei“) übersetzt ein ganzes Verzeichnis von Zeichenkettendateien in einem Durchlauf neu.</translation>
+    </message>
+    <message>
+        <source>The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.</source>
+        <translation>Die Schaltfläche „Probleme automatisch neu übersetzen“ im QS-Dialog reiht alle markierten Zeichenketten für eine einzige Stapelkorrektur ein.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.</source>
+        <translation>Ctrl+Alt+K öffnet die Konsistenzprüfung — findet dieselbe Quellzeichenkette mit unterschiedlichen Übersetzungen.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.</source>
+        <translation>Ctrl+Alt+G startet die ukrainische Genus-Kongruenzprüfung für Adjektiv-Substantiv-Abweichungen.</translation>
+    </message>
+    <message>
+        <source>ти/ви register consistency is handled in the translation prompt — the AI keeps informal ти or formal ви consistent per speaker automatically.</source>
+        <translation>Die ти/ви-Registerkonsistenz wird im Übersetzungs-Prompt gehandhabt — die KI hält informelles ти oder formelles ви pro Sprecher automatisch konsistent.</translation>
+    </message>
+    <message>
+        <source>Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.</source>
+        <translation>Der Fokusmodus zeigt jeweils eine Zeichenkette im Vollbild — ideal für ablenkungsfreies Überprüfen.</translation>
+    </message>
+    <message>
+        <source>The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.</source>
+        <translation>Der Schwierigkeitsschätzer (Wert 0–100) hilft Ihnen zu priorisieren, welche Zeichenketten manuell geprüft werden müssen.</translation>
+    </message>
+    <message>
+        <source>Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.</source>
+        <translation>Ziehen Sie eine .strings-, .dlstrings-, .ilstrings-, .esp-, .esm- oder .ba2-Datei auf das Fenster, um sie zu öffnen.</translation>
+    </message>
+    <message>
+        <source>The Diff Viewer (word-level) shows exactly what changed between two game versions of the same file.</source>
+        <translation>Der Diff-Betrachter (auf Wortebene) zeigt genau, was sich zwischen zwei Spielversionen derselben Datei geändert hat.</translation>
+    </message>
+    <message>
+        <source>The Glossary Manager ensures consistent terminology — add key terms and the AI will respect them in every call.</source>
+        <translation>Der Glossar-Manager sorgt für einheitliche Terminologie — fügen Sie Schlüsselbegriffe hinzu, und die KI berücksichtigt sie bei jedem Aufruf.</translation>
+    </message>
+    <message>
+        <source>Protected terms are replaced with unique tokens before the AI sees the string and restored afterward.</source>
+        <translation>Geschützte Begriffe werden durch eindeutige Token ersetzt, bevor die KI die Zeichenkette sieht, und danach wiederhergestellt.</translation>
+    </message>
+    <message>
+        <source>The Audit Log records every file operation and batch without ever storing actual string content.</source>
+        <translation>Das Audit-Protokoll erfasst jede Dateioperation und jeden Stapel, ohne jemals den tatsächlichen Zeichenketteninhalt zu speichern.</translation>
+    </message>
+    <message>
+        <source>Crash Recovery auto-saves progress periodically — if the app crashes, your work is offered on next launch.</source>
+        <translation>Die Absturzwiederherstellung speichert den Fortschritt regelmäßig automatisch — stürzt die App ab, wird Ihre Arbeit beim nächsten Start angeboten.</translation>
+    </message>
+    <message>
+        <source>The NexusMods Browser lets you search, preview, and download translation mods without leaving the app.</source>
+        <translation>Der NexusMods-Browser ermöglicht das Suchen, Vorschauen und Herunterladen von Übersetzungs-Mods, ohne die App zu verlassen.</translation>
+    </message>
+    <message>
+        <source>Version Comparison migrates unchanged translations from an old file to a new game version automatically.</source>
+        <translation>Der Versionsvergleich überträgt unveränderte Übersetzungen automatisch aus einer alten Datei in eine neue Spielversion.</translation>
+    </message>
+    <message>
+        <source>Load lore snippets in the Lore RAG Manager to give the AI contextual accuracy for faction names and world events.</source>
+        <translation>Laden Sie Lore-Ausschnitte im Lore-RAG-Manager, um der KI kontextuelle Genauigkeit für Fraktionsnamen und Weltereignisse zu geben.</translation>
+    </message>
+    <message>
+        <source>The Font Checker identifies characters missing from Starfield's Scaleform SWF font atlases.</source>
+        <translation>Die Schriftprüfung erkennt Zeichen, die in den Scaleform-SWF-Schriftatlanten von Starfield fehlen.</translation>
+    </message>
+    <message>
+        <source>Ctrl+M opens the Macro Editor — record repetitive edits as named macros and replay them with one click.</source>
+        <translation>Ctrl+M öffnet den Makro-Editor — zeichnen Sie wiederkehrende Bearbeitungen als benannte Makros auf und spielen Sie sie mit einem Klick ab.</translation>
+    </message>
+    <message>
+        <source>Translator Profiles let you define per-locale style rules and author metadata for each language.</source>
+        <translation>Übersetzerprofile ermöglichen es, sprachspezifische Stilregeln und Autoren-Metadaten für jede Sprache festzulegen.</translation>
+    </message>
+    <message>
+        <source>Session Manager (Ctrl+Shift+N) saves your search and filter state so you can resume exactly where you left off.</source>
+        <translation>Der Sitzungsmanager (Ctrl+Shift+N) speichert Ihren Such- und Filterzustand, sodass Sie genau dort fortfahren können, wo Sie aufgehört haben.</translation>
+    </message>
+    <message>
+        <source>The Plugin Validator dialog scans ESP/ESM files for NPC dialogue camera bugs before packaging.</source>
+        <translation>Der Plugin-Validator-Dialog durchsucht ESP/ESM-Dateien vor dem Packen nach Kamerafehlern in NPC-Dialogen.</translation>
+    </message>
+    <message>
+        <source>Shift+C copies the source text of the selected row; Shift+V pastes it into the translation column.</source>
+        <translation>Shift+C kopiert den Quelltext der ausgewählten Zeile; Shift+V fügt ihn in die Übersetzungsspalte ein.</translation>
+    </message>
+    <message>
+        <source>The status bar shows Total / Done / Left % and an ETA countdown during AI translation batches.</source>
+        <translation>Die Statusleiste zeigt während KI-Übersetzungsstapeln Gesamt / Fertig / Verbleibend % und einen ETA-Countdown.</translation>
+    </message>
+    <message>
+        <source>Advanced Search supports full regex across source and translation columns simultaneously.</source>
+        <translation>Die erweiterte Suche unterstützt vollständige reguläre Ausdrücke gleichzeitig in der Quell- und Übersetzungsspalte.</translation>
+    </message>
+    <message>
+        <source>BA2 archives with multiple .strings entries show a picker so you can choose which file to open.</source>
+        <translation>BA2-Archive mit mehreren .strings-Einträgen zeigen eine Auswahl, damit Sie die zu öffnende Datei wählen können.</translation>
+    </message>
+    <message>
+        <source>The Claude Chat Panel (dock) lets you ask Claude about the selected string and apply its suggestion directly.</source>
+        <translation>Das Claude-Chat-Panel (Dock) ermöglicht es, Claude zur ausgewählten Zeichenkette zu befragen und seinen Vorschlag direkt anzuwenden.</translation>
+    </message>
+    <message>
+        <source>TTS Preview synthesizes a read-out of your translation for timing comparison with the original game audio.</source>
+        <translation>Die TTS-Vorschau synthetisiert eine Vorlesung Ihrer Übersetzung zum Zeitvergleich mit dem originalen Spiel-Audio.</translation>
+    </message>
+    <message>
+        <source>The Dialogue Tree Viewer shows the Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree.</source>
+        <translation>Der Dialogbaum-Betrachter zeigt die Hierarchie Quest → Thema → Antwort aus einer ESP/ESM-Datei als interaktiven Baum.</translation>
+    </message>
+    <message>
+        <source>Pop out the string table to a second monitor via Window → Pop-out Table for multi-monitor workflows.</source>
+        <translation>Lösen Sie die Zeichenkettentabelle über „Fenster → Tabelle ausklappen“ auf einen zweiten Monitor für Multi-Monitor-Workflows.</translation>
+    </message>
+    <message>
+        <source>The Visual Context Preview renders the selected string inside a faithful in-game UI widget mockup.</source>
+        <translation>Die visuelle Kontextvorschau stellt die ausgewählte Zeichenkette in einer originalgetreuen Nachbildung des Spiel-UI-Widgets dar.</translation>
+    </message>
+    <message>
+        <source>The fine-tuned qcgemma4-st model checks 16 issue codes including GLOSSARY_MISMATCH, UNTRANSLATED, and REPETITION_ARTIFACT.</source>
+        <translation>Das feinabgestimmte Modell qcgemma4-st prüft 16 Problemcodes, darunter GLOSSARY_MISMATCH, UNTRANSLATED und REPETITION_ARTIFACT.</translation>
+    </message>
+    <message>
+        <source>Enable 'Protect English text' when translating RU→UK to keep English terminology untouched.</source>
+        <translation>Aktivieren Sie „Englischen Text schützen“ bei der Übersetzung RU→UK, um englische Terminologie unangetastet zu lassen.</translation>
+    </message>
+    <message>
+        <source>English anchors such as 'To Ukrainian:' and 'To English:' in the Modelfile structure the model's output reliably.</source>
+        <translation>Englische Anker wie „To Ukrainian:“ und „To English:“ in der Modelfile strukturieren die Modellausgabe zuverlässig.</translation>
+    </message>
+    <message>
+        <source>Increasing num_ctx uses more VRAM but lets the model see longer strings and richer system prompts.</source>
+        <translation>Ein höherer num_ctx-Wert verbraucht mehr VRAM, lässt das Modell aber längere Zeichenketten und reichhaltigere System-Prompts sehen.</translation>
+    </message>
+    <message>
+        <source>The Translation Cache (SHA-256 keyed) avoids retranslating identical strings across different files or sessions.</source>
+        <translation>Der Übersetzungs-Cache (SHA-256-basiert) vermeidet das erneute Übersetzen identischer Zeichenketten über verschiedene Dateien oder Sitzungen hinweg.</translation>
+    </message>
+    <message>
+        <source>xTranslator SST XML files can be imported and exported — string IDs are matched first, then source text.</source>
+        <translation>xTranslator-SST-XML-Dateien lassen sich importieren und exportieren — Zeichenketten werden zuerst über die ID, dann über den Quelltext abgeglichen.</translation>
+    </message>
+    <message>
+        <source>Consistency Checker's auto-replace rewrites all variants to your chosen canonical form in one click.</source>
+        <translation>Die Auto-Ersetzung der Konsistenzprüfung schreibt alle Varianten mit einem Klick auf die von Ihnen gewählte kanonische Form um.</translation>
+    </message>
+    <message>
+        <source>Pre-load Translation Memory before a Batch Translate run to skip strings that are already translated.</source>
+        <translation>Laden Sie den Übersetzungsspeicher vor einem Stapelübersetzungslauf vor, um bereits übersetzte Zeichenketten zu überspringen.</translation>
+    </message>
+    <message>
+        <source>The Spell Checker supports Hunspell, spylls (pure Python), or a CLI fallback depending on what is installed.</source>
+        <translation>Die Rechtschreibprüfung unterstützt Hunspell, spylls (reines Python) oder einen CLI-Fallback, je nachdem, was installiert ist.</translation>
+    </message>
+    <message>
+        <source>The Gender Checker uses a Ukrainian noun gender dictionary — extend the dictionary to improve detection coverage.</source>
+        <translation>Die Genusprüfung verwendet ein Wörterbuch für das Genus ukrainischer Substantive — erweitern Sie das Wörterbuch, um die Erkennungsabdeckung zu verbessern.</translation>
+    </message>
+    <message>
+        <source>Pop out the Translation Editor pane as a floating dock for a larger, more comfortable editing area.</source>
+        <translation>Lösen Sie den Übersetzungseditor-Bereich als schwebendes Dock für einen größeren, bequemeren Bearbeitungsbereich.</translation>
+    </message>
+    <message>
+        <source>The Claude API key is stored with AES-256-GCM encryption via the system keyring — never in plaintext on disk.</source>
+        <translation>Der Claude-API-Schlüssel wird mit AES-256-GCM-Verschlüsselung über den System-Schlüsselbund gespeichert — nie im Klartext auf der Festplatte.</translation>
+    </message>
+    <message>
+        <source>To retranslate only failed strings, open the QC dialog and click 'Auto-Retranslate Issues'.</source>
+        <translation>Um nur fehlgeschlagene Zeichenketten neu zu übersetzen, öffnen Sie den QS-Dialog und klicken Sie auf „Probleme automatisch neu übersetzen“.</translation>
+    </message>
+    <message>
+        <source>The Pre-Translation Estimator learns from your manual corrections — it improves automatically as you work.</source>
+        <translation>Der Vorübersetzungsschätzer lernt aus Ihren manuellen Korrekturen — er verbessert sich automatisch, während Sie arbeiten.</translation>
+    </message>
+    <message>
+        <source>All keyboard shortcuts can be reassigned in Settings → Keyboard Shortcuts to match your personal workflow.</source>
+        <translation>Alle Tastenkürzel können unter „Einstellungen → Tastenkürzel“ an Ihren persönlichen Arbeitsablauf angepasst werden.</translation>
+    </message>
+    <message>
+        <source>The Lore RAG search tab lets you preview exactly which context snippets will be injected for a given string.</source>
+        <translation>Der Lore-RAG-Suchreiter zeigt Ihnen in der Vorschau, welche Kontextausschnitte für eine bestimmte Zeichenkette eingefügt werden.</translation>
+    </message>
+    <message>
+        <source>Use the Register Checker to ensure you address the player consistently with either ти or ви throughout the whole file.</source>
+        <translation>Verwenden Sie die Registerprüfung, um den Spieler durchgehend konsistent mit ти oder ви anzusprechen.</translation>
+    </message>
+    <message>
+        <source>The 'Protect proper nouns' option keeps faction, company, ship, and character names from being translated by the AI.</source>
+        <translation>Die Option „Eigennamen schützen“ verhindert, dass die KI Fraktions-, Firmen-, Schiffs- und Charakternamen übersetzt.</translation>
+    </message>
+    <message>
+        <source>Rejected strings are highlighted in red in the table so you can find them quickly for manual correction.</source>
+        <translation>Abgelehnte Zeichenketten werden in der Tabelle rot hervorgehoben, damit Sie sie zur manuellen Korrektur schnell finden.</translation>
+    </message>
+    <message>
+        <source>The AI repetition artifact checker catches copy-paste loops and model hallucinations before they reach the player.</source>
+        <translation>Die Prüfung auf KI-Wiederholungsartefakte fängt Copy-Paste-Schleifen und Modellhalluzinationen ab, bevor sie den Spieler erreichen.</translation>
+    </message>
+    <message>
+        <source>Newline count mismatch detection ensures your translation preserves the same line breaks as the source.</source>
+        <translation>Die Erkennung von Zeilenumbruch-Abweichungen stellt sicher, dass Ihre Übersetzung dieselben Zeilenumbrüche wie die Quelle beibehält.</translation>
+    </message>
+    <message>
+        <source>Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.</source>
+        <translation>Die Erkennung durchgesickerter russischer Zeichen markiert alle kyrillischen Zeichen der falschen Schrift in einer ukrainischen Ausgabe.</translation>
+    </message>
+    <message>
+        <source>Export the Version Comparison report as HTML or CSV for review by other team members.</source>
+        <translation>Exportieren Sie den Versionsvergleichsbericht als HTML oder CSV zur Überprüfung durch andere Teammitglieder.</translation>
+    </message>
 </context>
 <context>
     <name>SpeakerPanel</name>

@@ -7535,6 +7535,238 @@ This cannot be undone.</source>
         <source>Reset All to Defaults</source>
         <translation>모두 기본값으로 초기화</translation>
     </message>
+    <message>
+        <source>Press F7 to jump instantly to the next untranslated string.</source>
+        <translation>F7을 누르면 다음 미번역 문자열로 즉시 이동합니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Enter approves the current translation and advances to the next string.</source>
+        <translation>Ctrl+Enter는 현재 번역을 승인하고 다음 문자열로 이동합니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+R rejects the current translation and marks it for retranslation.</source>
+        <translation>Ctrl+R은 현재 번역을 거부하고 재번역 대상으로 표시합니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+K opens the Command Palette — fuzzy-search any action without touching the mouse.</source>
+        <translation>Ctrl+K는 명령 팔레트를 엽니다. 마우스 없이 모든 동작을 퍼지 검색할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Translation Memory pre-loads known translations from a previous file — matched strings are never sent to the AI.</source>
+        <translation>번역 메모리는 이전 파일의 알려진 번역을 미리 불러옵니다. 일치하는 문자열은 AI로 전송되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Batch Translate Folder (File menu) retranslates an entire directory of string files in one run.</source>
+        <translation>파일 메뉴의 ‘폴더 일괄 번역’은 문자열 파일이 있는 디렉터리 전체를 한 번에 재번역합니다.</translation>
+    </message>
+    <message>
+        <source>The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.</source>
+        <translation>품질 검사 대화상자의 ‘문제 자동 재번역’ 버튼은 표시된 모든 문자열을 한 번의 일괄 수정 대기열에 넣습니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.</source>
+        <translation>Ctrl+Alt+K는 일관성 검사기를 엽니다. 같은 원본 문자열이 서로 다르게 번역된 경우를 찾습니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.</source>
+        <translation>Ctrl+Alt+G는 형용사–명사 불일치를 위한 우크라이나어 성 일치 검사기를 실행합니다.</translation>
+    </message>
+    <message>
+        <source>ти/ви register consistency is handled in the translation prompt — the AI keeps informal ти or formal ви consistent per speaker automatically.</source>
+        <translation>ти/ви 화계 일관성은 번역 프롬프트에서 처리됩니다. AI가 화자별로 비격식 ти 또는 격식 ви를 자동으로 일관되게 유지합니다.</translation>
+    </message>
+    <message>
+        <source>Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.</source>
+        <translation>집중 모드는 한 번에 한 문자열씩 전체 화면으로 보여 줍니다. 방해 없는 검토에 좋습니다.</translation>
+    </message>
+    <message>
+        <source>The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.</source>
+        <translation>난이도 추정기(0–100 점수)는 어떤 문자열을 수동으로 검토해야 할지 우선순위를 정하는 데 도움이 됩니다.</translation>
+    </message>
+    <message>
+        <source>Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.</source>
+        <translation>.strings, .dlstrings, .ilstrings, .esp, .esm 또는 .ba2 파일을 창에 끌어다 놓으면 열립니다.</translation>
+    </message>
+    <message>
+        <source>The Diff Viewer (word-level) shows exactly what changed between two game versions of the same file.</source>
+        <translation>차이 뷰어(단어 단위)는 같은 파일의 두 게임 버전 사이에서 무엇이 바뀌었는지 정확히 보여 줍니다.</translation>
+    </message>
+    <message>
+        <source>The Glossary Manager ensures consistent terminology — add key terms and the AI will respect them in every call.</source>
+        <translation>용어집 관리자는 일관된 용어를 보장합니다. 핵심 용어를 추가하면 AI가 모든 호출에서 이를 준수합니다.</translation>
+    </message>
+    <message>
+        <source>Protected terms are replaced with unique tokens before the AI sees the string and restored afterward.</source>
+        <translation>보호된 용어는 AI가 문자열을 보기 전에 고유 토큰으로 대체되었다가 이후에 복원됩니다.</translation>
+    </message>
+    <message>
+        <source>The Audit Log records every file operation and batch without ever storing actual string content.</source>
+        <translation>감사 로그는 실제 문자열 내용을 저장하지 않고 모든 파일 작업과 일괄 처리를 기록합니다.</translation>
+    </message>
+    <message>
+        <source>Crash Recovery auto-saves progress periodically — if the app crashes, your work is offered on next launch.</source>
+        <translation>충돌 복구는 진행 상황을 주기적으로 자동 저장합니다. 앱이 충돌하면 다음 실행 시 작업이 제안됩니다.</translation>
+    </message>
+    <message>
+        <source>The NexusMods Browser lets you search, preview, and download translation mods without leaving the app.</source>
+        <translation>NexusMods 브라우저를 사용하면 앱을 벗어나지 않고 번역 모드를 검색, 미리 보기, 다운로드할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Version Comparison migrates unchanged translations from an old file to a new game version automatically.</source>
+        <translation>버전 비교는 변경되지 않은 번역을 이전 파일에서 새 게임 버전으로 자동으로 이전합니다.</translation>
+    </message>
+    <message>
+        <source>Load lore snippets in the Lore RAG Manager to give the AI contextual accuracy for faction names and world events.</source>
+        <translation>Lore RAG 관리자에서 로어 스니펫을 불러오면 AI에 진영 이름과 세계 이벤트에 대한 맥락 정확도를 제공합니다.</translation>
+    </message>
+    <message>
+        <source>The Font Checker identifies characters missing from Starfield's Scaleform SWF font atlases.</source>
+        <translation>글꼴 검사기는 Starfield의 Scaleform SWF 글꼴 아틀라스에 없는 문자를 식별합니다.</translation>
+    </message>
+    <message>
+        <source>Ctrl+M opens the Macro Editor — record repetitive edits as named macros and replay them with one click.</source>
+        <translation>Ctrl+M은 매크로 편집기를 엽니다. 반복 편집을 이름 있는 매크로로 기록하고 한 번의 클릭으로 재생할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Translator Profiles let you define per-locale style rules and author metadata for each language.</source>
+        <translation>번역가 프로필을 사용하면 언어별 스타일 규칙과 작성자 메타데이터를 각 언어마다 정의할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Session Manager (Ctrl+Shift+N) saves your search and filter state so you can resume exactly where you left off.</source>
+        <translation>세션 관리자(Ctrl+Shift+N)는 검색 및 필터 상태를 저장하여 중단한 지점에서 정확히 다시 시작할 수 있게 합니다.</translation>
+    </message>
+    <message>
+        <source>The Plugin Validator dialog scans ESP/ESM files for NPC dialogue camera bugs before packaging.</source>
+        <translation>플러그인 검증기 대화상자는 패키징 전에 ESP/ESM 파일에서 NPC 대화 카메라 버그를 검사합니다.</translation>
+    </message>
+    <message>
+        <source>Shift+C copies the source text of the selected row; Shift+V pastes it into the translation column.</source>
+        <translation>Shift+C는 선택한 행의 원본 텍스트를 복사하고, Shift+V는 이를 번역 열에 붙여넣습니다.</translation>
+    </message>
+    <message>
+        <source>The status bar shows Total / Done / Left % and an ETA countdown during AI translation batches.</source>
+        <translation>상태 표시줄은 AI 번역 일괄 처리 중 전체 / 완료 / 남음 %와 ETA 카운트다운을 보여 줍니다.</translation>
+    </message>
+    <message>
+        <source>Advanced Search supports full regex across source and translation columns simultaneously.</source>
+        <translation>고급 검색은 원본과 번역 열에서 동시에 완전한 정규식을 지원합니다.</translation>
+    </message>
+    <message>
+        <source>BA2 archives with multiple .strings entries show a picker so you can choose which file to open.</source>
+        <translation>.strings 항목이 여러 개인 BA2 아카이브는 어떤 파일을 열지 선택할 수 있도록 선택기를 표시합니다.</translation>
+    </message>
+    <message>
+        <source>The Claude Chat Panel (dock) lets you ask Claude about the selected string and apply its suggestion directly.</source>
+        <translation>Claude 채팅 패널(도크)을 사용하면 선택한 문자열에 대해 Claude에게 물어보고 제안을 바로 적용할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>TTS Preview synthesizes a read-out of your translation for timing comparison with the original game audio.</source>
+        <translation>TTS 미리 듣기는 원본 게임 오디오와 타이밍을 비교할 수 있도록 번역을 음성으로 합성합니다.</translation>
+    </message>
+    <message>
+        <source>The Dialogue Tree Viewer shows the Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree.</source>
+        <translation>대화 트리 뷰어는 ESP/ESM 파일의 퀘스트 → 주제 → 응답 계층 구조를 대화형 트리로 보여 줍니다.</translation>
+    </message>
+    <message>
+        <source>Pop out the string table to a second monitor via Window → Pop-out Table for multi-monitor workflows.</source>
+        <translation>‘창 → 테이블 팝아웃’으로 문자열 테이블을 두 번째 모니터로 빼내 다중 모니터 작업에 활용하세요.</translation>
+    </message>
+    <message>
+        <source>The Visual Context Preview renders the selected string inside a faithful in-game UI widget mockup.</source>
+        <translation>시각적 맥락 미리 보기는 선택한 문자열을 실제 게임 UI 위젯을 충실히 재현한 화면 안에 렌더링합니다.</translation>
+    </message>
+    <message>
+        <source>The fine-tuned qcgemma4-st model checks 16 issue codes including GLOSSARY_MISMATCH, UNTRANSLATED, and REPETITION_ARTIFACT.</source>
+        <translation>미세 조정된 qcgemma4-st 모델은 GLOSSARY_MISMATCH, UNTRANSLATED, REPETITION_ARTIFACT를 포함한 16개 문제 코드를 검사합니다.</translation>
+    </message>
+    <message>
+        <source>Enable 'Protect English text' when translating RU→UK to keep English terminology untouched.</source>
+        <translation>RU→UK 번역 시 ‘영어 텍스트 보호’를 켜면 영어 용어를 그대로 유지합니다.</translation>
+    </message>
+    <message>
+        <source>English anchors such as 'To Ukrainian:' and 'To English:' in the Modelfile structure the model's output reliably.</source>
+        <translation>Modelfile의 ‘To Ukrainian:’, ‘To English:’ 같은 영어 앵커는 모델 출력을 안정적으로 구조화합니다.</translation>
+    </message>
+    <message>
+        <source>Increasing num_ctx uses more VRAM but lets the model see longer strings and richer system prompts.</source>
+        <translation>num_ctx를 늘리면 VRAM을 더 사용하지만 모델이 더 긴 문자열과 더 풍부한 시스템 프롬프트를 볼 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>The Translation Cache (SHA-256 keyed) avoids retranslating identical strings across different files or sessions.</source>
+        <translation>번역 캐시(SHA-256 키 기반)는 서로 다른 파일이나 세션에서 동일한 문자열을 다시 번역하지 않도록 합니다.</translation>
+    </message>
+    <message>
+        <source>xTranslator SST XML files can be imported and exported — string IDs are matched first, then source text.</source>
+        <translation>xTranslator SST XML 파일은 가져오고 내보낼 수 있습니다. 문자열은 먼저 ID로, 그다음 원본 텍스트로 일치시킵니다.</translation>
+    </message>
+    <message>
+        <source>Consistency Checker's auto-replace rewrites all variants to your chosen canonical form in one click.</source>
+        <translation>일관성 검사기의 자동 바꾸기는 모든 변형을 선택한 표준형으로 한 번에 다시 씁니다.</translation>
+    </message>
+    <message>
+        <source>Pre-load Translation Memory before a Batch Translate run to skip strings that are already translated.</source>
+        <translation>일괄 번역을 실행하기 전에 번역 메모리를 미리 불러오면 이미 번역된 문자열을 건너뜁니다.</translation>
+    </message>
+    <message>
+        <source>The Spell Checker supports Hunspell, spylls (pure Python), or a CLI fallback depending on what is installed.</source>
+        <translation>맞춤법 검사기는 설치된 항목에 따라 Hunspell, spylls(순수 Python) 또는 CLI 대체를 지원합니다.</translation>
+    </message>
+    <message>
+        <source>The Gender Checker uses a Ukrainian noun gender dictionary — extend the dictionary to improve detection coverage.</source>
+        <translation>성 검사기는 우크라이나어 명사 성 사전을 사용합니다. 사전을 확장하면 감지 범위가 향상됩니다.</translation>
+    </message>
+    <message>
+        <source>Pop out the Translation Editor pane as a floating dock for a larger, more comfortable editing area.</source>
+        <translation>번역 편집기 창을 떠 있는 도크로 빼내면 더 크고 편안한 편집 공간을 얻을 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>The Claude API key is stored with AES-256-GCM encryption via the system keyring — never in plaintext on disk.</source>
+        <translation>Claude API 키는 시스템 키링을 통해 AES-256-GCM 암호화로 저장되며, 디스크에 평문으로 저장되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>To retranslate only failed strings, open the QC dialog and click 'Auto-Retranslate Issues'.</source>
+        <translation>실패한 문자열만 다시 번역하려면 품질 검사 대화상자를 열고 ‘문제 자동 재번역’을 클릭하세요.</translation>
+    </message>
+    <message>
+        <source>The Pre-Translation Estimator learns from your manual corrections — it improves automatically as you work.</source>
+        <translation>사전 번역 추정기는 수동 수정에서 학습하여 작업하는 동안 자동으로 개선됩니다.</translation>
+    </message>
+    <message>
+        <source>All keyboard shortcuts can be reassigned in Settings → Keyboard Shortcuts to match your personal workflow.</source>
+        <translation>모든 키보드 단축키는 ‘설정 → 키보드 단축키’에서 개인 작업 흐름에 맞게 다시 지정할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>The Lore RAG search tab lets you preview exactly which context snippets will be injected for a given string.</source>
+        <translation>Lore RAG 검색 탭에서는 특정 문자열에 어떤 맥락 스니펫이 삽입될지 정확히 미리 볼 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Use the Register Checker to ensure you address the player consistently with either ти or ви throughout the whole file.</source>
+        <translation>화계 검사기를 사용하여 파일 전체에서 플레이어를 ти 또는 ви로 일관되게 지칭하세요.</translation>
+    </message>
+    <message>
+        <source>The 'Protect proper nouns' option keeps faction, company, ship, and character names from being translated by the AI.</source>
+        <translation>‘고유명사 보호’ 옵션은 AI가 진영, 회사, 우주선, 캐릭터 이름을 번역하지 않도록 합니다.</translation>
+    </message>
+    <message>
+        <source>Rejected strings are highlighted in red in the table so you can find them quickly for manual correction.</source>
+        <translation>거부된 문자열은 테이블에서 빨간색으로 강조되어 수동 수정을 위해 빠르게 찾을 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>The AI repetition artifact checker catches copy-paste loops and model hallucinations before they reach the player.</source>
+        <translation>AI 반복 아티팩트 검사기는 복사-붙여넣기 루프와 모델 환각이 플레이어에게 도달하기 전에 잡아냅니다.</translation>
+    </message>
+    <message>
+        <source>Newline count mismatch detection ensures your translation preserves the same line breaks as the source.</source>
+        <translation>줄바꿈 개수 불일치 감지는 번역이 원본과 동일한 줄바꿈을 유지하도록 보장합니다.</translation>
+    </message>
+    <message>
+        <source>Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.</source>
+        <translation>러시아어 문자 누출 감지는 우크라이나어 출력에서 잘못된 문자 체계의 키릴 문자를 표시합니다.</translation>
+    </message>
+    <message>
+        <source>Export the Version Comparison report as HTML or CSV for review by other team members.</source>
+        <translation>버전 비교 보고서를 HTML 또는 CSV로 내보내 다른 팀원이 검토하게 하세요.</translation>
+    </message>
 </context>
 <context>
     <name>SpeakerPanel</name>
