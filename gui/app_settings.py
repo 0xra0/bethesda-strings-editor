@@ -18,7 +18,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 40  # Increment when schema changes
+CONFIG_VERSION = 41  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -124,6 +124,11 @@ class AppSettings:
     # "expression" dial). Only non-default choices are stored. See
     # ollama_worker.PROMPT_DIALS / build_dials_prompt().
     custom_prompt_dials: dict = field(default_factory=dict)
+    # Player character's grammatical gender for player-referring lines ("you",
+    # player-describing adjectives/verbs). "" = unspecified (no directive), else
+    # "male" | "female" | "neutral". Installed via ollama_worker.set_player_gender()
+    # so every backend renders the player's gender consistently.
+    player_gender: str = ""
 
     # ── Term protection ──────────────────────────────────────────
     enable_term_protection: bool = True
@@ -504,6 +509,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("custom_prompt_dials", {})
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v40: added translation tuning dials")
+
+    if from_version < 41:
+        data.setdefault("player_gender", "")
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v41: added player-character gender")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

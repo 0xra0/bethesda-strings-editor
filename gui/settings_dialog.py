@@ -584,6 +584,25 @@ class SettingsDialog(QDialog):
         self.combo_target.setCurrentIndex(self.combo_target.findData(self._settings.default_target_lang))
         trans_layout.addRow(self.tr("Default Target:"), self.combo_target)
 
+        # Player character's grammatical gender for player-referring lines.
+        self.combo_player_gender = QComboBox()
+        for label, value in (
+            (self.tr("Unspecified"), ""),
+            (self.tr("Male"), "male"),
+            (self.tr("Female"), "female"),
+            (self.tr("Neutral (avoid gendered forms)"), "neutral"),
+        ):
+            self.combo_player_gender.addItem(label, value)
+        pg_idx = self.combo_player_gender.findData(getattr(self._settings, "player_gender", "") or "")
+        self.combo_player_gender.setCurrentIndex(pg_idx if pg_idx >= 0 else 0)
+        self.combo_player_gender.setToolTip(self.tr(
+            "Grammatical gender for lines addressing/describing the player («you», adjectives, "
+            "past-tense verbs) in gendered languages (Ukrainian, Polish, German, …).\n"
+            "A .strings file stores one text per ID, so this applies to the whole translation for every "
+            "player — there is no in-game M/F switch. Choose Neutral for a translation meant for any player."
+        ))
+        trans_layout.addRow(self.tr("Player Gender:"), self.combo_player_gender)
+
         self.spin_quality = QSpinBox()
         self.spin_quality.setRange(1, 10)
         self.spin_quality.setValue(self._settings.quality_level)
@@ -2011,6 +2030,7 @@ class SettingsDialog(QDialog):
         settings.ollama_restart_elevate = self.chk_restart_elevate.isChecked()
         settings.default_source_lang = self.combo_source.currentData()
         settings.default_target_lang = self.combo_target.currentData()
+        settings.player_gender = self.combo_player_gender.currentData() or ""
         settings.quality_level = self.spin_quality.value()
         settings.long_string_threshold = self.spin_threshold.value()
         settings.long_string_action = self.combo_long_action.currentData()
