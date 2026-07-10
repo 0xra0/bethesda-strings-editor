@@ -15,7 +15,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +109,35 @@ class TranslationMemory:
         self.loaded_count = len(self._by_id)
         self.source_path = str(path)
         return count
+
+    def add_pairs(
+        self,
+        pairs: Iterable[tuple[str, str]],
+        *,
+        prefer_existing: bool = False,
+    ) -> int:
+        """Merge ``(source, translation)`` pairs into the source-keyed memory.
+
+        Used by the Official-TM miner to fold Bethesda's canonical
+        source→target renderings straight into the memory (no string IDs — the
+        official TM is matched by source text).  Empty sides are skipped.
+
+        When *prefer_existing* is True an already-loaded source keeps its current
+        translation (so a hand-curated entry is never overwritten by mined data);
+        otherwise the incoming pair wins.  Returns the number of new sources added.
+        """
+        added = 0
+        for src, tgt in pairs:
+            if not src or not tgt:
+                continue
+            if src in self._by_src:
+                if not prefer_existing:
+                    self._by_src[src] = tgt
+                continue
+            self._by_src[src] = tgt
+            added += 1
+        self.loaded_count = len(self._by_id) + len(self._by_src)
+        return added
 
     def clear(self) -> None:
         self._by_id.clear()

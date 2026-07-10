@@ -446,6 +446,7 @@ class StringTableModel(QAbstractTableModel):
         self,
         translation_map: dict[int, str],
         source_map: dict[str, str] | None = None,
+        only_pending: bool = False,
     ) -> int:
         """Import translations from ID→text and/or source→text maps.
 
@@ -453,10 +454,18 @@ class StringTableModel(QAbstractTableModel):
           1. By string ID (fast, exact)
           2. By source text (fallback for rows whose ID wasn't in the map)
 
+        When *only_pending* is True, rows that already carry a non-empty
+        translation are left untouched (used when folding in an auto-mined
+        official TM so in-progress work is never clobbered — mirrors the ESP
+        mod-update migration philosophy).
+
         Returns the number of rows actually updated.
         """
         if not translation_map and not source_map:
             return 0
+
+        def _has_translation(row: dict) -> bool:
+            return bool((row.get("translated") or "").strip())
 
         applied_count = 0
         id_to_row = {row["id"]: i for i, row in enumerate(self._data)}
@@ -468,6 +477,9 @@ class StringTableModel(QAbstractTableModel):
         for string_id, text in (translation_map or {}).items():
             if string_id in id_to_row:
                 row_idx = id_to_row[string_id]
+                if only_pending and _has_translation(self._data[row_idx]):
+                    matched_rows.add(row_idx)
+                    continue
                 self._data[row_idx]["translated"] = text
                 self._data[row_idx]["status"] = "translated"
                 matched_rows.add(row_idx)
@@ -477,6 +489,8 @@ class StringTableModel(QAbstractTableModel):
         if source_map:
             for i, row in enumerate(self._data):
                 if i in matched_rows:
+                    continue
+                if only_pending and _has_translation(row):
                     continue
                 src = row.get("original", "")
                 if src and src in source_map:
