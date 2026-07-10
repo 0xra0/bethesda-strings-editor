@@ -6795,9 +6795,16 @@ Installed models are detected automatically and the list refreshes while this wi
         <translation>설치된 모델을 지금 다시 검색 (자동으로도 새로 고침됨)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="345"/>
-        <source>&lt;b&gt;Server-side GPU tuning&lt;/b&gt; (set where &lt;code&gt;ollama serve&lt;/code&gt; launches — runit &lt;code&gt;/etc/sv/ollama/run&lt;/code&gt;, a systemd drop-in, or your shell — &lt;i&gt;not&lt;/i&gt; in this app; restart Ollama after changing):&lt;br&gt;• &lt;b&gt;OLLAMA_NUM_PARALLEL=N&lt;/b&gt; — concurrent GPU slots. Match it to the app&apos;s parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so VRAM ≈ weights + N × context × KV-cache; set it lower if the model keeps reloading (VRAM eviction). Excess requests simply queue.&lt;br&gt;• &lt;b&gt;HSA_ENABLE_SDMA=0&lt;/b&gt; — fixes ROCm GPU ring hangs on AMD gfx10xx cards (RX 6800/6700). Recommended if long batches freeze.&lt;br&gt;Tip: &lt;code&gt;OLLAMA_KV_CACHE_TYPE=q8_0&lt;/code&gt; + &lt;code&gt;OLLAMA_FLASH_ATTENTION=1&lt;/code&gt; roughly halve KV-cache VRAM.</source>
-        <translation>&lt;b&gt;서버 측 GPU 튜닝&lt;/b&gt; (&lt;code&gt;ollama serve&lt;/code&gt;가 실행되는 곳에서 설정 — runit &lt;code&gt;/etc/sv/ollama/run&lt;/code&gt;, systemd drop-in 또는 셸 — 이 앱에서는 &lt;i&gt;아님&lt;/i&gt;; 변경 후 Ollama 재시작):&lt;br&gt;• &lt;b&gt;OLLAMA_NUM_PARALLEL=N&lt;/b&gt; — 동시 GPU 슬롯. 완전한 두 스트림 처리량을 위해 앱의 병렬 작업자 수에 맞추세요. 각 슬롯은 전체 컨텍스트 창을 미리 할당하므로 VRAM ≈ 가중치 + N × 컨텍스트 × KV 캐시입니다. 모델이 계속 다시 로드되면(VRAM 축출) 낮추세요. 초과 요청은 대기열에 들어갑니다.&lt;br&gt;• &lt;b&gt;HSA_ENABLE_SDMA=0&lt;/b&gt; — AMD gfx10xx 카드(RX 6800/6700)의 ROCm GPU 링 멈춤을 해결합니다. 긴 배치가 멈추면 권장합니다.&lt;br&gt;팁: &lt;code&gt;OLLAMA_KV_CACHE_TYPE=q8_0&lt;/code&gt; + &lt;code&gt;OLLAMA_FLASH_ATTENTION=1&lt;/code&gt;은 KV 캐시 VRAM을 대략 절반으로 줄입니다.</translation>
+        <source>OLLAMA_NUM_PARALLEL (set where 'ollama serve' launches — runit /etc/sv/ollama/run, a systemd drop-in, or your shell, not in this app) sets concurrent GPU slots; match it to the app's parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so lower it if the model keeps reloading from VRAM eviction — restart Ollama after changing it.</source>
+        <translation>OLLAMA_NUM_PARALLEL(ollama serve가 실행되는 곳에서 설정 — runit /etc/sv/ollama/run, systemd drop-in 또는 셸, 이 앱 아님)은 동시 GPU 슬롯 수를 정합니다. 완전한 두 스트림 처리량을 위해 앱의 병렬 작업자 수에 맞추세요. 각 슬롯은 전체 컨텍스트 창을 미리 할당하므로, 모델이 VRAM 축출로 계속 다시 로드되면 낮추세요. 변경 후 Ollama를 재시작하세요.</translation>
+    </message>
+    <message>
+        <source>On AMD ROCm cards (gfx10xx, RX 6800/6700), set HSA_ENABLE_SDMA=0 where 'ollama serve' launches to fix GPU ring hangs when long batches freeze.</source>
+        <translation>AMD ROCm 카드(gfx10xx, RX 6800/6700)에서는 ollama serve가 실행되는 곳에 HSA_ENABLE_SDMA=0을 설정하여 긴 배치가 멈출 때 GPU 링 멈춤을 해결하세요.</translation>
+    </message>
+    <message>
+        <source>OLLAMA_KV_CACHE_TYPE=q8_0 together with OLLAMA_FLASH_ATTENTION=1 roughly halve the Ollama server's KV-cache VRAM.</source>
+        <translation>OLLAMA_KV_CACHE_TYPE=q8_0과 OLLAMA_FLASH_ATTENTION=1은 Ollama 서버의 KV 캐시 VRAM을 대략 절반으로 줄입니다.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="396"/>

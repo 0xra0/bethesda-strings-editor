@@ -165,6 +165,9 @@ class SettingsDialog(QDialog):
         "Newline count mismatch detection ensures your translation preserves the same line breaks as the source.",
         "Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.",
         "Export the Version Comparison report as HTML or CSV for review by other team members.",
+        "OLLAMA_NUM_PARALLEL (set where 'ollama serve' launches — runit /etc/sv/ollama/run, a systemd drop-in, or your shell, not in this app) sets concurrent GPU slots; match it to the app's parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so lower it if the model keeps reloading from VRAM eviction — restart Ollama after changing it.",
+        "On AMD ROCm cards (gfx10xx, RX 6800/6700), set HSA_ENABLE_SDMA=0 where 'ollama serve' launches to fix GPU ring hangs when long batches freeze.",
+        "OLLAMA_KV_CACHE_TYPE=q8_0 together with OLLAMA_FLASH_ATTENTION=1 roughly halve the Ollama server's KV-cache VRAM.",
     ]
 
 
@@ -336,32 +339,6 @@ class SettingsDialog(QDialog):
             )
         )
         ollama_layout.addRow("", self.chk_restart_elevate)
-
-        # Server-side GPU tuning hint.  These are environment variables read by
-        # the Ollama *server* — they can't be set from this app (the app only
-        # sends per-request options).  Most relevant for AMD ROCm cards where
-        # VRAM is tight and parallel GPU work can wedge the driver.
-        self.lbl_ollama_env_help = QLabel(self.tr(
-            "<b>Server-side GPU tuning</b> (set where <code>ollama serve</code> "
-            "launches — runit <code>/etc/sv/ollama/run</code>, a systemd drop-in, "
-            "or your shell — <i>not</i> in this app; restart Ollama after "
-            "changing):<br>"
-            "• <b>OLLAMA_NUM_PARALLEL=N</b> — concurrent GPU slots. Match it to "
-            "the app's parallel workers for full two-stream throughput. Each slot "
-            "pre-allocates a whole context window, so "
-            "VRAM ≈ weights + N × context × KV-cache; set it lower if the model "
-            "keeps reloading (VRAM eviction). Excess requests simply queue.<br>"
-            "• <b>HSA_ENABLE_SDMA=0</b> — fixes ROCm GPU ring hangs on AMD "
-            "gfx10xx cards (RX 6800/6700). Recommended if long batches freeze.<br>"
-            "Tip: <code>OLLAMA_KV_CACHE_TYPE=q8_0</code> + "
-            "<code>OLLAMA_FLASH_ATTENTION=1</code> roughly halve KV-cache VRAM."
-        ))
-        self.lbl_ollama_env_help.setWordWrap(True)
-        self.lbl_ollama_env_help.setTextFormat(Qt.TextFormat.RichText)
-        self.lbl_ollama_env_help.setStyleSheet(
-            "color: palette(mid); font-size: 11px;"
-        )
-        ollama_layout.addRow(self.lbl_ollama_env_help)
 
         self.ollama_model.currentTextChanged.connect(self._update_model_hint)
 
@@ -1342,7 +1319,7 @@ class SettingsDialog(QDialog):
 
     def _show_tip(self) -> None:
         tip = self._GENERAL_TIPS[self._tip_index % len(self._GENERAL_TIPS)]
-        self._lbl_tip.setText(f"💡 {tip}")
+        self._lbl_tip.setText(f"💡 {self.tr(tip)}")
 
     @Slot()
     def _next_tip(self) -> None:

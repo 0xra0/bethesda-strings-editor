@@ -6532,9 +6532,16 @@ Nainstalované modely se rozpoznají automaticky a seznam se obnovuje, dokud je 
         <translation>Znovu prohledat nainstalované modely (obnovuje se i automaticky)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="345"/>
-        <source>&lt;b&gt;Server-side GPU tuning&lt;/b&gt; (set where &lt;code&gt;ollama serve&lt;/code&gt; launches — runit &lt;code&gt;/etc/sv/ollama/run&lt;/code&gt;, a systemd drop-in, or your shell — &lt;i&gt;not&lt;/i&gt; in this app; restart Ollama after changing):&lt;br&gt;• &lt;b&gt;OLLAMA_NUM_PARALLEL=N&lt;/b&gt; — concurrent GPU slots. Match it to the app&apos;s parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so VRAM ≈ weights + N × context × KV-cache; set it lower if the model keeps reloading (VRAM eviction). Excess requests simply queue.&lt;br&gt;• &lt;b&gt;HSA_ENABLE_SDMA=0&lt;/b&gt; — fixes ROCm GPU ring hangs on AMD gfx10xx cards (RX 6800/6700). Recommended if long batches freeze.&lt;br&gt;Tip: &lt;code&gt;OLLAMA_KV_CACHE_TYPE=q8_0&lt;/code&gt; + &lt;code&gt;OLLAMA_FLASH_ATTENTION=1&lt;/code&gt; roughly halve KV-cache VRAM.</source>
-        <translation>&lt;b&gt;Ladění GPU na straně serveru&lt;/b&gt; (nastavte tam, kde se spouští &lt;code&gt;ollama serve&lt;/code&gt; — runit &lt;code&gt;/etc/sv/ollama/run&lt;/code&gt;, systemd drop-in nebo váš shell — &lt;i&gt;ne&lt;/i&gt; v této aplikaci; po změně Ollamu restartujte):&lt;br&gt;• &lt;b&gt;OLLAMA_NUM_PARALLEL=N&lt;/b&gt; — souběžné GPU sloty. Sladěte je s paralelními pracovníky aplikace pro plnou dvouproudou propustnost. Každý slot předem alokuje celé kontextové okno, takže VRAM ≈ váhy + N × kontext × KV cache; snižte, pokud se model stále znovu načítá (vytěsňování z VRAM). Nadbytečné požadavky se jednoduše zařadí do fronty.&lt;br&gt;• &lt;b&gt;HSA_ENABLE_SDMA=0&lt;/b&gt; — opravuje zamrzání GPU ringu ROCm na kartách AMD gfx10xx (RX 6800/6700). Doporučeno, pokud dlouhé dávky zamrzají.&lt;br&gt;Tip: &lt;code&gt;OLLAMA_KV_CACHE_TYPE=q8_0&lt;/code&gt; + &lt;code&gt;OLLAMA_FLASH_ATTENTION=1&lt;/code&gt; zhruba na polovinu sníží VRAM KV cache.</translation>
+        <source>OLLAMA_NUM_PARALLEL (set where 'ollama serve' launches — runit /etc/sv/ollama/run, a systemd drop-in, or your shell, not in this app) sets concurrent GPU slots; match it to the app's parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so lower it if the model keeps reloading from VRAM eviction — restart Ollama after changing it.</source>
+        <translation>OLLAMA_NUM_PARALLEL (nastavte tam, kde se spouští ollama serve — runit /etc/sv/ollama/run, systemd drop-in nebo váš shell, ne v této aplikaci) nastavuje počet souběžných GPU slotů; slaďte jej s paralelními pracovníky aplikace pro plnou dvouproudou propustnost. Každý slot předem alokuje celé kontextové okno, takže jej snižte, pokud se model kvůli vytěsňování z VRAM stále znovu načítá — po změně Ollamu restartujte.</translation>
+    </message>
+    <message>
+        <source>On AMD ROCm cards (gfx10xx, RX 6800/6700), set HSA_ENABLE_SDMA=0 where 'ollama serve' launches to fix GPU ring hangs when long batches freeze.</source>
+        <translation>Na kartách AMD ROCm (gfx10xx, RX 6800/6700) nastavte HSA_ENABLE_SDMA=0 tam, kde se spouští ollama serve, abyste opravili zamrzání GPU ringu, když dlouhé dávky zamrzají.</translation>
+    </message>
+    <message>
+        <source>OLLAMA_KV_CACHE_TYPE=q8_0 together with OLLAMA_FLASH_ATTENTION=1 roughly halve the Ollama server's KV-cache VRAM.</source>
+        <translation>OLLAMA_KV_CACHE_TYPE=q8_0 spolu s OLLAMA_FLASH_ATTENTION=1 zhruba na polovinu sníží VRAM KV cache serveru Ollama.</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="396"/>
