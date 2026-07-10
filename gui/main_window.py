@@ -1474,6 +1474,18 @@ class MainWindow(QMainWindow):
         self.validate_folder_action.triggered.connect(self._validate_translation_folder)
         trans_menu.addAction(self.validate_folder_action)
 
+        self.official_tm_action = QAction(
+            self.tr("Mine &Official Terminology (TM + Glossary)…"), self
+        )
+        self.official_tm_action.setIcon(QIcon.fromTheme("insert-object"))
+        self.official_tm_action.setToolTip(self.tr(
+            "Align the base game's official languages (shipped side-by-side and\n"
+            "keyed on identical string IDs) to auto-build an authoritative TM +\n"
+            "glossary of Bethesda's canonical terminology — no AI calls."
+        ))
+        self.official_tm_action.triggered.connect(self._mine_official_terminology)
+        trans_menu.addAction(self.official_tm_action)
+
         self._companion_view_action = QAction(
             self.tr("Companion &Strings…"), self
         )
@@ -6912,6 +6924,107 @@ class MainWindow(QMainWindow):
             target_lang=str(target_lang),
         )
         dlg.exec()
+
+    def _mine_official_terminology(self) -> None:
+        """Open the Official-TM miner (align the base game's own localizations)."""
+        from gui.official_tm_dialog import OfficialTMDialog
+
+        # Seed the folder from the currently-open file's directory, if any.
+        data_dir = ""
+        if self.current_path:
+            data_dir = str(Path(self.current_path).parent)
+
+        # The official *target* to align against is a shipped language; the user's
+        # own target (e.g. uk) usually isn't shipped, so fall back to German.
+        src = str(self.combo_source_lang.currentData() or "en")
+        if src not in {"en", "de", "es", "fr", "it", "ja", "pl", "ptbr", "zhhans"}:
+            src = "en"
+        tgt = str(self.combo_target_lang.currentData() or "de")
+        if tgt in {src, "uk", "cs", "ko", "ru", ""}:
+            tgt = "pl" if src != "pl" else "de"
+
+        dlg = OfficialTMDialog(
+            parent=self, data_dir=data_dir, source_lang=src, target_lang=tgt,
+        )
+        dlg.import_requested.connect(self._apply_official_terminology)
+        dlg.exec()
+
+    @Slot(object)
+    def _apply_official_terminology(self, result) -> None:
+        """Fold a mined official TM + glossary into the app's memory/glossary.
+
+        TM pairs merge into the window-level :class:`TranslationMemory` (source
+        keyed — the official set has no string IDs) and pre-fill only *pending*
+        rows of the open file; glossary candidates become canonical
+        :class:`GlossaryEntry` rows.  Both persist so they survive across sessions.
+        """
+        tm_added = 0
+        gloss_added = 0
+
+        # 1) Translation Memory — merge source→target pairs, snapshot, apply.
+        if result.tm_pairs:
+            memory = self.translation_memory or TranslationMemory()
+            tm_added = memory.add_pairs(result.tm_pairs)
+            self.translation_memory = memory
+            if self.ollama_worker:
+                self.ollama_worker.translation_memory = memory
+            try:
+                memory.save_snapshot(self._tm_snapshot_path)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("Failed to save TM snapshot: %s", exc)
+            self._update_tm_indicator()
+            if self.current_file is not None:
+                # only_pending: never clobber in-progress translations.
+                self.table_model.import_translations(
+                    {}, source_map=dict(result.tm_pairs), only_pending=True,
+                )
+
+        # 2) Glossary — canonical terminology entries (skip existing sources).
+        if result.glossary and self._glossary_manager is not None:
+            from gui.glossary import GlossaryEntry
+            glossary = self._glossary_manager.global_glossary
+            existing = {e.source_term.lower() for e in glossary.entries}
+            note_base = self.tr("Official {src}→{tgt} localization").format(
+                src=result.source_lang, tgt=result.target_lang,
+            )
+            for cand in result.glossary:
+                if cand.source.lower() in existing:
+                    continue
+                notes = note_base
+                if cand.ref:
+                    refs = "; ".join(f"{k}: {v}" for k, v in cand.ref.items())
+                    notes = f"{note_base} — {refs}"
+                glossary.add_entry(
+                    GlossaryEntry(
+                        source_term=cand.source,
+                        target_term=cand.target,
+                        category=self.tr("Official"),
+                        notes=notes,
+                    ),
+                    _rebuild=False,
+                )
+                existing.add(cand.source.lower())
+                gloss_added += 1
+            if gloss_added:
+                glossary._rebuild_search_index()
+                try:
+                    glossary.save_json()
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("Failed to save glossary: %s", exc)
+
+        msg = self.tr(
+            "Official terminology imported: {tm} TM entries, {gloss} glossary terms."
+        ).format(tm=tm_added, gloss=gloss_added)
+        self.statusBar().showMessage(msg, 8000)
+        try:
+            from gui.micro_animations import show_toast
+            show_toast(self, msg)
+        except Exception:  # noqa: BLE001
+            pass
+        logger.info(
+            "Official-TM miner: %d TM entries, %d glossary terms (%s→%s)",
+            tm_added, gloss_added, result.source_lang, result.target_lang,
+        )
 
     def _migrate_esp_versions(self) -> None:
         """Open the ESP/ESM mod-update migration setup, then show the diff."""
