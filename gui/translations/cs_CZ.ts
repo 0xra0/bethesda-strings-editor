@@ -7538,6 +7538,238 @@ Ujistěte se, že Ollama běží:
         <source>Reset All to Defaults</source>
         <translation>Obnovit vše na výchozí</translation>
     </message>
+    <message>
+        <source>Press F7 to jump instantly to the next untranslated string.</source>
+        <translation>Stiskněte F7 pro okamžitý přechod na další nepřeložený řetězec.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Enter approves the current translation and advances to the next string.</source>
+        <translation>Ctrl+Enter schválí aktuální překlad a přejde na další řetězec.</translation>
+    </message>
+    <message>
+        <source>Ctrl+R rejects the current translation and marks it for retranslation.</source>
+        <translation>Ctrl+R odmítne aktuální překlad a označí jej k opětovnému přeložení.</translation>
+    </message>
+    <message>
+        <source>Ctrl+K opens the Command Palette — fuzzy-search any action without touching the mouse.</source>
+        <translation>Ctrl+K otevře paletu příkazů — fuzzy vyhledávání libovolné akce bez použití myši.</translation>
+    </message>
+    <message>
+        <source>Translation Memory pre-loads known translations from a previous file — matched strings are never sent to the AI.</source>
+        <translation>Překladová paměť přednačte známé překlady z předchozího souboru — shodné řetězce se nikdy neodesílají do AI.</translation>
+    </message>
+    <message>
+        <source>Batch Translate Folder (File menu) retranslates an entire directory of string files in one run.</source>
+        <translation>„Dávkově přeložit složku“ (nabídka „Soubor“) znovu přeloží celý adresář se soubory řetězců v jednom průchodu.</translation>
+    </message>
+    <message>
+        <source>The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.</source>
+        <translation>Tlačítko „Automaticky přeložit problémy“ v dialogu KK zařadí všechny označené řetězce do fronty jedné dávkové opravy.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.</source>
+        <translation>Ctrl+Alt+K otevře kontrolu konzistence — najde stejný zdrojový řetězec s různými překlady.</translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.</source>
+        <translation>Ctrl+Alt+G spustí ukrajinskou kontrolu shody rodu pro neshody přídavné jméno–podstatné jméno.</translation>
+    </message>
+    <message>
+        <source>ти/ви register consistency is handled in the translation prompt — the AI keeps informal ти or formal ви consistent per speaker automatically.</source>
+        <translation>Konzistence registru ти/ви se řeší v promptu překladu — AI automaticky udržuje neformální ти nebo formální ви konzistentně u každého mluvčího.</translation>
+    </message>
+    <message>
+        <source>Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.</source>
+        <translation>Režim soustředění zobrazuje jeden řetězec po druhém na celou obrazovku — skvělé pro kontrolu bez rozptylování.</translation>
+    </message>
+    <message>
+        <source>The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.</source>
+        <translation>Odhadovač obtížnosti (skóre 0–100) vám pomáhá určit priority, které řetězce potřebují ruční kontrolu.</translation>
+    </message>
+    <message>
+        <source>Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.</source>
+        <translation>Přetáhněte na okno soubor .strings, .dlstrings, .ilstrings, .esp, .esm nebo .ba2, abyste jej otevřeli.</translation>
+    </message>
+    <message>
+        <source>The Diff Viewer (word-level) shows exactly what changed between two game versions of the same file.</source>
+        <translation>Prohlížeč rozdílů (na úrovni slov) přesně ukáže, co se změnilo mezi dvěma herními verzemi téhož souboru.</translation>
+    </message>
+    <message>
+        <source>The Glossary Manager ensures consistent terminology — add key terms and the AI will respect them in every call.</source>
+        <translation>Správce glosáře zajišťuje konzistentní terminologii — přidejte klíčové termíny a AI je bude respektovat při každém volání.</translation>
+    </message>
+    <message>
+        <source>Protected terms are replaced with unique tokens before the AI sees the string and restored afterward.</source>
+        <translation>Chráněné termíny se před tím, než je AI uvidí, nahradí jedinečnými tokeny a poté se obnoví.</translation>
+    </message>
+    <message>
+        <source>The Audit Log records every file operation and batch without ever storing actual string content.</source>
+        <translation>Auditní protokol zaznamenává každou operaci se souborem a každou dávku, aniž by kdy ukládal skutečný obsah řetězců.</translation>
+    </message>
+    <message>
+        <source>Crash Recovery auto-saves progress periodically — if the app crashes, your work is offered on next launch.</source>
+        <translation>Obnova po pádu pravidelně automaticky ukládá postup — pokud aplikace spadne, při dalším spuštění se vám vaše práce nabídne.</translation>
+    </message>
+    <message>
+        <source>The NexusMods Browser lets you search, preview, and download translation mods without leaving the app.</source>
+        <translation>Prohlížeč NexusMods umožňuje vyhledávat, prohlížet a stahovat překladové módy, aniž byste opustili aplikaci.</translation>
+    </message>
+    <message>
+        <source>Version Comparison migrates unchanged translations from an old file to a new game version automatically.</source>
+        <translation>Porovnání verzí automaticky přenese nezměněné překlady ze starého souboru do nové verze hry.</translation>
+    </message>
+    <message>
+        <source>Load lore snippets in the Lore RAG Manager to give the AI contextual accuracy for faction names and world events.</source>
+        <translation>Načtěte úryvky loru ve správci Lore RAG, abyste AI dodali kontextovou přesnost pro názvy frakcí a herní události.</translation>
+    </message>
+    <message>
+        <source>The Font Checker identifies characters missing from Starfield's Scaleform SWF font atlases.</source>
+        <translation>Kontrola písem identifikuje znaky chybějící v atlasech písem Scaleform SWF hry Starfield.</translation>
+    </message>
+    <message>
+        <source>Ctrl+M opens the Macro Editor — record repetitive edits as named macros and replay them with one click.</source>
+        <translation>Ctrl+M otevře editor maker — nahrávejte opakující se úpravy jako pojmenovaná makra a přehrávejte je jedním kliknutím.</translation>
+    </message>
+    <message>
+        <source>Translator Profiles let you define per-locale style rules and author metadata for each language.</source>
+        <translation>Profily překladatele umožňují definovat stylová pravidla podle jazyka a metadata autora pro každý jazyk.</translation>
+    </message>
+    <message>
+        <source>Session Manager (Ctrl+Shift+N) saves your search and filter state so you can resume exactly where you left off.</source>
+        <translation>Správce relací (Ctrl+Shift+N) ukládá stav hledání a filtrů, takže můžete pokračovat přesně tam, kde jste skončili.</translation>
+    </message>
+    <message>
+        <source>The Plugin Validator dialog scans ESP/ESM files for NPC dialogue camera bugs before packaging.</source>
+        <translation>Dialog validátoru pluginů prohledává soubory ESP/ESM na chyby kamery v dialozích NPC před zabalením.</translation>
+    </message>
+    <message>
+        <source>Shift+C copies the source text of the selected row; Shift+V pastes it into the translation column.</source>
+        <translation>Shift+C zkopíruje zdrojový text vybraného řádku; Shift+V jej vloží do sloupce překladu.</translation>
+    </message>
+    <message>
+        <source>The status bar shows Total / Done / Left % and an ETA countdown during AI translation batches.</source>
+        <translation>Stavový řádek zobrazuje během dávkových AI překladů Celkem / Hotovo / Zbývá % a odpočet ETA.</translation>
+    </message>
+    <message>
+        <source>Advanced Search supports full regex across source and translation columns simultaneously.</source>
+        <translation>Pokročilé hledání podporuje plné regulární výrazy současně ve sloupcích zdroje a překladu.</translation>
+    </message>
+    <message>
+        <source>BA2 archives with multiple .strings entries show a picker so you can choose which file to open.</source>
+        <translation>Archivy BA2 s více položkami .strings zobrazí výběr, abyste mohli zvolit, který soubor otevřít.</translation>
+    </message>
+    <message>
+        <source>The Claude Chat Panel (dock) lets you ask Claude about the selected string and apply its suggestion directly.</source>
+        <translation>Panel chatu Claude (dok) umožňuje zeptat se Claude na vybraný řetězec a jeho návrh rovnou použít.</translation>
+    </message>
+    <message>
+        <source>TTS Preview synthesizes a read-out of your translation for timing comparison with the original game audio.</source>
+        <translation>Náhled TTS syntetizuje přečtení vašeho překladu pro porovnání načasování s původním zvukem hry.</translation>
+    </message>
+    <message>
+        <source>The Dialogue Tree Viewer shows the Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree.</source>
+        <translation>Prohlížeč stromu dialogů zobrazuje hierarchii Úkol → Téma → Odpověď ze souboru ESP/ESM jako interaktivní strom.</translation>
+    </message>
+    <message>
+        <source>Pop out the string table to a second monitor via Window → Pop-out Table for multi-monitor workflows.</source>
+        <translation>Vysuňte tabulku řetězců na druhý monitor přes „Okno → Vysunout tabulku“ pro práci s více monitory.</translation>
+    </message>
+    <message>
+        <source>The Visual Context Preview renders the selected string inside a faithful in-game UI widget mockup.</source>
+        <translation>Náhled vizuálního kontextu vykresluje vybraný řetězec uvnitř věrné napodobeniny herního prvku rozhraní.</translation>
+    </message>
+    <message>
+        <source>The fine-tuned qcgemma4-st model checks 16 issue codes including GLOSSARY_MISMATCH, UNTRANSLATED, and REPETITION_ARTIFACT.</source>
+        <translation>Doladěný model qcgemma4-st kontroluje 16 kódů problémů včetně GLOSSARY_MISMATCH, UNTRANSLATED a REPETITION_ARTIFACT.</translation>
+    </message>
+    <message>
+        <source>Enable 'Protect English text' when translating RU→UK to keep English terminology untouched.</source>
+        <translation>Při překladu RU→UK zapněte „Chránit anglický text“, aby anglická terminologie zůstala nedotčená.</translation>
+    </message>
+    <message>
+        <source>English anchors such as 'To Ukrainian:' and 'To English:' in the Modelfile structure the model's output reliably.</source>
+        <translation>Anglické kotvy jako „To Ukrainian:“ a „To English:“ v Modelfile spolehlivě strukturují výstup modelu.</translation>
+    </message>
+    <message>
+        <source>Increasing num_ctx uses more VRAM but lets the model see longer strings and richer system prompts.</source>
+        <translation>Zvýšení num_ctx spotřebuje více VRAM, ale umožní modelu vidět delší řetězce a bohatší systémové prompty.</translation>
+    </message>
+    <message>
+        <source>The Translation Cache (SHA-256 keyed) avoids retranslating identical strings across different files or sessions.</source>
+        <translation>Překladová mezipaměť (klíčovaná SHA-256) se vyhýbá opakovanému překládání identických řetězců napříč různými soubory nebo relacemi.</translation>
+    </message>
+    <message>
+        <source>xTranslator SST XML files can be imported and exported — string IDs are matched first, then source text.</source>
+        <translation>Soubory SST XML z xTranslatoru lze importovat a exportovat — řetězce se párují nejprve podle ID, poté podle zdrojového textu.</translation>
+    </message>
+    <message>
+        <source>Consistency Checker's auto-replace rewrites all variants to your chosen canonical form in one click.</source>
+        <translation>Automatická náhrada v kontrole konzistence přepíše všechny varianty na vámi zvolený kanonický tvar jedním kliknutím.</translation>
+    </message>
+    <message>
+        <source>Pre-load Translation Memory before a Batch Translate run to skip strings that are already translated.</source>
+        <translation>Před spuštěním dávkového překladu přednačte překladovou paměť, abyste přeskočili již přeložené řetězce.</translation>
+    </message>
+    <message>
+        <source>The Spell Checker supports Hunspell, spylls (pure Python), or a CLI fallback depending on what is installed.</source>
+        <translation>Kontrola pravopisu podporuje Hunspell, spylls (čistý Python) nebo záložní CLI podle toho, co je nainstalováno.</translation>
+    </message>
+    <message>
+        <source>The Gender Checker uses a Ukrainian noun gender dictionary — extend the dictionary to improve detection coverage.</source>
+        <translation>Kontrola rodu používá slovník rodu ukrajinských podstatných jmen — rozšiřte slovník pro lepší pokrytí detekce.</translation>
+    </message>
+    <message>
+        <source>Pop out the Translation Editor pane as a floating dock for a larger, more comfortable editing area.</source>
+        <translation>Vysuňte panel editoru překladu jako plovoucí dok pro větší a pohodlnější oblast úprav.</translation>
+    </message>
+    <message>
+        <source>The Claude API key is stored with AES-256-GCM encryption via the system keyring — never in plaintext on disk.</source>
+        <translation>Klíč API Claude se ukládá se šifrováním AES-256-GCM přes systémovou klíčenku — nikdy jako prostý text na disku.</translation>
+    </message>
+    <message>
+        <source>To retranslate only failed strings, open the QC dialog and click 'Auto-Retranslate Issues'.</source>
+        <translation>Chcete-li znovu přeložit jen chybné řetězce, otevřete dialog KK a klikněte na „Automaticky přeložit problémy“.</translation>
+    </message>
+    <message>
+        <source>The Pre-Translation Estimator learns from your manual corrections — it improves automatically as you work.</source>
+        <translation>Odhadovač před překladem se učí z vašich ručních oprav — zlepšuje se automaticky během práce.</translation>
+    </message>
+    <message>
+        <source>All keyboard shortcuts can be reassigned in Settings → Keyboard Shortcuts to match your personal workflow.</source>
+        <translation>Všechny klávesové zkratky lze přemapovat v „Nastavení → Klávesové zkratky“ tak, aby vyhovovaly vašemu pracovnímu postupu.</translation>
+    </message>
+    <message>
+        <source>The Lore RAG search tab lets you preview exactly which context snippets will be injected for a given string.</source>
+        <translation>Karta hledání Lore RAG umožňuje zobrazit náhled, které úryvky kontextu budou pro daný řetězec vloženy.</translation>
+    </message>
+    <message>
+        <source>Use the Register Checker to ensure you address the player consistently with either ти or ви throughout the whole file.</source>
+        <translation>Pomocí kontroly registru oslovujte hráče v celém souboru konzistentně buď ти, nebo ви.</translation>
+    </message>
+    <message>
+        <source>The 'Protect proper nouns' option keeps faction, company, ship, and character names from being translated by the AI.</source>
+        <translation>Volba „Chránit vlastní jména“ brání AI v překladu názvů frakcí, firem, lodí a postav.</translation>
+    </message>
+    <message>
+        <source>Rejected strings are highlighted in red in the table so you can find them quickly for manual correction.</source>
+        <translation>Odmítnuté řetězce jsou v tabulce zvýrazněny červeně, abyste je rychle našli k ruční opravě.</translation>
+    </message>
+    <message>
+        <source>The AI repetition artifact checker catches copy-paste loops and model hallucinations before they reach the player.</source>
+        <translation>Kontrola artefaktů opakování AI zachytí smyčky kopírování a vkládání a halucinace modelu dříve, než se dostanou k hráči.</translation>
+    </message>
+    <message>
+        <source>Newline count mismatch detection ensures your translation preserves the same line breaks as the source.</source>
+        <translation>Detekce neshody počtu konců řádků zajišťuje, že váš překlad zachová stejné zalomení řádků jako zdroj.</translation>
+    </message>
+    <message>
+        <source>Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.</source>
+        <translation>Detekce úniku ruských znaků označí jakékoli znaky cyrilice z nesprávného písma v ukrajinském výstupu.</translation>
+    </message>
+    <message>
+        <source>Export the Version Comparison report as HTML or CSV for review by other team members.</source>
+        <translation>Exportujte zprávu o porovnání verzí jako HTML nebo CSV pro kontrolu ostatními členy týmu.</translation>
+    </message>
 </context>
 <context>
     <name>SpeakerPanel</name>
