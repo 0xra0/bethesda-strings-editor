@@ -1396,6 +1396,16 @@ class MainWindow(QMainWindow):
         self.prompt_editor_action.triggered.connect(self._open_prompt_editor)
         trans_menu.addAction(self.prompt_editor_action)
 
+        self.player_referring_action = QAction(self.tr("Find Player-&Referring Strings"), self)
+        self.player_referring_action.setIcon(QIcon.fromTheme("edit-find"))
+        self.player_referring_action.setToolTip(self.tr(
+            "Select the strings that address or describe the player («you», <Alias=Player>, [PLYR]).\n"
+            "These are the gender-sensitive lines affected by the Player Gender setting\n"
+            "in gendered target languages (Ukrainian, Polish, German, …)."
+        ))
+        self.player_referring_action.triggered.connect(self._find_player_referring_strings)
+        trans_menu.addAction(self.player_referring_action)
+
         self.lore_rag_action = QAction(self.tr("Lore &RAG Context…"), self)
         self.lore_rag_action.setIcon(QIcon.fromTheme("document-properties"))
         self.lore_rag_action.setToolTip(self.tr(
@@ -5206,14 +5216,42 @@ class MainWindow(QMainWindow):
         reads, so it takes effect for every backend without rebuilding the worker.
         """
         try:
-            from gui.ollama_worker import set_prompt_customizations
+            from gui.ollama_worker import set_prompt_customizations, set_player_gender
             set_prompt_customizations(
                 getattr(self.settings, "custom_style_rules", {}) or {},
                 getattr(self.settings, "custom_prompt_addendum", "") or "",
                 getattr(self.settings, "custom_prompt_dials", {}) or {},
             )
+            set_player_gender(getattr(self.settings, "player_gender", "") or "")
         except Exception as exc:
             logger.warning("Failed to apply prompt customizations: %s", exc)
+
+    @Slot()
+    def _find_player_referring_strings(self):
+        """Select source strings that address/describe the player (gender-sensitive)."""
+        from gui.player_gender import find_player_referring_rows
+
+        rows = self.table_model._data if hasattr(self, "table_model") else []
+        if not rows:
+            self.statusBar().showMessage(self.tr("Open a file first"), 4000)
+            return
+        matches = find_player_referring_rows(rows)
+        if not matches:
+            self.statusBar().showMessage(self.tr("No player-referring strings found"), 5000)
+            return
+        # Reuse the search-result handler to select + scroll + report the matches.
+        self._on_search_results(matches)
+        try:
+            from gui.micro_animations import show_toast
+            show_toast(
+                self,
+                self.tr("{n} player-referring string(s) — gender-sensitive in gendered languages").format(
+                    n=len(matches)
+                ),
+                kind="info",
+            )
+        except Exception:
+            pass
 
     @Slot()
     def _open_prompt_editor(self):

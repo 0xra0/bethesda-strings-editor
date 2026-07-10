@@ -392,6 +392,17 @@ _CUSTOM_STYLE_OVERRIDES: dict[str, str] = {}  # target_lang code → replacement
 _CUSTOM_PROMPT_ADDENDUM: str = ""             # appended to every translation prompt
 _CUSTOM_PROMPT_DIALS: dict = {}               # structured tuning knobs (see PROMPT_DIALS)
 
+# ── Player-character gender ──────────────────────────────────────────────────
+# English "you"/adjectives don't encode grammatical gender; many target languages
+# do. This module-level state (installed from AppSettings.player_gender via
+# set_player_gender()) pins the player character's gender so player-referring lines
+# render consistently. Kept SEPARATE from the custom-prompt 3-tuple above so
+# get_prompt_customizations()'s tested contract (== ({}, "", {})) is unaffected.
+_PLAYER_GENDER: str = ""                       # "" | "male" | "female" | "neutral"
+# Targets whose second-person address / player-referring adjectives inflect for
+# gender. en/ja/ko/zhhans don't, so the directive would be a no-op there and is skipped.
+_GENDERED_TARGETS: frozenset[str] = frozenset({"de", "es", "fr", "it", "pl", "ptbr", "ru", "uk"})
+
 # ── Translation tuning dials ─────────────────────────────────────────────────
 # Single source of truth for both the prompt builder (build_dials_prompt) and the
 # Prompt Editor UI (prompt_editor_dialog builds its combos/checkboxes from this).
@@ -552,6 +563,53 @@ def set_prompt_customizations(
 def get_prompt_customizations() -> tuple[dict, str, dict]:
     """Snapshot the currently-installed customizations (for save/restore in UI)."""
     return dict(_CUSTOM_STYLE_OVERRIDES), _CUSTOM_PROMPT_ADDENDUM, _copy_dials(_CUSTOM_PROMPT_DIALS)
+
+
+def set_player_gender(value: Optional[str]) -> None:
+    """Install the player character's grammatical gender (from AppSettings.player_gender).
+
+    Accepts ``"male"``, ``"female"`` or ``"neutral"``; anything else (incl. ``None``
+    or the empty string) clears it, so no player-gender directive is emitted.
+    """
+    global _PLAYER_GENDER
+    v = (value or "").strip().lower()
+    _PLAYER_GENDER = v if v in ("male", "female", "neutral") else ""
+
+
+def get_player_gender() -> str:
+    """The currently-installed player gender ("" when unset)."""
+    return _PLAYER_GENDER
+
+
+def _player_gender_directive(target_lang: str) -> str:
+    """Prompt line pinning the player's grammatical gender for player-referring text.
+
+    Returns "" when no gender is set, or when the target language does not inflect
+    second-person address / player-referring words for gender (en, ja, ko, zhhans) —
+    where the directive would be a no-op.
+    """
+    gender = _PLAYER_GENDER
+    if gender not in ("male", "female", "neutral"):
+        return ""
+    if target_lang not in _GENDERED_TARGETS:
+        return ""
+    tgt = _LANG_DISPLAY.get(target_lang, target_lang)
+    if gender == "neutral":
+        return (
+            f"Player gender: avoid constructions that force the player's gender. Where {tgt} "
+            f"would otherwise require a masculine or feminine form for second-person address "
+            f"(the «you» being spoken to) or for adjectives, participles or past-tense verbs "
+            f"describing the player, prefer gender-neutral phrasing — reword so the line reads "
+            f"correctly for a player of any gender. Do not add explicit gender pronouns."
+        )
+    word = "masculine" if gender == "male" else "feminine"
+    return (
+        f"Player gender: the player character being addressed (the «you» being spoken to) is "
+        f"{gender}. Where {tgt} grammar requires a gender for second-person address, or for "
+        f"adjectives, participles or past-tense verbs describing the player, use the {word} form "
+        f"— consistently throughout. Express gender through inflection only; do not add explicit "
+        f"pronouns or parenthetical dual-gender forms."
+    )
 
 
 # Extra notes inserted after the universal rules — for source languages that
@@ -755,6 +813,9 @@ class TranslationRequest:
             )
             if self.glossary_snippet:
                 fix_base += "\nGlossary (use these exact translations):\n" + self.glossary_snippet
+            gender_directive = _player_gender_directive(self.target_lang)
+            if gender_directive:
+                fix_base += f"\n\n{gender_directive}"
             dials_block = build_dials_prompt(_CUSTOM_PROMPT_DIALS)
             if dials_block:
                 fix_base += f"\n\n{dials_block}"
@@ -835,6 +896,12 @@ class TranslationRequest:
         note = " ".join(filter(None, [src_extra, pair_extra]))
         if note:
             base += f"\nNote: {note}\n"
+
+        # Player-gender directive — pins player-referring text to a grammatical gender
+        # (only emitted for gendered target languages when a gender is set).
+        gender_directive = _player_gender_directive(self.target_lang)
+        if gender_directive:
+            base += f"\n{gender_directive}\n"
 
         # Translation examples (if we have a specific pair or a generic one).
         examples = _LANG_EXAMPLES.get((self.source_lang, self.target_lang), "")

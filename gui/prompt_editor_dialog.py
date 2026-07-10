@@ -52,7 +52,9 @@ from gui.ollama_worker import (
     PROMPT_DIALS,
     TranslationRequest,
     default_style_rule,
+    get_player_gender,
     get_prompt_customizations,
+    set_player_gender,
     set_prompt_customizations,
 )
 
@@ -94,6 +96,7 @@ class PromptEditorDialog(QDialog):
 
         self._build_ui(source_lang, target_lang)
         self._load_dials(dict(getattr(settings, "custom_prompt_dials", {}) or {}))
+        self._set_player_gender(getattr(settings, "player_gender", "") or "")
         # Load the initial target's rule and render the first preview.
         self._on_target_changed()
 
@@ -213,6 +216,22 @@ class PromptEditorDialog(QDialog):
         """Build the 'Translation preferences' group from the PROMPT_DIALS spec."""
         box = QGroupBox(self.tr("Translation preferences"))
         form = QFormLayout(box)
+        # Player character gender — a separate module-level layer (not a PROMPT_DIALS
+        # entry), so it is not stored in / collected from _dial_widgets.
+        self.combo_player_gender = QComboBox()
+        for label, value in (
+            (self.tr("Unspecified"), ""),
+            (self.tr("Male"), "male"),
+            (self.tr("Female"), "female"),
+            (self.tr("Neutral (avoid gendered forms)"), "neutral"),
+        ):
+            self.combo_player_gender.addItem(label, value)
+        self.combo_player_gender.setToolTip(self.tr(
+            "Grammatical gender for player-referring text in gendered target languages. "
+            "Only affects languages that inflect for gender (Ukrainian, Polish, German, …)."
+        ))
+        self.combo_player_gender.currentIndexChanged.connect(self._render_preview)
+        form.addRow(self.tr("Player gender:"), self.combo_player_gender)
         for spec in PROMPT_DIALS:
             label = self.tr(spec["label"]) + ":"
             if spec["multi"]:
@@ -274,6 +293,17 @@ class PromptEditorDialog(QDialog):
                     out[spec["key"]] = selected
         return out
 
+    def _set_player_gender(self, value: str) -> None:
+        """Select the player-gender combo entry for *value* (signals blocked)."""
+        idx = self.combo_player_gender.findData(value or "")
+        self.combo_player_gender.blockSignals(True)
+        self.combo_player_gender.setCurrentIndex(idx if idx >= 0 else 0)
+        self.combo_player_gender.blockSignals(False)
+
+    def _player_gender_value(self) -> str:
+        """The currently-selected player gender ("" when Unspecified)."""
+        return self.combo_player_gender.currentData() or ""
+
     # ── Editing behaviour ──────────────────────────────────────────────────
     def _flush_current_target(self) -> None:
         """Stash the style editor's text into the working dict for its language."""
@@ -307,6 +337,7 @@ class PromptEditorDialog(QDialog):
         self.addendum_edit.setPlainText("")
         self.addendum_edit.blockSignals(False)
         self._load_dials({})
+        self._set_player_gender("")
         tgt = self.combo_target.currentData()
         self.style_edit.blockSignals(True)
         self.style_edit.setPlainText(default_style_rule(tgt))
@@ -334,10 +365,12 @@ class PromptEditorDialog(QDialog):
         self._update_status(tgt)
 
         saved_rules, saved_addendum, saved_dials = get_prompt_customizations()
+        saved_gender = get_player_gender()
         try:
             set_prompt_customizations(
                 self._rules, self.addendum_edit.toPlainText(), self._collect_dials()
             )
+            set_player_gender(self._player_gender_value())
             req = TranslationRequest(
                 index=0,
                 original_text="",
@@ -348,6 +381,7 @@ class PromptEditorDialog(QDialog):
             text = req.to_system_prompt()
         finally:
             set_prompt_customizations(saved_rules, saved_addendum, saved_dials)
+            set_player_gender(saved_gender)
         self.preview_edit.setPlainText(text)
 
     # ── Commit ─────────────────────────────────────────────────────────────
@@ -365,6 +399,7 @@ class PromptEditorDialog(QDialog):
         self.result_style_rules = self._pruned_rules()
         self.result_addendum = self.addendum_edit.toPlainText().strip()
         self.result_dials = self._collect_dials()
+        self.result_player_gender = self._player_gender_value()
         self.accept()
 
     def apply_to_settings(self, settings) -> None:
@@ -372,3 +407,4 @@ class PromptEditorDialog(QDialog):
         settings.custom_style_rules = dict(getattr(self, "result_style_rules", {}))
         settings.custom_prompt_addendum = getattr(self, "result_addendum", "")
         settings.custom_prompt_dials = dict(getattr(self, "result_dials", {}))
+        settings.player_gender = getattr(self, "result_player_gender", "")
