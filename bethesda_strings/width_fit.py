@@ -188,6 +188,61 @@ def load_bundled_metrics() -> Dict[str, FontMetrics]:
     return out
 
 
+# ── fontconfig family → bundled face ──────────────────────────────────────────
+# A text field names its font by *class* ($MAIN_Font_Bold); fontconfig.txt maps
+# that class to a *family* (RF_55_M); and the family is the stem of a TTF we
+# already ship.  That chain resolves a field's face exactly, so nothing has to be
+# guessed from "is this widget probably bold?".
+
+_FAMILY_FILES: Dict[str, str] = {
+    "RF_35_M": "RF_35_M.ttf",
+    "RF_55_M": "RF_55_M.ttf",
+    "RF_55_SB": "RF_55_SB.ttf",
+    "NB Architekt": "NB_Architekt.ttf",
+    "NB Architekt Light": "NB_Architekt_Light.ttf",
+}
+
+# Which of our three roles a family stands in for, when a role is all the caller
+# has (e.g. the built-in widget presets).
+_FAMILY_ROLES: Dict[str, str] = {
+    "RF_35_M": ROLE_BODY,
+    "RF_55_M": ROLE_BOLD,
+    "RF_55_SB": ROLE_BOLD,
+    "NB Architekt": ROLE_BOLD,
+    "NB Architekt Light": ROLE_LATIN,
+}
+
+
+def role_for_family(family: str) -> str:
+    return _FAMILY_ROLES.get(family, ROLE_BODY)
+
+
+def load_metrics_for_family(family: str) -> Optional[FontMetrics]:
+    """Metrics for a fontconfig font family, or None if we do not ship that face.
+
+    Starfield also maps icon fonts (`Genesis Controller Buttons`) and faces we do
+    not bundle (`Starfield_Grotesk_R`); those return None so the caller can say
+    "cannot measure this widget" rather than silently measuring with the wrong
+    font — a controller-glyph field is not text and must never be width-checked.
+    """
+    filename = _FAMILY_FILES.get(family)
+    if not filename:
+        return None
+    path = _FONTS_DIR / filename
+    if not path.is_file():
+        return None
+    try:
+        sources = parse_ttf_glyphs(path)
+    except (OSError, struct.error):  # pragma: no cover - defensive
+        return None
+    src = next((s for s in sources if s.advances), None)
+    if src is None:
+        return None
+    return FontMetrics(
+        name=src.name, advances=src.advances, role=role_for_family(family)
+    )
+
+
 def metrics_from_sources(
     sources: Iterable[FontSource],
     role: str = ROLE_BODY,
@@ -222,9 +277,15 @@ def load_font_file(path: Path) -> List[FontSource]:
 # ── Widget specs ──────────────────────────────────────────────────────────────
 
 class Confidence(Enum):
-    """Where a widget's pixel budget came from."""
-    MEASURED = "measured"     # read out of the game's SWF
-    ESTIMATED = "estimated"   # plausible default, user should verify
+    """How much of a widget's geometry is the game's own.
+
+    Ordered from most to least trustworthy.  The distinction is kept on the spec
+    rather than flattened away because width scales *linearly* with font size —
+    a 20 % error in a derived size is a 20 % error in the verdict.
+    """
+    MEASURED = "measured"     # bounds AND font size read from the game's SWF
+    DERIVED = "derived"       # bounds from the SWF; font size inferred from height
+    ESTIMATED = "estimated"   # neither — a plausible default, user should verify
 
 
 @dataclass(frozen=True)
@@ -244,6 +305,7 @@ class WidgetSpec:
     uppercase: bool = False    # widget applies a CAPS transform before drawing
     confidence: Confidence = Confidence.ESTIMATED
     note: str = ""
+    family: str = ""           # fontconfig-resolved face, when known ("RF_55_M")
 
     def with_budget(self, budget_px: float) -> "WidgetSpec":
         """Return a copy with a corrected budget (the dialog's budget editor).
@@ -252,6 +314,40 @@ class WidgetSpec:
         is no longer ours to claim — it stays whatever the caller sets.
         """
         return replace(self, budget_px=float(budget_px))
+
+    @classmethod
+    def from_text_field(cls, field, family: str = "") -> "WidgetSpec":
+        """Build a spec from a real ``swf_widgets.TextField`` read out of the game.
+
+        This is the whole point of the SWF scan: the budget stops being a guess.
+        ``budget_px`` becomes the field's authored width minus its margins, and
+        ``font_px`` the size the field actually renders at — exactly when the SWF
+        declares one (`MEASURED`), and inferred from the box height when it does
+        not (`DERIVED`, see ``swf_widgets._HEIGHT_TO_FONT_PX``).
+
+        *family* is the fontconfig-resolved font family (e.g. ``RF_55_M``); it
+        picks the metric face, so no weight guessing is needed either.
+        """
+        from .swf_widgets import FontSizeSource
+
+        exact = field.font_size_source is FontSizeSource.DECLARED
+        note = field.font_class or ""
+        if family:
+            note = f"{note} → {family}" if note else family
+        if not exact:
+            note += "  (font size inferred from box height)"
+
+        return cls(
+            key=f"swf:{field.swf}:{field.char_id}",
+            label=field.label,
+            budget_px=field.usable_width_px,
+            font_px=field.font_px,
+            role=role_for_family(family),
+            uppercase=False,   # the CAPS transform lives in ActionScript, not the SWF
+            confidence=Confidence.MEASURED if exact else Confidence.DERIVED,
+            note=note.strip(),
+            family=family,
+        )
 
 
 # Length-critical widgets: single-line, fixed-width, clip on overflow.  Wrapping
@@ -275,13 +371,19 @@ _WIDGET_LIST: Sequence[WidgetSpec] = (
         key="item_name", label="Item name (list cell)", budget_px=420, font_px=22,
         role=ROLE_BODY, note="Inventory rows; long names truncate with an ellipsis.",
     ),
+    # These two are the real thing: bounds *and* font size read straight out of
+    # the shipped SWFs (see swf_widgets), which is why they are MEASURED while
+    # their neighbours are not.  Both were originally guessed far too generously
+    # here — the HUD objective is 335 px, not the 480 px that seemed reasonable.
     WidgetSpec(
-        key="hud_objective", label="HUD objective", budget_px=480, font_px=22,
-        role=ROLE_BODY, note="Active quest objective on the HUD.",
+        key="hud_objective", label="HUD objective", budget_px=335, font_px=18,
+        role=ROLE_BOLD, confidence=Confidence.MEASURED,
+        note="hudmessagesmenu › QuestObjectiveText_tf ($MAIN_Font_Bold → RF_55_M).",
     ),
     WidgetSpec(
-        key="notification", label="HUD notification", budget_px=560, font_px=22,
-        role=ROLE_BODY, note="Transient popup messages.",
+        key="notification", label="HUD notification", budget_px=317, font_px=19,
+        role=ROLE_BOLD, confidence=Confidence.MEASURED,
+        note="hudmenu › PromptMessageWidget.textField ($MAIN_Font_Bold → RF_55_M).",
     ),
     WidgetSpec(
         key="tooltip_title", label="Tooltip title", budget_px=340, font_px=24,

@@ -25,12 +25,13 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtGui import QColor, QFont, QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
     QComboBox,
+    QCompleter,
     QDialog,
     QDoubleSpinBox,
     QFileDialog,
@@ -41,6 +42,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMessageBox,
+    QProgressBar,
     QPushButton,
     QSizePolicy,
     QTableWidget,
@@ -51,6 +53,7 @@ from PySide6.QtWidgets import (
 )
 
 from bethesda_strings import format_string_id
+from bethesda_strings.swf_widgets import WidgetCatalogue, dedupe, scan_game_ui
 from bethesda_strings.width_fit import (
     ROLE_BODY,
     ROLE_BOLD,
@@ -63,6 +66,7 @@ from bethesda_strings.width_fit import (
     WidthCheckResult,
     load_bundled_metrics,
     load_font_file,
+    load_metrics_for_family,
     metrics_from_sources,
     scan_rows,
 )
@@ -71,6 +75,30 @@ logger = logging.getLogger(__name__)
 
 # Fill-ratio thresholds for the colour scale.
 _WARN_FILL = 0.90     # within 10 % of the edge — tight, but not yet broken
+
+
+class _CatalogueWorker(QThread):
+    """Scans the game's Interface SWFs off the UI thread (~250 files)."""
+
+    done = Signal(object)      # WidgetCatalogue
+    failed = Signal(str)
+    progress = Signal(int, str)
+
+    def __init__(self, data_dir: Path, parent=None) -> None:
+        super().__init__(parent)
+        self._data_dir = data_dir
+
+    def run(self) -> None:      # noqa: D102
+        try:
+            catalogue = scan_game_ui(
+                self._data_dir,
+                progress=lambda n, name: self.progress.emit(n, name),
+            )
+        except Exception as exc:               # noqa: BLE001 - report, never crash
+            logger.exception("Widget catalogue scan failed")
+            self.failed.emit(str(exc))
+            return
+        self.done.emit(catalogue)
 
 
 class WidthFitDialog(QDialog):
@@ -92,6 +120,12 @@ class WidthFitDialog(QDialog):
         self._metrics: Dict[str, FontMetrics] = load_bundled_metrics()
         self._custom_font: Optional[str] = None
 
+        # Real widget bounds scanned from the game's SWFs, when the user points
+        # us at an install.  Until then the built-in (mostly estimated) specs.
+        self._catalogue: Optional[WidgetCatalogue] = None
+        self._game_specs: Dict[str, WidgetSpec] = {}
+        self._scan_thread: Optional[_CatalogueWorker] = None
+
         self.setWindowTitle(self.tr("UI Width-Fit Simulator"))
         self.setWindowIcon(QIcon.fromTheme("format-justify-fill"))
         self.resize(1000, 660)
@@ -107,6 +141,7 @@ class WidthFitDialog(QDialog):
         root.setSpacing(8)
 
         root.addWidget(self._build_font_group())
+        root.addWidget(self._build_game_group())
         root.addWidget(self._build_budget_group())
 
         # ── Scan row ───────────────────────────────────────────────────────
@@ -212,6 +247,65 @@ class WidthFitDialog(QDialog):
         self._font_label.setWordWrap(True)
         self._font_label.setStyleSheet("color: #888;")
         lay.addWidget(self._font_label)
+        return box
+
+    def _build_game_group(self) -> QGroupBox:
+        box = QGroupBox(self.tr("Real Widgets from the Game (recommended)"))
+        lay = QVBoxLayout(box)
+        lay.setSpacing(4)
+
+        blurb = QLabel(self.tr(
+            "Point this at your game's Data folder to read the <b>actual</b> widget "
+            "bounds out of its Scaleform SWFs, instead of testing against an "
+            "estimate. Each field also names its own font, so the right face and "
+            "size are used automatically."
+        ))
+        blurb.setWordWrap(True)
+        blurb.setStyleSheet("color: #888;")
+        lay.addWidget(blurb)
+
+        row = QHBoxLayout()
+        self._game_edit = QLineEdit()
+        self._game_edit.setReadOnly(True)
+        self._game_edit.setPlaceholderText(self.tr("…/Starfield/Data"))
+        row.addWidget(self._game_edit, 1)
+
+        browse = QToolButton()
+        browse.setText("…")
+        browse.setToolTip(self.tr("Select the game's Data folder"))
+        browse.clicked.connect(self._browse_game_dir)
+        row.addWidget(browse)
+
+        self._scan_ui_btn = QPushButton(self.tr("Scan Game UI"))
+        self._scan_ui_btn.setEnabled(False)
+        self._scan_ui_btn.clicked.connect(self._scan_game_ui)
+        row.addWidget(self._scan_ui_btn)
+        lay.addLayout(row)
+
+        self._scan_bar = QProgressBar()
+        self._scan_bar.setVisible(False)
+        self._scan_bar.setTextVisible(True)
+        lay.addWidget(self._scan_bar)
+
+        pick = QHBoxLayout()
+        pick.addWidget(QLabel(self.tr("Test against:")))
+        self._game_widget_combo = QComboBox()
+        self._game_widget_combo.setEnabled(False)
+        self._game_widget_combo.setEditable(True)   # type to filter 900+ widgets
+        self._game_widget_combo.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        self._game_widget_combo.setToolTip(self.tr(
+            "A real text field from the game. Only fields that CLIP are listed —\n"
+            "wrapping fields grow instead of truncating, so width is not their bug.\n"
+            "Type to filter."
+        ))
+        self._game_widget_combo.currentIndexChanged.connect(self._on_game_widget_changed)
+        pick.addWidget(self._game_widget_combo, 1)
+        lay.addLayout(pick)
+
+        self._game_info = QLabel("")
+        self._game_info.setWordWrap(True)
+        self._game_info.setStyleSheet("color: #888;")
+        lay.addWidget(self._game_info)
         return box
 
     def _build_budget_group(self) -> QGroupBox:
@@ -349,6 +443,108 @@ class WidthFitDialog(QDialog):
             self.tr("Measuring with the bundled Starfield fonts — {names}").format(names=names)
         )
 
+    # ── Game UI catalogue ─────────────────────────────────────────────────────
+
+    def _browse_game_dir(self) -> None:
+        path = QFileDialog.getExistingDirectory(
+            self, self.tr("Select the Game Data Folder"), str(Path.home())
+        )
+        if not path:
+            return
+        self._game_edit.setText(path)
+        self._scan_ui_btn.setEnabled(True)
+
+    def _scan_game_ui(self) -> None:
+        data_dir = Path(self._game_edit.text().strip())
+        if not data_dir.is_dir():
+            return
+        self._scan_ui_btn.setEnabled(False)
+        self._scan_bar.setVisible(True)
+        self._scan_bar.setRange(0, 0)       # indeterminate: file count is unknown
+        self._scan_bar.setFormat(self.tr("Scanning…"))
+
+        self._scan_thread = _CatalogueWorker(data_dir, self)
+        self._scan_thread.progress.connect(self._on_scan_progress)
+        self._scan_thread.done.connect(self._on_catalogue_ready)
+        self._scan_thread.failed.connect(self._on_scan_failed)
+        self._scan_thread.finished.connect(lambda: self._scan_bar.setVisible(False))
+        self._scan_thread.start()
+
+    def _on_scan_progress(self, n: int, name: str) -> None:
+        self._scan_bar.setFormat(self.tr("Scanning {name}… ({n})").format(name=name, n=n))
+
+    def _on_scan_failed(self, err: str) -> None:
+        self._scan_ui_btn.setEnabled(True)
+        QMessageBox.warning(
+            self, self.tr("Width-Fit Simulator"),
+            self.tr("Could not scan the game UI: {err}").format(err=err),
+        )
+
+    def _on_catalogue_ready(self, catalogue: WidgetCatalogue) -> None:
+        self._catalogue = catalogue
+        self._scan_ui_btn.setEnabled(True)
+        self._game_specs.clear()
+        self._game_widget_combo.clear()
+
+        if not catalogue:
+            self._game_info.setText(self.tr(
+                "⚠ No UI text fields found there — is that the game's Data folder?"
+            ))
+            return
+
+        # Only clipping fields are worth listing (a wrapping field cannot overflow
+        # horizontally), and only those whose font we actually ship metrics for —
+        # controller-glyph fields are icons, not text, and must not be measured.
+        listed = 0
+        for field in dedupe(catalogue.clipping()):
+            family = catalogue.resolve_family(field)
+            metrics = load_metrics_for_family(family)
+            if metrics is None:
+                continue
+            spec = WidgetSpec.from_text_field(field, family)
+            self._game_specs[spec.key] = spec
+            mark = "" if field.is_exact else " ~"
+            self._game_widget_combo.addItem(
+                f"{spec.label}  —  {spec.budget_px:.0f}px @ {spec.font_px:.0f}px{mark}",
+                spec.key,
+            )
+            listed += 1
+
+        completer = self._game_widget_combo.completer()
+        if completer is not None:
+            completer.setFilterMode(Qt.MatchFlag.MatchContains)
+            completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+
+        self._game_widget_combo.setEnabled(listed > 0)
+        self._game_info.setText(self.tr(
+            "{listed} measurable clipping widgets from {swfs} SWFs. "
+            "“~” marks a widget whose font size the SWF does not state — it is "
+            "inferred from the box height, so treat those as approximate."
+        ).format(listed=listed, swfs=catalogue.swf_count))
+
+        if listed:
+            self._on_game_widget_changed()
+
+    def _selected_game_spec(self) -> Optional[WidgetSpec]:
+        if not self._game_widget_combo.isEnabled():
+            return None
+        key = self._game_widget_combo.currentData()
+        return self._game_specs.get(key) if key else None
+
+    def _on_game_widget_changed(self) -> None:
+        spec = self._selected_game_spec()
+        if spec is None:
+            return
+        conf = self.tr("exact — the game states this font size") \
+            if spec.confidence is Confidence.MEASURED \
+            else self.tr("font size inferred from the box height")
+        self._game_info.setText(self.tr(
+            "<b>{label}</b> — {w:.0f}px of usable width at {f:.0f}px. Font: {note}. "
+            "Bounds are exact; {conf}."
+        ).format(label=spec.label, w=spec.budget_px, f=spec.font_px,
+                 note=spec.note or "?", conf=conf))
+        self._clear_results()
+
     # ── Scanning ──────────────────────────────────────────────────────────────
 
     def _current_budgets(self) -> Dict[str, WidgetSpec]:
@@ -382,11 +578,25 @@ class WidthFitDialog(QDialog):
 
         self._scan_btn.setEnabled(False)
         try:
+            budgets = self._current_budgets()
+            metrics = dict(self._metrics)
+            override = self._widget_combo.currentData()
+
+            # A real widget picked from the game wins over the built-in estimates:
+            # its budget, its font size, and — via fontconfig — its actual face.
+            game_spec = self._selected_game_spec()
+            if game_spec is not None:
+                budgets[game_spec.key] = game_spec
+                override = game_spec.key
+                face = load_metrics_for_family(game_spec.family)
+                if face is not None:
+                    metrics[game_spec.role] = face
+
             result = scan_rows(
                 self._rows,
-                self._metrics,
-                budgets=self._current_budgets(),
-                widget_override=self._widget_combo.currentData(),
+                metrics,
+                budgets=budgets,
+                widget_override=override,
             )
             self._result = result
             self._populate(result)
@@ -395,6 +605,11 @@ class WidthFitDialog(QDialog):
             self._summary_label.setText(self.tr("Error during scan: {err}").format(err=exc))
         finally:
             self._scan_btn.setEnabled(True)
+
+    def _widget_label(self, key: str) -> str:
+        """Display name for a widget key — built-in preset or scanned game field."""
+        spec = WIDGETS.get(key) or self._game_specs.get(key)
+        return spec.label if spec else key
 
     def _on_tight_toggled(self) -> None:
         """Re-render from the existing scan — no need to re-measure."""
@@ -433,7 +648,7 @@ class WidthFitDialog(QDialog):
         self._table.setRowCount(len(rows))
         for i, res in enumerate(rows):
             self._table.setItem(i, 0, self._id_item(res))
-            self._table.setItem(i, 1, QTableWidgetItem(WIDGETS[res.widget_key].label))
+            self._table.setItem(i, 1, QTableWidgetItem(self._widget_label(res.widget_key)))
             self._table.setItem(i, 2, QTableWidgetItem(res.source))
             self._table.setItem(i, 3, self._translation_item(res))
             self._table.setItem(i, 4, self._num_item(f"{res.width_px:.0f} px"))
@@ -536,7 +751,7 @@ class WidthFitDialog(QDialog):
                 ])
                 for r in rows:
                     writer.writerow([
-                        format_string_id(r.string_id), WIDGETS[r.widget_key].label,
+                        format_string_id(r.string_id), self._widget_label(r.widget_key),
                         r.source, r.translated,
                         f"{r.width_px:.0f}", f"{r.budget_px:.0f}",
                         f"{r.fill_ratio * 100:.0f}",
