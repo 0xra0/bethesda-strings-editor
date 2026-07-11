@@ -53,7 +53,7 @@ from PySide6.QtWidgets import (
 )
 
 from bethesda_strings import format_string_id
-from bethesda_strings.swf_widgets import WidgetCatalogue, dedupe, scan_game_ui
+from bethesda_strings.swf_widgets import TextField, WidgetCatalogue, dedupe, scan_game_ui
 from bethesda_strings.width_fit import (
     ROLE_BODY,
     ROLE_BOLD,
@@ -124,6 +124,7 @@ class WidthFitDialog(QDialog):
         # us at an install.  Until then the built-in (mostly estimated) specs.
         self._catalogue: Optional[WidgetCatalogue] = None
         self._game_specs: Dict[str, WidgetSpec] = {}
+        self._game_fields: Dict[str, TextField] = {}
         self._scan_thread: Optional[_CatalogueWorker] = None
 
         self.setWindowTitle(self.tr("UI Width-Fit Simulator"))
@@ -286,6 +287,20 @@ class WidthFitDialog(QDialog):
         self._scan_bar.setVisible(False)
         self._scan_bar.setTextVisible(True)
         lay.addWidget(self._scan_bar)
+
+        self._worst_case_chk = QCheckBox(
+            self.tr("Worst case: check the large-font (accessibility) menu")
+        )
+        self._worst_case_chk.setChecked(True)
+        self._worst_case_chk.setToolTip(self.tr(
+            "Starfield ships a large-font variant of most menus (missionmenu_lrg).\n"
+            "The box is usually the same size while the text grows — up to 2.6× —\n"
+            "so a label that only just fits the normal menu clips there.\n"
+            "With this on, each widget is checked in whichever of its two builds\n"
+            "has the least room."
+        ))
+        self._worst_case_chk.toggled.connect(self._on_game_widget_changed)
+        lay.addWidget(self._worst_case_chk)
 
         pick = QHBoxLayout()
         pick.addWidget(QLabel(self.tr("Test against:")))
@@ -484,6 +499,7 @@ class WidthFitDialog(QDialog):
         self._catalogue = catalogue
         self._scan_ui_btn.setEnabled(True)
         self._game_specs.clear()
+        self._game_fields.clear()
         self._game_widget_combo.clear()
 
         if not catalogue:
@@ -503,6 +519,7 @@ class WidthFitDialog(QDialog):
                 continue
             spec = WidgetSpec.from_text_field(field, family)
             self._game_specs[spec.key] = spec
+            self._game_fields[spec.key] = field   # kept so worst_case() can pair it
             mark = "" if field.is_exact else " ~"
             self._game_widget_combo.addItem(
                 f"{spec.label}  —  {spec.budget_px:.0f}px @ {spec.font_px:.0f}px{mark}",
@@ -526,23 +543,53 @@ class WidthFitDialog(QDialog):
             self._on_game_widget_changed()
 
     def _selected_game_spec(self) -> Optional[WidgetSpec]:
+        """Spec for the chosen widget — swapped for its tightest build if asked.
+
+        With "worst case" on, picking the standard menu's widget measures against
+        whichever of its two builds has the least room, which is normally the
+        large-font one.  The returned spec is registered so the results table can
+        name the build actually used.
+        """
         if not self._game_widget_combo.isEnabled():
             return None
         key = self._game_widget_combo.currentData()
-        return self._game_specs.get(key) if key else None
+        if not key:
+            return None
+
+        field = self._game_fields.get(key)
+        if field is None or self._catalogue is None:
+            return self._game_specs.get(key)
+
+        if self._worst_case_chk.isChecked():
+            field = self._catalogue.worst_case(field)
+
+        spec = WidgetSpec.from_text_field(field, self._catalogue.resolve_family(field))
+        self._game_specs[spec.key] = spec     # so _widget_label() can resolve it
+        return spec
 
     def _on_game_widget_changed(self) -> None:
         spec = self._selected_game_spec()
         if spec is None:
             return
+
         conf = self.tr("exact — the game states this font size") \
             if spec.confidence is Confidence.MEASURED \
             else self.tr("font size inferred from the box height")
+
+        note = ""
+        chosen = self._game_fields.get(self._game_widget_combo.currentData())
+        if chosen is not None and spec.key != f"swf:{chosen.swf}:{chosen.char_id}":
+            # The worst-case swap actually changed the widget — say so plainly,
+            # or the numbers on screen will not match the combo entry above them.
+            note = self.tr(
+                " <b>Worst case:</b> measuring the large-font build, which is tighter."
+            )
+
         self._game_info.setText(self.tr(
             "<b>{label}</b> — {w:.0f}px of usable width at {f:.0f}px. Font: {note}. "
-            "Bounds are exact; {conf}."
+            "Bounds are exact; {conf}.{worst}"
         ).format(label=spec.label, w=spec.budget_px, f=spec.font_px,
-                 note=spec.note or "?", conf=conf))
+                 note=spec.note or "?", conf=conf, worst=note))
         self._clear_results()
 
     # ── Scanning ──────────────────────────────────────────────────────────────

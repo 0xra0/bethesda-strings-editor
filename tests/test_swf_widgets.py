@@ -296,3 +296,67 @@ def test_dedupe_collapses_the_same_component_repeated_across_menus():
 def test_dedupe_sorts_exact_sized_widgets_first():
     fields = [_tf("derived", w=999.0, exact=False), _tf("exact", w=10.0, exact=True)]
     assert [f.name for f in dedupe(fields)] == ["exact", "derived"]
+
+
+def test_zero_width_runtime_sized_fields_are_not_measurable():
+    """A 0px box is sized by ActionScript later — measuring it flags everything."""
+    runtime_sized = _tf(w=0.0)
+    assert runtime_sized.is_measurable is False
+    cat = WidgetCatalogue([runtime_sized, _tf("real", w=100.0)], {}, 1)
+    assert [f.name for f in cat.clipping()] == ["real"]
+
+
+# ── Large-font (_lrg) worst case ──────────────────────────────────────────────
+
+def test_large_font_variant_is_recognised_from_the_swf_name():
+    assert _tf(swf="missionmenu_lrg").is_large_font is True
+    assert _tf(swf="missionmenu_lrg").base_swf == "missionmenu"
+    assert _tf(swf="missionmenu").is_large_font is False
+    assert _tf(swf="missionmenu").base_swf == "missionmenu"
+
+
+def test_capacity_is_what_decides_which_build_is_tighter():
+    """Same box, bigger font = less room. Pixel width alone would call them equal."""
+    std = _tf(w=100.0, font=20.0)
+    lrg = _tf(w=100.0, font=40.0, swf="m_lrg")
+    assert std.usable_width_px == lrg.usable_width_px    # identical box…
+    assert std.capacity_em == pytest.approx(5.0)         # …but half the room
+    assert lrg.capacity_em == pytest.approx(2.5)
+
+
+def test_worst_case_picks_the_large_font_build():
+    std = _tf(name="Label_tf", w=100.0, font=18.0, swf="missionmenu")
+    lrg = _tf(name="Label_tf", w=100.0, font=48.0, swf="missionmenu_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+
+    # From either entry, the tighter build is the one measured against.
+    assert cat.worst_case(std).swf == "missionmenu_lrg"
+    assert cat.worst_case(lrg).swf == "missionmenu_lrg"
+
+
+def test_worst_case_keeps_the_field_when_the_variant_is_no_tighter():
+    """192 of the shipped pairs have an identical font; swapping them is pointless."""
+    std = _tf(name="Label_tf", w=100.0, font=18.0, swf="bartermenu")
+    lrg = _tf(name="Label_tf", w=100.0, font=18.0, swf="bartermenu_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+    assert cat.worst_case(std).swf == "bartermenu"       # stable: no needless swap
+
+
+def test_worst_case_is_a_no_op_without_a_large_font_twin():
+    lone = _tf(name="Label_tf", swf="buttonclips")
+    cat = WidgetCatalogue([lone], {}, 1)
+    assert cat.worst_case(lone) is lone
+
+
+def test_variants_do_not_pair_widgets_in_different_boxes():
+    """The pairing key is the box, not the character id.
+
+    Ids drift between the two separately-compiled menus, and pairing on them
+    produced nonsense — "pairs" whose large-font build was *smaller*. Two fields
+    of different widths are not the same widget, whatever their ids say.
+    """
+    std = _tf(name="Text_tf", w=354.0, font=36.0, swf="armorcraftingmenu")
+    lrg = _tf(name="Text_tf", w=241.0, font=25.0, swf="armorcraftingmenu_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+    assert cat.worst_case(std) is std       # not paired, so not swapped
+    assert cat.variants(std) == [std]
