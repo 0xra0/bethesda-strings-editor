@@ -45,6 +45,14 @@ from PySide6.QtWidgets import (
     QSizePolicy, QToolButton, QVBoxLayout, QWidget,
 )
 
+from bethesda_strings.width_fit import (
+    WIDGETS,
+    FontMetrics,
+    check_fit,
+    infer_widget_key,
+    load_bundled_metrics,
+)
+
 logger = logging.getLogger(__name__)
 
 # ── Font registration ─────────────────────────────────────────────────────────
@@ -533,6 +541,23 @@ def _render_preview(
     return px, n_lines, max_lines, overflows
 
 
+# ── Width-fit metrics ─────────────────────────────────────────────────────────
+# The rendered preview above wraps text to fit *its own canvas*, which resizes
+# with the dock — useful for judging wrap behaviour, but it cannot answer "will
+# this clip in-game?".  That question needs the game font's real advance widths
+# measured against a fixed widget budget, which is what bethesda_strings.width_fit
+# provides.  Loaded once and cached: _refresh() runs on every resize event.
+
+_metrics_cache: Optional[dict[str, FontMetrics]] = None
+
+
+def _width_metrics() -> dict[str, FontMetrics]:
+    global _metrics_cache
+    if _metrics_cache is None:
+        _metrics_cache = load_bundled_metrics()
+    return _metrics_cache
+
+
 # ── Main dock widget ──────────────────────────────────────────────────────────
 
 class VisualContextPreview(QDockWidget):
@@ -618,9 +643,11 @@ class VisualContextPreview(QDockWidget):
         self._lines_label = QLabel("")
         self._overflow_label = QLabel("")
         self._overflow_label.setStyleSheet("color: #ff5555; font-weight: bold;")
+        self._fit_label = QLabel("")
         self._hint_label = QLabel("")
         self._hint_label.setStyleSheet("color: #888888;")
-        for w in (self._chars_label, self._lines_label, self._overflow_label, self._hint_label):
+        for w in (self._chars_label, self._lines_label, self._overflow_label,
+                  self._fit_label, self._hint_label):
             stats_layout.addWidget(w)
         stats_layout.addStretch()
         vlay.addLayout(stats_layout)
@@ -738,6 +765,74 @@ class VisualContextPreview(QDockWidget):
             self._overflow_label.setStyleSheet("color: #ff5555; font-weight: bold;")
 
         self._hint_label.setText(p["hint"])
+        self._update_fit_indicator()
+
+    # ── Live "does it fit" indicator ──────────────────────────────────────────
+
+    def _update_fit_indicator(self) -> None:
+        """Width-fit verdict for the selected string, from real font metrics.
+
+        Distinct from the OVERFLOW badge above it: that one reports whether the
+        text outgrew the *preview canvas* (which resizes with the dock), while
+        this measures the string's true rendered pixel width against a fixed
+        widget budget — the thing that actually clips in-game.
+
+        Silent for prose, which wraps rather than clipping, and for strings with
+        no translation yet.
+        """
+        translated = self._translated_text.strip()
+        metrics_by_role = _width_metrics()
+
+        if not translated or not metrics_by_role:
+            self._fit_label.clear()
+            self._fit_label.setToolTip("")
+            return
+
+        # The widget is fixed by the English, so infer from the source when we
+        # have one; fall back to the translation for source-less rows.
+        widget_key = infer_widget_key(self._source_text or translated)
+        if widget_key is None:
+            self._fit_label.clear()
+            self._fit_label.setToolTip("")
+            return
+
+        spec = WIDGETS[widget_key]
+        metrics = metrics_by_role.get(spec.role) or next(iter(metrics_by_role.values()))
+        res = check_fit(translated, spec, metrics, source=self._source_text)
+
+        pct = int(round(res.fill_ratio * 100))
+        approx = " ≈" if res.is_approximate else ""
+        verdict = self.tr("CLIPS") if not res.fits else self.tr("fits")
+        self._fit_label.setText(
+            f"{spec.label}: {res.width_px:.0f}/{res.budget_px:.0f}px ({pct}%) {verdict}{approx}"
+        )
+
+        if not res.fits:
+            colour = "#ff5555"
+        elif res.fill_ratio >= 0.9:
+            colour = "#e0a030"
+        else:
+            colour = "#44cc44"
+        self._fit_label.setStyleSheet(f"color: {colour}; font-weight: bold;")
+
+        tip = [
+            self.tr("Rendered width measured from the game font's own advance widths."),
+            self.tr("Widget: {label} — {note}").format(label=spec.label, note=spec.note),
+            self.tr(
+                "The budget is an estimate for a 1920×1080 stage; tune it in "
+                "Translation → UI Width-Fit Simulator."
+            ),
+        ]
+        if res.source_width_px > 0:
+            tip.insert(1, self.tr(
+                "×{r:.2f} the width of the English source, which fit by construction."
+            ).format(r=res.source_ratio))
+        if res.is_approximate:
+            tip.append(self.tr(
+                "Approximate: contains runtime text (a name or number) or glyphs "
+                "with no metric in this font."
+            ))
+        self._fit_label.setToolTip("\n".join(tip))
 
     def resizeEvent(self, event) -> None:  # noqa: N802
         super().resizeEvent(event)
