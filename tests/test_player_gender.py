@@ -10,10 +10,15 @@ from gui.ollama_worker import (
     _player_gender_directive,
     get_player_gender,
     get_prompt_customizations,
+    is_gendered_target,
     set_player_gender,
     set_prompt_customizations,
 )
-from gui.player_gender import find_player_referring_rows, is_player_referring
+from gui.player_gender import (
+    count_player_referring_texts,
+    find_player_referring_rows,
+    is_player_referring,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -172,3 +177,27 @@ def test_find_rows_returns_matching_indices():
 def test_find_rows_handles_missing_key_and_non_dicts():
     rows = [{"translated": "х"}, None, {"original": None}, {"original": "your turn"}]
     assert find_player_referring_rows(rows) == [3]
+
+
+# ── is_gendered_target (pre-batch nudge gate) ────────────────────────────────
+
+@pytest.mark.parametrize("lang", ["uk", "pl", "de", "es", "fr", "it", "ru", "ptbr"])
+def test_gendered_targets(lang):
+    assert is_gendered_target(lang) is True
+
+
+@pytest.mark.parametrize("lang", ["en", "ko", "ja", "zhhans", "tr", ""])
+def test_non_gendered_targets(lang):
+    assert is_gendered_target(lang) is False
+
+
+# ── count_player_referring_texts ─────────────────────────────────────────────
+
+def test_count_player_referring_texts():
+    texts = ["You win.", "System nominal.", "Your ship.", "<Alias=Player> waits", None, ""]
+    assert count_player_referring_texts(texts) == 3
+
+
+def test_count_player_referring_texts_empty():
+    assert count_player_referring_texts([]) == 0
+    assert count_player_referring_texts(["a door", "a reactor"]) == 0

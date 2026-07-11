@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
     QDockWidget,
     QFrame,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QLineEdit,
     QListWidget,
@@ -72,7 +73,7 @@ from gui.keyboard_manager import ActionEntry, KeyboardManager
 from gui.macro_recorder import MacroRecorder
 from gui.claude_client import is_claude_model, estimate_batch_cost
 from gui.claude_code_client import is_claude_code_model
-from gui.ollama_worker import OllamaWorker, TranslationRequest
+from gui.ollama_worker import OllamaWorker, TranslationRequest, is_gendered_target
 from gui.settings_dialog import SettingsDialog
 from gui.prompt_editor_dialog import PromptEditorDialog
 from gui.dialogue_tree_dialog import DialogueTreeDialog
@@ -3092,6 +3093,11 @@ class MainWindow(QMainWindow):
             )
             return
 
+        # Player-gender nudge: warn before translating player-referring strings into a
+        # gendered target with no player gender set (a per-line guessed gender is inconsistent).
+        if not self._check_player_gender_nudge(requests):
+            return
+
         # Pre-flight estimate for the Claude backends.  The metered API shows a
         # USD cost; the Claude Code CLI (subscription) shows token counts only.
         _pf_model = self.settings.ollama_model
@@ -3125,6 +3131,74 @@ class MainWindow(QMainWindow):
         )
         # CRITICAL FIX: Emit signal instead of direct method call
         self.translation_requested.emit(requests)
+
+    def _check_player_gender_nudge(self, requests: list) -> bool:
+        """Warn before translating player-referring strings into a gendered language
+        with no player gender set. Returns True to proceed, False to cancel the batch.
+        """
+        if not getattr(self.settings, "warn_player_gender_unset", True):
+            return True
+        if getattr(self.settings, "player_gender", ""):
+            return True  # gender already declared → directive is unambiguous
+        target_lang = self.combo_target_lang.currentData()
+        if not is_gendered_target(target_lang):
+            return True
+        from gui.player_gender import count_player_referring_texts
+        n = count_player_referring_texts(r.original_text for r in requests)
+        if not n:
+            return True
+
+        box = QMessageBox(self)
+        box.setIcon(QMessageBox.Icon.Warning)
+        box.setWindowTitle(self.tr("Player Gender Not Set"))
+        box.setText(self.tr(
+            "{n} of the {total} strings about to be translated address or describe the "
+            "player («you», <Alias=Player>, …), and {lang} inflects for gender."
+        ).format(n=n, total=len(requests), lang=self.combo_target_lang.currentText()))
+        box.setInformativeText(self.tr(
+            "No player gender is set, so the model will pick a gender per line — which can come "
+            "out inconsistent. Set one now, or continue anyway."
+        ))
+        set_btn = box.addButton(self.tr("Set Gender…"), QMessageBox.ButtonRole.ActionRole)
+        go_btn = box.addButton(self.tr("Translate Anyway"), QMessageBox.ButtonRole.AcceptRole)
+        box.addButton(self.tr("Cancel"), QMessageBox.ButtonRole.RejectRole)
+        chk = QCheckBox(self.tr("Don't warn me again"))
+        box.setCheckBox(chk)
+        box.setDefaultButton(set_btn)
+        box.exec()
+
+        if chk.isChecked():
+            self.settings.warn_player_gender_unset = False
+            save_settings(self.settings)
+
+        clicked = box.clickedButton()
+        if clicked is set_btn:
+            # Cancelling the picker cancels the batch, so the choice isn't skipped by accident.
+            return self._quick_set_player_gender()
+        if clicked is go_btn:
+            return True
+        return False  # Cancel, or the dialog was dismissed
+
+    def _quick_set_player_gender(self) -> bool:
+        """Inline picker that sets AppSettings.player_gender. Returns False if cancelled."""
+        options = [self.tr("Male"), self.tr("Female"), self.tr("Neutral (avoid gendered forms)")]
+        values = ["male", "female", "neutral"]
+        choice, ok = QInputDialog.getItem(
+            self,
+            self.tr("Player Gender"),
+            self.tr("Grammatical gender for lines addressing/describing the player:"),
+            options, 0, False,
+        )
+        if not ok:
+            return False
+        self.settings.player_gender = values[options.index(choice)]
+        save_settings(self.settings)
+        # Install the new gender so the pending batch picks it up at prompt-build time.
+        self._apply_prompt_customizations()
+        self.statusBar().showMessage(
+            self.tr("Player gender set to {g}").format(g=self.settings.player_gender), 5000
+        )
+        return True
 
     def _claude_preflight_check(self, requests: list, subscription: bool = False) -> bool:
         """
