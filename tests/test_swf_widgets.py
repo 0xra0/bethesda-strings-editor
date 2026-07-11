@@ -28,6 +28,7 @@ from bethesda_strings.swf import (
 from bethesda_strings.swf_widgets import (
     FontSizeSource,
     TextField,
+    VariantOutcome,
     WidgetCatalogue,
     dedupe,
     parse_edit_text,
@@ -260,9 +261,9 @@ def test_read_cstring_survives_a_missing_terminator():
 
 # ── Catalogue ─────────────────────────────────────────────────────────────────
 
-def _tf(name="a", w=100.0, font=18.0, exact=True, clips=True, swf="m") -> TextField:
+def _tf(name="a", w=100.0, font=18.0, exact=True, clips=True, swf="m", cid=1) -> TextField:
     return TextField(
-        swf=swf, name=name, char_id=1,
+        swf=swf, name=name, char_id=cid,
         width_px=w, height_px=22.0, left_margin_px=0.0, right_margin_px=0.0,
         font_class="$MAIN_Font", font_px=font,
         font_size_source=FontSizeSource.DECLARED if exact else FontSizeSource.DERIVED,
@@ -360,3 +361,96 @@ def test_variants_do_not_pair_widgets_in_different_boxes():
     cat = WidgetCatalogue([std, lrg], {}, 2)
     assert cat.worst_case(std) is std       # not paired, so not swapped
     assert cat.variants(std) == [std]
+
+
+# ── A menu that repeats a widget name cannot be paired ────────────────────────
+# The box key pairs (base_swf, name, usable_width). One menu often reuses a name
+# for several boxes of the same width — `text_tf` appears 146 times in the
+# shipped UI — and then there is no way to say which field the other build's
+# field answers to. Guessing regroups *unrelated fields in the same menu* and
+# measures against the tightest, which is how `chargenmenu › text_tf` (843px @
+# 29px) came to be checked against a 126px title: a six-character budget that
+# calls every translation an overflow.
+
+def test_two_fields_in_one_menu_are_never_variants_of_each_other():
+    """Same menu, same name, same box, different font: not a pair. Refuse it."""
+    title = _tf(name="text_tf", w=843.0, font=126.0, swf="chargenmenu", cid=295)
+    body = _tf(name="text_tf", w=843.0, font=29.0, swf="chargenmenu", cid=297)
+    cat = WidgetCatalogue([title, body], {}, 1)
+
+    assert cat.variants(body) == [body]
+    field, outcome = cat.worst_case_with_reason(body)
+    assert field is body                          # never swapped for the title
+    assert field.font_px == 29.0                  # …and never measured at 126px
+    assert outcome is VariantOutcome.NO_VARIANT
+
+
+def test_an_ambiguous_key_refuses_the_pair_and_admits_it_did_not_check():
+    """A real twin exists — but the menu repeats the key, so it cannot be found.
+
+    This must not report as NO_VARIANT ("no large-font build"): one does exist.
+    Saying so would claim a check that never happened.
+    """
+    title = _tf(name="text_tf", w=843.0, font=126.0, swf="chargenmenu", cid=295)
+    body = _tf(name="text_tf", w=843.0, font=29.0, swf="chargenmenu", cid=297)
+    lrg = _tf(name="text_tf", w=843.0, font=41.0, swf="chargenmenu_lrg", cid=297)
+    cat = WidgetCatalogue([title, body, lrg], {}, 2)
+
+    field, outcome = cat.worst_case_with_reason(body)
+    assert field is body
+    assert outcome is VariantOutcome.AMBIGUOUS
+
+
+# ── Why the worst case is what it is ──────────────────────────────────────────
+# Of the 589 widgets the shipped UI defines in both builds, 251 grow the font,
+# 336 keep it and 2 shrink it. So "the field did not change" has several very
+# different causes, and reporting them all as silence tells the user nothing
+# about whether the accessibility build was checked at all.
+
+def test_reason_says_the_large_font_build_was_measured():
+    std = _tf(name="Label_tf", w=100.0, font=18.0, swf="missionmenu")
+    lrg = _tf(name="Label_tf", w=100.0, font=48.0, swf="missionmenu_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+
+    field, outcome = cat.worst_case_with_reason(std)
+    assert field is lrg
+    assert outcome is VariantOutcome.TIGHTER
+
+
+def test_reason_distinguishes_no_tighter_variant_from_no_variant_at_all():
+    """The two cases that both leave the field alone — and must not read alike."""
+    std = _tf(name="Label_tf", w=100.0, font=18.0, swf="bartermenu")
+    lrg = _tf(name="Label_tf", w=100.0, font=18.0, swf="bartermenu_lrg")
+    lone = _tf(name="Label_tf", w=100.0, font=18.0, swf="buttonclips")
+    cat = WidgetCatalogue([std, lrg, lone], {}, 3)
+
+    # Has a large-font twin, but it uses the same font: already the worst case.
+    assert cat.worst_case_with_reason(std) == (std, VariantOutcome.NO_TIGHTER)
+    # Ships no large-font build at all: never checked in one, and says so.
+    assert cat.worst_case_with_reason(lone) == (lone, VariantOutcome.NO_VARIANT)
+
+
+def test_the_large_font_build_is_not_assumed_to_be_the_tighter_one():
+    """Two shipped widgets SHRINK the font in the _lrg build (missionboard 49→26).
+
+    The worst case is whichever build has less room, so picking the large-font
+    entry there swaps *back* to the standard one — and the caller is told which
+    build it got, precisely so it cannot claim "measuring the large-font build".
+    """
+    std = _tf(name="text_tf", w=107.3, font=49.2, swf="missionboard")
+    lrg = _tf(name="text_tf", w=107.3, font=26.2, swf="missionboard_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+
+    field, outcome = cat.worst_case_with_reason(lrg)
+    assert field is std                    # the standard build is the tight one here
+    assert field.is_large_font is False
+    assert outcome is VariantOutcome.TIGHTER
+    assert cat.worst_case_with_reason(std) == (std, VariantOutcome.NO_TIGHTER)
+
+
+def test_unpaired_widget_reports_no_variant_rather_than_claiming_a_check():
+    """The 354/241 mispair again: not a pair, so the _lrg build was NOT checked."""
+    std = _tf(name="Text_tf", w=354.0, font=36.0, swf="armorcraftingmenu")
+    lrg = _tf(name="Text_tf", w=241.0, font=25.0, swf="armorcraftingmenu_lrg")
+    cat = WidgetCatalogue([std, lrg], {}, 2)
+    assert cat.worst_case_with_reason(std) == (std, VariantOutcome.NO_VARIANT)

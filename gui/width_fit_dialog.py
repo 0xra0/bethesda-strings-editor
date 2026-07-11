@@ -23,7 +23,7 @@ from __future__ import annotations
 import csv
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, NamedTuple, Optional
 
 from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtGui import QColor, QFont, QIcon
@@ -53,7 +53,13 @@ from PySide6.QtWidgets import (
 )
 
 from bethesda_strings import format_string_id
-from bethesda_strings.swf_widgets import TextField, WidgetCatalogue, dedupe, scan_game_ui
+from bethesda_strings.swf_widgets import (
+    TextField,
+    VariantOutcome,
+    WidgetCatalogue,
+    dedupe,
+    scan_game_ui,
+)
 from bethesda_strings.width_fit import (
     ROLE_BODY,
     ROLE_BOLD,
@@ -75,6 +81,20 @@ logger = logging.getLogger(__name__)
 
 # Fill-ratio thresholds for the colour scale.
 _WARN_FILL = 0.90     # within 10 % of the edge — tight, but not yet broken
+
+
+class _Selection(NamedTuple):
+    """The widget the user picked, the build measured, and why they differ.
+
+    Kept as three separate facts rather than collapsed into the spec: the build
+    measured is not always the one picked, and the reason it changed (or did not)
+    is what the info line has to report.
+    """
+
+    spec: WidgetSpec
+    picked: Optional[TextField]
+    measured: Optional[TextField]
+    outcome: Optional[VariantOutcome]
 
 
 class _CatalogueWorker(QThread):
@@ -289,15 +309,18 @@ class WidthFitDialog(QDialog):
         lay.addWidget(self._scan_bar)
 
         self._worst_case_chk = QCheckBox(
-            self.tr("Worst case: check the large-font (accessibility) menu")
+            self.tr("Check the tightest build (large-font menu, where it is tighter)")
         )
         self._worst_case_chk.setChecked(True)
         self._worst_case_chk.setToolTip(self.tr(
             "Starfield ships a large-font variant of most menus (missionmenu_lrg).\n"
-            "The box is usually the same size while the text grows — up to 2.6× —\n"
-            "so a label that only just fits the normal menu clips there.\n"
-            "With this on, each widget is checked in whichever of its two builds\n"
-            "has the least room."
+            "Where the text grows the box usually does not — up to 2.6× — so a label\n"
+            "that only just fits the normal menu clips there.\n"
+            "\n"
+            "Decided per widget, not across the board: of the 589 widgets that exist in\n"
+            "both builds, 251 grow the font, 336 keep it, and 2 even shrink it. So the\n"
+            "build with the least room is measured — whichever one that is — and the\n"
+            "line below says what happened for the widget you picked."
         ))
         self._worst_case_chk.toggled.connect(self._on_game_widget_changed)
         lay.addWidget(self._worst_case_chk)
@@ -542,13 +565,14 @@ class WidthFitDialog(QDialog):
         if listed:
             self._on_game_widget_changed()
 
-    def _selected_game_spec(self) -> Optional[WidgetSpec]:
-        """Spec for the chosen widget — swapped for its tightest build if asked.
+    def _selected_game_widget(self) -> Optional["_Selection"]:
+        """The chosen widget, the build actually measured, and why.
 
-        With "worst case" on, picking the standard menu's widget measures against
-        whichever of its two builds has the least room, which is normally the
-        large-font one.  The returned spec is registered so the results table can
-        name the build actually used.
+        With the checkbox on, the build measured is whichever of the two has the
+        least room — usually, but not always, the large-font one — so the picked
+        and measured fields both come back, and the caller names what it used
+        rather than assuming.  ``outcome`` is None when the check is off.  The
+        spec is registered so the results table can name the build it measured.
         """
         if not self._game_widget_combo.isEnabled():
             return None
@@ -556,34 +580,70 @@ class WidthFitDialog(QDialog):
         if not key:
             return None
 
-        field = self._game_fields.get(key)
-        if field is None or self._catalogue is None:
-            return self._game_specs.get(key)
+        picked = self._game_fields.get(key)
+        if picked is None or self._catalogue is None:
+            spec = self._game_specs.get(key)
+            return _Selection(spec, None, None, None) if spec is not None else None
 
+        measured = picked
+        outcome: Optional[VariantOutcome] = None
         if self._worst_case_chk.isChecked():
-            field = self._catalogue.worst_case(field)
+            measured, outcome = self._catalogue.worst_case_with_reason(picked)
 
-        spec = WidgetSpec.from_text_field(field, self._catalogue.resolve_family(field))
+        spec = WidgetSpec.from_text_field(
+            measured, self._catalogue.resolve_family(measured)
+        )
         self._game_specs[spec.key] = spec     # so _widget_label() can resolve it
-        return spec
+        return _Selection(spec, picked, measured, outcome)
+
+    def _selected_game_spec(self) -> Optional[WidgetSpec]:
+        chosen = self._selected_game_widget()
+        return chosen.spec if chosen is not None else None
+
+    def _variant_note(self, chosen: "_Selection") -> str:
+        """One sentence on what the large-font check did — including "nothing"."""
+        picked, measured, outcome = chosen.picked, chosen.measured, chosen.outcome
+
+        if outcome is VariantOutcome.TIGHTER and measured is not None:
+            # Name the build. It is normally the large-font one, but two shipped
+            # widgets shrink the font there, so asserting that would be a lie.
+            return self.tr(
+                " <b>Worst case:</b> the <b>{swf}</b> build has less room, "
+                "so that is the one measured."
+            ).format(swf=measured.swf)
+        if outcome is VariantOutcome.NO_TIGHTER:
+            if picked is not None and picked.is_large_font:
+                return self.tr(
+                    " This is the large-font build, and nothing is tighter — "
+                    "it already is the worst case."
+                )
+            return self.tr(
+                " Its large-font build gives no less room, so this already is "
+                "the worst case."
+            )
+        if outcome is VariantOutcome.AMBIGUOUS:
+            # Do not let this pass as "checked". It wasn't.
+            return self.tr(
+                " ⚠ This menu reuses this name and box for more than one field, so "
+                "its large-font twin cannot be told apart — it was <b>not</b> checked."
+            )
+        if outcome is VariantOutcome.NO_VARIANT:
+            return self.tr(
+                " This menu ships no large-font build, so only this one is checked."
+            )
+        return ""
 
     def _on_game_widget_changed(self) -> None:
-        spec = self._selected_game_spec()
-        if spec is None:
+        chosen = self._selected_game_widget()
+        if chosen is None:
             return
+        spec = chosen.spec
 
         conf = self.tr("exact — the game states this font size") \
             if spec.confidence is Confidence.MEASURED \
             else self.tr("font size inferred from the box height")
 
-        note = ""
-        chosen = self._game_fields.get(self._game_widget_combo.currentData())
-        if chosen is not None and spec.key != f"swf:{chosen.swf}:{chosen.char_id}":
-            # The worst-case swap actually changed the widget — say so plainly,
-            # or the numbers on screen will not match the combo entry above them.
-            note = self.tr(
-                " <b>Worst case:</b> measuring the large-font build, which is tighter."
-            )
+        note = self._variant_note(chosen)
 
         self._game_info.setText(self.tr(
             "<b>{label}</b> — {w:.0f}px of usable width at {f:.0f}px. Font: {note}. "
