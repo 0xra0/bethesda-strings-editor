@@ -581,6 +581,12 @@ def get_player_gender() -> str:
     return _PLAYER_GENDER
 
 
+def is_gendered_target(target_lang: str) -> bool:
+    """True if *target_lang* inflects second-person address / player-referring words
+    for grammatical gender (so the player-gender directive is meaningful there)."""
+    return target_lang in _GENDERED_TARGETS
+
+
 def _player_gender_directive(target_lang: str) -> str:
     """Prompt line pinning the player's grammatical gender for player-referring text.
 

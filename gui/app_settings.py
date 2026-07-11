@@ -18,7 +18,7 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 41  # Increment when schema changes
+CONFIG_VERSION = 42  # Increment when schema changes
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -129,6 +129,9 @@ class AppSettings:
     # "male" | "female" | "neutral". Installed via ollama_worker.set_player_gender()
     # so every backend renders the player's gender consistently.
     player_gender: str = ""
+    # Show a dismissable nudge before a batch when player_gender is unset but the
+    # batch contains player-referring strings in a gendered target language.
+    warn_player_gender_unset: bool = True
 
     # ── Term protection ──────────────────────────────────────────
     enable_term_protection: bool = True
@@ -514,6 +517,11 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("player_gender", "")
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v41: added player-character gender")
+
+    if from_version < 42:
+        data.setdefault("warn_player_gender_unset", True)
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v42: added player-gender pre-batch nudge toggle")
 
     if from_version < CONFIG_VERSION:
         logger.warning(
