@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/ruff-action@v3
+      # Pinned to an exact version, unlike every other action here: ruff-action
+      # ships immutable releases from v4 on and publishes no floating `v4` tag,
+      # so `@v4` is not a valid ref. Bump this by hand.
+      - uses: astral-sh/ruff-action@v4.1.0
 
   pyright:
     name: pyright
@@ -26,6 +29,6 @@ jobs:
       - name: Install dependencies
         # pytest is imported by tests/ so pyright needs it on the path to resolve the import
         run: pip install -r requirements.txt pytest pyright
-      - uses: jakebailey/pyright-action@v2
+      - uses: jakebailey/pyright-action@v3
         with:
           version: path
