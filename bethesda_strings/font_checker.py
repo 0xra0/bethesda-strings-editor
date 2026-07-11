@@ -24,10 +24,16 @@ from __future__ import annotations
 import re
 import struct
 import unicodedata
-import zlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
+
+from .swf import (
+    TAG_DEFINE_FONT2,
+    TAG_DEFINE_FONT3,
+    decompress_swf,
+    iter_tags,
+)
 
 
 # ── Always-problematic characters ─────────────────────────────────────────────
@@ -192,15 +198,6 @@ _SWF_UPEM_DEFINEFONT2 = 1024
 _SWF_UPEM_DEFINEFONT3 = 20480
 
 
-def _skip_rect(data: bytes, pos: int) -> int:
-    """Return the byte position after a bit-packed RECT record."""
-    if pos >= len(data):
-        return pos
-    nbits = (data[pos] >> 3) & 0x1F
-    total_bits = 5 + 4 * nbits
-    return pos + (total_bits + 7) // 8
-
-
 def _parse_definefont2(body: bytes, units_per_em: int) -> Tuple[str, Set[int], Dict[int, float]]:
     """Extract (font_name, codepoint_set, advances) from a DefineFont2/3 tag body.
 
@@ -296,63 +293,29 @@ def _parse_definefont2(body: bytes, units_per_em: int) -> Tuple[str, Set[int], D
 
 def parse_swf_glyphs(path: Path) -> List[FontSource]:
     """Parse a Scaleform SWF file and return one FontSource per embedded font."""
-    raw = path.read_bytes()
-    if len(raw) < 8:
+    data = decompress_swf(path.read_bytes())
+    if data is None:
         return []
-
-    sig = raw[:3]
-    if sig == b"CWS":
-        try:
-            data = raw[:8] + zlib.decompress(raw[8:])
-        except zlib.error:
-            return []
-    elif sig == b"FWS":
-        data = raw
-    else:
-        # ZWS (LZMA) — skip; would need lzma module and Starfield rarely uses it
-        return []
-
-    # Skip SWF file header
-    pos = 8
-    pos = _skip_rect(data, pos)
-    pos += 4  # FrameRate (UI16) + FrameCount (UI16)
 
     sources: List[FontSource] = []
-    while pos + 2 <= len(data):
-        record_header = struct.unpack_from("<H", data, pos)[0]
-        tag_type   = (record_header >> 6) & 0x3FF
-        short_len  = record_header & 0x3F
-        pos += 2
-
-        if short_len == 0x3F:
-            if pos + 4 > len(data):
-                break
-            tag_length = struct.unpack_from("<I", data, pos)[0]
-            pos += 4
-        else:
-            tag_length = short_len
-
-        tag_end = pos + tag_length
-
-        if tag_type in (48, 75):  # DefineFont2 / DefineFont3
-            body = bytes(data[pos:tag_end])
-            # DefineFont3 stores glyph + advance coordinates 20× larger than
-            # DefineFont2, so its EM square is 20480 rather than 1024 units.
-            units_per_em = _SWF_UPEM_DEFINEFONT3 if tag_type == 75 else _SWF_UPEM_DEFINEFONT2
-            font_name, codes, advances = _parse_definefont2(body, units_per_em)
-            if codes:
-                sources.append(FontSource(
-                    name=font_name or f"Font_{len(sources)}",
-                    path=path,
-                    codepoints=frozenset(codes),
-                    source_type="swf",
-                    advances=advances,
-                ))
-        elif tag_type == 0:  # End
-            break
-
-        pos = tag_end
-
+    for tag_type, body in iter_tags(data):
+        if tag_type not in (TAG_DEFINE_FONT2, TAG_DEFINE_FONT3):
+            continue
+        # DefineFont3 stores glyph + advance coordinates 20× larger than
+        # DefineFont2, so its EM square is 20480 rather than 1024 units.
+        units_per_em = (
+            _SWF_UPEM_DEFINEFONT3 if tag_type == TAG_DEFINE_FONT3
+            else _SWF_UPEM_DEFINEFONT2
+        )
+        font_name, codes, advances = _parse_definefont2(body, units_per_em)
+        if codes:
+            sources.append(FontSource(
+                name=font_name or f"Font_{len(sources)}",
+                path=path,
+                codepoints=frozenset(codes),
+                source_type="swf",
+                advances=advances,
+            ))
     return sources
 
 
@@ -553,7 +516,10 @@ def _read_ttf_name(raw: bytes, name_off: int) -> str:
 # ── fontconfig.txt parser ──────────────────────────────────────────────────────
 
 _FONTLIB_RE = re.compile(r'^fontlib\s+"([^"]+)"', re.IGNORECASE)
-_MAP_RE      = re.compile(r'^map\s+"([^"]+)"\s+"([^"]+)"', re.IGNORECASE)
+# Starfield writes `map "$MAIN_Font" = "RF_35_M" Normal`.  The `=` is optional in
+# the wild (older Bethesda titles omit it), so it is matched leniently — without
+# this, every mapping in a real fontconfig.txt was silently dropped.
+_MAP_RE      = re.compile(r'^map\s+"([^"]+)"\s*=?\s*"([^"]+)"', re.IGNORECASE)
 
 
 def parse_fontconfig(path: Path) -> Dict[str, str]:

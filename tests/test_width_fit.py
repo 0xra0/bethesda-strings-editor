@@ -27,6 +27,7 @@ from bethesda_strings.font_checker import (
     parse_swf_glyphs,
     parse_ttf_glyphs,
 )
+from bethesda_strings.swf_widgets import FontSizeSource, TextField
 from bethesda_strings.width_fit import (
     DEFAULT_WIDGET,
     ROLE_BODY,
@@ -39,12 +40,29 @@ from bethesda_strings.width_fit import (
     infer_widget_key,
     is_length_critical,
     load_bundled_metrics,
+    load_metrics_for_family,
     metrics_from_sources,
     render_text,
     scan_rows,
 )
 
 FONTS_DIR = Path(__file__).parent.parent / "data" / "fonts"
+
+
+def _text_field(
+    *, width=300.0, left=0.0, right=0.0, exact=True, font=18.0
+) -> TextField:
+    """A synthetic TextField standing in for one read out of a game SWF."""
+    return TextField(
+        swf="hudmessagesmenu", name="QuestObjectiveText_tf", char_id=42,
+        width_px=width, height_px=22.0,
+        left_margin_px=left, right_margin_px=right,
+        font_class="$MAIN_Font_Bold", font_px=font,
+        font_size_source=(
+            FontSizeSource.DECLARED if exact else FontSizeSource.DERIVED
+        ),
+        multiline=False, word_wrap=False, auto_size=False,
+    )
 
 
 # ── Synthetic SWF builders ────────────────────────────────────────────────────
@@ -370,9 +388,70 @@ def test_with_budget_overrides_only_the_budget():
     assert spec.budget_px != 123          # frozen — original untouched
 
 
-def test_default_budgets_are_declared_estimates():
-    """Guards the honesty of the tool: nothing claims SWF provenance it lacks."""
-    assert all(w.confidence is Confidence.ESTIMATED for w in WIDGETS.values())
+def test_budgets_declare_their_provenance_honestly():
+    """Guards the honesty of the tool: nothing claims SWF provenance it lacks.
+
+    The two HUD widgets were read out of the shipped SWFs, so they may say
+    MEASURED — and must cite the field they came from.  Everything else is still
+    a guess and has to admit it.
+    """
+    measured = {k for k, w in WIDGETS.items() if w.confidence is Confidence.MEASURED}
+    assert measured == {"hud_objective", "notification"}
+    for key in measured:
+        assert "›" in WIDGETS[key].note      # names the source field
+
+    rest = [w for k, w in WIDGETS.items() if k not in measured]
+    assert all(w.confidence is Confidence.ESTIMATED for w in rest)
+
+
+# ── Real widgets read out of the game ─────────────────────────────────────────
+
+def test_widget_spec_from_a_real_text_field_is_measured_when_the_swf_states_the_size():
+    field = _text_field(width=300.0, left=10.0, right=15.0, exact=True, font=18.0)
+    spec = WidgetSpec.from_text_field(field, "RF_55_M")
+
+    # The budget is the *usable* width — margins are not available to text.
+    assert spec.budget_px == pytest.approx(275.0)
+    assert spec.font_px == pytest.approx(18.0)
+    assert spec.confidence is Confidence.MEASURED
+    assert spec.family == "RF_55_M"
+    assert spec.role == ROLE_BOLD           # resolved from the family, not guessed
+
+
+def test_widget_spec_is_derived_when_the_swf_omits_the_font_size():
+    spec = WidgetSpec.from_text_field(_text_field(exact=False), "RF_35_M")
+    assert spec.confidence is Confidence.DERIVED
+    assert "inferred" in spec.note          # the caveat travels with the spec
+    assert spec.role == ROLE_BODY
+
+
+def test_family_resolves_to_the_bundled_face():
+    bold = load_metrics_for_family("RF_55_M")
+    body = load_metrics_for_family("RF_35_M")
+    assert bold is not None and bold.name == "RF_55_M"
+    assert body is not None and body.name == "RF_35_M"
+
+
+def test_unbundled_and_icon_fonts_are_refused_not_guessed():
+    """A controller-glyph field is icons, not text — measuring it would be nonsense."""
+    assert load_metrics_for_family("Genesis Controller  Buttons") is None
+    assert load_metrics_for_family("Starfield_Grotesk_R") is None
+    assert load_metrics_for_family("") is None
+
+
+def test_a_real_widget_can_be_scanned_against():
+    field = _text_field(width=335.0, exact=True, font=18.0)
+    spec = WidgetSpec.from_text_field(field, "RF_55_M")
+    face = load_metrics_for_family("RF_55_M")
+    assert face is not None
+    metrics = {spec.role: face}
+
+    rows = [{"id": 1, "original": "Board the ship",
+             "translated": "Піднятися на борт корабля негайно та відлетіти"}]
+    res = scan_rows(rows, metrics, budgets={spec.key: spec}, widget_override=spec.key)
+    assert res.checked == 1
+    assert res.overflow_count == 1
+    assert res.results[0].widget_key == spec.key
 
 
 # ── Row scan ──────────────────────────────────────────────────────────────────
