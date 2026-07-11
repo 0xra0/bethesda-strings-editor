@@ -16,7 +16,7 @@ whole-word second-person pronouns plus Bethesda player-reference placeholders.
 from __future__ import annotations
 
 import re
-from typing import List, Sequence
+from typing import Iterable, List, Sequence
 
 # Whole-word English second-person pronouns — the player is the "you" being
 # addressed. Longer forms are listed first so the alternation prefers them, and
@@ -53,3 +53,12 @@ def find_player_referring_rows(rows: Sequence[dict], *, key: str = "original") -
         if is_player_referring(text or ""):
             out.append(i)
     return out
+
+
+def count_player_referring_texts(texts: Iterable[str]) -> int:
+    """How many of *texts* are player-referring.
+
+    Used for the pre-batch nudge, which counts over the source texts of the strings
+    actually about to be translated (not the whole file).
+    """
+    return sum(1 for t in texts if is_player_referring(t or ""))
