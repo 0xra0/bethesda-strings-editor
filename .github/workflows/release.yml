@@ -5,6 +5,14 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: >-
+          Rehearse a release: build, sign, and create a DRAFT release to prove the
+          pipeline works. A draft is private to maintainers, notifies nobody, and
+          creates no tag. NexusMods is never touched.
+        type: boolean
+        default: true
 
 jobs:
   # ── Changelog ────────────────────────────────────────────────────────────────
@@ -71,7 +79,13 @@ jobs:
       - name: Inject version from git tag
         shell: bash
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"   # strip leading 'v'
+          # On a dry run there is no tag — GITHUB_REF_NAME is the branch, which
+          # would bake a version of "main" into the build.
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"   # strip leading 'v'
+          else
+            VERSION="0.0.0-dryrun"
+          fi
           echo "__version__ = '${VERSION}'" > _version.py
           echo "Building version ${VERSION}"
 
@@ -150,7 +164,11 @@ jobs:
     name: Create Release
     needs: [changelog, build]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    # Real releases come from a tag. A dry run also gets here — that is the whole
+    # point, since it is the only way to exercise the publish step before it
+    # matters — but it can only ever produce a draft (see the step below).
+    # Dispatching with dry_run unchecked just builds and stops.
+    if: startsWith(github.ref, 'refs/tags/') || inputs.dry_run
     permissions:
       contents: write
 
@@ -186,8 +204,22 @@ jobs:
             SHA256SUMS
             SHA256SUMS.asc
           body_path: CHANGES.md
-          draft: false
+          # Anything not built from a tag is a rehearsal, so it can only be a
+          # draft: private to maintainers, notifies nobody, and — importantly —
+          # GitHub does not create the tag until a draft is published.
+          draft: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Without an explicit tag_name a dry run would inherit the *branch* name
+          # and offer to tag it. Point it at an obviously disposable name instead.
+          tag_name: >-
+            ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name
+                || format('dry-run-{0}', github.run_id) }}
+          name: >-
+            ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name
+                || format('DRY RUN {0} — not a release', github.run_id) }}
           prerelease: ${{ contains(github.ref_name, '-') }}
+          # Fail loudly if the build produced no zips, rather than quietly
+          # publishing a release with nothing attached to it.
+          fail_on_unmatched_files: true
 
   # ── NexusMods Upload ──────────────────────────────────────────────────────────
   # Requires three repository secrets:
@@ -198,6 +230,9 @@ jobs:
     name: Upload to NexusMods
     needs: release
     runs-on: ubuntu-latest
+    # This is the one irreversible, outward-facing step: it publishes a file to a
+    # public mod page. It requires a real tag, so a dry run (which has no tag)
+    # can never reach it, and the `-` guard keeps pre-releases off the mod page.
     if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
 
     steps:
