@@ -71,6 +71,13 @@ _HEIGHT_TO_FONT_PX = 1.22
 _HTML_SIZE_RE = re.compile(r'size="(\d+)"')
 _HTML_FACE_RE = re.compile(r'face="([^"]+)"')
 
+# Starfield ships a large-font accessibility variant of most menus alongside the
+# standard one (missionmenu.swf / missionmenu_lrg.swf).  The box is usually the
+# *same* size while the font grows — median ×1.30 and up to ×2.64 across the
+# shipped UI — so the large-font menu is the genuine worst case for fit, and a
+# label that only just fits the standard menu will clip there.  See worst_case().
+_LARGE_FONT_SUFFIX = "_lrg"
+
 
 class FontSizeSource(Enum):
     """Where a field's font size came from — see the module docstring."""
@@ -103,6 +110,40 @@ class TextField:
     def usable_width_px(self) -> float:
         """Width actually available to text, once margins are taken out."""
         return max(0.0, self.width_px - self.left_margin_px - self.right_margin_px)
+
+    @property
+    def is_measurable(self) -> bool:
+        """False for zero-width boxes, which the game sizes at runtime.
+
+        A 0 px field is not a tiny widget — it is a widget whose bounds
+        ActionScript supplies later.  Measuring against it would flag *every*
+        string as overflowing, so it is excluded rather than reported.
+        """
+        return self.usable_width_px > 0 and self.font_px > 0
+
+    @property
+    def is_large_font(self) -> bool:
+        """True for Starfield's ``*_lrg`` large-font accessibility menu variants."""
+        return self.swf.endswith(_LARGE_FONT_SUFFIX)
+
+    @property
+    def base_swf(self) -> str:
+        """The menu this field belongs to, with any ``_lrg`` suffix stripped."""
+        if self.is_large_font:
+            return self.swf[: -len(_LARGE_FONT_SUFFIX)]
+        return self.swf
+
+    @property
+    def capacity_em(self) -> float:
+        """How much text the box holds, in em — the font-size-independent measure.
+
+        Comparing two variants of the same widget by raw pixel width is
+        meaningless when their font sizes differ; capacity is what actually
+        decides which one runs out of room first.  Lower = tighter.
+        """
+        if self.font_px <= 0:
+            return 0.0
+        return self.usable_width_px / self.font_px
 
     @property
     def clips(self) -> bool:
@@ -355,6 +396,19 @@ def parse_swf_file(path: Path) -> List[TextField]:
     return parse_swf_text_fields(data, path.stem)
 
 
+def _variant_key(field: TextField) -> Tuple[str, str, float]:
+    """Identity of a widget across the standard and large-font builds of a menu.
+
+    Deliberately **not** keyed on character id: the two menus are compiled
+    separately, so ids drift and pairing on them produces nonsense (a "pair"
+    whose large-font font is *smaller*).  Keying on the box the widget occupies —
+    same menu, same field name, same usable width — pairs only widgets we can
+    actually show are the same one, and across the shipped UI it yields zero
+    such anomalies.
+    """
+    return (field.base_swf, field.name, round(field.usable_width_px, 1))
+
+
 @dataclass
 class WidgetCatalogue:
     """Every text field found in a game's UI, plus its font-class → family map."""
@@ -363,13 +417,37 @@ class WidgetCatalogue:
     font_map: Dict[str, str]     # "$MAIN_Font_Bold" → "RF_55_M"
     swf_count: int
 
+    def __post_init__(self) -> None:
+        # Lazy variant index — an internal cache, not a constructor argument.
+        self._variants: Optional[Dict[Tuple[str, str, float], List[TextField]]] = None
+
     def clipping(self) -> List[TextField]:
-        """Only the fields that clip — the ones where width is a real failure mode."""
-        return [f for f in self.fields if f.clips]
+        """The fields where width is a real failure mode: they clip, and they measure."""
+        return [f for f in self.fields if f.clips and f.is_measurable]
 
     def resolve_family(self, field: TextField) -> str:
         """Font family this field renders in, per fontconfig ("" if unmapped)."""
         return self.font_map.get(field.font_class, "")
+
+    def variants(self, field: TextField) -> List[TextField]:
+        """*field* together with its counterpart in the other font-size build."""
+        if self._variants is None:
+            index: Dict[Tuple[str, str, float], List[TextField]] = {}
+            for candidate in self.fields:
+                if candidate.is_measurable:
+                    index.setdefault(_variant_key(candidate), []).append(candidate)
+            self._variants = index
+        return self._variants.get(_variant_key(field), [field])
+
+    def worst_case(self, field: TextField) -> TextField:
+        """The tightest build of *field* — normally its large-font twin.
+
+        Returns *field* itself when the menu has no large-font variant, or when
+        the variant is no tighter.  Compared on ``capacity_em``, since the boxes
+        match and only the font differs; comparing pixel widths would say they
+        are identical and miss the whole point.
+        """
+        return min(self.variants(field), key=lambda f: (f.capacity_em, f.swf))
 
     def __bool__(self) -> bool:
         return bool(self.fields)
