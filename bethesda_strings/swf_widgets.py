@@ -72,10 +72,15 @@ _HTML_SIZE_RE = re.compile(r'size="(\d+)"')
 _HTML_FACE_RE = re.compile(r'face="([^"]+)"')
 
 # Starfield ships a large-font accessibility variant of most menus alongside the
-# standard one (missionmenu.swf / missionmenu_lrg.swf).  The box is usually the
-# *same* size while the font grows — median ×1.30 and up to ×2.64 across the
-# shipped UI — so the large-font menu is the genuine worst case for fit, and a
-# label that only just fits the standard menu will clip there.  See worst_case().
+# standard one (missionmenu.swf / missionmenu_lrg.swf).  Where the font grows the
+# box usually does *not* — median ×1.30 and up to ×2.64 — so that build is where
+# a label that only just fits the standard menu will clip.
+#
+# It is not, however, universally tighter, and nothing here may assume it is.  Of
+# the 589 widgets the shipped UI defines in both builds, 251 grow the font, 336
+# use an identical one, and 2 actually *shrink* it (missionboard › text_tf goes
+# 49px → 26px).  So the worst case is decided per widget, on capacity, and
+# worst_case() reports which build it picked and why — see VariantOutcome.
 _LARGE_FONT_SUFFIX = "_lrg"
 
 
@@ -83,6 +88,28 @@ class FontSizeSource(Enum):
     """Where a field's font size came from — see the module docstring."""
     DECLARED = "declared"   # stated in the SWF (HTML `<font size=…>` or FontHeight)
     DERIVED = "derived"     # inferred from the field's height; approximate
+
+
+class VariantOutcome(Enum):
+    """What the large-font check actually found for one widget.
+
+    Four outcomes, and they are *not* interchangeable — three of them leave the
+    chosen widget unchanged, and a caller that reports them all as silence tells
+    the user nothing about whether the accessibility build was checked at all:
+
+    ``TIGHTER``     the other build has less room, so it is the one measured.
+                    Usually the large-font one — but not always, so callers must
+                    name the build rather than assume it.
+    ``NO_TIGHTER``  the twin exists and gives no less room; this already is the
+                    worst case.
+    ``AMBIGUOUS``   a twin exists but cannot be identified, so it was NOT checked
+                    (see ``WidgetCatalogue.variants``).
+    ``NO_VARIANT``  this menu ships no other build of the widget.
+    """
+    TIGHTER = "tighter"
+    NO_TIGHTER = "no_tighter"
+    AMBIGUOUS = "ambiguous"
+    NO_VARIANT = "no_variant"
 
 
 @dataclass(frozen=True)
@@ -429,25 +456,73 @@ class WidgetCatalogue:
         """Font family this field renders in, per fontconfig ("" if unmapped)."""
         return self.font_map.get(field.font_class, "")
 
-    def variants(self, field: TextField) -> List[TextField]:
-        """*field* together with its counterpart in the other font-size build."""
+    def _variant_index(self) -> Dict[Tuple[str, str, float], List[TextField]]:
         if self._variants is None:
             index: Dict[Tuple[str, str, float], List[TextField]] = {}
             for candidate in self.fields:
                 if candidate.is_measurable:
                     index.setdefault(_variant_key(candidate), []).append(candidate)
             self._variants = index
-        return self._variants.get(_variant_key(field), [field])
+        return self._variants
+
+    def _key_group(self, field: TextField) -> List[TextField]:
+        return self._variant_index().get(_variant_key(field), [])
+
+    def variants(self, field: TextField) -> List[TextField]:
+        """*field* together with its counterpart in the other font-size build.
+
+        Only an **unambiguous 1:1** pairing counts.  A single menu often reuses
+        one field name for several boxes of the same width (``text_tf`` alone
+        appears 146 times across the shipped UI), and when it does there is no
+        way to tell which of them the other build's field corresponds to — so
+        the pair is refused rather than guessed.
+
+        Guessing here is not a cosmetic error.  Without this check the key also
+        groups *unrelated fields within the same menu*, and the tightest of them
+        wins: picking ``chargenmenu › text_tf`` (843px @ 29px) measured against a
+        126 px title in the same menu — a budget of six characters, which flags
+        every translation as clipping.  It is the same class of nonsense the
+        discarded character-id key produced, arriving through a different door.
+        """
+        group = self._key_group(field)
+        standard = [f for f in group if not f.is_large_font]
+        large = [f for f in group if f.is_large_font]
+        if len(standard) > 1 or len(large) > 1:
+            return [field]              # ambiguous — refuse to pair
+        return group or [field]
 
     def worst_case(self, field: TextField) -> TextField:
-        """The tightest build of *field* — normally its large-font twin.
+        """The tightest build of *field* — its large-font twin where that is tighter.
 
         Returns *field* itself when the menu has no large-font variant, or when
         the variant is no tighter.  Compared on ``capacity_em``, since the boxes
         match and only the font differs; comparing pixel widths would say they
         are identical and miss the whole point.
         """
-        return min(self.variants(field), key=lambda f: (f.capacity_em, f.swf))
+        return self.worst_case_with_reason(field)[0]
+
+    def worst_case_with_reason(
+        self, field: TextField
+    ) -> Tuple[TextField, VariantOutcome]:
+        """``worst_case``, plus *why* — so a UI can say whether the check applied.
+
+        The returned field alone cannot distinguish "its large-font build is no
+        tighter, so this is already the worst case" from "the large-font build
+        was never checked, because we could not identify it".  Both leave the
+        field unchanged, and reporting them alike would let the user believe a
+        widget was covered when it never was.
+        """
+        variants = self.variants(field)
+        tightest = min(variants, key=lambda f: (f.capacity_em, f.swf))
+        if tightest.capacity_em < field.capacity_em:
+            return tightest, VariantOutcome.TIGHTER
+        if len(variants) > 1:
+            return field, VariantOutcome.NO_TIGHTER
+        # Nothing to compare against — but say *why*: a twin the key cannot
+        # resolve is a check that did not happen, not a menu without one.
+        if any(f.is_large_font != field.is_large_font for f in self._key_group(field)):
+            return field, VariantOutcome.AMBIGUOUS
+        return field, VariantOutcome.NO_VARIANT
 
     def __bool__(self) -> bool:
         return bool(self.fields)
