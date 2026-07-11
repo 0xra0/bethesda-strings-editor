@@ -25,7 +25,7 @@ import re
 import struct
 import unicodedata
 import zlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -125,15 +125,32 @@ _BUILTIN_SAFE = _build_builtin_safe_set()
 
 @dataclass
 class FontSource:
-    """A single loaded font with its glyph coverage."""
+    """A single loaded font with its glyph coverage and horizontal metrics.
+
+    ``advances`` maps codepoint → horizontal advance expressed as a fraction of
+    the EM square (so 0.5 means "half the font's pixel size wide").  Normalising
+    at parse time means callers never have to care whether the numbers came from
+    a DefineFont2 tag (1024 units/em), a DefineFont3 tag (20480 units/em) or a
+    TTF ``hmtx`` table (usually 1000 or 2048 units/em).
+
+    It is empty when the font carries no layout/metric data — a SWF font tag is
+    only required to ship an advance table when its ``HasLayout`` flag is set,
+    so glyph coverage can be known while widths are not.
+    """
     name: str                           # Font family name from the file
     path: Path
     codepoints: frozenset[int]
     source_type: str = "swf"            # "swf", "ttf", "builtin"
+    advances: Dict[int, float] = field(default_factory=dict)
 
     @property
     def glyph_count(self) -> int:
         return len(self.codepoints)
+
+    @property
+    def has_metrics(self) -> bool:
+        """True when this font carries usable horizontal advance widths."""
+        return bool(self.advances)
 
 
 @dataclass
@@ -169,6 +186,12 @@ class FontCheckResult:
 
 # ── SWF parser ────────────────────────────────────────────────────────────────
 
+# EM square of the glyph/advance coordinate space, per font tag.  DefineFont3
+# multiplies DefineFont2's coordinates by 20 to buy sub-unit precision.
+_SWF_UPEM_DEFINEFONT2 = 1024
+_SWF_UPEM_DEFINEFONT3 = 20480
+
+
 def _skip_rect(data: bytes, pos: int) -> int:
     """Return the byte position after a bit-packed RECT record."""
     if pos >= len(data):
@@ -178,10 +201,16 @@ def _skip_rect(data: bytes, pos: int) -> int:
     return pos + (total_bits + 7) // 8
 
 
-def _parse_definefont2(body: bytes) -> Tuple[str, Set[int]]:
-    """Extract (font_name, codepoint_set) from a DefineFont2/3 tag body."""
+def _parse_definefont2(body: bytes, units_per_em: int) -> Tuple[str, Set[int], Dict[int, float]]:
+    """Extract (font_name, codepoint_set, advances) from a DefineFont2/3 tag body.
+
+    ``advances`` maps codepoint → advance as a fraction of the EM square, and is
+    empty unless the tag sets ``FontFlagsHasLayout`` (0x80) — the flag that makes
+    the FontAdvanceTable present.  *units_per_em* is 1024 for DefineFont2 and
+    20480 for DefineFont3, whose glyph/advance coordinates are 20× larger.
+    """
     if len(body) < 6:
-        return "", set()
+        return "", set(), {}
     pos = 0
 
     # FontID
@@ -190,6 +219,7 @@ def _parse_definefont2(body: bytes) -> Tuple[str, Set[int]]:
     # Flags byte
     flags = body[pos]
     pos += 1
+    has_layout    = bool(flags & 0x80)
     wide_offsets  = bool(flags & 0x08)
     wide_codes    = bool(flags & 0x04)
 
@@ -198,22 +228,22 @@ def _parse_definefont2(body: bytes) -> Tuple[str, Set[int]]:
 
     # FontName
     if pos >= len(body):
-        return "", set()
+        return "", set(), {}
     name_len = body[pos]
     pos += 1
     if pos + name_len > len(body):
-        return "", set()
+        return "", set(), {}
     font_name = body[pos:pos + name_len].rstrip(b"\x00").decode("latin-1", errors="replace")
     pos += name_len
 
     # NumGlyphs
     if pos + 2 > len(body):
-        return font_name, set()
+        return font_name, set(), {}
     num_glyphs = struct.unpack_from("<H", body, pos)[0]
     pos += 2
 
     if num_glyphs == 0:
-        return font_name, set()
+        return font_name, set(), {}
 
     # OffsetTable + CodeTableOffset
     # All offsets are measured from the START of the OffsetTable field.
@@ -225,7 +255,7 @@ def _parse_definefont2(body: bytes) -> Tuple[str, Set[int]]:
 
     # Read CodeTableOffset
     if pos + offset_size > len(body):
-        return font_name, set()
+        return font_name, set(), {}
     if wide_offsets:
         code_table_offset = struct.unpack_from("<I", body, pos)[0]
     else:
@@ -236,15 +266,32 @@ def _parse_definefont2(body: bytes) -> Tuple[str, Set[int]]:
     code_size = 2 if wide_codes else 1
 
     if code_table_pos + num_glyphs * code_size > len(body):
-        return font_name, set()
+        return font_name, set(), {}
 
-    codes: Set[int] = set()
+    # Keep glyph order — the FontAdvanceTable is indexed by glyph, not codepoint.
+    glyph_codes: List[int] = []
     for i in range(num_glyphs):
         p = code_table_pos + i * code_size
         code = struct.unpack_from("<H", body, p)[0] if wide_codes else body[p]
-        codes.add(code)
+        glyph_codes.append(code)
 
-    return font_name, codes
+    codes: Set[int] = set(glyph_codes)
+
+    advances: Dict[int, float] = {}
+    if has_layout and units_per_em > 0:
+        # Layout section directly follows the CodeTable:
+        #   FontAscent SI16 | FontDescent SI16 | FontLeading SI16
+        #   FontAdvanceTable SI16[NumGlyphs]
+        layout_pos = code_table_pos + num_glyphs * code_size + 6
+        if layout_pos + num_glyphs * 2 <= len(body):
+            for i, code in enumerate(glyph_codes):
+                raw = struct.unpack_from("<h", body, layout_pos + i * 2)[0]
+                if raw < 0:
+                    continue
+                # A codepoint can be listed twice; first glyph wins.
+                advances.setdefault(code, raw / units_per_em)
+
+    return font_name, codes, advances
 
 
 def parse_swf_glyphs(path: Path) -> List[FontSource]:
@@ -289,13 +336,17 @@ def parse_swf_glyphs(path: Path) -> List[FontSource]:
 
         if tag_type in (48, 75):  # DefineFont2 / DefineFont3
             body = bytes(data[pos:tag_end])
-            font_name, codes = _parse_definefont2(body)
+            # DefineFont3 stores glyph + advance coordinates 20× larger than
+            # DefineFont2, so its EM square is 20480 rather than 1024 units.
+            units_per_em = _SWF_UPEM_DEFINEFONT3 if tag_type == 75 else _SWF_UPEM_DEFINEFONT2
+            font_name, codes, advances = _parse_definefont2(body, units_per_em)
             if codes:
                 sources.append(FontSource(
                     name=font_name or f"Font_{len(sources)}",
                     path=path,
                     codepoints=frozenset(codes),
                     source_type="swf",
+                    advances=advances,
                 ))
         elif tag_type == 0:  # End
             break
@@ -307,15 +358,19 @@ def parse_swf_glyphs(path: Path) -> List[FontSource]:
 
 # ── TTF / OTF parser ──────────────────────────────────────────────────────────
 
-def _read_cmap4(raw: bytes, sub: int) -> Set[int]:
-    """Parse a cmap format-4 subtable (BMP Unicode)."""
+def _read_cmap4(raw: bytes, sub: int) -> Dict[int, int]:
+    """Parse a cmap format-4 subtable (BMP Unicode) → {codepoint: glyph_id}.
+
+    The glyph id is retained (rather than just the codepoint) because ``hmtx``
+    advance widths are indexed by glyph, not by character.
+    """
     if sub + 14 > len(raw):
-        return set()
+        return {}
     seg_count_x2  = struct.unpack_from(">H", raw, sub + 6)[0]
     seg_count     = seg_count_x2 // 2
     end_off = sub + 14
     if end_off + seg_count_x2 + 2 + seg_count_x2 * 3 > len(raw):
-        return set()
+        return {}
     end_codes   = [struct.unpack_from(">H", raw, end_off + i * 2)[0] for i in range(seg_count)]
     start_off   = end_off + seg_count_x2 + 2  # +2 for reservedPad
     start_codes = [struct.unpack_from(">H", raw, start_off + i * 2)[0] for i in range(seg_count)]
@@ -324,7 +379,7 @@ def _read_cmap4(raw: bytes, sub: int) -> Set[int]:
     range_off   = delta_off + seg_count_x2
     ranges      = [struct.unpack_from(">H", raw, range_off + i * 2)[0] for i in range(seg_count)]
 
-    codes: Set[int] = set()
+    gids: Dict[int, int] = {}
     for i in range(seg_count):
         s, e, d, ro = start_codes[i], end_codes[i], deltas[i], ranges[i]
         if s == 0xFFFF:
@@ -340,25 +395,66 @@ def _read_cmap4(raw: bytes, sub: int) -> Set[int]:
                 if gid != 0:
                     gid = (gid + d) & 0xFFFF
             if gid != 0:
-                codes.add(c)
-    return codes
+                gids[c] = gid
+    return gids
 
 
-def _read_cmap12(raw: bytes, sub: int) -> Set[int]:
-    """Parse a cmap format-12 subtable (full Unicode)."""
+def _read_cmap12(raw: bytes, sub: int) -> Dict[int, int]:
+    """Parse a cmap format-12 subtable (full Unicode) → {codepoint: glyph_id}."""
     if sub + 16 > len(raw):
-        return set()
+        return {}
     n_groups = struct.unpack_from(">I", raw, sub + 12)[0]
     base = sub + 16
     if base + n_groups * 12 > len(raw):
-        return set()
-    codes: Set[int] = set()
+        return {}
+    gids: Dict[int, int] = {}
     for i in range(n_groups):
         o = base + i * 12
-        start = struct.unpack_from(">I", raw, o)[0]
-        end   = struct.unpack_from(">I", raw, o + 4)[0]
-        codes.update(range(start, end + 1))
-    return codes
+        start     = struct.unpack_from(">I", raw, o)[0]
+        end       = struct.unpack_from(">I", raw, o + 4)[0]
+        start_gid = struct.unpack_from(">I", raw, o + 8)[0]
+        for c in range(start, end + 1):
+            gids[c] = start_gid + (c - start)
+    return gids
+
+
+def _read_hmtx(
+    raw: bytes,
+    tables: Dict[str, int],
+    cmap: Dict[int, int],
+) -> Dict[int, float]:
+    """Return {codepoint: advance as a fraction of the EM square} from a TTF.
+
+    Reads ``head`` for unitsPerEm, ``hhea`` for numberOfHMetrics and ``hmtx``
+    for the advances themselves.  Glyphs beyond numberOfHMetrics are monospaced
+    tail glyphs that all share the final advance — the format's compression trick
+    for fonts ending in a run of equal-width glyphs.
+    """
+    head = tables.get("head")
+    hhea = tables.get("hhea")
+    hmtx = tables.get("hmtx")
+    if head is None or hhea is None or hmtx is None:
+        return {}
+    if head + 20 > len(raw) or hhea + 36 > len(raw):
+        return {}
+
+    units_per_em = struct.unpack_from(">H", raw, head + 18)[0]
+    num_h_metrics = struct.unpack_from(">H", raw, hhea + 34)[0]
+    if units_per_em <= 0 or num_h_metrics <= 0:
+        return {}
+    if hmtx + num_h_metrics * 4 > len(raw):
+        return {}
+
+    raw_advances = [
+        struct.unpack_from(">H", raw, hmtx + i * 4)[0] for i in range(num_h_metrics)
+    ]
+    last = raw_advances[-1]
+
+    advances: Dict[int, float] = {}
+    for cp, gid in cmap.items():
+        adv = raw_advances[gid] if gid < num_h_metrics else last
+        advances[cp] = adv / units_per_em
+    return advances
 
 
 def parse_ttf_glyphs(path: Path) -> List[FontSource]:
@@ -405,16 +501,24 @@ def parse_ttf_glyphs(path: Path) -> List[FontSource]:
 
     if best_sub is None:
         return []
-    codes = _read_cmap12(raw, best_sub) if best_fmt == 12 else _read_cmap4(raw, best_sub)
-    if not codes:
+    cmap_gids = _read_cmap12(raw, best_sub) if best_fmt == 12 else _read_cmap4(raw, best_sub)
+    if not cmap_gids:
         return []
+
+    advances = _read_hmtx(raw, tables, cmap_gids)
 
     # Try to extract font family name from name table
     font_name = path.stem
     if "name" in tables:
         font_name = _read_ttf_name(raw, tables["name"]) or font_name
 
-    return [FontSource(name=font_name, path=path, codepoints=frozenset(codes), source_type="ttf")]
+    return [FontSource(
+        name=font_name,
+        path=path,
+        codepoints=frozenset(cmap_gids),
+        source_type="ttf",
+        advances=advances,
+    )]
 
 
 def _read_ttf_name(raw: bytes, name_off: int) -> str:
@@ -542,6 +646,23 @@ class FontChecker:
             combined -= set(_ALWAYS_BAD)
             self._combined = frozenset(combined)
         return self._combined
+
+    def combined_advances(self) -> Dict[int, float]:
+        """Merged {codepoint: advance-in-EM-fractions} across every loaded font.
+
+        Earlier sources win on conflict, matching the order the user loaded them
+        in.  Empty when no loaded font carried layout metrics.
+        """
+        merged: Dict[int, float] = {}
+        for src in self.sources:
+            for cp, adv in src.advances.items():
+                merged.setdefault(cp, adv)
+        return merged
+
+    @property
+    def has_metrics(self) -> bool:
+        """True when at least one loaded font supplied advance widths."""
+        return any(src.has_metrics for src in self.sources)
 
     def missing_chars(self, text: str) -> List[str]:
         """Return list of characters in *text* that are not in any loaded font."""

@@ -1439,6 +1439,18 @@ class MainWindow(QMainWindow):
         self.font_checker_action.setEnabled(False)
         trans_menu.addAction(self.font_checker_action)
 
+        self.width_fit_action = QAction(self.tr("UI &Width-Fit Simulator…"), self)
+        self.width_fit_action.setIcon(QIcon.fromTheme("format-justify-fill"))
+        self.width_fit_action.setToolTip(self.tr(
+            "Measure each translated label's rendered pixel width against the\n"
+            "space its widget actually has, and flag the ones that will clip.\n"
+            "Cyrillic and German run 15–30% longer than English; buttons, menu\n"
+            "labels and HUD text have no room to grow."
+        ))
+        self.width_fit_action.triggered.connect(self._open_width_fit)
+        self.width_fit_action.setEnabled(False)
+        trans_menu.addAction(self.width_fit_action)
+
         self.version_compare_action = QAction(
             self.tr("Compare Game &Versions…"), self
         )
@@ -2110,6 +2122,8 @@ class MainWindow(QMainWindow):
             self.gender_check_action.setEnabled(has_file)
         if hasattr(self, "font_checker_action"):
             self.font_checker_action.setEnabled(has_file)
+        if hasattr(self, "width_fit_action"):
+            self.width_fit_action.setEnabled(has_file)
         if hasattr(self, "btn_encoding_change"):
             self.btn_encoding_change.setEnabled(
                 has_file and not isinstance(self.current_file, (EspFile, TxtStringFile))
@@ -6288,6 +6302,13 @@ class MainWindow(QMainWindow):
         dlg = FontCheckerDialog(rows=rows, parent=self)
         dlg.jump_to_row.connect(self._jump_to_row)
         dlg.fix_applied.connect(self._apply_font_fixes)
+        dlg.exec()
+
+    def _open_width_fit(self) -> None:
+        """Open the UI Width-Fit Simulator dialog."""
+        from gui.width_fit_dialog import WidthFitDialog
+        dlg = WidthFitDialog(rows=list(self.table_model._data), parent=self)
+        dlg.jump_to_row.connect(self._jump_to_row)
         dlg.exec()
 
     def _apply_font_fixes(self, patches: list) -> None:
