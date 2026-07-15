@@ -34,6 +34,36 @@ theme_manager = ThemeManager()
 _RTL_LANGS = {"ar", "he", "fa", "ur"}
 
 
+def _preload_system_libva() -> None:
+    """Work around the PySide6-bundled FFmpeg vs system libva ABI gap (Linux only).
+
+    PySide6's wheels ship FFmpeg through thin *stub* libraries
+    (``libQt6FFmpegStub-va*.so``) that forward VA-API calls to the system libva at
+    runtime.  The bundled ``libavutil.so.59`` needs ``vaMapBuffer2`` (libva >= 2.21),
+    but the shipped stub predates that symbol and does not export it.  As soon as
+    VA-API hardware video decoding kicks in — e.g. an animated video background — the
+    dynamic loader fails to resolve ``vaMapBuffer2`` and the whole process aborts with
+    a *symbol lookup error*.  That is a hard crash in native code that Python cannot
+    catch, so it has to be prevented before Qt Multimedia ever loads libavutil.
+
+    Loading the real system libva with ``RTLD_GLOBAL`` first puts ``vaMapBuffer2``
+    into the global symbol scope, so the bundled libavutil resolves it against the
+    system library (which does export it).  No-op off Linux, and a silent no-op when
+    libva is absent — no libva means no VA-API, so FFmpeg decodes in software and
+    never references the symbol anyway.
+    """
+    if not sys.platform.startswith("linux"):
+        return
+    import ctypes
+
+    for soname in ("libva.so.2", "libva-drm.so.2"):
+        try:
+            ctypes.CDLL(soname, mode=ctypes.RTLD_GLOBAL)
+        except OSError:
+            # libva (or that companion) not installed — nothing to preload.
+            pass
+
+
 def _load_translator(app: QApplication, translator: QTranslator, locale_code: str) -> None:
     """Install a .qm translation file for *locale_code* (BCP-47, e.g. 'uk_UA').
 
@@ -68,6 +98,10 @@ def _load_translator(app: QApplication, translator: QTranslator, locale_code: st
 
 def main():
     """Main entry point for the application."""
+    # Must run before Qt Multimedia loads its bundled FFmpeg (see the helper's
+    # docstring) — do it first so no code path can beat it to libavutil.
+    _preload_system_libva()
+
     # Enable high-DPI scaling
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
