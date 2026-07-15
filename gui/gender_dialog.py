@@ -115,7 +115,10 @@ class GenderDialog(FadeInMixin, QDialog):
             QAbstractItemView.EditTrigger.NoEditTriggers)
         self._table.setAlternatingRowColors(True)
         self._table.verticalHeader().setVisible(False)
-        self._table.currentRowChanged.connect(self._on_row_changed)
+        # QTableWidget emits currentCellChanged(row, col, prevRow, prevCol);
+        # it has no currentRowChanged signal (that belongs to QListWidget).
+        self._table.currentCellChanged.connect(
+            lambda row, *_: self._on_row_changed(row))
         self._table.cellDoubleClicked.connect(self._jump_current)
         splitter.addWidget(self._table)
 
@@ -149,6 +152,11 @@ class GenderDialog(FadeInMixin, QDialog):
     # ── Data ──────────────────────────────────────────────────────────────────
 
     def _populate(self) -> None:
+        # With no mismatches, _setup_ui() returns before building the table
+        # (it shows only the "no issues found" label + Close button), so there
+        # is nothing to populate — and self._table does not exist.
+        if not self._mismatches:
+            return
         self._table.setRowCount(len(self._mismatches))
         for r, mm in enumerate(self._mismatches):
             bg = _COL_BG.get(mm.noun_gender, QColor("#f9fafb"))
