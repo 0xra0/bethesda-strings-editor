@@ -464,9 +464,17 @@ class ClaudeClient:
             f"and if needed provide an improved version."
         )
 
+        # Scale the budget with the text being reviewed, like translate() does.
+        # A flat 1024 truncated the review of any book or note mid-sentence —
+        # and because the reply is appended to the chat history verbatim, the
+        # half-finished text then rode along into the next Suggest request.
+        # The review restates the translation and may append an improved
+        # version, so budget for both plus the prose around them.
+        review_budget = min(4096, max(1024, (len(original) + len(translation)) * 2))
+
         response = self._create_message(
             model=self.model,
-            max_tokens=1024,
+            max_tokens=review_budget,
             system=[{"type": "text", "text": system,
                      "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user}],

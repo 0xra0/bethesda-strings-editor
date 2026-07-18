@@ -100,6 +100,11 @@ class ClaudeTranslationWorker(QObject):
         self.profile_manager = None     # bethesda_strings.character_profiles.ProfileManager (optional)
         self.profile_assignments = None # bethesda_strings.character_profiles.ProfileAssignments (optional)
         self.skipped_types: list = []
+        # Attached by MainWindow after construction (the TM lives on the window so
+        # it survives worker rebuilds).  Declared here so the lookup below reads a
+        # real attribute rather than depending on the caller having set one.
+        self.translation_memory = None  # Optional[gui.translation_memory.TranslationMemory]
+        self.tm_fuzzy_max_score: float = 3.0
 
         self._stop_flag = False
         self._mutex = QMutex()
@@ -145,6 +150,12 @@ class ClaudeTranslationWorker(QObject):
         if hasattr(self._claude, "reset_usage"):
             self._claude.reset_usage()
 
+        # Warm only the word lists this language pair can consult (quality
+        # checks, English-leak detection); loading all of them costs hundreds
+        # of MB on languages the session never touches.
+        from gui.ollama_worker import preload_language_dictionaries
+        preload_language_dictionaries(self.source_lang, self.target_lang)
+
         total = len(requests)
         done = 0
         success = 0
@@ -184,11 +195,23 @@ class ClaudeTranslationWorker(QObject):
                     if cached:
                         return req.index, cached, req.string_id
 
-            # Check translation memory (skipped on retry for the same reason)
-            if not is_retry and hasattr(self, "translation_memory") and self.translation_memory:
-                tm_result = self.translation_memory.get(req.string_id)
-                if tm_result:
-                    return req.index, tm_result, req.string_id
+            # Check translation memory (skipped on retry for the same reason).
+            # Same lookup order as OllamaWorker: id, then source text, then fuzzy.
+            # There is no TranslationMemory.get() — calling it raised AttributeError
+            # out of this function and failed every string in the batch.  Looking up
+            # by id alone was also not enough: a memory mined by the Official-TM
+            # miner or imported from TMX is keyed purely by source text.
+            tm = self.translation_memory
+            if not is_retry and tm:
+                mem_hit = tm.get_by_id(req.string_id)
+                if not mem_hit:
+                    mem_hit = tm.get_by_source(source_text)
+                if not mem_hit:
+                    mem_hit = tm.get_fuzzy(
+                        source_text, max_score=self.tm_fuzzy_max_score
+                    )
+                if mem_hit:
+                    return req.index, mem_hit, req.string_id
 
             # Term protection
             protected = source_text

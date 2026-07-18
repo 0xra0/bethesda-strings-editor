@@ -154,10 +154,27 @@ def test_retry_hint_bypasses_cache(_app):
 
 
 # ── Bug 3: a retry bypasses the translation memory ───────────────────────────
+def _tm_with(id_entries=(), src_entries=()):
+    """A real TranslationMemory — never a dict stand-in.
+
+    Standing this in as ``{7: "..."}`` is what hid the fact that the worker
+    called ``TranslationMemory.get()``, which does not exist: a dict has that
+    method, the real class has ``get_by_id``.  Every string in a batch failed
+    with AttributeError as soon as a TM was loaded, and the test passed.
+    """
+    from gui.translation_memory import TranslationMemory
+    tm = TranslationMemory()
+    for sid, text in id_entries:
+        tm._by_id[sid] = text
+    if src_entries:
+        tm.add_pairs(src_entries)
+    return tm
+
+
 def test_retry_hint_bypasses_translation_memory(_app):
     client = FakeClient()
     worker = _make_worker(_app, client)
-    worker.translation_memory = {7: "STALE TM VALUE"}
+    worker.translation_memory = _tm_with(id_entries=[(7, "STALE TM VALUE")])
 
     # Non-retry: the TM hit short-circuits the model.
     results, _ = _run(worker, [_req(text="Grav drive", string_id=7)])
@@ -166,7 +183,23 @@ def test_retry_hint_bypasses_translation_memory(_app):
 
     # Retry: the TM is skipped and the model is called.
     worker2 = _make_worker(_app, client)
-    worker2.translation_memory = {7: "STALE TM VALUE"}
+    worker2.translation_memory = _tm_with(id_entries=[(7, "STALE TM VALUE")])
     results2, _ = _run(worker2, [_req(text="Grav drive", string_id=7, retry_hint="fix")])
     assert results2[0] == "TR:Grav drive"
     assert client.calls == 1
+
+
+def test_source_keyed_tm_is_used_by_the_claude_backend(_app):
+    """A memory with no IDs at all still resolves — by source text.
+
+    The Official-TM miner and TMX import both produce source-keyed memories.
+    Looking up by ID alone left them permanently unused on this backend.
+    """
+    client = FakeClient()
+    worker = _make_worker(_app, client)
+    worker.translation_memory = _tm_with(src_entries=[("Grav drive", "Грав-двигун")])
+
+    results, errors = _run(worker, [_req(text="Grav drive", string_id=7)])
+    assert not errors
+    assert results[0] == "Грав-двигун"
+    assert client.calls == 0
