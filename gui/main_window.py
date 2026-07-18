@@ -747,6 +747,18 @@ class MainWindow(QMainWindow):
         )
         logger.info("Auto-saved recovery snapshot: %d string(s)", len(translations))
 
+    def _clear_recovery_snapshot(self) -> None:
+        """Drop the auto-save snapshot after the work reaches disk for real.
+
+        The snapshot was only ever cleared on a clean exit, so a crash *after* a
+        successful save still offered to restore translations the user had
+        already written out — stale work presented as unsaved.
+        """
+        try:
+            self._recovery_manager.clear()
+        except Exception as exc:  # never let cleanup break a successful save
+            logger.warning("Failed to clear recovery snapshot: %s", exc)
+
     @Slot()
     def _check_for_crash_recovery(self) -> None:
         """Show restore dialog if a leftover recovery snapshot exists."""
@@ -855,6 +867,7 @@ class MainWindow(QMainWindow):
             self.ollama_worker.profile_manager = self._profile_manager
             self.ollama_worker.profile_assignments = self._profile_assignments
             self.ollama_worker.skipped_types = list(self.settings.skip_string_types)
+            self.ollama_worker.tm_fuzzy_max_score = self.settings.tm_fuzzy_max_score
             logger.info("Translation worker initialized (%s: %s)", backend_label, model)
         else:
             self.ollama_worker = OllamaWorker(
@@ -2884,6 +2897,7 @@ class MainWindow(QMainWindow):
                 self.table_model.apply_changes_to_file(self.current_file)
                 self.current_file.save(str(self.current_path))
                 _count = len(self.current_file)
+            self._clear_recovery_snapshot()
             self.statusBar().showMessage(self.tr("Saved successfully ✓"))
             from gui.micro_animations import show_toast
             show_toast(self, self.tr("Saved ✓  {name}").format(
@@ -2974,6 +2988,7 @@ class MainWindow(QMainWindow):
                 self.table_model.apply_changes_to_file(self.current_file)
                 self.current_file.save(file_path)
                 _count2 = len(self.current_file)
+            self._clear_recovery_snapshot()
             self.statusBar().showMessage(
                 self.tr("Saved to {filename}").format(filename=Path(file_path).name)
             )
@@ -6178,11 +6193,10 @@ class MainWindow(QMainWindow):
                 )
                 return
             memory = TranslationMemory()
-            for row in self.table_model._data:
-                orig = row.get("original", "") or ""
-                trans = row.get("translated", "") or ""
-                if orig and trans:
-                    memory._by_src[orig] = trans
+            memory.add_pairs(
+                (row.get("original", "") or "", row.get("translated", "") or "")
+                for row in self.table_model._data
+            )
 
         file_path, _ = get_save_filename(
             self,

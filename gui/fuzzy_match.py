@@ -393,6 +393,114 @@ def best_fuzzy_match(
     return best_translation, best_score
 
 
+class FuzzyIndex:
+    """Candidate pre-filter for :func:`best_fuzzy_match` over a large pool.
+
+    ``best_fuzzy_match`` is a linear scan and every candidate costs a digit-run
+    regex, two tokenisations and a word-level edit distance.  Against a
+    translation memory of the size the Official-TM miner produces (Starfield's
+    own localizations run to six figures) that is seconds per lookup, on the
+    *miss* path that every uncached string takes.  This narrows the pool first.
+
+    The filter is **sound** — it only drops candidates ``fuzzy_score`` would
+    have rejected anyway — which rests on two properties of that function:
+
+    * **Multi-word sources.** A candidate survives only when fewer than
+      ``threshold`` of the ``n`` source words are missing from it, so it must
+      match at least ``n - threshold + 1`` source *positions*.  A position can
+      only match when its word appears somewhere in the candidate, so summing
+      the query-side multiplicity of every word the two share is an upper bound
+      on the positions that can match — candidates whose bound falls short are
+      unreachable.  ``fuzzy_score`` also breaks outright when the candidate has
+      more than ``threshold`` words more than the source, which bounds the
+      candidate's word count too.
+    * **Single-word sources.** These take the substring path, which can match
+      without sharing a word ("Reload" / "Reloads") — so word indexing alone
+      would be unsound.  But that path also rejects any candidate whose length
+      differs by more than ``_substring_threshold_inc(len(source))``, so only a
+      narrow band of lengths can match.  Single-word sources are therefore
+      indexed by length as well as by word.
+
+    Sources that tokenise to no words at all (punctuation-only) can only ever
+    match each other: a worded source misses every one of its words against
+    them, and they hit the ``len(cnd_words) - len(src_words) > threshold``
+    break against a worded candidate.  They are kept in their own bucket.
+    """
+
+    def __init__(self, sources: Iterable[str] = ()) -> None:
+        self._by_word: dict[int, list[str]] = {}
+        self._single_by_len: dict[int, list[str]] = {}
+        self._tokenless: list[str] = []
+        # Insertion ordinal per source, so candidates() can hand back the pool in
+        # the order a full scan would have walked it.  best_fuzzy_match keeps the
+        # *first* candidate at the best score, so ties are broken by position —
+        # returning them in set order would pick a different translation from run
+        # to run (PYTHONHASHSEED), for the same memory and the same string.
+        # source → (insertion ordinal, word count).  One dict rather than two:
+        # both fields are written together and read together, and a translation
+        # memory carries six figures of entries.
+        self._meta: dict[str, tuple[int, int]] = {}
+        for source in sources:
+            self.add(source)
+
+    def add(self, source: str) -> None:
+        """Index one candidate source string."""
+        if source in self._meta:
+            return
+        words = tokenize(source)
+        self._meta[source] = (len(self._meta), len(words))
+        if not words:
+            self._tokenless.append(source)
+            return
+        # A single-word source is reachable both ways: by word (when the query
+        # has several words, which forces the word-distance path) and by length
+        # (when the query is itself one word, which forces the substring path).
+        if len(words) == 1:
+            self._single_by_len.setdefault(len(source), []).append(source)
+        for w in set(words):
+            self._by_word.setdefault(w, []).append(source)
+
+    def candidates(self, source: str) -> list[str]:
+        """Every indexed source that could possibly score against *source*.
+
+        Returned in insertion order, so scoring this list picks exactly the same
+        winner a full scan would — including among equal-scoring candidates.
+        """
+        words = tokenize(source)
+        if not words:
+            return list(self._tokenless)
+
+        n = len(words)
+        threshold = _define_heuristic_threshold(n)
+        required = n - threshold + 1   # positions that must match; >= 1 for all n
+        max_words = n + threshold      # fuzzy_score's outright length break
+
+        multiplicity: dict[int, int] = {}
+        for w in words:
+            multiplicity[w] = multiplicity.get(w, 0) + 1
+
+        # Upper bound, per candidate, on how many source positions could match.
+        reach: dict[str, int] = {}
+        for w, mult in multiplicity.items():
+            for cand in self._by_word.get(w, ()):
+                reach[cand] = reach.get(cand, 0) + mult
+
+        out = {
+            cand
+            for cand, bound in reach.items()
+            if bound >= required and self._meta[cand][1] <= max_words
+        }
+
+        if n == 1:
+            # The substring path can match without sharing a word at all, so the
+            # bound above does not apply — fall back to its own length window.
+            span = _substring_threshold_inc(len(source))
+            for length in range(len(source) - span, len(source) + span + 1):
+                out.update(self._single_by_len.get(length, ()))
+
+        return sorted(out, key=lambda cand: self._meta[cand][0])
+
+
 # ── self-test ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

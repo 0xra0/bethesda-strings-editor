@@ -9,7 +9,7 @@ import threading
 import time
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple
 
 if TYPE_CHECKING:
     from bethesda_strings.character_profiles import CharacterProfile
@@ -26,6 +26,7 @@ from gui.fr_word_checker import preload as _preload_fr_dict
 from gui.it_word_checker import preload as _preload_it_dict
 from gui.pl_word_checker import preload as _preload_pl_dict
 from gui.ptbr_word_checker import preload as _preload_ptbr_dict
+from gui.ko_word_checker import preload as _preload_ko_dict
 from gui.glossary import GlossaryManager
 from gui.term_protector import TermProtector
 from gui.translation_cache import TranslationCache
@@ -284,6 +285,50 @@ _LANG_DISPLAY: dict[str, str] = {
     "ru":     "Russian",
     "uk":     "Ukrainian",
 }
+
+# ── word-list preloading ─────────────────────────────────────────────────────
+# Each entry loads a frequency list into a Python set at first use. They are not
+# small: Russian is a 35 MB file and Ukrainian 6 MB, and the in-memory set costs
+# several times that. Loading all nine on every launch spent hundreds of MB on
+# languages the session will never touch, so only the ones a given language pair
+# can actually consult are warmed.
+_DICT_PRELOADERS: dict[str, Callable[[], None]] = {
+    "de":   _preload_de_dict,
+    "en":   _preload_en_dict,
+    "es":   _preload_es_dict,
+    "fr":   _preload_fr_dict,
+    "it":   _preload_it_dict,
+    "ko":   _preload_ko_dict,
+    "pl":   _preload_pl_dict,
+    "ptbr": _preload_ptbr_dict,
+    "ru":   _preload_ru_dict,
+    "uk":   _preload_uk_dict,
+}
+
+
+def preload_language_dictionaries(source_lang: str, target_lang: str) -> None:
+    """Warm only the word lists this language pair can consult.
+
+    Loading happens on a background thread and is idempotent, so calling this
+    again for the same pair is free and calling it for a new pair adds only what
+    the new pair needs.
+
+    English is always included: it backs the English-leak quality check and the
+    English-text protection pass regardless of the pair. Russian is added for a
+    Ukrainian target, which is checked for Russian-word leakage.
+    """
+    src = (source_lang or "").lower()
+    tgt = (target_lang or "").lower()
+
+    wanted = {"en", src, tgt}
+    if tgt == "uk":
+        wanted.add("ru")
+
+    for lang in sorted(wanted):
+        preloader = _DICT_PRELOADERS.get(lang)
+        if preloader is not None:
+            preloader()
+
 
 # Rule 1 of the system prompt: target-language style / register guidance.
 _TARGET_STYLE: dict[str, str] = {
@@ -1194,17 +1239,6 @@ class OllamaWorker(QObject):
             f"term_protection={enable_term_protection}, max_workers={self.max_workers}, "
             f"cache={'enabled' if translation_cache else 'disabled'}"
         )
-        # Preload word dictionaries in the background to avoid blocking the
-        # first translation request on dictionary load time.
-        _preload_ru_dict()
-        _preload_en_dict()
-        _preload_uk_dict()
-        _preload_de_dict()
-        _preload_es_dict()
-        _preload_fr_dict()
-        _preload_it_dict()
-        _preload_pl_dict()
-        _preload_ptbr_dict()
 
     def _get_model_config(self, model_name: Optional[str] = None) -> Dict[str, Any]:
         """Return the best-matching config for *model_name* (or the worker's model).
@@ -1389,6 +1423,13 @@ class OllamaWorker(QObject):
             self._consecutive_timeouts = 0
             self._backend_wedged = False
         self._session = self._make_session()
+
+        # Warm the word lists this batch's language pair can consult, so the
+        # first request does not wait on a dictionary load.  The pair is only
+        # known here — requests carry it, the worker is constructed without it.
+        preload_language_dictionaries(
+            requests[0].source_lang, requests[0].target_lang
+        )
 
         total = len(requests)
         successful = 0
