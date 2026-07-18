@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import threading
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
@@ -57,6 +58,18 @@ class TranslationMemory:
         self._by_src: dict[str, str] = {}   # original_text → translation
         self.source_path: str = ""
         self.loaded_count: int = 0
+        # Lazily built candidate pre-filter for get_fuzzy(); rebuilt on demand
+        # after any write to _by_src.  None = needs rebuilding.  Guarded by a
+        # lock because get_fuzzy() runs on every translation worker thread at
+        # once: without it, a batch start has ten threads each building their
+        # own copy of the same index before any of them can use one.
+        self._fuzzy_index = None  # Optional[gui.fuzzy_match.FuzzyIndex]
+        self._fuzzy_lock = threading.Lock()
+
+    def _invalidate_fuzzy_index(self) -> None:
+        """Drop the fuzzy pre-filter after a write to the source-keyed map."""
+        with self._fuzzy_lock:
+            self._fuzzy_index = None
 
     # ── Loading ───────────────────────────────────────────────────────────────
 
@@ -90,7 +103,8 @@ class TranslationMemory:
                 self._by_id[sid] = orig
                 count += 1
 
-        self.loaded_count = len(self._by_id)
+        self._invalidate_fuzzy_index()
+        self.loaded_count = len(self)
         return count
 
     def load_strings_file(self, path: str | Path) -> int:
@@ -106,7 +120,7 @@ class TranslationMemory:
             if text and text.strip():
                 self._by_id[string_id] = text
                 count += 1
-        self.loaded_count = len(self._by_id)
+        self.loaded_count = len(self)
         self.source_path = str(path)
         return count
 
@@ -136,12 +150,14 @@ class TranslationMemory:
                 continue
             self._by_src[src] = tgt
             added += 1
-        self.loaded_count = len(self._by_id) + len(self._by_src)
+        self._invalidate_fuzzy_index()
+        self.loaded_count = len(self)
         return added
 
     def clear(self) -> None:
         self._by_id.clear()
         self._by_src.clear()
+        self._invalidate_fuzzy_index()
         self.loaded_count = 0
 
     # ── Lookup ────────────────────────────────────────────────────────────────
@@ -162,16 +178,41 @@ class TranslationMemory:
         fuzzy_match module is unavailable.
 
         Only called after get_by_id() and get_by_source() both return None.
+
+        A :class:`~gui.fuzzy_match.FuzzyIndex` narrows the candidate pool first.
+        Scoring every entry is seconds per lookup once the memory reaches the
+        size the Official-TM miner produces, and this is the path taken by every
+        string that misses both exact lookups.  The pre-filter is sound (see
+        FuzzyIndex), so the result is identical to scanning the whole memory.
         """
         if not self._by_src:
             return None
         try:
-            from gui.fuzzy_match import best_fuzzy_match
+            from gui.fuzzy_match import FuzzyIndex, best_fuzzy_match
         except ImportError:
             return None
+
+        with self._fuzzy_lock:
+            index = self._fuzzy_index
+            if index is None:
+                index = self._fuzzy_index = FuzzyIndex(self._by_src)
+
+        # One dict lookup per candidate, tolerating a miss: the index may name a
+        # source that a concurrent clear() or reload has since dropped, and this
+        # runs on every translation worker thread at once.  A subscript (even
+        # behind an `in` test) would raise KeyError in that window.
+        by_src = self._by_src
+        candidates = []
+        for src in index.candidates(original):
+            translation = by_src.get(src)
+            if translation:
+                candidates.append((src, translation))
+        if not candidates:
+            return None
+
         result = best_fuzzy_match(
             original,
-            self._by_src.items(),
+            candidates,
             max_score=max_score,
         )
         return result[0] if result else None
@@ -235,7 +276,8 @@ class TranslationMemory:
                 self._by_src[src_text] = tgt_text
                 count += 1
 
-        self.loaded_count = len(self._by_id) + len(self._by_src)
+        self._invalidate_fuzzy_index()
+        self.loaded_count = len(self)
         return count
 
     def export_tmx(
@@ -351,11 +393,26 @@ class TranslationMemory:
         except (ValueError, OSError, TypeError) as exc:
             logger.warning("Failed to load TM snapshot %s: %s", path, exc)
             return 0
-        self.loaded_count = len(self._by_id)
-        return len(self._by_id)
+        self._invalidate_fuzzy_index()
+        self.loaded_count = len(self)
+        return len(self)
 
     def __len__(self) -> int:
-        return len(self._by_id)
+        """Number of entries the memory can resolve.
+
+        Both indexes count.  ``len(self._by_id)`` alone reported 0 for a memory
+        loaded purely from TMX or mined by the Official-TM miner — both are
+        source-keyed — which silently disabled every feature gated on the size
+        or truthiness of the TM (worker attachment, the lookup gate in both
+        translation backends, snapshot-on-exit, the browser, the indicator).
+
+        ``load()`` fills both maps for one logical entry, so the maximum — not
+        the sum — is the entry count.  It under-reports only when ID-keyed and
+        source-keyed entries were loaded from *different* files (e.g. a
+        ``.strings`` TM plus mined official pairs); it never reports zero for a
+        non-empty memory, which is the failure that mattered.
+        """
+        return max(len(self._by_id), len(self._by_src))
 
     def __bool__(self) -> bool:
-        return bool(self._by_id)
+        return bool(self._by_id or self._by_src)

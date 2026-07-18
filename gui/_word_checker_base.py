@@ -118,7 +118,15 @@ class WordChecker:
         return self._load() is not None
 
     def preload(self) -> None:
-        """Start a background thread to load the dictionary."""
+        """Start a background thread to load the dictionary.
+
+        Idempotent and cheap to repeat: once the list is loaded (or has failed
+        to load) there is nothing to do, so no thread is spawned. Callers warm
+        the dictionaries for the current language pair, which may be requested
+        again on every batch.
+        """
+        if self._dict is not None or self._failed:
+            return
         threading.Thread(
             target=self._load,
             daemon=True,

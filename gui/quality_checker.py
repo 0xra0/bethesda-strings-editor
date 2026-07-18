@@ -259,6 +259,11 @@ _CYRILLIC_SOURCES: frozenset = frozenset({"ru", "russian", "uk", "ukrainian"})
 _CJK_TARGETS: frozenset = frozenset({"ja", "japanese", "zhhans", "chinese", "zh"})
 # Target language codes that use Hangul script.
 _HANGUL_TARGETS: frozenset = frozenset({"ko", "korean"})
+# Display width of one CJK/Hangul character in Latin-character units.  Those
+# scripts are drawn full-width — roughly two Latin glyphs per character — which
+# is what lets the character-count thresholds below stand in for pixel width on
+# every target.  See QualityChecker._target_width_factor.
+_FULL_WIDTH_FACTOR: float = 2.0
 
 # ── Standalone numbers (2+ digits, not embedded in IDs/paths/tags) ─────────────
 # (?!0{2,}(?!\d)) excludes pure-zero groups like "000" that arise from
@@ -708,6 +713,28 @@ class QualityChecker:
                     )
                 )
 
+    def _target_width_factor(self) -> float:
+        """Latin-equivalent display width of one target character.
+
+        Every threshold below is a character count standing in for a *width*,
+        calibrated on targets that write one narrow glyph per character.  CJK
+        and Hangul do neither: they pack far more meaning per character (a
+        Korean translation typically runs 0.4–0.6× the English character count,
+        Chinese lower still) and each glyph is drawn full-width, roughly two
+        Latin characters.
+
+        Comparing their raw character ratio against the same numbers made the
+        checks useless in both directions — UI_OVERFLOW at 1.40× could
+        essentially never fire for a Korean translation, while the 0.20×
+        SUSPICIOUSLY_SHORT floor sat close enough to a normal Chinese ratio to
+        flag correct work.  Converting to width units first keeps one set of
+        thresholds honest for every supported target.
+        """
+        tgt = self.target_language.lower()
+        if tgt in _CJK_TARGETS or tgt in _HANGUL_TARGETS:
+            return _FULL_WIDTH_FACTOR
+        return 1.0
+
     def _check_length_ratio(
         self, original: str, translated: str, report: QualityReport
     ) -> None:
@@ -715,7 +742,14 @@ class QualityChecker:
         if orig_len == 0:
             return
         trans_len = len(translated.strip())
-        ratio = trans_len / orig_len
+        # Compared in Latin-equivalent width units, not raw characters, so the
+        # thresholds mean the same thing for a Hangul/CJK target as for Cyrillic.
+        width_factor = self._target_width_factor()
+        ratio = trans_len * width_factor / orig_len
+        # Raw character ratio, for the messages: the numbers a user sees in the
+        # table are characters, so reporting the width-adjusted figure there
+        # would not match anything they can count.
+        char_ratio = trans_len / orig_len
 
         # Very short Cyrillic sources (≤ 8 chars) are typically abbreviations or
         # acronyms; expanding them is correct localization practice
@@ -733,7 +767,7 @@ class QualityChecker:
                         code="SUSPICIOUSLY_SHORT",
                         message=(
                             f"Translation is much shorter than original "
-                            f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                            f"({trans_len} vs {orig_len} chars, {char_ratio:.2f}×)"
                         ),
                     )
                 )
@@ -746,27 +780,30 @@ class QualityChecker:
                     code="SUSPICIOUSLY_SHORT",
                     message=(
                         f"Translation is much shorter than original "
-                        f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                        f"({trans_len} vs {orig_len} chars, {char_ratio:.2f}×)"
                     ),
                 )
             )
         elif orig_len >= _UI_OVERFLOW_MIN_ORIG and ratio >= UI_OVERFLOW_RATIO:
             # Translation overflows the hardcoded Bethesda UI bounding box.
             # Compute the character budget (40% headroom) so the retry hint can
-            # give the model a concrete target.
-            budget = int(orig_len * UI_OVERFLOW_RATIO)
+            # give the model a concrete target.  For a full-width target the
+            # budget is in *its* characters, so divide the width allowance back
+            # out — 40 % more width buys a Korean label only ~70 % as many
+            # characters as the English source has.
+            budget = int(orig_len * UI_OVERFLOW_RATIO / width_factor)
             excess = trans_len - budget
             report.issues.append(
                 QualityIssue(
                     severity=SEVERITY_WARNING,
                     code="UI_OVERFLOW",
                     message=(
-                        f"Translation is {ratio:.0%} of original length "
+                        f"Translation is {ratio:.0%} of original width "
                         f"({trans_len} vs {orig_len} chars) — likely overflows "
                         f"Bethesda hardcoded UI bounding box"
                     ),
                     detail=(
-                        f"budget: ≤{budget} chars ({orig_len}×1.4); "
+                        f"budget: ≤{budget} chars; "
                         f"current: {trans_len} chars; shorten by {excess}+ chars"
                     ),
                 )
@@ -778,7 +815,7 @@ class QualityChecker:
                     code="SUSPICIOUSLY_LONG",
                     message=(
                         f"Translation is much longer than original "
-                        f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                        f"({trans_len} vs {orig_len} chars, {char_ratio:.2f}×)"
                     ),
                 )
             )
@@ -791,7 +828,7 @@ class QualityChecker:
                     code="LENGTH_INCREASE",
                     message=(
                         f"Translation is notably longer than original "
-                        f"({trans_len} vs {orig_len} chars, {ratio:.2f}×)"
+                        f"({trans_len} vs {orig_len} chars, {char_ratio:.2f}×)"
                     ),
                 )
             )

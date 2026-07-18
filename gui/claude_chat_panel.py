@@ -13,6 +13,7 @@ the main table so Claude always has the relevant source/translation in view.
 from __future__ import annotations
 
 import logging
+import re
 from typing import Dict, List, Optional
 
 from bethesda_strings import format_string_id
@@ -35,6 +36,29 @@ from PySide6.QtWidgets import (
 )
 
 logger = logging.getLogger(__name__)
+
+# A fenced block, with the optional language tag after the opening fence left
+# out of the capture (```korean → "korean" is not part of the suggestion).
+_CODE_BLOCK_RE = re.compile(r"```[^\n`]*\n?(.*?)\n?```", re.DOTALL)
+
+
+def last_code_block(history: List[Dict]) -> str:
+    """Return the last fenced block Claude sent, or "" if there is none.
+
+    Reads the stored history rather than the rendered chat, because the reply
+    handlers rewrite every fence into a <pre> element before display: the widget
+    text contains no backticks at all, so scanning it could only ever report
+    "no code block found" — while the button's enable check ran against the raw
+    reply and lit it up anyway.  Every path that shows an assistant message
+    stores the raw text first, so this sees the same content the user read.
+    """
+    for message in reversed(history):
+        if message.get("role") != "assistant":
+            continue
+        blocks = _CODE_BLOCK_RE.findall(message.get("content", "") or "")
+        if blocks:
+            return blocks[-1].strip()
+    return ""
 
 
 # ── Background chat worker ────────────────────────────────────────────────────
@@ -490,13 +514,10 @@ class ClaudeChatPanel(QDockWidget):
 
     @Slot()
     def _do_apply(self) -> None:
-        """Extract last code block from chat and emit apply_translation."""
-        html = self._chat_view.toPlainText()
-        # Find last ```…``` block
-        import re
-        blocks = re.findall(r"```\n?(.*?)\n?```", html, re.DOTALL)
-        if blocks:
-            suggestion = blocks[-1].strip()
+        """Extract the last code block Claude sent and emit apply_translation."""
+        suggestion = last_code_block(self._history)
+
+        if suggestion:
             self.apply_translation.emit(suggestion)
             self._append_system(f"Applied: {suggestion[:80]}…" if len(suggestion) > 80 else f"Applied: {suggestion}")
         else:
@@ -587,7 +608,6 @@ class ClaudeChatPanel(QDockWidget):
     @Slot(str)
     def _on_reply(self, text: str) -> None:
         """Replace raw streamed text with nicely formatted HTML."""
-        import re
         self._history.append({"role": "assistant", "content": text})
 
         # Build the formatted content (same logic as _append_claude)
@@ -615,6 +635,9 @@ class ClaudeChatPanel(QDockWidget):
     def _on_review_done(self, text: str) -> None:
         self._history.append({"role": "assistant", "content": text})
         self._append_claude(text, prefix="📋 Translation Review")
+        # A review that includes an improved version is just as applicable as a
+        # suggestion; only the streaming path used to enable the button.
+        self._btn_apply.setEnabled(bool(re.search(r"```", text)))
 
     @Slot(str)
     def _on_tool_note(self, name: str) -> None:
@@ -638,7 +661,6 @@ class ClaudeChatPanel(QDockWidget):
         self._scroll_bottom()
 
     def _append_claude(self, text: str, prefix: str = "Claude") -> None:
-        import re
         # Highlight code blocks
         formatted = re.sub(
             r"```\n?(.*?)\n?```",

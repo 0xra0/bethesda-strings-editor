@@ -550,3 +550,109 @@ def test_find_repeated_ngram_detects():
 def test_find_repeated_ngram_clean():
     gram = _find_repeated_ngram("The quick brown fox jumps over the lazy dog")
     assert gram is None
+
+
+# ── length ratios on full-width targets ────────────────────────────────────────
+# Every length threshold is a character count standing in for a display width,
+# calibrated on scripts that draw one narrow glyph per character.  Hangul and CJK
+# do neither — far more meaning per character, and each glyph drawn full-width —
+# so the raw ratios are not comparable and the checks were useless in both
+# directions for two supported targets.
+
+def _length_codes(checker, source, translation):
+    report = checker.check(0, 1, source, translation)
+    return {
+        issue.code for issue in report.issues
+        if issue.code in {
+            "SUSPICIOUSLY_SHORT", "UI_OVERFLOW",
+            "SUSPICIOUSLY_LONG", "LENGTH_INCREASE",
+        }
+    }
+
+
+def test_korean_translation_is_not_flagged_as_short():
+    """A correct Korean translation runs ~0.4x the English character count."""
+    checker = make_checker(target_language="Korean", source_language="English")
+
+    codes = _length_codes(
+        checker,
+        "Emergency Protocol Override Authorization",
+        "비상 프로토콜 무시 승인",
+    )
+
+    assert codes == set()
+
+
+def test_korean_overflow_is_caught_despite_a_low_character_ratio():
+    """40 Hangul chars draw about as wide as 80 Latin ones — that overflows.
+
+    Measured against raw character counts this is 0.98x the source and nothing
+    fires, so UI_OVERFLOW could essentially never trigger on a Hangul target.
+    """
+    checker = make_checker(target_language="Korean", source_language="English")
+
+    codes = _length_codes(
+        checker,
+        "Emergency Protocol Override Authorization",
+        "비상 프로토콜 무시 승인 절차를 완전하게 처리하는 관리자 전용 기능입니다",
+    )
+
+    assert "UI_OVERFLOW" in codes
+
+
+def test_full_width_budget_is_stated_in_target_characters():
+    """The retry hint has to give the model a number it can actually count to."""
+    checker = make_checker(target_language="Korean", source_language="English")
+    report = checker.check(
+        0, 1,
+        "Emergency Protocol Override Authorization",
+        "비상 프로토콜 무시 승인 절차를 완전하게 처리하는 관리자 전용 기능입니다",
+    )
+
+    overflow = next(i for i in report.issues if i.code == "UI_OVERFLOW")
+    # 41 source chars x 1.4 width allowance / 2.0 per Hangul char = 28
+    assert "≤28 chars" in overflow.detail
+
+
+def test_narrow_script_targets_keep_the_original_thresholds():
+    """Ukrainian is unaffected — same character counts, same verdicts."""
+    checker = make_checker(target_language="Ukrainian", source_language="English")
+
+    assert _length_codes(checker, "Reload Weapon", "Перезарядити зброю") == set()
+    assert "UI_OVERFLOW" in _length_codes(
+        checker,
+        "Emergency Protocol Override",
+        "Авторизація екстреного протоколу перевизначення систем",
+    )
+
+
+def test_chinese_translation_is_not_flagged_as_short():
+    """Chinese packs tighter still, dropping under the 0.20x character floor.
+
+    Pinned below that floor deliberately: at 0.14x by characters this is a
+    correct translation the check used to call suspiciously short, and it is
+    only cleared by converting to width units first (0.28x).
+    """
+    checker = make_checker(target_language="zhhans", source_language="English")
+    source = ("Emergency Protocol Override Authorization Required "
+              "For This Terminal Access Point")
+    translation = "此终端访问点需要紧急协议覆盖授权"
+    assert len(translation) / len(source) < 0.20
+
+    codes = _length_codes(checker, source, translation)
+
+    assert "SUSPICIOUSLY_SHORT" not in codes
+
+
+def test_chinese_gibberish_is_still_flagged_as_short():
+    """The floor still has to catch a genuinely truncated translation."""
+    checker = make_checker(target_language="zhhans", source_language="English")
+
+    codes = _length_codes(
+        checker,
+        "Emergency Protocol Override Authorization Required "
+        "For This Terminal Access Point",
+        "此终",
+    )
+
+    assert "SUSPICIOUSLY_SHORT" in codes
