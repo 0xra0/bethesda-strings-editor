@@ -118,7 +118,7 @@ def main():
 
     app = QApplication(sys.argv)
     app.setApplicationName("Bethesda Strings AI Translator")
-    app.setApplicationVersion("0.2.4")
+    app.setApplicationVersion("0.2.5")
     app.setOrganizationName("BethesdaModTools")
 
     # Windows: give the process an explicit AppUserModelID.  Without it the
