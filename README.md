@@ -93,8 +93,10 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Rate-limit resilience** — the Claude API client retries 429/5xx responses with exponential backoff (honouring `Retry-After`), so a large batch rides out transient rate limits instead of failing rows
 - **AI-fix mode** — instead of retranslating from source, sends the existing flawed translation + QC issue descriptions to the model for targeted correction; faster and more precise than a full retranslation
 - **Language-pair prompts** — dedicated system prompts for every source→target combination with register rules, script conventions, and native examples
+- **Player-gender-aware translation** — English "you" carries no grammatical gender, but most targets do, so the model would otherwise guess one per line. Declare the player character's gender once (Settings → Translation Preferences, or the Prompt Editor) and every backend applies it consistently; Translation → **Find Player-Referring Strings** selects the gender-sensitive rows. A pre-batch warning catches an unset gender before any AI call — and only when it matters: the target inflects *and* the batch actually contains player-referring lines
 - **Translation Prompt Editor** (Translation → Translation Prompt Editor) — customize the system prompt without editing code: set **tuning dials** (language style, formality, vocabulary, grammar, expression/localization, translation rigor), override the per-language style/register rule, and append project-wide instructions, with a live preview of the fully-assembled prompt. Applies to every backend (Ollama, Claude API, Claude Code CLI); the formatting-token protection rules stay fixed so placeholders can't be broken
-- **Translation memory** — known strings are looked up before calling the model, so they are never retranslated; a loaded TM is persisted as a JSON snapshot and auto-loaded next session, shown by a status-bar indicator, and inspectable via a searchable **TM browser** (Translation → Browse Translation Memory). Fuzzy matches whose numbers differ from the source (`28LY` ≠ `30LY`) are rejected
+- **Translation memory** — known strings are looked up before calling the model, so they are never retranslated; a loaded TM is persisted as a JSON snapshot and auto-loaded next session, shown by a status-bar indicator, and inspectable via a searchable **TM browser** (Translation → Browse Translation Memory). Fuzzy matches whose numbers differ from the source (`28LY` ≠ `30LY`) are rejected, and lookup stays fast on a six-figure TM via a sound pre-filter that only drops candidates the scorer would have rejected anyway
+- **Official terminology miner** (Translation → Mine Official Terminology) — Bethesda ships every official language for a plugin side by side on identical string IDs, so aligning English against an official target yields **their** canonical rendering of every weapon, faction, UI verb and quest term, with **zero AI calls**. Auto-detects the languages your install ships, mines a TM plus a filtered glossary (with optional reference languages — e.g. Polish as a Slavic cross-reference for Ukrainian), and imports into pending rows only, never clobbering work in progress. EN→DE on a real install: 190,367 TM entries + 17,815 glossary terms in 27 s
 - **Apply to All Identical Originals** (Ctrl+Alt+D) — propagate one row's translation to every row with the same source text in one shot; **Delete** clears a translation and reverts the row to pending
 - **Translation cache** — SHA-256-keyed JSON cache (up to 50,000 entries) persisted across sessions
 - **Term protector** — 8,000+ Starfield-specific terms are replaced with placeholder tokens before the AI sees the text and restored afterward, preventing mistranslation of proper nouns
@@ -115,6 +117,8 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **VMAD script-property analysis** (Translation → Script Property Analysis) — parses the Papyrus script-property strings attached to records, classifies each value as translatable / review / locked (resource paths, event names, identifiers), and byte-splices only the edited values so unmodelled script structures survive untouched; works on both localized and non-localized plugins
 - **Starfield interface TXT**: `translate_en.txt` / `translate_ru.txt` key=value interface string files
 - **xTranslator SST XML**: import/export in xTranslator format (match by `sID`, fallback to source text)
+- **Translation folder validator** (Translation → Validate Translation Folder) — scans a finished translation against the game's Data folder (loose files **and** `.ba2` archives) and flags every file and ID that will show an in-game `<Error: Unknown lstring ID …>`, before you launch the game; also surfaces cross-file-type ID contamination
+- **Companion strings viewer** (Translation → Companion Strings) — read-only view of a loaded `.strings`/`.dlstrings`/`.ilstrings` triplet with file-type and text/ID filters. The three files have **independent ID spaces**, so companions load as reference and are never merged into the file you save
 - **Drag-and-drop** file loading with format validation
 - **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` directly as a Translation Memory or merge into the current file; zip, 7z, and rar archives are automatically extracted; free-account downloads via browser cookies (`curl-cffi`); account sign-in uses the official browser-based **Single Sign-On** flow (no API key to paste — the app is a registered NexusMods application)
 - **NexusMods upload** — v3 multipart upload client with presigned S3 URLs (File → Upload to NexusMods)
@@ -125,6 +129,10 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Hunspell spell-check** — per-language `SPELL_ERROR` warnings; uses system dictionaries on Linux and app-bundled dictionaries on Windows/macOS (populate via `scripts/fetch_dictionaries.py`)
 - **AI quality model** (`qcgemma4-st`) — fine-tuned Gemma 4 E4B that detects 16 issue codes with chain-of-thought reasoning and structured `VERDICT: GOOD / ISSUES_FOUND` output with `AUTOFIX`/`RETRANSLATE` recommendations
 - **Font & Glyph Checker** — parses Scaleform SWF font atlases and TTF/OTF cmap tables; flags translation characters that will render as squares in-game and suggests auto-fixable substitutes
+- **UI Width-Fit Simulator** (Translation → UI Width-Fit Simulator) — the glyph checker proves a character *exists*; this proves the label it spells *fits its box*. Cyrillic, German and Polish run 15–30 % longer than English and Scaleform widgets **clip rather than shrink**, so a perfectly-spelled translation still ships as a truncated button. Width is summed from the real per-glyph advances of the actual game faces (SWF `FontAdvanceTable` / TTF `hmtx`), with markup resolved and value placeholders substituted first. Results are colour-coded worst-overflow-first with CSV export, and every row also carries **vs Source** — the translated width over the English width, which needs no budget at all, since the English fit by construction
+- **Real widget bounds, read from the game's own SWFs** — budgets are not guessed. Point the simulator at your Data folder and it reads every `Interface/*.swf` and `*Interface*.ba2` (~250 SWFs, ~2560 clipping fields), taking each field's authored width, margins, clip behaviour and font *class* straight from its `DefineEditText` record. Font size is marked **declared** when the SWF states it and **derived** when inferred from box height — never flattened together, because width scales linearly with size, so a 20 % size error is a 20 % wrong verdict
+- **Large-font (accessibility) menus checked as the worst case** — Starfield ships a `_lrg` build of most menus where the box usually stays the same size while the font grows (up to ×2.64), so a label can pass the standard menu and clip only for players using the large font. The tightest of the two builds is chosen per widget, and the dialog always names which build it measured — including when the twin could not be identified, so "no warning" never quietly means "not checked"
+- **Korean particle (조사) checker** — allomorphs are *computed* from Hangul 받침 arithmetic, never guessed. Flags single-form particles after a value placeholder (always a latent bug: the substituted noun's final consonant is unknowable at translation time and the engine resolves nothing), and particle/stem mismatches within the provably sound subset. Measured at **0 false positives over 5,353 real Korean strings**; both codes are auto-fixable, and the model is taught the same rule
 - **Auto-Fix All** — one-click batch application of all mechanically correctable issues (whitespace, capitalization, character substitution, missing newlines, truncated translations, unclosed guillemets)
 - **Per-code hide filter** — suppress specific QC issue codes from the results table for the current session
 - **Retranslation queue** — strings flagged by QC are queued and retranslated with a per-string hint describing what went wrong
@@ -135,7 +143,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Plugin validator** — scans ESP/ESM for NPC dialogue camera bugs: missing Localized flag, stray DIAL/SCEN/INFO records, ONAM overrides, missing master dependencies
 
 ### Review tools
-- **Visual Context Preview** (Ctrl+Shift+P) — dockable panel that renders the current string inside a faithful recreation of the Bethesda UI using actual game fonts extracted from `fonts_uk.swf` / `fonts_en.swf`; pixel-exact borders, noise tile, and dark gradient from `dialoguemenu.swf`; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI); colour-coded overflow indicator; Source/Translation/Both view modes
+- **Visual Context Preview** (Ctrl+Shift+P) — dockable panel that renders the current string inside a faithful recreation of the Bethesda UI using actual game fonts extracted from `fonts_uk.swf` / `fonts_en.swf`; pixel-exact borders, noise tile, and dark gradient from `dialoguemenu.swf`; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI); Source/Translation/Both view modes. Carries a **live fit indicator** for length-critical strings (`Tab label: 262/220px (119%) CLIPS`) that measures real font advances against a fixed widget budget — deliberately separate from the canvas overflow badge beside it, which only reports whether the text outgrew the *preview*, and so cannot answer "will this clip in-game?"
 - **Dialogue Tree Visualizer** — interactive quest → topic → response node graph (Translation → Dialogue Tree) with Starfield dark-space visual theme; click any node to jump to that string in the table
 - **Audio / TTS Preview** (Ctrl+Shift+A) — dockable panel with eSpeak-NG and Piper backends; synthesizes a TTS read-out of the translation so timing can be compared against the original game audio; colour-coded timing bar (green ≤ 110 %, orange ≤ 130 %, red > 130 %)
 - **Native Starfield voice playback** — decodes the original Wwise `.wem` voice clip for a dialogue line straight from the game's `*Voices*.ba2` archives (FormID → voice clip, via `vgmstream-cli`) and plays it back in the audio panel alongside the TTS read-out; in ESP/ESM mode the row's FormID auto-fills
@@ -212,8 +220,14 @@ bethesda_strings/              Pure Python parsing library (no Qt dependency)
   xml_handler.py               xTranslator SST XML import/export
   encoding.py                  Encoding detection and conversion
   version_diff.py              Game-version diff and translation migration
+  triplet.py                   Read-only .strings/.dlstrings/.ilstrings companion holder (independent ID spaces)
+  strings_validator.py         Classifies a translation folder against the game's source IDs
+  official_tm_miner.py         Mines TM + glossary from the base game's own official localizations
   character_profiles.py        Character persona profile definitions
-  font_checker.py              SWF/TTF glyph coverage checker (library layer)
+  font_checker.py              SWF/TTF glyph coverage + advance-width metrics (library layer)
+  swf.py                       SWF container primitives (decompress, tag walk, bit-packed RECT)
+  swf_widgets.py               Real UI widget bounds from the game's DefineEditText records
+  width_fit.py                 UI width-fit simulator — measured width vs. widget budget
   lore_db.py                   SQLite FTS5 lore database and UESP downloader
   dialogue_tree.py             Quest → Topic → Response tree parser
 
@@ -239,12 +253,19 @@ gui/                           PySide6 application layer
   quality_dialog.py            QA results dialog — filtering, per-code hide, auto-fix, retranslation
   ai_qc_worker.py              Worker thread for qcgemma4-st quality model
   spell_checker.py             Hunspell spell-check wrapper (3 backends: lib / spylls / CLI)
+  ko_particle_checker.py       Korean 조사 agreement, computed from Hangul 받침 arithmetic
+  player_gender.py             Detects player-referring (gender-sensitive) source strings
   font_checker_dialog.py       SWF/TTF glyph coverage checker dialog
+  width_fit_dialog.py          UI width-fit simulator UI (real widgets, large-font worst case)
   string_table.py              QAbstractTableModel for strings, ESP, and TXT modes
   term_protector.py            Placeholder-based term protection (8000+ terms)
   translation_cache.py         SHA-256-keyed persistent translation cache
   translation_memory.py        Pre-loaded map of string ID → known-good translation (+ JSON snapshot)
   tm_browser_dialog.py         Searchable read-only Translation Memory browser
+  official_tm_dialog.py        Official-terminology miner UI (language auto-detect, glossary preview)
+  fuzzy_match.py               Fuzzy scoring + FuzzyIndex candidate pre-filter for TM lookup
+  validate_translation_dialog.py  Translation-folder validator UI (in-game lstring-ID errors)
+  companion_strings_dialog.py  Read-only viewer for a loaded .strings triplet
   glossary.py                  Glossary data model, CSV/TBX/JSON I/O
   consistency_checker.py       Finds inconsistent translations of identical source strings
   gender_checker.py            Ukrainian adjective/noun gender agreement checker
@@ -272,13 +293,16 @@ gui/                           PySide6 application layer
 
 data/
   fonts/                       Game fonts extracted from Starfield SWF assets
+                               (also the advance-width source for the width-fit simulator)
     RF_35_M.ttf                Cyrillic body font (UK locale, $MAIN_Font)
     RF_55_M.ttf                Cyrillic bold
     RF_55_SB.ttf               Cyrillic semi-bold
     NB_Architekt_Light.ttf     Latin body font (EN locale)
     NB_Architekt.ttf           Latin bold
   dialogue_bg_tile.png         50×50 noise tile from dialoguemenu.swf
-  *_words.txt                  Word lists for source-language leak detection (12 languages)
+  *_words.txt                  Word lists for source-language leak detection (10 languages) and,
+                               for Korean, the 조사 particle checker; loaded per language pair
+                               rather than all at once (~331 MB → ~44 MB for an EN→KO session)
 
 scripts/
   apply_quality_fixes.py       CLI: apply auto-fixes from a JSON report to SST XML
