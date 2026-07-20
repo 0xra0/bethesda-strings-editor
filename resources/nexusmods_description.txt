@@ -22,6 +22,21 @@ python main.py[/code]
 
 To cut these flags off at the source, the PyInstaller launcher is [b]compiled from source[/b] on the CI runners (producing unique bytes rather than the widely-blocklisted prebuilt stub) instead of being shipped as-is. If you still hit a warning, please post the exact file name and its SHA-256 hash so I can submit it to the antivirus vendor as a false positive.
 
+[heading]What's New in v0.2.5[/heading]
+
+[list]
+[*][b]UI Width-Fit Simulator[/b] — catches the translation that is spelled perfectly and still ships as a truncated button. Widths are measured from the real per-glyph advances of the game's own fonts, against widget budgets read out of the game's own menus — including the large-font accessibility build, where a label that passes the normal menu can still clip
+[*][b]Player-gender-aware translation[/b] — declare your player character's gender once instead of letting the AI guess it line by line in Ukrainian, Polish, German, Russian and other gendered languages
+[*][b]Official terminology miner[/b] — extracts Bethesda's own wording for every weapon, faction, UI verb and quest term straight out of the base game's shipped localizations, with zero AI calls (190k+ entries from a real install in under 30 seconds)
+[*][b]Translation Prompt Editor[/b] — retune how the AI translates (style, formality, vocabulary, grammar, rigor) without touching code, with a live preview
+[*][b]Korean particle (조사) checker[/b] — computed from Hangul 받침 arithmetic rather than guessed; 0 false positives measured across 5,353 real Korean strings
+[*][b]Much lighter and faster[/b] — word lists now load per language pair instead of all at once (~331 MB → ~44 MB on an EN→KO session), and translation-memory fuzzy lookup is ~10× faster with identical results
+[/list]
+
+[b]Fixes worth calling out:[/b] a translation memory keyed by source text (everything the miner and TMX imports produce) reported itself empty and was silently switched off everywhere; the Claude backend failed every string in a batch as soon as any TM was loaded; the chat panel's "Use as Translation" button could never actually work; the gender-agreement dialog crashed on open; and on Linux the app could abort at startup when the animated background kicked in hardware video decoding.
+
+Full changelog: [url=https://github.com/0xra0/bethesda-strings-editor/blob/main/CHANGELOG.md]CHANGELOG.md[/url]
+
 [heading]Installation[/heading]
 
 [list=1]
@@ -37,7 +52,7 @@ To cut these flags off at the source, the PyInstaller launcher is [b]compiled fr
 
 [heading]Ollama Models[/heading]
 
-The custom translation fine-tunes are [b]not published on any hub[/b] — there is no [b]ollama pull[/b] for them. To translate with a local model, use the Claude API backend (above) or build a model from a GGUF:
+The custom translation fine-tunes are [b]not published on any hub[/b] — there is no [b]ollama pull[/b] for them. To translate, use your [b]Claude Code subscription[/b] or the [b]Claude API[/b] (both above, neither needs a GPU), or build a local model from a GGUF:
 
 [list=1]
 [*]Download a GGUF — e.g. the public [b]MamayLM[/b] (Ukrainian) from HuggingFace: INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0 — or use any Gemma-3 / instruct [b].gguf[/b] you already have
