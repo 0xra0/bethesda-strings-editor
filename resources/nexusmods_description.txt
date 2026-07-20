@@ -63,8 +63,11 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Claude Code backend[/b] — run translation, chat, and review on your Claude Code [b]subscription[/b] instead of the metered API, via the local [b]claude[/b] CLI ([b]claude-code:haiku / :sonnet / :opus[/b]); no API key, no per-token cost
 [*][b]AI-fix mode[/b] — instead of retranslating from scratch, sends the existing flawed translation + QC issue description to the model for targeted correction; faster and more precise than a full retranslation
 [*][b]Language-pair prompts[/b] — dedicated system prompt for every source→target combination with register rules, script conventions, and native examples
+[*][b]Translation Prompt Editor[/b] — customize the system prompt without touching code: tuning dials (language style, formality, vocabulary, grammar, expression/localization, rigor), a per-language style/register override, and project-wide instructions, with a live preview of the assembled prompt. Applies to every backend; the placeholder-protection rules stay fixed so game tags can't be broken
+[*][b]Player-gender-aware translation[/b] — English "you" carries no grammatical gender, but Ukrainian, Polish, German, Russian and the rest do, so the AI would otherwise guess one line by line. Declare your player character's gender once and every backend applies it consistently; a warning catches an unset gender [i]before[/i] the batch runs, and only when the strings in it actually refer to the player
+[*][b]Official terminology miner[/b] — the game already ships every official language side by side on identical string IDs, so the tool aligns English against an official target and extracts [b]Bethesda's own[/b] wording for every weapon, faction, UI verb and quest term — with [b]zero AI calls[/b]. EN→DE on a real install: 190,367 translation-memory entries and 17,815 glossary terms in 27 seconds. Imported into empty rows only, so work in progress is never overwritten
 [*][b]Pipeline post-processing[/b] — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline repair, guillemet close-quote enforcement
-[*][b]Translation memory[/b] — approved strings are never sent to the model again
+[*][b]Translation memory[/b] — approved strings are never sent to the model again; a loaded TM survives across sessions, shows in the status bar, and is searchable in a browser dialog
 [*][b]Persistent cache[/b] — SHA-256 keyed, survives sessions, up to 50,000 entries
 [*][b]Term protector[/b] — 8,000+ Starfield names, places, and UI labels swapped to placeholders before the AI sees the text; proper nouns are never mistranslated
 [*][b]Glossary system[/b] — CSV/TBX/JSON import-export, in-app editor, automatic injection into AI prompts
@@ -88,6 +91,8 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Starfield interface TXT[/b] — [b]translate_en.txt[/b] / [b]translate_ru.txt[/b] key=value interface string files
 [*][b]xTranslator SST XML[/b] — import/export compatible with existing xTranslator projects
 [*][b]Encoding detection[/b] — auto-detects UTF-8 BOM, UTF-8, CP1251, CP1252, CP1250 (Polish), GBK; per-file override
+[*][b]Translation folder validator[/b] — scans your finished translation against the game's Data folder (loose files [i]and[/i] BA2 archives) and lists every file and ID that will throw the in-game [b]"Unknown lstring ID"[/b] error — before you launch the game
+[*][b]Companion strings viewer[/b] — read-only view of a loaded .strings/.dlstrings/.ilstrings triplet with file-type and text/ID filters. The three files have independent ID spaces, so companions load as reference and are never merged into the file you save
 [*][b]Drag-and-drop[/b] file loading with format validation
 [/list]
 
@@ -96,6 +101,10 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Quality checker[/b] — 20+ automated checks: missing/extra game tags, empty or untranslated strings, source-language leakage, English leak, suspicious length ratios, newline mismatches, truncated AI output, AI artifact prefixes, encoding failures, unclosed guillemets, unmatched brackets, CJK script coverage, and glossary mismatches
 [*][b]AI quality model[/b] (qcgemma4-st) — fine-tuned Gemma 4 E4B that checks translations and returns structured verdicts with AUTOFIX/RETRANSLATE recommendations and chain-of-thought reasoning
 [*][b]Font & Glyph Checker[/b] — parses Scaleform SWF font atlases and TTF/OTF cmap tables; flags translation characters that will render as squares in-game and suggests auto-fixable substitutes
+[*][b]UI Width-Fit Simulator[/b] — the glyph checker proves a character exists; this proves the label it spells [i]fits its box[/i]. Cyrillic, German and Polish run 15–30% longer than English, and Scaleform widgets [b]clip rather than shrink[/b] — so a perfectly-spelled translation still ships as a truncated button. Width is measured from the real per-glyph advances of the actual game fonts, not estimated from character counts, and every row also shows the translated width against the English one (which fit by construction)
+[*][b]Real widget bounds, read from the game's own menus[/b] — point it at your Data folder and it reads every Interface SWF and BA2 (~250 files, ~2560 clipping fields), taking each widget's authored width, margins, clip behaviour and font straight from the game. No guessed budgets: it marks whether the font size was stated by the menu or inferred from the box, because a 20% size error is a 20% wrong verdict
+[*][b]Large-font (accessibility) menus checked as the worst case[/b] — Starfield ships a large-font build of most menus where the box usually stays the same size while the text grows (up to ×2.64). A label can pass the normal menu and clip only for players using the large font, which is exactly the bug that ships unnoticed. The tighter build is picked per widget, and the tool always names which one it measured — so silence never quietly means "not checked"
+[*][b]Korean particle (조사) checker[/b] — allomorphs are computed from Hangul 받침 arithmetic, never guessed. Catches single-form particles after a placeholder (the substituted noun's final consonant can't be known at translation time, and the engine resolves nothing) and particle/stem mismatches. Measured at 0 false positives across 5,353 real Korean strings; both are auto-fixable
 [*][b]Hunspell spell-check[/b] — optional per-language spell checking; Windows/macOS builds ship bundled dictionaries, on Linux install system ones with [b]pacman -S hunspell-uk[/b] or [b]apt install hunspell-uk[/b]
 [*][b]Auto-Fix All[/b] — one-click batch fix for all mechanically correctable issues (whitespace, capitalization, character substitution, missing newlines, unclosed guillemets)
 [*][b]Per-code hide filter[/b] — suppress specific QC issue codes from the results table for the current session
@@ -109,8 +118,8 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 
 [b]Review Tools[/b]
 [list]
-[*][b]Visual Context Preview[/b] ([b]Ctrl+Shift+P[/b]) — dockable panel that renders the current string inside a faithful recreation of the Bethesda in-game UI using actual game fonts extracted from SWF assets; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI)
-[*][b]Dialogue Tree Visualizer[/b] — interactive Quest → Topic → Response node graph ([b]Ctrl+Alt+D[/b]) with Starfield dark-space visual theme; click any node to jump to that string in the table
+[*][b]Visual Context Preview[/b] ([b]Ctrl+Shift+P[/b]) — dockable panel that renders the current string inside a faithful recreation of the Bethesda in-game UI using actual game fonts extracted from SWF assets; auto-detects context type (Dialogue, Quest, Book, Note, Terminal, UI), and shows a live fit indicator for length-critical strings ([b]Tab label: 262/220px (119%) CLIPS[/b]) measured against the real widget budget
+[*][b]Dialogue Tree Visualizer[/b] — interactive Quest → Topic → Response node graph ([b]Ctrl+Shift+T[/b]) with Starfield dark-space visual theme; click any node to jump to that string in the table
 [*][b]Audio / TTS Preview[/b] ([b]Ctrl+Shift+A[/b]) — synthesizes a TTS read-out of the translation for timing comparison; eSpeak-NG and Piper backends; colour-coded timing bar
 [*][b]Native Starfield voice playback[/b] — decodes the original Wwise [b].wem[/b] voice clip for a dialogue line straight from the game's Voices BA2 archives (FormID → voice clip, via vgmstream-cli) and plays it back alongside the TTS read-out; in ESP/ESM mode the row's FormID auto-fills
 [*][b]Speaker (NPC) panel[/b] — shows who voices the selected dialogue line (name, gender, faction, category, raw voice type, plus "also voiced by" for shared lines) by parsing the Wwise voice-type folder name
@@ -133,6 +142,7 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Zen / Focus Mode[/b] ([b]F11[/b]) — full-screen overlay showing one string at a time for distraction-free translation; pending-string counter and per-string status badge
 [*][b]Multi-monitor support[/b] — Translation Editor dock ([b]Ctrl+Shift+E[/b]) floats to any monitor; Pop Out String List ([b]Ctrl+Shift+L[/b]) opens a mirrored table window
 [*][b]Claude AI Assistant dock[/b] ([b]Ctrl+Shift+C[/b]) — chat about the current string and apply Claude's suggested translation with one click; optionally connect remote [b]MCP servers[/b] (Settings → Claude MCP Servers) so Claude can call external tools while you chat
+[*][b]Apply to All Identical Originals[/b] ([b]Ctrl+Alt+D[/b]) — propagate one row's translation to every row with the same source text in one shot; [b]Delete[/b] clears a translation and reverts the row to pending
 [*][b]Command palette[/b] ([b]Ctrl+K[/b]) and vim-style navigation (j/k, G)
 [*][b]Keyboard shortcuts editor[/b] — rebind any action
 [*][b]F7[/b] → next untranslated · [b]Ctrl+Enter[/b] → approve · [b]Ctrl+R[/b] → reject
