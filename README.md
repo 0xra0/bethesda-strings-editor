@@ -121,7 +121,6 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Companion strings viewer** (Translation → Companion Strings) — read-only view of a loaded `.strings`/`.dlstrings`/`.ilstrings` triplet with file-type and text/ID filters. The three files have **independent ID spaces**, so companions load as reference and are never merged into the file you save
 - **Drag-and-drop** file loading with format validation
 - **NexusMods Translation Browser** — search NexusMods for existing translation mods, browse their files, and import `.strings`/`.dlstrings`/`.ilstrings` directly as a Translation Memory or merge into the current file; zip, 7z, and rar archives are automatically extracted; free-account downloads via browser cookies (`curl-cffi`); account sign-in uses the official browser-based **Single Sign-On** flow (no API key to paste — the app is a registered NexusMods application)
-- **NexusMods upload** — v3 multipart upload client with presigned S3 URLs (File → Upload to NexusMods)
 
 ### Quality assurance
 - **Quality checker** — 20+ checks: missing/extra game tags, empty or untranslated strings, source-language leakage, English leak, suspicious length ratios, newline mismatches, truncated AI output, AI artifact prefixes, encoding failures, unclosed guillemets, unmatched brackets, script coverage (CJK), and more
@@ -281,7 +280,7 @@ gui/                           PySide6 application layer
   session_manager.py           Named work sessions with persistent search/filter state
   macro_recorder.py            Record/replay sequences of edit operations as macros
   theme_manager.py             16 built-in QSS themes + custom theme loader
-  nexusmods_uploader.py        NexusMods v3 multipart upload client
+  nexusmods_uploader.py        NexusMods v3 multipart upload client (used only by the release CI)
   nexusmods_browser_dialog.py  NexusMods translation browser (card grid, async thumbnails)
   nexusmods_client.py          NexusMods REST v1 + GraphQL v2 API client
   app_settings.py              AppSettings dataclass, JSON + QSettings persistence

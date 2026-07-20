@@ -134,7 +134,6 @@ ollama cp 0xra/bethesda-qc qcgemma4-st[/code]
 [*][b]Free-user downloads[/b] — downloads work without a Premium subscription by reusing your active browser session (Firefox or Chromium); no NXM handler or manual clicks needed
 [*][b]Archive extraction[/b] — automatically extracts .esp/.esm/.esl files from .zip, .7z, and .rar mod archives and opens them directly in the editor
 [*][b]Translation Memory import[/b] — download a translation mod from NexusMods and load it as TM in one click; known strings are pre-filled and skipped by AI
-[*][b]Mod upload[/b] — upload release archives directly from inside the app using the NexusMods v3 multipart upload API (File → Upload to NexusMods…)
 [/list]
 
 [b]UI / Workflow[/b]

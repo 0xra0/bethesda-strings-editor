@@ -1264,11 +1264,6 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.save_as_action)
 
         file_menu.addSeparator()
-        nexusmods_action = QAction(self.tr("Upload to &NexusMods…"), self)
-        nexusmods_action.setIcon(QIcon.fromTheme("network-transmit"))
-        nexusmods_action.triggered.connect(self._open_nexusmods_upload)
-        file_menu.addAction(nexusmods_action)
-
         nexusmods_browse_action = QAction(self.tr("&Browse NexusMods for Translations…"), self)
         nexusmods_browse_action.setIcon(QIcon.fromTheme("network-receive"))
         nexusmods_browse_action.triggered.connect(self._open_nexusmods_browser)
@@ -6225,15 +6220,6 @@ class MainWindow(QMainWindow):
                 self.tr("Export Failed"),
                 self.tr("Could not export translation memory:\n{error}").format(error=e),
             )
-
-    def _open_nexusmods_upload(self):
-        from gui.nexusmods_upload_dialog import NexusModsUploadDialog
-        dlg = NexusModsUploadDialog(
-            self,
-            settings=self.settings,
-            initial_file=self.current_path,
-        )
-        dlg.exec()
 
     def _open_nexusmods_browser(self) -> None:
         from gui.nexusmods_browser_dialog import NexusModsBrowserDialog
