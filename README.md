@@ -98,7 +98,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Official terminology miner** (Translation → Mine Official Terminology) — Bethesda ships every official language for a plugin side by side on identical string IDs, so aligning English against an official target yields **their** canonical rendering of every weapon, faction, UI verb and quest term, with **zero AI calls**. Auto-detects the languages your install ships, mines a TM plus a filtered glossary (with optional reference languages — e.g. Polish as a Slavic cross-reference for Ukrainian), and imports into pending rows only, never clobbering work in progress. EN→DE on a real install: 190,367 TM entries + 17,815 glossary terms in 27 s
 - **Apply to All Identical Originals** (Ctrl+Alt+D) — propagate one row's translation to every row with the same source text in one shot; **Delete** clears a translation and reverts the row to pending
 - **Translation cache** — SHA-256-keyed JSON cache (up to 100,000 entries) persisted across sessions
-- **Term protector** — anything that must survive the model byte-for-byte is swapped for a placeholder token before the AI sees the text and restored afterward: 20 structural patterns (game tags, format specifiers, FormIDs, chemical formulas, and deliberately-obfuscated in-game codes such as encrypted-note passwords), plus a built-in list of 86 proper nouns. The shipped `protected_terms_starfield_hq.txt` is deliberately **empty** — Starfield's faction, company and UI terms are *meant* to be translated — so add entries there only for names that must stay verbatim in every locale
+- **Term protector** — anything that must survive the model byte-for-byte is swapped for a placeholder token before the AI sees the text and restored afterward: 20 structural patterns (game tags, format specifiers, FormIDs, chemical formulas, and deliberately-obfuscated in-game codes such as encrypted-note passwords), plus a built-in list of 86 proper nouns. Starfield's faction, company and UI terms are *meant* to be translated, so no term list is bundled; drop a `protected_terms_starfield_hq.txt` next to the application and it is read at startup, for names that must stay verbatim in every locale
 - **Pipeline post-processing** — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline structure repair, mixed-script repair, guillemet close-quote enforcement
 - **Glossary system** — CSV/TBX/JSON glossary with in-app editor, term suggestions dock, and automatic injection into AI prompts
 - **Character Persona Profiling** — assign a voice profile to any string or quest (Freestar Ranger, SysDef Officer, Crimson Fleet Pirate, House Va'ruun Zealot, UC Civilian, Robot/Automaton, Narrator, or custom); each profile overrides the AI system prompt and temperature
@@ -311,7 +311,7 @@ scripts/
   compile_translations.sh      Recompile .ts → .qm UI translation files
   fetch_dictionaries.py        Download Hunspell .aff/.dic dictionaries into dicts/ (Windows/macOS spell-check bundle)
   download_lang_dicts.py       Download word-frequency lists into data/ (source-language leak detection)
-  extract_starfield_glossary.py Build starfield_glossary.json from string files
+  extract_starfield_glossary.py Build starfield_glossary.json from string files (local artifact, untracked)
   nexusmods_upload.py          Publish a release to NexusMods (driven by the release workflow)
   install_file_associations.sh Register the Linux desktop entry and MIME types
 

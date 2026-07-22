@@ -1,5 +1,0 @@
-# Starfield Protected Terms
-# Total terms: 0
-# All Starfield terms (company names, factions, UI tokens, acronyms) are
-# translatable and handled by the AI. Add entries here only if a specific
-# term must be preserved verbatim in every locale.
