@@ -5,9 +5,19 @@
 ```bash
 git clone https://github.com/0xra0/bethesda-strings-editor
 cd bethesda-strings-editor
-pip install PySide6 requests
-pip install ruff pyright pytest   # dev tools
+pip install -r requirements.txt
+pip install pytest pyright ruff        # dev tools — see below
 ```
+
+`requirements.txt` is the source of truth and is grouped: four **core**
+packages the app will not start without (PySide6, requests, cryptography,
+anthropic) and four **optional** ones that each have a runtime fallback, so
+the app runs without them. The dev tools are commented out there on purpose —
+the release workflow runs PyInstaller over that file and would otherwise bundle
+pytest and pyright into the shipped build.
+
+Python **3.10 or newer**. CI builds and tests on 3.12; development happens on
+3.10, so avoid syntax newer than that.
 
 Run the application:
 
@@ -15,24 +25,52 @@ Run the application:
 python main.py
 ```
 
-Run tests:
+## Tests
 
 ```bash
-QT_QPA_PLATFORM=offscreen python -m pytest tests/ -v
+QT_QPA_PLATFORM=offscreen python -m pytest tests/ -q
 ```
 
-Lint and type-check:
+47 files, **959 tests**, about 30 seconds. `QT_QPA_PLATFORM=offscreen` is what
+lets the Qt tests run without an X11/Wayland server; it is what CI sets on
+Linux, and it is unnecessary on Windows.
+
+The suite needs no game files: everything runs from synthetic bytes, word lists
+tracked under `data/`, and the real Starfield fonts committed to `data/fonts/`.
+One test self-skips — the end-to-end Wwise voice decode, which needs a Starfield
+install and `vgmstream-cli`. Four more are POSIX-only and skip on Windows.
+
+On Linux the offscreen Qt plugin links `libEGL.so.1`, so a headless machine
+needs it (`libegl1` on Debian/Ubuntu — CI installs it). The Hunspell spell-check
+tests fall back to other backends when `hunspell` is absent; see
+`requirements.txt` for the per-distro install line if you want to exercise it.
+
+## Lint and type-check
 
 ```bash
 ruff check .
+ruff format --check .
 pyright
 ```
 
-Compile the Ukrainian UI translation after editing `gui/translations/uk_UA.ts`:
+Configuration lives in `pyproject.toml` (ruff) and `pyrightconfig.json`.
 
-```bash
-./scripts/compile_translations.sh
-```
+- **ruff** — `E`, `W`, `F` rule sets, line length **110**. `E501` (line too
+  long) is ignored globally because QSS theme strings and Qt file-filter
+  strings cannot be wrapped; `E741` and `E731` are ignored as deliberate style.
+- **pyright** — `standard` mode, `scripts/` excluded, and three Qt-noisy rules
+  turned off (`reportAttributeAccessIssue`, `reportCallIssue`,
+  `reportIncompatibleMethodOverride`).
+
+**Run pyright in the same environment you installed `requirements.txt` into.**
+It resolves imports from whatever interpreter it finds, so running it against a
+bare system Python reports dozens of phantom errors for PySide6, keyring and
+anthropic that CI does not see. CI is authoritative: it installs
+`requirements.txt` first.
+
+`pyproject.toml` also carries a `[tool.mypy]` section. No workflow runs mypy —
+pyright is the type checker; the config is left in place for anyone who prefers
+it locally.
 
 ## Pre-commit hooks
 
@@ -41,34 +79,123 @@ pip install pre-commit
 pre-commit install
 ```
 
-Ruff lint and format hooks run automatically on `git commit`.
+Two ruff hooks run on `git commit`: the linter with `--fix` (it rewrites what
+it can), and the formatter with `--check` — that one **reports** and fails the
+commit rather than reformatting, so run `ruff format .` yourself when it does.
 
-## Ollama model
+## UI translations
 
-The app requires a custom Ollama model named `translategemma3-st`. Create it
-from the provided `Modelfile` (edit the GGUF path first):
+Seven locales live in `gui/translations/*.ts`. After editing any of them:
+
+```bash
+./scripts/compile_translations.sh
+```
+
+Commit only the `.ts` source — `.qm` binaries are gitignored and are rebuilt by
+the release workflow. See [TRANSLATING.md](TRANSLATING.md) for the full guide,
+including who maintains which locale.
+
+## Translation backends
+
+The app has three, chosen by the model name in the settings — there is no
+separate backend switch:
+
+| Backend | Selected by | Needs |
+|---|---|---|
+| Claude API | a `claude-*` model id | an Anthropic API key (metered) |
+| Claude Code CLI | a `claude-code:*` model id | the local `claude` binary (subscription) |
+| Ollama | anything else | a local Ollama server |
+
+**No backend is required to work on the code** — the test suite makes no
+network calls and spawns no model.
+
+For the Ollama path, three `Modelfile`s are tracked (`Modelfile`,
+`Modelfile.qc`, `Modelfile.gemma4-opus48`). None of them names a real GGUF:
+every `FROM` is a placeholder path, because the fine-tunes are unpublished.
+Point `FROM` at a GGUF you have, then:
 
 ```bash
 ollama create translategemma3-st -f Modelfile
 ```
+
+`CLAUDE.md` documents each model and, importantly, how per-model parameter
+precedence works before you edit a Modelfile.
 
 ## PyInstaller build (local)
 
 ```bash
 ./scripts/compile_translations.sh
 echo "__version__ = 'dev'" > _version.py
+pip install pyinstaller
 pyinstaller bethesda_strings_editor.spec
 ```
 
-The bundle lands in `dist/bethesda-strings-editor/`.
+The bundle lands in `dist/bethesda-strings-editor/`. `_version.py` is
+overwritten by CI from the git tag; the committed copy is a placeholder.
+
+Release builds compile the PyInstaller bootloader from source
+(`pip install --no-binary pyinstaller`) because the prebuilt wheel's bootloader
+bytes trip antivirus heuristics. A local build does not need that.
+
+## File associations
+
+`gui/file_associations.py` registers the app as the handler for `.strings`,
+`.esp`, `.ba2` and friends — per-user, no root or admin:
+
+```bash
+python main.py --register-file-types      # or: ./scripts/install_file_associations.sh
+python main.py --unregister-file-types
+```
+
+It is split into pure **plan** functions and **apply** functions specifically so
+the Windows registry layout is unit-tested on Linux CI (`tests/test_file_associations.py`).
+Keep new logic on the plan side where you can.
+
+## CI
+
+Four workflows, all under `.github/workflows/`:
+
+| Workflow | Runs on | Does |
+|---|---|---|
+| `lint.yml` | every PR and push to `main` | ruff, then pyright |
+| `test.yml` | every PR and push to `main` | pytest on Ubuntu **and** Windows |
+| `docs.yml` | every PR; deploys from `main` | Sphinx with `-W`, so a warning fails the build |
+| `release.yml` | tags matching `v*`, plus manual dispatch | build, sign, publish |
+
+A PR must be green on lint, test (both OSes) and docs before it merges.
+`docs.yml`'s `-W` means a malformed docstring in a documented module breaks the
+build, not just the page.
 
 ## Release process
 
-1. Commit all changes to `main`.
-2. Tag: `git tag v0.2.0 && git push origin v0.2.0`
+1. Merge everything into `main`.
+2. Rehearse: Actions → **Build and Release** → *Run workflow* with `dry_run`
+   checked. It builds both platforms, signs the checksums, and creates a
+   **draft** release — private, notifies nobody, creates no tag, and cannot
+   reach the NexusMods job.
+3. Tag and push:
 
-GitHub Actions builds Linux + Windows binaries, generates a changelog with
-git-cliff, and publishes a GitHub Release automatically.
+```bash
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+CI then builds Linux + Windows bundles, generates the changelog with git-cliff,
+writes `SHA256SUMS`, GPG-signs it into `SHA256SUMS.asc`, and publishes the
+GitHub Release. A tag containing `-` (e.g. `v0.3.0-rc1`) is marked a
+pre-release and skips the NexusMods upload.
+
+Repository secrets the release needs:
+
+| Secret / variable | Used for |
+|---|---|
+| `GPG_PRIVATE_KEY` | base64 armored private key — signs `SHA256SUMS` |
+| `GPG_PASSPHRASE` | the key's passphrase; optional, read only when set |
+| `NEXUSMODS_API_KEY` | mod-page upload (a repo *variable*) |
+| `NEXUSMODS_FILE_GROUP_ID_LINUX` / `_WINDOWS` | which file group to replace |
+
+The public half of the signing key is committed as `release-signing-key.asc`;
+[VERIFICATION.md](VERIFICATION.md) documents the fingerprint and how users
+verify a download.
 
 ## Project layout
 
@@ -76,24 +203,36 @@ git-cliff, and publishes a GitHub Release automatically.
 |------|----------|
 | `bethesda_strings/` | Pure-Python parsing library (no Qt) |
 | `gui/` | PySide6 application layer |
-| `tests/` | pytest test suite |
-| `benchmarks/` | Performance benchmarks |
-| `scripts/` | Helper scripts |
-| `resources/` | Icons and QSS stylesheet |
-| `data/` | Word lists for language detection |
-| `packaging/` | Linux desktop entry + MIME-type definitions |
+| `tests/` | pytest suite (47 files) |
+| `benchmarks/` | Performance benchmarks, run by hand |
+| `scripts/` | Dictionary fetchers, dataset builders, translation compile, release upload |
+| `resources/` | Icons, QSS stylesheet, NexusMods page assets |
+| `data/` | Word lists for language detection, and the bundled Starfield fonts |
+| `packaging/` | Linux desktop entry + MIME-type XML (bundled into the build) |
 | `docs/` | Sphinx documentation |
 | `.github/workflows/` | CI: lint, test, release, docs |
+| `Modelfile*` | Ollama model definitions |
 
-## Code style
+Two files in the root are **untracked by design**:
+`protected_terms_starfield_hq.txt` (a user extension point — the app ships
+without one and falls back to a built-in set) and `starfield_glossary.json` (a
+build artifact of `scripts/extract_starfield_glossary.py` that no code opens by
+that name). The `.spec` adds the terms file conditionally, because PyInstaller
+aborts on a missing `datas` path.
 
-- **Formatter**: `ruff format`
-- **Linter**: ruff (`E`, `W`, `F` rules; E501 globally ignored)
-- **Type checker**: Pyright
+## Architecture
+
+`CLAUDE.md` in the repository root is the detailed map: every module, what it
+owns, and — more usefully — *why* the non-obvious parts are the way they are
+(independent string-ID spaces per file extension, occurrence-indexed ESP field
+write-back, per-model Ollama parameter precedence). Read the relevant section
+before changing a parser; several of them encode failure modes that are silent
+rather than loud.
 
 ## Commit message conventions
 
-The changelog is auto-generated by git-cliff from commit prefixes:
+The changelog is auto-generated by git-cliff. `.cliff.toml` matches on the
+**first word** of the message:
 
 | Prefix | Changelog section |
 |--------|-------------------|
@@ -102,3 +241,9 @@ The changelog is auto-generated by git-cliff from commit prefixes:
 | `Remove …` / `Delete …` | Removed |
 | `Update …` / `Improve …` / `Refactor …` / `Change …` | Changed |
 | Everything else | Other |
+
+In practice the project writes conventional-commit subjects
+(`feat(qa): …`, `fix(esp): …`, `docs: …`, `chore(deps): …`) with the PR number
+appended by the squash merge. Of those only `fix…` matches a parser, so most
+commits currently land under **Other** in the generated changelog. Either style
+is accepted; if you want yours grouped, lead with one of the verbs above.
