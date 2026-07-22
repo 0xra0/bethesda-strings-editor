@@ -10,7 +10,6 @@ AI-assisted localization tool for Bethesda game files (Starfield). Translates `.
 [![Claude](https://img.shields.io/badge/AI-Claude%20API-7C3AED?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.ai)
 [![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](LICENSE)
 [![NexusMods](https://img.shields.io/badge/NexusMods-Starfield-D98F40?style=for-the-badge&logo=nexusmods&logoColor=white)](https://www.nexusmods.com/starfield/mods/17158)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/0xra0/bethesda-strings-editor)
 
 ---
 
