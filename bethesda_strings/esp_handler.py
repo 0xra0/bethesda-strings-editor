@@ -159,6 +159,33 @@ def _looks_like_resource_path(text: str) -> bool:
     return False
 
 
+def _field_translatable_text(fdata: bytes, encoding: str) -> Optional[str]:
+    """Decode a non-localized field occurrence, or return None if it doesn't count.
+
+    This is the single source of truth for "does this occurrence count", and it
+    MUST be applied identically by `_parse_record` (extraction) and
+    `_patch_fields` (write-back). One record can repeat the same field
+    signature many times — a WEAP's FULL appears once for the weapon's own name
+    and again for every OBTE/OBTF modification-grade label — and both sides line
+    entries up purely by "the Nth occurrence of this signature in this record".
+    If extraction skips an occurrence (empty, or a resource path) that
+    write-back does not equally skip, every later occurrence in that record
+    shifts by one slot and receives the wrong translation.
+    """
+    raw = fdata.rstrip(b"\x00")
+    if not raw:
+        return None
+    try:
+        text = raw.decode(encoding, errors="replace")
+    except Exception:
+        text = raw.decode("latin-1", errors="replace")
+    # Skip asset paths that masquerade as text (translating them breaks
+    # animations/meshes — e.g. DOOR/CNAM is a resource path, not "text").
+    if _looks_like_resource_path(text):
+        return None
+    return text
+
+
 # Synthetic context notes for field/record pairs the model tends to mishandle,
 # applied only when the record carries no real NLDT developer note. QUST/FULL
 # utility quest names in particular get "expanded" into invented content.
@@ -353,18 +380,12 @@ class EspFile:
                     ))
                 continue
 
-            # Non-localized: null-terminated text
-            raw = fdata.rstrip(b"\x00")
-            if not raw:
-                continue
-            try:
-                text = raw.decode(encoding, errors="replace")
-            except Exception:
-                text = raw.decode("latin-1", errors="replace")
-
-            # Skip asset paths that masquerade as text (translating them breaks
-            # animations/meshes — e.g. DOOR/CNAM is a resource path, not "text").
-            if _looks_like_resource_path(text):
+            # Non-localized: null-terminated text. Must use the same
+            # occurrence-counting predicate as _patch_fields() — see the
+            # _field_translatable_text docstring — or repeated same-signature
+            # fields in one record (e.g. WEAP's FULL chain) drift apart.
+            text = _field_translatable_text(fdata, encoding)
+            if text is None:
                 continue
 
             self.strings.append(EspStringEntry(
@@ -398,13 +419,22 @@ class EspFile:
             )
 
         # Build translation map: (form_id, field_sig, occurrence) → translated text
+        #
+        # `occ` must advance for every entry in self.strings, not only the ones
+        # that changed. self.strings is in physical file order (see
+        # _parse_record) and _patch_fields' own occ_counter advances for every
+        # physical occurrence unconditionally. An entry left untranslated
+        # (translation == original — common for proper nouns and brand names
+        # kept as-is, e.g. a weapon named "ARX-15") would otherwise desync this
+        # index from that one, shifting every later same-signature occurrence in
+        # the record onto the wrong field.
         trans_map: dict[tuple[int, str, int], str] = {}
         occ: dict[tuple[int, str], int] = {}
         for entry in self.strings:
+            key2 = (entry.form_id, entry.field_sig)
+            idx  = occ.get(key2, 0)
+            occ[key2] = idx + 1
             if entry.translation and entry.translation != entry.original:
-                key2 = (entry.form_id, entry.field_sig)
-                idx  = occ.get(key2, 0)
-                occ[key2] = idx + 1
                 trans_map[(entry.form_id, entry.field_sig, idx)] = entry.translation
 
         # Fast set of form_ids that have any translation (for O(1) lookup in _write_chunks)
@@ -571,7 +601,12 @@ def _patch_fields(
             _, proc_id = result
             if proc_id == 1 and not edid.startswith("s"):
                 pass  # GMST proc: skip if EDID doesn't start with 's'
-            elif fdata and fdata != b"\x00":
+            elif _field_translatable_text(fdata, encoding) is not None:
+                # Same predicate as _parse_record(). The previous, looser check
+                # (`fdata and fdata != b"\x00"`) counted occurrences extraction
+                # had skipped — all-null padding longer than one byte, or
+                # resource-path-like text — shifting every later same-signature
+                # translation in the record onto the wrong field.
                 key2 = (form_id, fsig_str)
                 idx  = occ_counter.get(key2, 0)
                 occ_counter[key2] = idx + 1
