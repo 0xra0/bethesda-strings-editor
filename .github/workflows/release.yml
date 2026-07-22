@@ -234,10 +234,16 @@ jobs:
           fail_on_unmatched_files: true
 
   # ── NexusMods Upload ──────────────────────────────────────────────────────────
-  # Requires three repository secrets:
-  #   NEXUSMODS_API_KEY            — from https://www.nexusmods.com/users/myaccount?tab=api
+  # One repository *secret* — a credential, so it must never be a variable:
+  #   NEXUSMODS_API_KEY  — from https://www.nexusmods.com/users/myaccount?tab=api
+  # and two repository *variables*, which are just IDs and are fine in the clear:
   #   NEXUSMODS_FILE_GROUP_ID_LINUX   — Files tab → ⋯ → API Info on your mod page
   #   NEXUSMODS_FILE_GROUP_ID_WINDOWS — same, for the Windows file group
+  #
+  # The key was a `vars.` entry until now, which GitHub stores and displays in
+  # plaintext and does not mask in logs — `gh variable list` prints it in full.
+  # Only `secrets.` is redacted. If the key is missing the upload script warns
+  # and exits 0, so a release still publishes to GitHub either way.
   nexusmods:
     name: Upload to NexusMods
     needs: release
@@ -260,7 +266,7 @@ jobs:
 
       - name: Upload to NexusMods
         env:
-          NEXUSMODS_API_KEY: ${{ vars.NEXUSMODS_API_KEY }}
+          NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
           NEXUSMODS_FILE_GROUP_ID_LINUX: ${{ vars.NEXUSMODS_FILE_GROUP_ID_LINUX }}
           NEXUSMODS_FILE_GROUP_ID_WINDOWS: ${{ vars.NEXUSMODS_FILE_GROUP_ID_WINDOWS }}
           RELEASE_VERSION: ${{ github.ref_name }}

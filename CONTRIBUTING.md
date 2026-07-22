@@ -184,13 +184,18 @@ writes `SHA256SUMS`, GPG-signs it into `SHA256SUMS.asc`, and publishes the
 GitHub Release. A tag containing `-` (e.g. `v0.3.0-rc1`) is marked a
 pre-release and skips the NexusMods upload.
 
-Repository secrets the release needs:
+What the release reads, and from where — the distinction is not cosmetic:
+**secrets are masked in logs and never readable back, variables are stored and
+displayed in plaintext.** Every credential belongs in the first column.
 
-| Secret / variable | Used for |
+| Repository **secret** | Used for |
 |---|---|
 | `GPG_PRIVATE_KEY` | base64 armored private key — signs `SHA256SUMS` |
 | `GPG_PASSPHRASE` | the key's passphrase; optional, read only when set |
-| `NEXUSMODS_API_KEY` | mod-page upload (a repo *variable*) |
+| `NEXUSMODS_API_KEY` | mod-page upload; missing → upload skips with a warning |
+
+| Repository **variable** | Used for |
+|---|---|
 | `NEXUSMODS_FILE_GROUP_ID_LINUX` / `_WINDOWS` | which file group to replace |
 
 The public half of the signing key is committed as `release-signing-key.asc`;
