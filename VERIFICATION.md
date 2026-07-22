@@ -18,7 +18,7 @@ is free text that anybody can put on a key they generated themselves; the
 fingerprint is the key.
 
 ```
-D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
+4DF8 BE08 A2CB 5E00 62BE  EBAC 1FD0 408A 426E 7AD0
 ```
 
 Questions or a suspected problem with a release go to
@@ -40,15 +40,15 @@ gpg --verify SHA256SUMS.asc SHA256SUMS
 sha256sum --check --ignore-missing SHA256SUMS
 ```
 
-Step 2 prints something like this — the actual output for the v0.2.5 release:
+Step 2 prints this shape — `Good signature`, then the fingerprint to check:
 
 ```
-gpg: Signature made Mon 20 Jul 2026 10:45:12 AM EEST
-gpg:                using RSA key D50C3274546FE1FB0653DA01E750D9A94177134B
+gpg: Signature made <date>
+gpg:                using RSA key 4DF8BE08A2CB5E0062BEEBAC1FD0408A426E7AD0
 gpg: Good signature from "Bethesda Strings Editor Releases …" [unknown]
 gpg: WARNING: This key is not certified with a trusted signature!
 gpg:          There is no indication that the signature belongs to the owner.
-Primary key fingerprint: D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
+Primary key fingerprint: 4DF8 BE08 A2CB 5E00 62BE  EBAC 1FD0 408A 426E 7AD0
 ```
 
 **That WARNING is expected and is not a failure.** `Good signature` is the
@@ -58,7 +58,7 @@ the `Primary key fingerprint` line matches the one above, character for
 character. To silence the warning permanently:
 
 ```bash
-gpg --lsign-key D50C3274546FE1FB0653DA01E750D9A94177134B
+gpg --lsign-key 4DF8BE08A2CB5E0062BEEBAC1FD0408A426E7AD0
 ```
 
 Step 3 prints `bethesda-strings-editor-linux-x64.zip: OK` for each archive you
@@ -70,9 +70,25 @@ against a `SHA256SUMS` that lists both.
 ## Key details
 
 ```
-pub   rsa4096 2026-06-12 [SC] [expires: 2030-06-11]
-      D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
+pub   rsa4096 2026-07-22 [SC] [expires: 2030-07-21]
+      4DF8 BE08 A2CB 5E00 62BE  EBAC 1FD0 408A 426E 7AD0
 ```
+
+The key carries no email address — a user ID is free text and proves nothing,
+so there is deliberately none to mistake for a contact address.
+
+### Key history
+
+| Key | Signed | Status |
+|---|---|---|
+| `4DF8 BE08 A2CB 5E00 62BE  EBAC 1FD0 408A 426E 7AD0` | v0.2.6 onwards | **current** — published here |
+| `D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B` | up to v0.2.5 | retired, no longer published |
+
+The retired key's public half is no longer distributed, so `SHA256SUMS.asc` on
+**v0.2.5 and earlier cannot be signature-checked** any more. Their `SHA256SUMS`
+still detects a corrupted or truncated download, but it no longer proves who
+produced the file. Use v0.2.6 or later if you need the signature, or ask on the
+issue tracker and those releases can be re-signed with the current key.
 
 Fetch the key directly instead of cloning:
 
@@ -87,14 +103,14 @@ gpg --fetch-keys \
 
 ```bash
 # Fetch the checksums for a specific release (or download them from the
-# release page in a browser)
-gh release download v0.2.5 -R 0xra0/bethesda-strings-editor -p 'SHA256SUMS*'
+# release page in a browser). Use a v0.2.6-or-later tag — see Key history.
+gh release download vX.Y.Z -R 0xra0/bethesda-strings-editor -p 'SHA256SUMS*'
 
 # Import the key from your clone of the repo
 gpg --import release-signing-key.asc
 
 # Confirm the fingerprint matches the one above
-gpg --fingerprint D50C3274546FE1FB0653DA01E750D9A94177134B
+gpg --fingerprint 4DF8BE08A2CB5E0062BEEBAC1FD0408A426E7AD0
 
 # Verify the signature — "Good signature" = the checksum list is untampered
 gpg --verify SHA256SUMS.asc SHA256SUMS
