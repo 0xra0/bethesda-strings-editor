@@ -148,7 +148,8 @@ def test_sso_worker_cancel_stops_running_thread(monkeypatch):
     import time
     from PySide6.QtCore import QCoreApplication
 
-    QCoreApplication.instance() or QCoreApplication([])
+    if QCoreApplication.instance() is None:
+        QCoreApplication([])
     import gui.nexusmods_sso as sso
     import gui.settings_dialog as sd
 
