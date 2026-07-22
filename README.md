@@ -185,12 +185,15 @@ Each language pair has a dedicated system prompt with register rules, script con
 pip install -r requirements.txt
 ```
 
-Core dependencies: `PySide6>=6.6`, `requests>=2.31`, `cryptography>=43.0`, `anthropic>=0.25`
+Core dependencies: `PySide6>=6.11`, `requests>=2.33`, `cryptography>=48.0`, `anthropic>=0.104`
 
-Optional:
-- `keyring>=25.0` — API key storage in system keyring
+Optional — each has a runtime fallback, so install only what you need:
+- `keyring>=25.7` — API keys in the system keyring (otherwise an AES-256-GCM file store is used)
+- `curl-cffi>=0.15` — free-account NexusMods downloads via browser cookies
+- `py7zr>=1.1` / `rarfile>=4.3` — `.7z` and `.rar` extraction (otherwise the `7z` / `unrar` CLIs)
 - `hunspell>=0.5.5` or `spylls>=0.1.7` — spell-check engine (hunspell CLI used as fallback); run `scripts/fetch_dictionaries.py` to bundle Hunspell dictionaries for Windows/macOS
-- `curl-cffi>=0.7` — free-user NexusMods downloads via browser cookies
+
+Developed and tested on Python 3.10 with the versions above; the test suite runs green on them.
 
 ---
 
