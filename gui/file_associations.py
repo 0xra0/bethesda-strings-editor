@@ -177,7 +177,10 @@ def _icon_sources(tmpdir: Optional[Path]) -> dict[int, Path]:
         sources[512] = large
     if tmpdir is not None and large.is_file():
         try:
-            from PIL import Image  # noqa: PLC0415 - optional, absent when frozen
+            # type: ignore — Pillow is not a dependency (nor present in CI, nor
+            # in the frozen build); it is used when a dev machine happens to
+            # have it, purely to render the in-between icon sizes.
+            from PIL import Image  # type: ignore[import-not-found]  # noqa: PLC0415
         except ImportError:
             return sources
         try:
