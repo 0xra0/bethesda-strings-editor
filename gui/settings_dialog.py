@@ -14,6 +14,7 @@ from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QKeySequenceEdit
 from typing import TYPE_CHECKING, Optional
 from gui.app_settings import (
+    SUPPORTED_LANGUAGES,
     AppSettings,
     get_config_dir, get_config_dir_override, set_config_dir_override,
     get_cache_dir, get_cache_dir_override, set_cache_dir_override,
@@ -95,9 +96,12 @@ class _NexusSSOWorker(QThread):
 
 class SettingsDialog(QDialog):
     """Dialog for configuring Ollama and term protection settings."""
-    SUPPORTED_LANGUAGES = [
-        'English', 'Russian', 'Ukrainian', 'Korean',
-    ]
+
+    # (display name, Starfield locale code) — the same table the main window
+    # offers.  This used to be a private list of four bare display names, which
+    # both hid eight languages and stored the name where every consumer expects
+    # the code.  See app_settings.SUPPORTED_LANGUAGES.
+    SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES
 
     # Default Ollama model suggestions shown before the user refreshes from the server
     _DEFAULT_OLLAMA_MODELS = [
@@ -572,16 +576,22 @@ class SettingsDialog(QDialog):
         trans_group = QGroupBox(self.tr("Translation Preferences"))
         trans_layout = QFormLayout()
 
+        # The item *data* is the locale code, never the display name: that is what
+        # the settings store and what every downstream consumer keys off.  Falling
+        # back to index 0 matters — an unmatched findData() leaves the combo at
+        # -1, which shows blank and makes currentData() return None on save.
         self.combo_source = QComboBox()
-        for lang in self.SUPPORTED_LANGUAGES:
-            self.combo_source.addItem(self.tr(lang), lang)
-        self.combo_source.setCurrentIndex(self.combo_source.findData(self._settings.default_source_lang))
+        for display_name, lang_code in self.SUPPORTED_LANGUAGES:
+            self.combo_source.addItem(self.tr(display_name), lang_code)
+        _src_idx = self.combo_source.findData(self._settings.default_source_lang)
+        self.combo_source.setCurrentIndex(_src_idx if _src_idx >= 0 else 0)
         trans_layout.addRow(self.tr("Default Source:"), self.combo_source)
 
         self.combo_target = QComboBox()
-        for lang in self.SUPPORTED_LANGUAGES:
-            self.combo_target.addItem(self.tr(lang), lang)
-        self.combo_target.setCurrentIndex(self.combo_target.findData(self._settings.default_target_lang))
+        for display_name, lang_code in self.SUPPORTED_LANGUAGES:
+            self.combo_target.addItem(self.tr(display_name), lang_code)
+        _tgt_idx = self.combo_target.findData(self._settings.default_target_lang)
+        self.combo_target.setCurrentIndex(_tgt_idx if _tgt_idx >= 0 else 0)
         trans_layout.addRow(self.tr("Default Target:"), self.combo_target)
 
         # Player character's grammatical gender for player-referring lines.
@@ -615,20 +625,10 @@ class SettingsDialog(QDialog):
         self.spin_threshold.setToolTip(self.tr("Character count threshold for 'long' strings"))
         trans_layout.addRow(self.tr("Long String Threshold:"), self.spin_threshold)
 
+        # Same rule as the language combos: the label is translated, the item
+        # data stays the English key that `long_string_action` stores.
         self.combo_long_action = QComboBox()
-        self.combo_long_action.addItems([
-            self.tr("Translate"),
-            self.tr("Original"),
-            self.tr("Skip")
-        ])
-        # Note: We need to match the setting value, not the translated value
-        # But wait, self.SUPPORTED_LANGUAGES are not translated.
-        # For long_string_action, it's better to use English keys internally.
-
-        # Let's fix long_string_action handling
-        actions = ["Translate", "Original", "Skip"]
-        self.combo_long_action.clear()
-        for action in actions:
+        for action in ("Translate", "Original", "Skip"):
             self.combo_long_action.addItem(self.tr(action), action)
 
         idx = self.combo_long_action.findData(self._settings.long_string_action)
@@ -2028,8 +2028,11 @@ class SettingsDialog(QDialog):
         settings.ollama_num_thread = self.spin_num_thread.value()
         settings.ollama_restart_command = self.ollama_restart_command.text().strip()
         settings.ollama_restart_elevate = self.chk_restart_elevate.isChecked()
-        settings.default_source_lang = self.combo_source.currentData()
-        settings.default_target_lang = self.combo_target.currentData()
+        # `or` keeps the previous value if a combo somehow has no current item:
+        # currentData() is None at index -1, and None reaches TranslationRequest
+        # and `default_source_lang[:2]` in the TMX loader, which raises there.
+        settings.default_source_lang = self.combo_source.currentData() or settings.default_source_lang
+        settings.default_target_lang = self.combo_target.currentData() or settings.default_target_lang
         settings.player_gender = self.combo_player_gender.currentData() or ""
         settings.quality_level = self.spin_quality.value()
         settings.long_string_threshold = self.spin_threshold.value()
@@ -2043,9 +2046,13 @@ class SettingsDialog(QDialog):
         settings.protect_named_entities = self.chk_protect_named_entities.isChecked()
         settings.protected_terms_file = self.terms_file_path.text()
         settings.theme = self.get_selected_theme()
-        settings.ui_language = self.combo_ui_lang.currentData()
-        settings.font_size = self.spin_font_size.value()
-        settings.color_blind_mode = self.chk_color_blind.isChecked()
+        # The Appearance group is only built when a theme manager was supplied,
+        # so these three widgets may not exist.  Reading them unconditionally
+        # raised AttributeError and lost every other setting in this method.
+        if hasattr(self, "combo_ui_lang"):
+            settings.ui_language = self.combo_ui_lang.currentData() or settings.ui_language
+            settings.font_size = self.spin_font_size.value()
+            settings.color_blind_mode = self.chk_color_blind.isChecked()
         settings.enable_cache = self.chk_enable_cache.isChecked()
         settings.max_workers = self.spin_max_workers.value()
         settings.tm_fuzzy_max_score = self._tm_pct_to_score(self.slider_tm_fuzzy.value())
