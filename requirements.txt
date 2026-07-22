@@ -1,13 +1,32 @@
-PySide6>=6.6
-requests>=2.31
-cryptography>=43.0
-anthropic>=0.25
-keyring>=25.0  # optional — falls back to encrypted file store if unavailable
-curl-cffi>=0.7  # optional — required for free-user NexusMods downloads (Chrome TLS impersonation)
-py7zr>=0.20     # optional — required for .7z archive extraction (falls back to 7z CLI if absent)
-# Spell-check — optional; install separately after meeting the system-level build dep:
+# Core — the application will not start without these.
+PySide6>=6.11
+requests>=2.33
+cryptography>=48.0
+anthropic>=0.104        # Messages API MCP connector needs the mcp_servers kwarg
+
+# Optional — every one of these has a runtime fallback; install for the feature named.
+keyring>=25.7           # API keys in the system keyring (else an AES-256-GCM file store)
+curl-cffi>=0.15         # free-account NexusMods downloads (Chrome TLS impersonation)
+py7zr>=1.1              # .7z extraction (else the 7z CLI)
+rarfile>=4.3            # .rar extraction (else the unrar or 7z CLI)
+
+# Spell-check — optional, and installed separately because hunspell needs a
+# system-level build dependency first:
 #   Arch:          pacman -S hunspell-dev && pip install hunspell
 #   Debian/Ubuntu: apt install libhunspell-dev && pip install hunspell
 #   Pure-Python:   pip install spylls
 # hunspell>=0.5.5
 # spylls>=0.1.7
+
+# Development only — deliberately not installed by default, because the release
+# workflow runs PyInstaller over this file and would bundle them into the build.
+# CI installs them explicitly (.github/workflows/{test,lint,release}.yml).
+# pytest>=9.0
+# pyright>=1.1.411
+# ruff>=0.15
+# pyinstaller>=6.21
+
+# Not Python packages — install through your OS package manager if you want the
+# feature: ollama (local translation backend), vgmstream-cli (native Starfield
+# voice playback), espeak-ng or piper (TTS preview), 7z / unrar (archive
+# fallbacks when py7zr / rarfile are absent).

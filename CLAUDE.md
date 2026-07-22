@@ -4,16 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the Application
 
+This project uses the **conda** environment `bethesda-strings-editor` (Python
+3.10) for everything — running the app, the test suite, and any install. Do not
+use the system interpreter or `pip` outside the env; it has a different and
+incomplete set of packages.
+
 ```bash
+conda activate bethesda-strings-editor
 python main.py
+
+# non-interactively (one-shot commands):
+conda run -n bethesda-strings-editor python -m pytest tests/
 ```
 
 Dependencies are in `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
-# Core: PySide6>=6.6, requests>=2.31, cryptography>=43.0
-# Optional: keyring>=25.0  (falls back to encrypted file store if absent)
+# Core:     PySide6>=6.11, requests>=2.33, cryptography>=48.0, anthropic>=0.104
+# Optional: keyring, curl-cffi, py7zr, rarfile, hunspell/spylls — each has a
+#           runtime fallback, so the app starts without them
 ```
 
 Logging goes to both stdout and `translator.log` in the project root.
