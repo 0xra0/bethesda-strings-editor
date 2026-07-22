@@ -1,57 +1,41 @@
-# Modelfile for gemma4-opus48-st
-# Gemma 4 12B IT fine-tuned on Claude Opus 4.6/4.7/4.8 reasoning data.
-# Source: https://huggingface.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF
-#
+# MamayLM Gemma-3 12B IT v2.0 (Ukrainian) - Optimized for Bethesda Starfield Translation
+# Base model: Gemma-3 12B IT, fine-tuned by INSAIT Institute for Ukrainian language
+# Source: https://huggingface.co/INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0-GGUF
+
 # IMPORTANT — parameter precedence:
 #   The bethesda-strings-editor application overrides these options on every
 #   API call (values here apply only to direct `ollama run` invocations):
-#     temperature, num_ctx, num_predict, top_p, repeat_penalty, stop, system
+#     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
 #
 #   These options are NOT overridden — the Modelfile values stay active during
 #   API calls too:
-#     top_k, min_p, repeat_last_n
+#     min_p, repeat_last_n
 #
-#   The mechanism, so this note does not rot: the app sends each of
-#   top_p / top_k / min_p / repeat_penalty / repeat_last_n only when the model's
-#   own profile in OllamaWorker.MODEL_CONFIGS defines it. This model resolves to
-#   the "gemma4" profile (any name starting `gemma4-` matches it), which defines
-#   top_p and repeat_penalty but NOT top_k — unlike the translategemma3-st
-#   profile, which does define top_k. So the 64 below is the one in force.
+#   The app sends a sampling knob only when the model's own profile in
+#   OllamaWorker.MODEL_CONFIGS defines it. The "mamaylm" profile (matched by any
+#   name starting `mamaylm`) defines top_k 64, top_p 0.95 and repeat_penalty,
+#   but not min_p or repeat_last_n.
 #
-# Thinking mode:
-#   This model has a built-in reasoning (think) channel.  The application
-#   suppresses it automatically by sending think=false on every API call AND
-#   stripping any <think>…</think> blocks in post-processing.
-#   For direct `ollama run` use you may see thinking output — this is normal.
-#
-# To create the Ollama model:
-#   1. Download a GGUF from the model card above (e.g. the Q4_K_M quant) and
-#      point the FROM line at it.
-#   2. ollama create gemma4-opus48-st -f Modelfile.gemma4-opus48
-#   3. Select the model in the app's Settings -> Ollama.
-#
-#   The name matters: anything starting `gemma4-` picks up the app's "gemma4"
-#   tuning profile, including think=false and the longer timeout.
+# To build from this file:
+#   1. Download a GGUF from the model card above and point FROM at it.
+#   2. ollama create mamaylm-gemma3-12b-v2.0 -f Modelfile.mamaylm
+#   3. Select the model in the app's Settings -> Ollama. Keep the `mamaylm`
+#      prefix in the name so the app's tuning profile applies.
 
-FROM /path/to/gemma4-opus48.Q4_K_M.gguf
+FROM /path/to/MamayLM-Gemma-3-12B-IT-v2.0.Q4_K_M.gguf
 
-# ── Chat template (Gemma 4 with thinking-mode support) ───────────────────────
-# The {{ if .Think }}<|think|>{{ end }} guard is the key difference from Gemma 3.
-# When the app sends think=false (always, for translation), .Think is false and
-# <|think|> is never injected — the model does not enter thinking mode.
-# For direct `ollama run` use, thinking is ON by default (no think=false sent).
+# ── Chat template (Gemma 3) ──────────────────────────────────────────────────
+# Same as Modelfile's, without the <|think|> guard: Gemma 3 (and so MamayLM)
+# has no thinking mode.
 TEMPLATE "{{ if .System }}<start_of_turn>system
 {{ .System }}<end_of_turn>
 {{ end }}{{ if .Prompt }}<start_of_turn>user
 {{ .Prompt }}<end_of_turn>
 {{ end }}<start_of_turn>model
-{{ if .Think }}<|think|>
-{{ end }}{{ .Response }}<end_of_turn>"
+{{ .Response }}<end_of_turn>"
 
-# ── Fallback system prompt ────────────────────────────────────────────────────
+# ── System prompt (Bethesda Starfield Localization) ───────────────────────────
 # Used ONLY when no system is provided in the API call (direct use).
-# The application always supplies its own detailed system prompt at runtime,
-# which fully replaces this.  Keep it short and correct.
 SYSTEM "You are a professional Bethesda Starfield game localization translator. Translate the given text into Ukrainian only. Output ONLY the translated text — no explanations, notes, or commentary. Preserve all formatting tokens exactly as written: <Alias=...>, <Token...>, <Global...>, %s, %d, {variable}, <br>, <font ...>, <mag>, <dur>, <relat=...>, <basename=...>, <repetitions>, [[TK_...]], [[STRUCT_BREAK_SGL_N]], [[STRUCT_BREAK_DBL_N]]. For square brackets: preserve input-binding tokens ([Attack], [Jump], [Sprint], etc.) and NPC name/variable tokens ([Name], [Andreja], [Vasco]) unchanged. Translate dialogue-choice tokens ([Lie], [Persuade], [Flirt], etc.) keeping the brackets. Translate ALL-CAPS status codes ([CANCELED], [REDACTED], [DELIVERED], etc.) to Ukrainian equivalents. Write distinctly Ukrainian — not a Russian transliteration. Use Ukrainian-specific vocabulary where it diverges from Russian (наразі not сейчас, завдяки not благодаря). Always close guillemet quotation marks: every opening « must have a matching closing »."
 
 # ── Generation parameters ─────────────────────────────────────────────────────
@@ -61,30 +45,23 @@ SYSTEM "You are a professional Bethesda Starfield game localization translator. 
 PARAMETER temperature 1.0
 
 # Context window: 16 384 tokens covers all Bethesda string types, including
-# books and terminal logs.  The model supports up to 131 072 tokens; raise
-# this only if you regularly translate extremely large batches in one call.
+# books and terminal logs.
 PARAMETER num_ctx 16384
 
 # Maximum output tokens per request.
 PARAMETER num_predict 4096
 
-# Sampling — model author recommendations. top_k is NOT overridden at runtime
-# (the "gemma4" profile does not define it), so this value is in force for API
-# calls as well as direct use.
+# Sampling — model author recommendations.
 PARAMETER top_k 64
 PARAMETER top_p 0.95
 
 # min_p: drops tokens whose probability is below 2% of the top token's.
-# Complements top_p as a secondary quality filter.
-# NOTE: no profile defines min_p, so the app never sends it and this value is
-# what applies at runtime.
 PARAMETER min_p 0.02
 
 # Repeat penalty: light repetition control, safe for highly inflected Ukrainian.
 PARAMETER repeat_penalty 1.1
 
 # Repeat window: 256 tokens covers most Bethesda strings without overhead.
-# NOTE: as with min_p and top_k, this value applies at runtime as well.
 PARAMETER repeat_last_n 256
 
 # ── Stop tokens ───────────────────────────────────────────────────────────────
