@@ -164,7 +164,7 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **GPU monitor** — status bar widget showing GPU utilisation, VRAM usage, and temperature (AMD via Linux sysfs; NVIDIA via `nvidia-smi` on Linux/Windows/macOS; auto-hides if no GPU found)
 - **Ollama model auto-detection** — the model dropdown in Settings loads installed models automatically and keeps refreshing while the window is open, so a model pulled with `ollama pull` shows up without clicking Refresh
 - **Ollama force-stop** — frees a wedged GPU by restarting the Ollama service; on Linux a privileged restart uses the app's own Qt-themed password dialog (`sudo -S`, with askpass/pkexec fallback), on Windows it stops the service via `taskkill` with no console flash
-- **UI translations** — interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community WIP)
+- **UI translations** — interface available in Ukrainian ✓, German, Spanish, French, Polish, Czech, Korean (community-maintained, machine-assisted; native-speaker review welcome — see [TRANSLATING.md](TRANSLATING.md))
 - **Cross-platform desktop notifications** on batch completion — `notify-send`/D-Bus on Linux, native system-tray balloons on Windows and macOS
 - **Native OS integration** — native Explorer/Finder file dialogs on Windows/macOS; config stored in the OS-native location (`%APPDATA%` on Windows, `~/Library/Application Support` on macOS, `$XDG_CONFIG_HOME`/`~/.config` on Linux) with owner-only file permissions
 - **"What's New" panel** — recent GitHub release notes are fetched and rendered on the welcome screen after the welcome card
@@ -342,7 +342,9 @@ UI translations live in `gui/translations/<locale>.ts`. After editing any `.ts` 
 ./scripts/compile_translations.sh
 ```
 
-Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`, `ko_KR`.
+Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`, `ko_KR` — 1,735 strings each, all filled in.
+
+**English and Ukrainian are maintained by [@0xra0](https://github.com/0xra0); every other locale is community-maintained** — machine-assisted and not proofread by a native speaker, because the author does not speak them. Corrections are very welcome: see [TRANSLATING.md](TRANSLATING.md).
 
 ---
 
