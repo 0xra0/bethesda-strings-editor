@@ -1,13 +1,35 @@
 # git-cliff configuration
-# Generates a structured changelog from commit messages without requiring
-# strict conventional-commit format.
+#
+# This repository has two commit styles and the changelog has to read well for
+# both.  Early history is imperative-verb ("Add …", "Fix …", 104 + 99 of them);
+# everything recent is conventional-commit ("feat(qa): …", "docs: …").  Only
+# `fix…` happened to match both, so every feat/docs/chore/ci commit was landing
+# under "Other" — which is where the last five releases' worth of work went.
+#
+# `conventional_commits` stays false on purpose: turning it on would make
+# git-cliff *parse* messages as conventional and drop the legacy ones (or
+# mangle them), and the old commits are still in the history a full regenerate
+# walks.  Instead the parsers below match both vocabularies explicitly.
 #
 # Usage:
-#   git-cliff --output CHANGELOG.md          # full history
-#   git-cliff v0.1.0..HEAD --output CHANGELOG.md  # since last tag
+#   git-cliff --output CHANGELOG.md               # full history
+#   git-cliff --unreleased                        # preview the next release
+#   git-cliff --latest --strip header             # what release.yml runs
 
 [changelog]
 header = "# Changelog\n"
+# Two things here are load-bearing.
+#
+# `split(pat="\n") | first` takes the **subject line only**.  `commit.message`
+# is the entire message, so without it every body paragraph — and the
+# Co-Authored-By trailers — was pasted into the release notes with the commit
+# link glued to the end of the last one.  The v0.2.5 release body on GitHub
+# shows exactly that.
+#
+# `group | striptags` is what makes the section order deterministic: groups are
+# named "<!-- 3 -->Changed" so they sort by that number, and striptags removes
+# the marker before printing.  Without it the sections come out in whatever
+# order the commits happened to appear in.
 body = """
 {% if version %}\
 ## [{{ version }}] — {{ timestamp | date(format="%Y-%m-%d") }}
@@ -15,10 +37,11 @@ body = """
 ## [Unreleased]
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}\
-### {{ group }}
+### {{ group | striptags | trim }}
 {% for commit in commits %}\
-- {{ commit.message | trim | upper_first }}\
-  ([`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/0xra0/bethesda-strings-editor/commit/{{ commit.id }}))
+- {% if commit.scope %}**{{ commit.scope }}**: {% endif %}\
+{{ commit.message | split(pat="\n") | first | trim | upper_first }} \
+([`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/0xra0/bethesda-strings-editor/commit/{{ commit.id }}))
 {% endfor %}
 {% endfor %}\
 """
@@ -26,7 +49,15 @@ footer = ""
 trim = true
 
 [git]
-conventional_commits = false
+# Parse conventional commits properly: this is what puts the *description* in
+# `commit.message` (no "feat(qa):" prefix to strip by hand) and exposes
+# `commit.scope` to the template.  Doing it with preprocessors instead does not
+# work — preprocessors run *before* commit_parsers, so rewriting the subject
+# erases the very type the parsers match on, and everything lands in "Other".
+conventional_commits = true
+# …but keep the commits that are not conventional.  Two thirds of this history
+# predates the switch ("Add …", "Fix …"); dropping them would empty a full
+# regenerate.  They fall through to the legacy verb parsers below.
 filter_unconventional = false
 split_commits = false
 protect_breaking_commits = false
@@ -34,16 +65,50 @@ filter_commits = false
 tag_pattern = "v[0-9].*"
 topo_order = false
 
-# Map commit message prefixes to changelog sections.
-# Falls back to "Other" for anything that doesn't match.
-commit_parsers = [
-  { message = "^[Aa]dd",                     group = "Added"   },
-  { message = "^[Ff]ix",                     group = "Fixed"   },
-  { message = "^[Rr]emove|^[Dd]elete",       group = "Removed" },
-  { message = "^[Uu]pdate|^[Ii]mprove|^[Rr]efactor|^[Cc]hange", group = "Changed" },
-  { message = ".*",                           group = "Other"   },
+# Applied to the subject before parsing.  Only the PR link — the conventional
+# type and scope are handled by the parser above, not by rewriting text.
+commit_preprocessors = [
+  # Squash merges append "(#28)" — make it a link to the pull request.
+  { pattern = '\(#(\d+)\)', replace = "([#${1}](https://github.com/0xra0/bethesda-strings-editor/pull/${1}))" },
 ]
 
-[remote.github]
-owner = "0xra0"
-repo  = "bethesda-strings-editor"
+# First match wins, so order matters: breaking changes are caught before the
+# type that carries them, and the legacy verbs sit after the conventional types
+# (a message is only tested against them if it is not conventional at all).
+commit_parsers = [
+  # Release bookkeeping is not a change anyone reads a changelog for.
+  { message = "^Release v",                  skip = true },
+
+  # Breaking changes, however they are marked.
+  { message = "^[a-z0-9]+(\\([^)]*\\))?!:",  group = "<!-- 0 -->Breaking changes" },
+  { body    = "BREAKING[ -]CHANGE",          group = "<!-- 0 -->Breaking changes" },
+
+  # Conventional types.
+  { message = "^feat",                       group = "<!-- 1 -->Added"         },
+  { message = "^fix",                        group = "<!-- 2 -->Fixed"         },
+  { message = "^perf|^refactor",             group = "<!-- 3 -->Changed"       },
+  { message = "^revert",                     group = "<!-- 4 -->Removed"       },
+  { message = "^security",                   group = "<!-- 5 -->Security"      },
+  { message = "^docs",                       group = "<!-- 6 -->Documentation" },
+  { message = "^i18n",                       group = "<!-- 7 -->Translations"  },
+  { message = "^chore|^ci|^build|^test|^style", group = "<!-- 8 -->Maintenance" },
+
+  # Legacy imperative-verb history (everything before the switch).
+  { message = "^[Aa]dd",                     group = "<!-- 1 -->Added"   },
+  { message = "^[Ff]ix",                     group = "<!-- 2 -->Fixed"   },
+  { message = "^[Rr]emove|^[Dd]elete",       group = "<!-- 4 -->Removed" },
+  { message = "^[Uu]pdate|^[Ii]mprove|^[Rr]efactor|^[Cc]hange", group = "<!-- 3 -->Changed" },
+
+  { message = ".*",                          group = "<!-- 9 -->Other"   },
+]
+
+# No [remote.github] section on purpose.  Configuring one makes git-cliff call
+# the GitHub API to enrich commits, and `--latest` then *panics* outright if
+# that call fails — "Could not get github metadata: … Status(403)" — which is
+# what an unauthenticated run hits on the rate limit, i.e. every local preview.
+# In a release it would take the whole workflow down over an API hiccup.
+#
+# Nothing here needs it: the template uses only message, scope, id and version,
+# and pull-request links are built by the preprocessor above from the "(#28)"
+# that squash merges already put in the subject.  Removing it makes the
+# changelog generate offline and identically.
