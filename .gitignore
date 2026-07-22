@@ -240,7 +240,6 @@ dicts/
 *.gguf
 *.bin
 *.safetensors
-Modelfile.mamaylm
 scripts/starfield_en_uk_sharegpt.jsonl
 
 # Local data files, not tracked (see bethesda_strings_editor.spec)
