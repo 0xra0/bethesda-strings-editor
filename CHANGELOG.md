@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+### Added
+- **File-type associations on Linux and Windows** — register the app as the handler for `.strings`, `.dlstrings`, `.ilstrings`, `.esp`, `.esm`, `.esl` and `.ba2` so they open on a double-click and draw a proper icon in the file manager. Per-user, no root and no admin: `$XDG_DATA_HOME` on Linux, `HKCU\Software\Classes` on Windows. Run `python main.py --register-file-types` (or `scripts/install_file_associations.sh`), and `--unregister-file-types` to remove every trace. On Windows the extension's **default** handler is only claimed with `--force` — Windows 10+ guards a user-chosen default behind a hash no application may forge, and silently taking `.esp` from a modding tool you picked yourself is worse than not being the default
+
+### Changed
+- **The in-app NexusMods upload dialog is gone.** Releases are published by CI, which drives the same uploader from `scripts/nexusmods_upload.py`; nothing about downloading or browsing mods changes
+- `requirements.txt` now separates the four packages the app cannot start without from the optional ones, each with the feature it enables and the fallback used when it is absent
+
+### Fixed
+- **A translated ESP/ESM could receive the wrong text in every field after the first.** Extraction and write-back line entries up by *"the Nth occurrence of this field signature in this record"* — a single record repeats one signature many times, e.g. a weapon's `FULL` names the weapon and then every modification grade — but the two sides disagreed about which occurrences counted. Write-back skipped only a lone null byte, while extraction had also dropped null-padded fields and resource paths, so every later occurrence shifted a slot and silently took another field's translation, with the last one falling off the end. The two now share one predicate, and `save()` advances its counter for every entry rather than only changed ones, so a proper noun you deliberately left in English no longer desynchronises everything after it
+- **The Settings dialog stored language *names* where the app expects locale codes.** Its Default Source/Target pickers offered 4 of the 12 languages the main window offers, and saved `"Ukrainian"` where every consumer looks for `"uk"` — silently switching off the per-language style rule, the player-gender directive and the word-list preload for that session. Because it also *looked up* the code against name data, the combo matched nothing and sat blank, so opening Settings and pressing Save without touching the language rows wrote `null` to both fields, after which importing a TMX raised `TypeError`. **If you have ever opened Settings, your language pair is repaired on first launch to the `ru`→`uk` default rather than to the pair you chose** — the original value was overwritten at save time and cannot be recovered. Check Settings → Translation Preferences once after updating
+- **Upgrading logged a warning that nothing had gone wrong.** The config migration reported *"Config version N is older than current M. Some settings may use defaults."* on every **successful** migration, because it tested the same condition the caller checks before starting one. That sentence is true in a case that used to log nothing at all — a config written by a **newer** build, whose unknown settings are dropped — and it now appears there, naming what was dropped
+
+### Security
+- **The release signing key has been rotated.** Releases from this one on are signed by `4DF8 BE08 A2CB 5E00 62BE  EBAC 1FD0 408A 426E 7AD0`; import the new `release-signing-key.asc` before verifying. The previous key is retired and no longer published, so **v0.2.5 and earlier can no longer be signature-checked** — their `SHA256SUMS` still detects a corrupted download but no longer proves who produced it. [VERIFICATION.md](VERIFICATION.md) documents the fingerprint, the key history, and the full check
+- The CI NexusMods credential was stored as a repository *variable*, which GitHub keeps in plaintext and does not mask in logs. It is now a repository secret, and the key itself has been reissued
+
+### Documentation
+- `SECURITY.md`, `VERIFICATION.md`, `CONTRIBUTING.md`, `TRANSLATING.md` and the three `Modelfile`s were audited against the code and corrected — a protected-terms count overstated by two orders of magnitude (8,000+ claimed, 86 real), a translation-cache cap documented at half its actual size, a deleted script and a removed Weblate setup still described as if they existed, `Modelfile` paths pointing at files nobody has, and the wrong number of files listed for a release. `TRANSLATING.md` now states plainly that English and Ukrainian are maintained by [@0xra0](https://github.com/0xra0) and the other six locales are community-maintained
+- Release notes are grouped again: the changelog generator matched only an older commit style, so features and fixes had been collecting under "Other", and it had been pasting entire commit bodies — trailers included — into the published notes
+
 ---
 
 ## [0.2.5] — 2026-07-20
