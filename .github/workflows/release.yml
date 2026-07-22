@@ -156,10 +156,12 @@ jobs:
           retention-days: 7
 
   # ── Release ───────────────────────────────────────────────────────────────────
-  # Requires one repository secret:
-  #   GPG_PRIVATE_KEY  — base64-encoded armored private key
+  # Repository secrets used for signing:
+  #   GPG_PRIVATE_KEY  — base64-encoded armored private key, required
   #                      (gpg --armor --export-secret-keys KEYID | base64 -w0)
-  #   (key has no passphrase — no GPG_PASSPHRASE secret needed)
+  #   GPG_PASSPHRASE   — the key's passphrase, if it has one. Optional: the
+  #                      signing step reads it only when it is set, so a
+  #                      passphrase-less key keeps working unchanged.
   release:
     name: Create Release
     needs: [changelog, build]
@@ -189,10 +191,20 @@ jobs:
       - name: Import GPG signing key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
+          # Importing never needs the passphrase; only the signature does.
           echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --batch --import
-          gpg --batch --yes --pinentry-mode loopback \
-            --armor --detach-sign SHA256SUMS
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            # --passphrase-fd 0 rather than --passphrase: an argument would be
+            # visible in the runner's process list for the life of the call.
+            printf '%s' "$GPG_PASSPHRASE" | gpg --batch --yes \
+              --pinentry-mode loopback --passphrase-fd 0 \
+              --armor --detach-sign SHA256SUMS
+          else
+            gpg --batch --yes --pinentry-mode loopback \
+              --armor --detach-sign SHA256SUMS
+          fi
           echo "--- Signature ---"
           gpg --verify SHA256SUMS.asc SHA256SUMS
 
