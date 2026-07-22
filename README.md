@@ -97,8 +97,8 @@ Each language pair has a dedicated system prompt with register rules, script con
 - **Translation memory** — known strings are looked up before calling the model, so they are never retranslated; a loaded TM is persisted as a JSON snapshot and auto-loaded next session, shown by a status-bar indicator, and inspectable via a searchable **TM browser** (Translation → Browse Translation Memory). Fuzzy matches whose numbers differ from the source (`28LY` ≠ `30LY`) are rejected, and lookup stays fast on a six-figure TM via a sound pre-filter that only drops candidates the scorer would have rejected anyway
 - **Official terminology miner** (Translation → Mine Official Terminology) — Bethesda ships every official language for a plugin side by side on identical string IDs, so aligning English against an official target yields **their** canonical rendering of every weapon, faction, UI verb and quest term, with **zero AI calls**. Auto-detects the languages your install ships, mines a TM plus a filtered glossary (with optional reference languages — e.g. Polish as a Slavic cross-reference for Ukrainian), and imports into pending rows only, never clobbering work in progress. EN→DE on a real install: 190,367 TM entries + 17,815 glossary terms in 27 s
 - **Apply to All Identical Originals** (Ctrl+Alt+D) — propagate one row's translation to every row with the same source text in one shot; **Delete** clears a translation and reverts the row to pending
-- **Translation cache** — SHA-256-keyed JSON cache (up to 50,000 entries) persisted across sessions
-- **Term protector** — 8,000+ Starfield-specific terms are replaced with placeholder tokens before the AI sees the text and restored afterward, preventing mistranslation of proper nouns
+- **Translation cache** — SHA-256-keyed JSON cache (up to 100,000 entries) persisted across sessions
+- **Term protector** — anything that must survive the model byte-for-byte is swapped for a placeholder token before the AI sees the text and restored afterward: 20 structural patterns (game tags, format specifiers, FormIDs, chemical formulas, and deliberately-obfuscated in-game codes such as encrypted-note passwords), plus a built-in list of 86 proper nouns. The shipped `protected_terms_starfield_hq.txt` is deliberately **empty** — Starfield's faction, company and UI terms are *meant* to be translated — so add entries there only for names that must stay verbatim in every locale
 - **Pipeline post-processing** — per-string passes after every translation: game tag restoration, case matching, line-prefix preservation, newline structure repair, mixed-script repair, guillemet close-quote enforcement
 - **Glossary system** — CSV/TBX/JSON glossary with in-app editor, term suggestions dock, and automatic injection into AI prompts
 - **Character Persona Profiling** — assign a voice profile to any string or quest (Freestar Ranger, SysDef Officer, Crimson Fleet Pirate, House Va'ruun Zealot, UC Civilian, Robot/Automaton, Narrator, or custom); each profile overrides the AI system prompt and temperature
@@ -303,13 +303,14 @@ data/
                                rather than all at once (~331 MB → ~44 MB for an EN→KO session)
 
 scripts/
-  apply_quality_fixes.py       CLI: apply auto-fixes from a JSON report to SST XML
   extract_sharegpt_dataset.py  Export EN→target string pairs as ShareGPT JSONL
   create_qc_dataset.py         Generate QC training dataset (14,928 examples, 16 issue codes)
   compile_translations.sh      Recompile .ts → .qm UI translation files
   fetch_dictionaries.py        Download Hunspell .aff/.dic dictionaries into dicts/ (Windows/macOS spell-check bundle)
   download_lang_dicts.py       Download word-frequency lists into data/ (source-language leak detection)
   extract_starfield_glossary.py Build starfield_glossary.json from string files
+  nexusmods_upload.py          Publish a release to NexusMods (driven by the release workflow)
+  install_file_associations.sh Register the Linux desktop entry and MIME types
 
 packaging/
   bethesda-strings-editor.desktop      Linux desktop entry (file associations)
@@ -335,6 +336,8 @@ Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`, `ko_KR`
 ```bash
 python -m pytest tests/
 ```
+
+943 tests across 46 files, all pure Python — no Qt event loop, no network, no game install. Binary formats are exercised with hand-built record and tag bytes and the AI backends with fake clients; the one end-to-end voice-decode test self-skips when Starfield and `vgmstream-cli` aren't present.
 
 ---
 
