@@ -30,23 +30,65 @@ Logging goes to both stdout and `translator.log` in the project root.
 
 ## Ollama Models
 
-### Translation model (`translategemma3-st`)
+Three Modelfiles are tracked. **None of them names a real GGUF** — every `FROM`
+is a `/path/to/…` placeholder, because the fine-tunes are not published and a
+machine-specific absolute path is worse than useless to anyone else (and rots
+here too: both previously-committed paths are gone from this machine). Point
+`FROM` at a GGUF you have, then `ollama create <name> -f <file>`.
+
+**Parameter precedence** is the thing to get right when editing them, and it is
+per-model, not global. The app always overrides `system`, `temperature`,
+`num_ctx` and `num_predict`; for the sampling knobs it sends
+`top_p`/`top_k`/`min_p`/`repeat_penalty`/`repeat_last_n` **only when the model's
+own profile in `OllamaWorker.MODEL_CONFIGS` defines that key** (`ollama_worker.py`
+`payload["options"]` loop). No profile defines `min_p` or `repeat_last_n`, so
+those always come from the Modelfile; `top_k` comes from the Modelfile for
+`gemma4-*` (that profile omits it) but is overridden for `translategemma3-st`.
+`num_predict` is adaptive per string —
+`max(profile_num_predict, min(settings.ollama_num_predict, max(512, input_len × 4)))`
+— so a profile's `num_predict` acts as the floor, not the cap. Profile lookup is
+exact name → base-name prefix → `_DEFAULT_MODEL_CONFIG`, which is why a model
+called `gemma4-opus48-st` picks up the `gemma4` profile (and its `think=false`).
+
+### Translation model (`translategemma3-st` — `Modelfile`)
 
 ```bash
 ollama create translategemma3-st -f Modelfile
 ```
 
-The `Modelfile` points to a local GGUF path (`/mnt/ssd/models/gguf/translategemma-27b-it.Q4_K_M.gguf`). All generation parameters in `Modelfile` are overridden at runtime — the file is only used for direct `ollama run` invocations.
+Gemma 3 chat template. Any compatible instruct GGUF works — e.g. the public
+[MamayLM Ukrainian model](https://huggingface.co/INSAIT-Institute/MamayLM-Gemma-3-12B-IT-v2.0).
 
-### Quality-check model (`qcgemma4-st`)
+### Reasoning model (`gemma4-opus48-st` — `Modelfile.gemma4-opus48`)
 
-Fine-tuned Gemma 4 E4B IT on `scripts/qc_dataset_sharegpt.jsonl` (14,928 examples, 16 issue codes). Creates or recreates the model:
+```bash
+ollama create gemma4-opus48-st -f Modelfile.gemma4-opus48
+```
+
+Gemma 4 12B IT fine-tuned on Claude Opus reasoning data
+([model card](https://huggingface.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF)).
+Has a thinking channel; the app sends `think=false` **and** strips `<think>…</think>`
+in post-processing, so keep the `{{ if .Think }}` guard in the TEMPLATE.
+
+### Quality-check model (`qcgemma4-st` — `Modelfile.qc`)
+
+Gemma 4 E4B IT fine-tuned on `scripts/qc_dataset_sharegpt.jsonl` (14,928
+examples, 16 issue codes).
 
 ```bash
 ollama create qcgemma4-st -f Modelfile.qc
 ```
 
-`Modelfile.qc` points to `/home/home/.unsloth/studio/exports/gemma-4-e4b-it-unsloth-bnb-4bit-gguf/gemma-4-e4b-it.Q4_K_M.gguf`. Uses `temperature 0.0` and `num_ctx 8192` for deterministic structured output. `num_predict 1024` to give the model's chain-of-thought reasoning enough budget before the structured VERDICT block. Input format matches the training data: `Check this Ukrainian translation:\n\nSource (English):\n{src}\n\nTranslation (Ukrainian):\n{tgt}`. Output is `VERDICT: GOOD` or `VERDICT: ISSUES_FOUND\nCODES: …\nSEVERITY: …\nDETAILS:\n- …\nACTION: AUTOFIX|RETRANSLATE`.
+Driven by `ai_qc_worker.py`, which is a **separate, much smaller** call path than
+translation: plain `/api/generate` with its own `_SYSTEM_PROMPT` (kept identical
+to the Modelfile's `SYSTEM`), `temperature 0.0`, `num_predict 1024`, and nothing
+else — so `num_ctx 8192` and the stop tokens come from the Modelfile. The model
+name is free-form (`AppSettings.ai_qc_model`, default `qcgemma4-st`). `num_predict
+1024` gives the chain-of-thought room before the VERDICT block; a truncated
+verdict parses as *no issues found*, which is the one failure a quality checker
+must not have. Input format matches the training data:
+`Check this Ukrainian translation:\n\nSource (English):\n{src}\n\nTranslation (Ukrainian):\n{tgt}`.
+Output is `VERDICT: GOOD` or `VERDICT: ISSUES_FOUND\nCODES: …\nSEVERITY: …\nDETAILS:\n- …\nACTION: AUTOFIX|RETRANSLATE`.
 
 ## Compiling UI Translations
 

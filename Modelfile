@@ -6,9 +6,15 @@
 #   API call (values here apply only to direct `ollama run` invocations):
 #     temperature, num_ctx, num_predict, top_k, top_p, repeat_penalty, stop, system
 #
-#   These options are NOT overridden by the app — Modelfile values are always
-#   active, including during API calls:
+#   These options are NOT overridden — the Modelfile values stay active during
+#   API calls too:
 #     min_p, repeat_last_n
+#
+#   The mechanism, so this note does not rot: the app sends each of
+#   top_p / top_k / min_p / repeat_penalty / repeat_last_n only when the model's
+#   own profile in OllamaWorker.MODEL_CONFIGS defines it. The
+#   "translategemma3-st" profile defines top_k, top_p and repeat_penalty but not
+#   min_p or repeat_last_n — so those two come from here.
 #
 # To build from this file:
 #   1. Set the FROM path below to a GGUF on your machine.  The custom fine-tune
@@ -43,8 +49,11 @@ PARAMETER temperature 0.1
 # necessary for long Bethesda strings (books, terminal notes, dialogue trees).
 PARAMETER num_ctx 16384
 
-# Maximum output tokens per request.  The application uses an adaptive value
-# (min(4096, max(200, input_length / 2))); 4 096 is a safe direct-use default.
+# Maximum output tokens per request.  The application computes this per string:
+#   max(profile_num_predict, min(settings.ollama_num_predict, max(512, input_len × 4)))
+# so this value also acts as the floor for the adaptive budget — with the 4 096
+# in MODEL_CONFIGS["translategemma3-st"], no request ever asks for less.
+# 4 096 is likewise a safe default for direct `ollama run` use.
 PARAMETER num_predict 4096
 
 # Sampling parameters.
@@ -55,7 +64,8 @@ PARAMETER top_p 0.9
 # probability.  At temperature 0.1 the distribution is already very peaked;
 # min_p acts as a fine-grained quality filter without restricting fluency.
 # Complements top_p rather than replacing it (both thresholds must pass).
-# NOTE: the app does NOT send min_p — this Modelfile value is always active.
+# NOTE: MODEL_CONFIGS["translategemma3-st"] does not define min_p, so the app
+# never sends it and this value is what applies at runtime.
 PARAMETER min_p 0.02
 
 # Repeat penalty: matches the value the app sends at runtime (OllamaWorker
@@ -69,7 +79,8 @@ PARAMETER repeat_penalty 1.1
 # exceed 64 tokens; a 64-token window lets the model repeat phrases it
 # generated just a few sentences earlier.  256 tokens covers most strings
 # without adding meaningful overhead.
-# NOTE: the app does NOT send repeat_last_n — this Modelfile value is always active.
+# NOTE: as with min_p, no profile defines repeat_last_n, so this value applies
+# at runtime as well as under direct `ollama run`.
 PARAMETER repeat_last_n 256
 
 # ── Stop tokens ──────────────────────────────────────────────────────────────

@@ -35,7 +35,7 @@ Enter your Anthropic API key in **Settings → Claude AI** and pick Haiku 4.5 / 
 
 ### Option C — local Ollama model from a GGUF
 
-Any Gemma-3 / instruct GGUF works with the app's prompts (the app supplies its own system prompt and overrides every generation parameter at runtime). For Ukrainian, the publicly available **MamayLM** fine-tune is a good default:
+Any Gemma-3 / instruct GGUF works with the app's prompts — the app supplies its own system prompt and overrides temperature, context size and output budget at runtime (the sampling knobs a Modelfile sets, such as `min_p` and `repeat_last_n`, stay in force; each Modelfile documents which). For Ukrainian, the publicly available **MamayLM** fine-tune is a good default:
 
 ```bash
 # 1. Download a GGUF — e.g. MamayLM (Ukrainian) from HuggingFace:
