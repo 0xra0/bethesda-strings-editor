@@ -242,3 +242,11 @@ dicts/
 *.safetensors
 Modelfile.mamaylm
 scripts/starfield_en_uk_sharegpt.jsonl
+
+# Local data files, not tracked (see bethesda_strings_editor.spec)
+#   protected_terms_starfield_hq.txt — user extension point; the app reads it
+#     from its own directory when present, and ships without one
+#   starfield_glossary.json — 6 MB build artifact of
+#     scripts/extract_starfield_glossary.py; nothing loads it by that name
+protected_terms_starfield_hq.txt
+starfield_glossary.json

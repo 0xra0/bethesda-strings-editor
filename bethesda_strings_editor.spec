@@ -82,10 +82,14 @@ datas = [
     ('resources/style.qss',       'resources/'),
     # Compiled Qt UI translations (build step: scripts/compile_translations.sh)
     *[(str(p), 'gui/translations/') for p in __import__('pathlib').Path('gui/translations').glob('*.qm')],
-    # Default protected-terms list shipped with the app
-    ('protected_terms_starfield_hq.txt', '.'),
-    # Default glossary
-    ('starfield_glossary.json', '.'),
+    # protected_terms_starfield_hq.txt and starfield_glossary.json are no longer
+    # tracked or bundled. The terms file is a user extension point the app reads
+    # from its own directory when present (main_window), and nothing ever opened
+    # the glossary by that name — GlossaryManager reads <config>/glossary.json —
+    # so bundling it only added ~6 MB of dead weight to every build. Globbed
+    # rather than listed, because PyInstaller aborts on a missing datas path.
+    *[(p, '.') for p in ('protected_terms_starfield_hq.txt',)
+      if __import__('pathlib').Path(p).is_file()],
 ]
 
 a = Analysis(
