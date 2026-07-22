@@ -306,6 +306,20 @@ class AppSettings:
         version = filtered.get("config_version", 1)
         if version < CONFIG_VERSION:
             filtered = _migrate_config(filtered, version)
+        elif version > CONFIG_VERSION:
+            # Written by a newer build — downgrade, or a config synced from a
+            # machine running a newer release.  The filter above has already
+            # dropped every setting this build does not know, so this is where
+            # "some settings may use defaults" is actually true.  It was never
+            # reported: the only warning sat on the migration path, which a
+            # newer config never takes.
+            unknown = sorted(set(data) - valid_keys)
+            logger.warning(
+                "Config is from a newer version (v%s > v%s); %d unknown setting(s) "
+                "ignored and left at this build's defaults%s",
+                version, CONFIG_VERSION, len(unknown),
+                (": " + ", ".join(unknown)) if unknown else "",
+            )
 
         return cls(**filtered)
 
@@ -573,11 +587,21 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v43: repaired language codes written by the settings dialog")
 
-    if from_version < CONFIG_VERSION:
+    # This used to warn on `from_version < CONFIG_VERSION` — the exact condition
+    # the caller tests *before* calling, so it fired after every successful
+    # migration and told the user their settings "may use defaults" when nothing
+    # had gone wrong.  What it was reaching for is whether the chain actually
+    # brought the data up to date: every block above sets config_version, so a
+    # lower value here means no step covered `from_version`.
+    reached = data.get("config_version", from_version)
+    if reached < CONFIG_VERSION:
         logger.warning(
-            f"Config version {from_version} is older than current {CONFIG_VERSION}. "
-            f"Some settings may use defaults."
+            "Config migration stopped at v%s (current is v%s) — no migration step "
+            "covers v%s. Some settings may use defaults.",
+            reached, CONFIG_VERSION, from_version,
         )
+    else:
+        logger.info("Migrated config from v%s to v%s", from_version, CONFIG_VERSION)
 
     return data
 
