@@ -18,7 +18,45 @@ from PySide6.QtCore import QSettings
 
 logger = logging.getLogger(__name__)
 
-CONFIG_VERSION = 42  # Increment when schema changes
+CONFIG_VERSION = 43  # Increment when schema changes
+
+# ── Translation languages ────────────────────────────────────────────────────
+# The languages Starfield itself ships (Localization.ba2) plus Russian and
+# Ukrainian for xTranslator-style workflows.  Order: English source first, then
+# alphabetical by display name.
+#
+# The second element is the **Starfield locale code**, and that is what
+# `default_source_lang` / `default_target_lang` store — never the display name.
+# Every consumer keys off the code: `_TARGET_STYLE[lang]` for the per-language
+# style rule, `_GENDERED_TARGETS` for the player-gender directive, and
+# `preload_language_dictionaries` for the word lists.  A display name in those
+# fields matches none of them and is silently ignored rather than rejected,
+# which is exactly how it went unnoticed (see the v20 and v43 migrations).
+#
+# This table lives here, in the module both the main window and the Settings
+# dialog already import, because two private copies drifted: the dialog kept a
+# four-name list of its own and stored display names, undoing v20.
+SUPPORTED_LANGUAGES: list[tuple[str, str]] = [
+    ("English",              "en"),
+    ("German",               "de"),
+    ("Spanish",              "es"),
+    ("French",               "fr"),
+    ("Italian",              "it"),
+    ("Japanese",             "ja"),
+    ("Korean",               "ko"),
+    ("Polish",               "pl"),
+    ("Portuguese (Brazil)",  "ptbr"),
+    ("Chinese (Simplified)", "zhhans"),
+    ("Russian",              "ru"),
+    ("Ukrainian",            "uk"),
+]
+
+# Display name → locale code, for repairing configs written before the codes
+# existed (v20) or by the dialog that never adopted them (v43).
+LANGUAGE_NAME_TO_CODE = {name: code for name, code in SUPPORTED_LANGUAGES}
+
+# The closed set of values these two settings may hold.
+LANGUAGE_CODES = frozenset(code for _, code in SUPPORTED_LANGUAGES)
 
 # Fields whose values are XOR-obfuscated with base64 in the on-disk JSON.
 # The in-memory value is always plaintext; only the serialized form is wrapped.
@@ -441,16 +479,10 @@ def _migrate_config(data: dict, from_version: int) -> dict:
     if from_version < 20:
         # Language fields changed from display names ("Russian", "Ukrainian", "English")
         # to Starfield locale codes ("ru", "uk", "en") to support all official languages.
-        _lang_name_to_code = {
-            "English": "en", "German": "de", "Spanish": "es", "French": "fr",
-            "Italian": "it", "Japanese": "ja", "Korean": "ko", "Polish": "pl",
-            "Portuguese (Brazil)": "ptbr", "Chinese (Simplified)": "zhhans",
-            "Russian": "ru", "Ukrainian": "uk",
-        }
         for key in ("default_source_lang", "default_target_lang"):
             old_val = data.get(key, "")
-            if old_val in _lang_name_to_code:
-                data[key] = _lang_name_to_code[old_val]
+            if old_val in LANGUAGE_NAME_TO_CODE:
+                data[key] = LANGUAGE_NAME_TO_CODE[old_val]
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v20: language codes → locale codes")
 
@@ -522,6 +554,24 @@ def _migrate_config(data: dict, from_version: int) -> dict:
         data.setdefault("warn_player_gender_unset", True)
         data["config_version"] = CONFIG_VERSION
         logger.info("Migrated config to v42: added player-gender pre-batch nudge toggle")
+
+    if from_version < 43:
+        # Repair language fields the Settings dialog corrupted.  It never adopted
+        # v20's locale codes: its combos stored the *display name* as item data,
+        # so saving wrote "Ukrainian" back over "uk" — and because it looked the
+        # codes up with findData(), the combo matched nothing, sat at index -1,
+        # and wrote **None** for a user who opened Settings without touching the
+        # language rows at all.  None then crashed the TMX loader on
+        # `default_source_lang[:2]`.  Both are repaired here rather than merely
+        # fixed going forward, since an affected config stays broken otherwise.
+        for key, fallback in (("default_source_lang", "ru"), ("default_target_lang", "uk")):
+            val = data.get(key)
+            if isinstance(val, str) and val in LANGUAGE_NAME_TO_CODE:
+                data[key] = LANGUAGE_NAME_TO_CODE[val]   # "Ukrainian" → "uk"
+            elif not isinstance(val, str) or val not in LANGUAGE_CODES:
+                data[key] = fallback                     # None / unknown → default
+        data["config_version"] = CONFIG_VERSION
+        logger.info("Migrated config to v43: repaired language codes written by the settings dialog")
 
     if from_version < CONFIG_VERSION:
         logger.warning(

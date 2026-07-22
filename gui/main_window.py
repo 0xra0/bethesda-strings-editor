@@ -59,6 +59,7 @@ from bethesda_strings.ba2_handler import BA2File
 from bethesda_strings.esp_handler import EspFile
 from bethesda_strings.txt_handler import TxtStringFile
 from gui.app_settings import (
+    SUPPORTED_LANGUAGES,
     AppSettings,
     get_cache_dir,
     get_config_dir,
@@ -499,23 +500,10 @@ class MainWindow(QMainWindow):
     translation_complete = Signal(int, int)
     translation_requested = Signal(list)  # NEW: For thread-safe translation
 
-    # Languages that ship with Starfield (Localization.ba2) + Russian/Ukrainian
-    # for xTranslator-style workflows.  Order: English source first, then
-    # alphabetical by display name.  Locale codes match Starfield's file suffixes.
-    SUPPORTED_LANGUAGES = [
-        ("English",              "en"),
-        ("German",               "de"),
-        ("Spanish",              "es"),
-        ("French",               "fr"),
-        ("Italian",              "it"),
-        ("Japanese",             "ja"),
-        ("Korean",               "ko"),
-        ("Polish",               "pl"),
-        ("Portuguese (Brazil)",  "ptbr"),
-        ("Chinese (Simplified)", "zhhans"),
-        ("Russian",              "ru"),
-        ("Ukrainian",            "uk"),
-    ]
+    # (display name, Starfield locale code) — defined once in app_settings so the
+    # Settings dialog cannot offer a different set again.  Kept as a class
+    # attribute because existing code reads it off the window.
+    SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES
 
     def __init__(self, settings: Optional[AppSettings] = None, parent=None, theme_manager=None):
         """Initialize the main window.
