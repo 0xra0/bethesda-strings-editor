@@ -82,6 +82,11 @@ datas = [
     ('resources/style.qss',       'resources/'),
     # Compiled Qt UI translations (build step: scripts/compile_translations.sh)
     *[(str(p), 'gui/translations/') for p in __import__('pathlib').Path('gui/translations').glob('*.qm')],
+    # Desktop entry + MIME definitions. gui/file_associations.py reads these out
+    # of sys._MEIPASS when the frozen app runs --register-file-types, so a
+    # release can register itself with the desktop; without them it can't.
+    ('packaging/bethesda-strings-editor.desktop',  'packaging/'),
+    ('packaging/bethesda-strings-editor-mime.xml', 'packaging/'),
     # protected_terms_starfield_hq.txt and starfield_glossary.json are no longer
     # tracked or bundled. The terms file is a user extension point the app reads
     # from its own directory when present (main_window), and nothing ever opened

@@ -98,6 +98,12 @@ def _load_translator(app: QApplication, translator: QTranslator, locale_code: st
 
 def main():
     """Main entry point for the application."""
+    # File-association registration is a headless, one-shot action — handle it
+    # before anything touches Qt, and never open a window for it.
+    if {"--register-file-types", "--unregister-file-types"} & set(sys.argv[1:]):
+        from gui.file_associations import main as file_associations_main
+        sys.exit(file_associations_main(sys.argv[1:]))
+
     # Must run before Qt Multimedia loads its bundled FFmpeg (see the helper's
     # docstring) — do it first so no code path can beat it to libavutil.
     _preload_system_libva()
