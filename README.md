@@ -313,7 +313,7 @@ scripts/
   download_lang_dicts.py       Download word-frequency lists into data/ (source-language leak detection)
   extract_starfield_glossary.py Build starfield_glossary.json from string files (local artifact, untracked)
   nexusmods_upload.py          Publish a release to NexusMods (driven by the release workflow)
-  install_file_associations.sh Register the Linux desktop entry and MIME types
+  install_file_associations.sh Register the Linux desktop entry, MIME types and icons
 
 packaging/
   bethesda-strings-editor.desktop      Linux desktop entry (file associations)
