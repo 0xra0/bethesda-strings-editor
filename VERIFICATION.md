@@ -10,8 +10,20 @@ Every release ships two extra files alongside the `.zip` archives:
 The public key is **not** a release asset — it lives in this repository as
 [`release-signing-key.asc`](release-signing-key.asc). That is deliberate: a key
 published next to the files it signs proves nothing, because anyone able to
-replace an asset could replace the key too. Take it from the repository (or a
-keyserver), and check the fingerprint below.
+replace an asset could replace the key too. Take it from the repository, and
+check the fingerprint below.
+
+**Identify the key by its fingerprint, never by its name or address.** A user ID
+is free text that anybody can put on a key they generated themselves; the
+fingerprint is the key.
+
+```
+D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
+```
+
+Questions or a suspected problem with a release go to
+[GitHub Security Advisories](https://github.com/0xra0/bethesda-strings-editor/security/advisories/new),
+not to any address attached to the key.
 
 ---
 
@@ -28,12 +40,12 @@ gpg --verify SHA256SUMS.asc SHA256SUMS
 sha256sum --check --ignore-missing SHA256SUMS
 ```
 
-Step 2 prints something like this — the exact output for the v0.2.5 release:
+Step 2 prints something like this — the actual output for the v0.2.5 release:
 
 ```
 gpg: Signature made Mon 20 Jul 2026 10:45:12 AM EEST
 gpg:                using RSA key D50C3274546FE1FB0653DA01E750D9A94177134B
-gpg: Good signature from "Bethesda Strings Editor Releases <…>" [unknown]
+gpg: Good signature from "Bethesda Strings Editor Releases …" [unknown]
 gpg: WARNING: This key is not certified with a trusted signature!
 gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
@@ -41,13 +53,17 @@ Primary key fingerprint: D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
 
 **That WARNING is expected and is not a failure.** `Good signature` is the
 result; the warning only says you have not personally certified the key in your
-own web of trust. What replaces that trust here is the fingerprint: check that
-the `Primary key fingerprint` line matches the one below. To silence the warning
-permanently, sign the key locally with `gpg --lsign-key D50C3274546FE1FB0653DA01E750D9A94177134B`.
+own web of trust. What replaces that trust here is the fingerprint — check that
+the `Primary key fingerprint` line matches the one above, character for
+character. To silence the warning permanently:
+
+```bash
+gpg --lsign-key D50C3274546FE1FB0653DA01E750D9A94177134B
+```
 
 Step 3 prints `bethesda-strings-editor-linux-x64.zip: OK` for each archive you
 actually downloaded; `--ignore-missing` is what lets you check one archive
-against a `SHA256SUMS` listing both.
+against a `SHA256SUMS` that lists both.
 
 ---
 
@@ -56,10 +72,7 @@ against a `SHA256SUMS` listing both.
 ```
 pub   rsa4096 2026-06-12 [SC] [expires: 2030-06-11]
       D50C 3274 546F E1FB 0653  DA01 E750 D9A9 4177 134B
-uid   Bethesda Strings Editor Releases <REDACTED>
 ```
-
-Full fingerprint: `D50C3274546FE1FB0653DA01E750D9A94177134B`
 
 Fetch the key directly instead of cloning:
 
@@ -81,7 +94,7 @@ gh release download v0.2.5 -R 0xra0/bethesda-strings-editor -p 'SHA256SUMS*'
 gpg --import release-signing-key.asc
 
 # Confirm the fingerprint matches the one above
-gpg --fingerprint REDACTED
+gpg --fingerprint D50C3274546FE1FB0653DA01E750D9A94177134B
 
 # Verify the signature — "Good signature" = the checksum list is untampered
 gpg --verify SHA256SUMS.asc SHA256SUMS
