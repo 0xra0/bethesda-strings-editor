@@ -205,6 +205,18 @@ python main.py
 
 Logs are written to both stdout and `translator.log` in the project root.
 
+### File associations (Linux and Windows)
+
+Register the app as the handler for `.strings` / `.dlstrings` / `.ilstrings`, `.esp` / `.esm` / `.esl` and `.ba2` — file icons, the **Open With** entry, and double-click:
+
+```bash
+bethesda-strings-editor --register-file-types      # frozen build
+python main.py --register-file-types               # from source
+python main.py --unregister-file-types             # undo
+```
+
+Everything is per-user and needs no root or admin: `$XDG_DATA_HOME` on Linux (MIME XML, desktop entry, icons in both the `apps` and `mimetypes` contexts, Thunar restarted so it drops its icon cache), `HKCU\Software\Classes` on Windows. On Windows the app is added to **Open With** but does not claim the default handler unless you pass `--force`, since Windows guards a default you chose yourself and quietly taking `.esp` from another modding tool would be worse than not being the default. Linux users installing from a checkout can use `scripts/install_file_associations.sh` instead — it is a wrapper around the same code.
+
 ---
 
 ## Project structure
