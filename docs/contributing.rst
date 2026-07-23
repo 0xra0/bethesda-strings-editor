@@ -18,7 +18,7 @@ Quick reference
    pip install pytest pyright ruff        # dev tools
 
    python main.py                                     # run the app
-   QT_QPA_PLATFORM=offscreen python -m pytest tests/ -q   # 959 tests, ~30s
+   QT_QPA_PLATFORM=offscreen python -m pytest tests/ -q   # 988 tests, ~30s
    ruff check . && ruff format --check . && pyright   # what CI runs
 
 Python 3.10 or newer; CI builds and tests on 3.12. ``requirements.txt``
@@ -37,7 +37,7 @@ Where things live
 
    bethesda_strings/   Pure-Python parsing library (no Qt)
    gui/                PySide6 application layer
-   tests/              pytest suite (47 files)
+   tests/              pytest suite (49 files)
    benchmarks/         Performance benchmarks, run by hand
    scripts/            Dictionary fetchers, dataset builders, release upload
    resources/          Icons, QSS stylesheet, NexusMods page assets
