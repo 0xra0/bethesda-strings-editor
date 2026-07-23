@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 project = "Bethesda Strings Editor"
-copyright = "2024, 0xra0"
+copyright = "2024–2026, 0xra0"
 author = "0xra0"
 release = "0.1.0"
 
