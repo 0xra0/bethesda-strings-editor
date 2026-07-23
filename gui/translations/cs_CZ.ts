@@ -516,95 +516,95 @@ Vyžadováno pro AI překlad — bez ní proběhne pouze automatická oprava.</t
 <context>
     <name>ClaudeChatPanel</name>
     <message>
-        <location filename="../claude_chat_panel.py" line="166"/>
+        <location filename="../claude_chat_panel.py" line="190"/>
         <source>Claude AI Assistant</source>
         <translation>Asistent Claude AI</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="200"/>
+        <location filename="../claude_chat_panel.py" line="224"/>
         <source>Key:</source>
         <translation>Klíč:</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="203"/>
+        <location filename="../claude_chat_panel.py" line="227"/>
         <source>Anthropic API key (sk-ant-…)</source>
         <translation>Anthropic API klíč (sk-ant-…)</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="205"/>
+        <location filename="../claude_chat_panel.py" line="229"/>
         <source>Your Anthropic API key.  Find it at console.anthropic.com</source>
         <translation>Váš Anthropic API klíč. Najdete jej na console.anthropic.com</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="234"/>
+        <location filename="../claude_chat_panel.py" line="258"/>
         <source>No string selected</source>
         <translation>Nebyl vybrán žádný řetězec</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="269"/>
+        <location filename="../claude_chat_panel.py" line="293"/>
         <source>Review Translation</source>
         <translation>Zkontrolovat překlad</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="271"/>
+        <location filename="../claude_chat_panel.py" line="295"/>
         <source>Ask Claude to review the current translation for quality issues</source>
         <translation>Požádejte Claude o kontrolu aktuálního překladu na kvalitu</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="276"/>
+        <location filename="../claude_chat_panel.py" line="300"/>
         <source>Suggest Translation</source>
         <translation>Navrhnout překlad</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="278"/>
+        <location filename="../claude_chat_panel.py" line="302"/>
         <source>Ask Claude to translate the current source string</source>
         <translation>Požádejte Claude o překlad aktuálního zdrojového řetězce</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="283"/>
+        <location filename="../claude_chat_panel.py" line="307"/>
         <source>Use as Translation</source>
         <translation>Použít jako překlad</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="286"/>
+        <location filename="../claude_chat_panel.py" line="310"/>
         <source>Apply Claude&apos;s last suggested translation to the selected table row.
 The suggestion is the last code block or plain text in the chat.</source>
         <translation>Použít poslední navržený překlad od Claude na vybraný řádek tabulky.
 Návrh je poslední blok kódu nebo prostý text v chatu.</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="304"/>
+        <location filename="../claude_chat_panel.py" line="328"/>
         <source>Ask Claude about this string… (Ctrl+Enter to send)</source>
         <translation>Ptejte se Claude na tento řetězec… (Ctrl+Enter pro odeslání)</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="313"/>
+        <location filename="../claude_chat_panel.py" line="337"/>
         <source>Send</source>
         <translation>Odeslat</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="318"/>
+        <location filename="../claude_chat_panel.py" line="342"/>
         <source>Clear</source>
         <translation>Vymazat</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="320"/>
+        <location filename="../claude_chat_panel.py" line="344"/>
         <source>Clear conversation history</source>
         <translation>Vymazat historii konverzace</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="328"/>
-        <location filename="../claude_chat_panel.py" line="674"/>
+        <location filename="../claude_chat_panel.py" line="352"/>
+        <location filename="../claude_chat_panel.py" line="696"/>
         <source>Claude is thinking…</source>
         <translation>Claude přemýšlí…</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="359"/>
+        <location filename="../claude_chat_panel.py" line="383"/>
         <source>String {sid}</source>
         <translation>Řetězec {sid}</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="432"/>
+        <location filename="../claude_chat_panel.py" line="456"/>
         <source>Please enter your Anthropic API key in the field above,
 or pick a &apos;Claude Code&apos; model to use your subscription instead.
 You can get an API key at console.anthropic.com</source>
@@ -613,39 +613,39 @@ nebo místo toho zvolte model „Claude Code“ a využijte své předplatné.
 Klíč API získáte na console.anthropic.com</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="624"/>
+        <location filename="../claude_chat_panel.py" line="647"/>
         <source>Claude is using tool: {name}…</source>
         <translation>Claude používá nástroj: {name}…</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="367"/>
+        <location filename="../claude_chat_panel.py" line="391"/>
         <source>&lt;no translation yet&gt;</source>
         <translation>&lt;zatím žádný překlad&gt;</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="418"/>
+        <location filename="../claude_chat_panel.py" line="442"/>
         <source>Claude Code CLI Not Found</source>
         <translation>CLI Claude Code nenalezeno</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="420"/>
+        <location filename="../claude_chat_panel.py" line="444"/>
         <source>The &apos;claude&apos; command was not found.
 Install Claude Code and run &apos;claude&apos; once to log in, or set CLAUDE_CLI_PATH.</source>
         <translation>Příkaz „claude“ nebyl nalezen.
 Nainstalujte Claude Code a jednou spusťte „claude“ pro přihlášení, nebo nastavte CLAUDE_CLI_PATH.</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="430"/>
+        <location filename="../claude_chat_panel.py" line="454"/>
         <source>API Key Required</source>
         <translation>Vyžadován API klíč</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="505"/>
+        <location filename="../claude_chat_panel.py" line="526"/>
         <source>No suggestion found</source>
         <translation>Nenalezen žádný návrh</translation>
     </message>
     <message>
-        <location filename="../claude_chat_panel.py" line="507"/>
+        <location filename="../claude_chat_panel.py" line="528"/>
         <source>No code block found in the last reply.
 Ask Claude to suggest a translation first.</source>
         <translation>V poslední odpovědi nebyl nalezen žádný blok kódu.
@@ -655,7 +655,7 @@ Nejprve požádejte Claude o návrh překladu.</translation>
 <context>
     <name>ClaudeTranslationWorker</name>
     <message>
-        <location filename="../claude_translation_worker.py" line="295"/>
+        <location filename="../claude_translation_worker.py" line="318"/>
         <source>Translation failed for string index {idx}</source>
         <translation>Překlad selhal pro index řetězce {idx}</translation>
     </message>
@@ -1152,32 +1152,32 @@ Migrace vyplní aktuálně otevřený plugin, proto nejprve otevřete v editoru 
 <context>
     <name>ExportModeDialog</name>
     <message>
-        <location filename="../main_window.py" line="7463"/>
+        <location filename="../main_window.py" line="7697"/>
         <source>Export Mode</source>
         <translation>Režim exportu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7473"/>
+        <location filename="../main_window.py" line="7707"/>
         <source>Select export mode:</source>
         <translation>Vyberte režim exportu:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7477"/>
+        <location filename="../main_window.py" line="7711"/>
         <source>All strings</source>
         <translation>Všechny řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7481"/>
+        <location filename="../main_window.py" line="7715"/>
         <source>Translated only</source>
         <translation>Pouze přeložené</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7488"/>
+        <location filename="../main_window.py" line="7722"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7492"/>
+        <location filename="../main_window.py" line="7726"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
@@ -1485,7 +1485,7 @@ Znaky bez bezpečné náhrady zůstanou beze změny.</translation>
     </message>
     <message>
         <location filename="../gender_dialog.py" line="87"/>
-        <location filename="../gender_dialog.py" line="144"/>
+        <location filename="../gender_dialog.py" line="147"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
@@ -1520,7 +1520,7 @@ Znaky bez bezpečné náhrady zůstanou beze změny.</translation>
         <translation>Rod podstatného jména</translation>
     </message>
     <message>
-        <location filename="../gender_dialog.py" line="139"/>
+        <location filename="../gender_dialog.py" line="142"/>
         <source>Jump to String in Table</source>
         <translation>Přejít na řetězec v tabulce</translation>
     </message>
@@ -2169,230 +2169,225 @@ Tuto akci nelze vrátit zpět.</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main_window.py" line="528"/>
-        <location filename="../main_window.py" line="794"/>
-        <location filename="../main_window.py" line="6769"/>
+        <location filename="../main_window.py" line="517"/>
+        <location filename="../main_window.py" line="795"/>
+        <location filename="../main_window.py" line="6902"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Překladač řetězců Bethesda AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="781"/>
+        <location filename="../main_window.py" line="782"/>
         <source>Restored {n} translation(s) from crash recovery snapshot.</source>
         <translation>Obnoveno {n} překlad(ů) ze snapshotu po havárii.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="797"/>
+        <location filename="../main_window.py" line="798"/>
         <source>Show</source>
         <translation>Zobrazit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="800"/>
+        <location filename="../main_window.py" line="801"/>
         <source>Quit</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="933"/>
+        <location filename="../main_window.py" line="935"/>
         <source>No file loaded</source>
         <translation>Žádný soubor není načten</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="945"/>
-        <location filename="../main_window.py" line="4073"/>
+        <location filename="../main_window.py" line="947"/>
+        <location filename="../main_window.py" line="4181"/>
         <source>Encoding: —</source>
         <translation>Kódování: —</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="948"/>
+        <location filename="../main_window.py" line="950"/>
         <source>Change…</source>
         <translation>Změnit…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="952"/>
+        <location filename="../main_window.py" line="954"/>
         <source>Override the auto-detected file encoding and re-decode all strings</source>
         <translation>Přepsat automaticky detekované kódování souboru a znovu dekódovat všechny řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="962"/>
+        <location filename="../main_window.py" line="964"/>
         <source>Strings: 0</source>
         <translation>Řetězce: 0</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="978"/>
+        <location filename="../main_window.py" line="980"/>
         <source>Source:</source>
         <translation>Zdroj:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="992"/>
+        <location filename="../main_window.py" line="994"/>
         <source>Target:</source>
         <translation>Cíl:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1004"/>
+        <location filename="../main_window.py" line="1006"/>
         <source>Quality:</source>
         <translation>Kvalita:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1011"/>
+        <location filename="../main_window.py" line="1013"/>
         <source>Quality 7-10 recommended</source>
         <translation>Doporučená kvalita 7–10</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1113"/>
+        <location filename="../main_window.py" line="1115"/>
         <source>Translation memory loaded — click to browse</source>
         <translation>Překladová paměť načtena – klikněte pro procházení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1127"/>
+        <location filename="../main_window.py" line="1129"/>
         <source>Total strings · translated · remaining
 Updates live as translations complete.</source>
         <translation>Celkem řetězců · přeloženo · zbývá
 Aktualizuje se živě během překladu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1137"/>
+        <location filename="../main_window.py" line="1139"/>
         <source>Estimated time remaining for current translation batch</source>
         <translation>Odhadovaný zbývající čas pro aktuální dávku překladu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1154"/>
+        <location filename="../main_window.py" line="1156"/>
         <source>Ready</source>
         <translation>Připraveno</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1157"/>
+        <location filename="../main_window.py" line="1159"/>
         <source>Glossary Suggestions</source>
         <translation>Návrhy z glosáře</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1166"/>
-        <location filename="../main_window.py" line="3910"/>
+        <location filename="../main_window.py" line="1168"/>
+        <location filename="../main_window.py" line="4018"/>
         <source>Select a string to see glossary hints.</source>
         <translation>Vyberte řetězec pro zobrazení nápověd z glosáře.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1171"/>
+        <location filename="../main_window.py" line="1173"/>
         <source>Double-click to copy the target term to clipboard.</source>
         <translation>Dvojklikem zkopírujete cílový termín do schránky.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1228"/>
+        <location filename="../main_window.py" line="1230"/>
         <source>&amp;File</source>
         <translation>&amp;Soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1229"/>
+        <location filename="../main_window.py" line="1231"/>
         <source>&amp;Open...</source>
         <translation>&amp;Otevřít...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1234"/>
+        <location filename="../main_window.py" line="1236"/>
         <source>Open &amp;Recent</source>
         <translation>Otevřít &amp;nedávné</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1238"/>
+        <location filename="../main_window.py" line="1240"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1245"/>
+        <location filename="../main_window.py" line="1247"/>
         <source>Save &amp;As...</source>
         <translation>Uložit &amp;jako...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1253"/>
-        <source>Upload to &amp;NexusMods…</source>
-        <translation>Nahrát na &amp;NexusMods…</translation>
-    </message>
-    <message>
-        <location filename="../main_window.py" line="1258"/>
+        <location filename="../main_window.py" line="1255"/>
         <source>&amp;Browse NexusMods for Translations…</source>
         <translation>&amp;Procházet překlady na NexusMods…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1264"/>
+        <location filename="../main_window.py" line="1261"/>
         <source>E&amp;xit</source>
         <translation>&amp;Konec</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1270"/>
+        <location filename="../main_window.py" line="1267"/>
         <source>&amp;Edit</source>
         <translation>&amp;Úpravy</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1272"/>
+        <location filename="../main_window.py" line="1269"/>
         <source>&amp;Advanced Search...</source>
         <translation>&amp;Pokročilé hledání...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1282"/>
+        <location filename="../main_window.py" line="1279"/>
         <source>Copy &amp;Original → Translated</source>
         <translation>Kopírovat &amp;původní → přeložený</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1292"/>
+        <location filename="../main_window.py" line="1289"/>
         <source>&amp;Translation</source>
         <translation>&amp;Překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1294"/>
+        <location filename="../main_window.py" line="1291"/>
         <source>Translate &amp;Selected</source>
         <translation>Přeložit &amp;vybrané</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1302"/>
+        <location filename="../main_window.py" line="1299"/>
         <source>Translate &amp;All</source>
         <translation>Přeložit &amp;vše</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1311"/>
+        <location filename="../main_window.py" line="1308"/>
         <source>Stop Translation</source>
         <translation>Zastavit překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1320"/>
+        <location filename="../main_window.py" line="1317"/>
         <source>Import from &amp;TXT...</source>
         <translation>Importovat z &amp;TXT...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1328"/>
+        <location filename="../main_window.py" line="1325"/>
         <source>Export to &amp;TXT...</source>
         <translation>Exportovat do &amp;TXT...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1336"/>
+        <location filename="../main_window.py" line="1333"/>
         <source>Import from &amp;XML (SST)...</source>
         <translation>Importovat z &amp;XML (SST)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1342"/>
+        <location filename="../main_window.py" line="1339"/>
         <source>Export to &amp;XML (SST)...</source>
         <translation>Exportovat do &amp;XML (SST)...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1350"/>
+        <location filename="../main_window.py" line="1347"/>
         <source>Compare with &amp;File...</source>
         <translation>Porovnat se &amp;souborem...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1366"/>
+        <location filename="../main_window.py" line="1363"/>
         <source>Dialogue &amp;Tree Visualizer…</source>
         <translation>&amp;Vizualizace stromu dialogů…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1370"/>
+        <location filename="../main_window.py" line="1367"/>
         <source>Visualise the Quest → Topic → Response dialogue tree from an ESP/ESM file.
 Shows conversation flow as a node graph so translators can see context.</source>
         <translation>Vizualizovat strom dialogů Úkol → Téma → Odpověď ze souboru ESP/ESM.
 Zobrazuje průběh konverzace jako graf uzlů, aby překladatelé viděli kontext.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1389"/>
+        <location filename="../main_window.py" line="1386"/>
         <source>Translation &amp;Prompt Editor…</source>
         <translation>Editor &amp;promptů překladu…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1392"/>
+        <location filename="../main_window.py" line="1389"/>
         <source>Customize the translation system prompt: override the per-language style/
 register rule and append project-wide instructions. Applies to every backend
 (Ollama, Claude API, Claude Code CLI) with a live preview.</source>
@@ -2401,12 +2396,12 @@ registru pro jednotlivé jazyky a doplňte pokyny pro celý projekt. Platí pro 
 backend (Ollama, Claude API, Claude Code CLI) s živým náhledem.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1399"/>
+        <location filename="../main_window.py" line="1406"/>
         <source>Lore &amp;RAG Context…</source>
         <translation>Kontext &amp;RAG lore…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1402"/>
+        <location filename="../main_window.py" line="1409"/>
         <source>Manage the local lore database used for Retrieval-Augmented Generation.
 Download articles from UESP or import a local JSON file to give the AI
 accurate lore context when translating strings mentioning factions, places,
@@ -2417,12 +2412,12 @@ přesný kontext lore při překladu řetězců zmiňujících frakce, místa
 nebo postavy (např. House Va&apos;ruun, Akila City, Freestar Collective).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1410"/>
+        <location filename="../main_window.py" line="1417"/>
         <source>&amp;Character Profiles…</source>
         <translation>&amp;Profily postav…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1413"/>
+        <location filename="../main_window.py" line="1420"/>
         <source>Create and manage character personas (Freestar Ranger, SysDef Officer, …).
 Assign profiles to strings via right-click; the AI will adapt its register,
 tone, and temperature to match the character&apos;s voice.</source>
@@ -2431,12 +2426,12 @@ Přiřazujte profily řetězcům pravým tlačítkem; AI přizpůsobí svůj reg
 tón a teplotu hlasu postavy.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1420"/>
+        <location filename="../main_window.py" line="1427"/>
         <source>Font &amp;Glyph Checker…</source>
         <translation>Kontrola písem a &amp;glyfů…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1423"/>
+        <location filename="../main_window.py" line="1430"/>
         <source>Scan translated strings for characters that will render as missing
 glyphs (tofu □) in-game due to incomplete font atlas coverage.
 Supports Scaleform SWF font atlases and TTF/OTF fonts.</source>
@@ -2445,12 +2440,12 @@ glyfy (tofu □) kvůli neúplnému pokrytí atlasu písem.
 Podporuje atlasy písem Scaleform SWF a písma TTF/OTF.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1466"/>
+        <location filename="../main_window.py" line="1485"/>
         <source>&amp;Validate Translation Folder…</source>
         <translation>&amp;Ověřit složku překladu…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1470"/>
+        <location filename="../main_window.py" line="1489"/>
         <source>Scan a Strings folder for files/IDs that will show
 &apos;Unknown lstring ID&apos; in-game (missing, empty, or incomplete
 translations) by comparing against the English sources.</source>
@@ -2459,46 +2454,46 @@ translations) by comparing against the English sources.</source>
 překlady) porovnáním s anglickými zdroji.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1478"/>
+        <location filename="../main_window.py" line="1509"/>
         <source>Companion &amp;Strings…</source>
         <translation>Doprovodné &amp;řetězce…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1482"/>
+        <location filename="../main_window.py" line="1513"/>
         <source>Browse the read-only companion .strings/.dlstrings/.ilstrings
 reference loaded alongside the current file.</source>
         <translation>Procházejte doprovodnou referenci jen ke čtení
 .strings/.dlstrings/.ilstrings načtenou spolu s aktuálním souborem.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1562"/>
+        <location filename="../main_window.py" line="1593"/>
         <source>&amp;Macro Editor… (q)</source>
         <translation>Editor &amp;maker… (q)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1567"/>
+        <location filename="../main_window.py" line="1598"/>
         <source>Open the macro editor to define regex-replace steps and apply
 them to thousands of strings in one batch. (Ctrl+M or &apos;q&apos; in table)</source>
         <translation>Otevřít editor maker pro definování kroků náhrady regulárním výrazem a
 jejich použití na tisíce řetězců v jedné dávce. (Ctrl+M nebo „q“ v tabulce)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1613"/>
+        <location filename="../main_window.py" line="1644"/>
         <source>&amp;Browse Translation Memory…</source>
         <translation>&amp;Procházet překladovou paměť…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1617"/>
+        <location filename="../main_window.py" line="1648"/>
         <source>Open a searchable, read-only view of the loaded translation memory.</source>
         <translation>Otevře prohledávatelné zobrazení načtené překladové paměti jen ke čtení.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1660"/>
+        <location filename="../main_window.py" line="1691"/>
         <source>Apply Translation to All &amp;Identical Originals</source>
         <translation>Použít překlad na všechny &amp;shodné originály</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1665"/>
+        <location filename="../main_window.py" line="1696"/>
         <source>Copy the current row&apos;s translation to every other row whose source
 text is identical — a one-shot fix for the same sentence translated
 differently.</source>
@@ -2507,199 +2502,199 @@ zdrojovým textem — jednorázová oprava stejné věty přeložené
 různě.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1761"/>
+        <location filename="../main_window.py" line="1792"/>
         <source>Show/hide the Claude AI chat assistant panel (Ctrl+Shift+C)</source>
         <translation>Zobrazit/skrýt panel chatovacího asistenta Claude AI (Ctrl+Shift+C)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1795"/>
+        <location filename="../main_window.py" line="1826"/>
         <source>&amp;View</source>
         <translation>&amp;Zobrazení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1797"/>
+        <location filename="../main_window.py" line="1828"/>
         <source>&amp;Zen / Focus Mode</source>
         <translation>Režim &amp;Zen / soustředění</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1802"/>
+        <location filename="../main_window.py" line="1833"/>
         <source>Hide all panels and enter a distraction-free single-string editor (F11)</source>
         <translation>Skrýt všechny panely a přejít do editoru jednoho řetězce bez rozptylování (F11)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1809"/>
+        <location filename="../main_window.py" line="1840"/>
         <source>&amp;Editor Pane</source>
         <translation>Panel &amp;editoru</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1814"/>
+        <location filename="../main_window.py" line="1845"/>
         <source>Show/hide the Translation Editor pane — a larger editing area that can be dragged to a second monitor (Ctrl+Shift+E)</source>
         <translation>Zobrazit/skrýt panel editoru překladu — větší oblast úprav, kterou lze přetáhnout na druhý monitor (Ctrl+Shift+E)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1820"/>
+        <location filename="../main_window.py" line="1851"/>
         <source>&amp;Pop Out String List</source>
         <translation>&amp;Vysunout seznam řetězců</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1825"/>
+        <location filename="../main_window.py" line="1856"/>
         <source>Open the string list in a separate window — ideal for placing on a second monitor (Ctrl+Shift+L)</source>
         <translation>Otevřít seznam řetězců v samostatném okně — ideální pro druhý monitor (Ctrl+Shift+L)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1833"/>
+        <location filename="../main_window.py" line="1864"/>
         <source>&amp;Audio Preview</source>
         <translation>Náhled &amp;zvuku</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1839"/>
+        <location filename="../main_window.py" line="1870"/>
         <source>Show/hide the Audio Preview panel (Ctrl+Shift+A)</source>
         <translation>Zobrazit/skrýt panel náhledu zvuku (Ctrl+Shift+A)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1844"/>
+        <location filename="../main_window.py" line="1875"/>
         <source>&amp;Visual Context Preview</source>
         <translation>Náhled &amp;vizuálního kontextu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1851"/>
+        <location filename="../main_window.py" line="1882"/>
         <source>Show/hide the Visual Context Preview panel — renders the current string in a faithful Bethesda UI box using the actual game fonts (Ctrl+Shift+P)</source>
         <translation>Zobrazit/skrýt panel náhledu vizuálního kontextu — vykreslí aktuální řetězec ve věrné UI krabici Bethesda se skutečnými herními písmy (Ctrl+Shift+P)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1860"/>
+        <location filename="../main_window.py" line="1891"/>
         <source>&amp;Settings</source>
         <translation>&amp;Nastavení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1871"/>
+        <location filename="../main_window.py" line="1902"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Předvolby...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1877"/>
+        <location filename="../main_window.py" line="1908"/>
         <source>Open &amp;Config File...</source>
         <translation>Otevřít &amp;konfigurační soubor...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1881"/>
+        <location filename="../main_window.py" line="1912"/>
         <source>Export Sett&amp;ings...</source>
         <translation>Exportovat nast&amp;avení...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1885"/>
+        <location filename="../main_window.py" line="1916"/>
         <source>Import Sett&amp;ings...</source>
         <translation>Importovat nast&amp;avení...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1922"/>
+        <location filename="../main_window.py" line="1953"/>
         <source>Main Toolbar</source>
         <translation>Hlavní panel nástrojů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1928"/>
+        <location filename="../main_window.py" line="1959"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1931"/>
+        <location filename="../main_window.py" line="1962"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1936"/>
-        <location filename="../main_window.py" line="3207"/>
+        <location filename="../main_window.py" line="1967"/>
+        <location filename="../main_window.py" line="3315"/>
         <source>Translate</source>
         <translation>Přeložit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1940"/>
+        <location filename="../main_window.py" line="1971"/>
         <source>Stop</source>
         <translation>Zastavit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1944"/>
+        <location filename="../main_window.py" line="1975"/>
         <source>Search</source>
         <translation>Hledat</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1949"/>
+        <location filename="../main_window.py" line="1980"/>
         <source>Quality Check</source>
         <translation>Kontrola kvality</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1955"/>
+        <location filename="../main_window.py" line="1986"/>
         <source>Settings</source>
         <translation>Nastavení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2171"/>
+        <location filename="../main_window.py" line="2204"/>
         <source>(none)</source>
         <translation>(žádný)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2173"/>
+        <location filename="../main_window.py" line="2206"/>
         <source>Profile &apos;{name}&apos; assigned to {n} string(s)</source>
         <translation>Profil „{name}“ přiřazen k {n} řetězcům</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2290"/>
+        <location filename="../main_window.py" line="2323"/>
         <source>Add Protected Terms</source>
         <translation>Přidat chráněné termíny</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2297"/>
+        <location filename="../main_window.py" line="2330"/>
         <source>Detected potential company/faction names. Select and add to protection list:</source>
         <translation>Detekovány potenciální názvy společností/frakcí. Vyberte a přidejte do seznamu ochrany:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2313"/>
+        <location filename="../main_window.py" line="2346"/>
         <source>Category:</source>
         <translation>Kategorie:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2324"/>
+        <location filename="../main_window.py" line="2357"/>
         <source>Add Selected</source>
         <translation>Přidat vybrané</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2330"/>
+        <location filename="../main_window.py" line="2363"/>
         <source>Skip</source>
         <translation>Přeskočit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2497"/>
-        <location filename="../main_window.py" line="2620"/>
-        <location filename="../main_window.py" line="2681"/>
+        <location filename="../main_window.py" line="2530"/>
+        <location filename="../main_window.py" line="2653"/>
+        <location filename="../main_window.py" line="2714"/>
         <source>Loading {filename}...</source>
         <translation>Načítá se {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2527"/>
-        <location filename="../main_window.py" line="3748"/>
+        <location filename="../main_window.py" line="2560"/>
+        <location filename="../main_window.py" line="3856"/>
         <source>String List</source>
         <translation>Seznam řetězců</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2644"/>
+        <location filename="../main_window.py" line="2677"/>
         <source>Encoding: {encoding}</source>
         <translation>Kódování: {encoding}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2506"/>
-        <location filename="../main_window.py" line="2647"/>
-        <location filename="../main_window.py" line="2692"/>
-        <location filename="../main_window.py" line="2797"/>
+        <location filename="../main_window.py" line="2539"/>
+        <location filename="../main_window.py" line="2680"/>
+        <location filename="../main_window.py" line="2725"/>
+        <location filename="../main_window.py" line="2830"/>
         <source>Strings: {count}</source>
         <translation>Řetězce: {count}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1378"/>
+        <location filename="../main_window.py" line="1375"/>
         <source>Script &amp;Property Analysis (VMAD)…</source>
         <translation>Analýza &amp;vlastností skriptů (VMAD)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1382"/>
+        <location filename="../main_window.py" line="1379"/>
         <source>Parse compiled Papyrus script (VMAD) properties from an ESP/ESM/ESL.
 Real display text is editable; script identifiers, event names and
 resource paths are locked because editing them breaks the mod.</source>
@@ -2708,116 +2703,116 @@ Skutečný zobrazovaný text lze upravovat; identifikátory skriptů, názvy ud�
 cesty k prostředkům jsou uzamčeny, protože jejich úprava poškodí mód.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1455"/>
+        <location filename="../main_window.py" line="1474"/>
         <source>Mod Update &amp;Migration (ESP/ESM)…</source>
         <translation>&amp;Migrace aktualizace módu (ESP/ESM)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1459"/>
+        <location filename="../main_window.py" line="1478"/>
         <source>Diff two versions of a mod plugin (old vs new ESP/ESM) and carry
 your existing translations forward to the updated version.</source>
         <translation>Porovná dvě verze pluginu módu (starý vs. nový ESP/ESM) a přenese
 vaše stávající překlady do aktualizované verze.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1674"/>
+        <location filename="../main_window.py" line="1705"/>
         <source>Check &amp;Gender Agreement…</source>
         <translation>Zkontrolovat shodu &amp;rodu…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1679"/>
+        <location filename="../main_window.py" line="1710"/>
         <source>Scan translated strings for adjective/noun gender agreement
 errors (Ukrainian grammar). (Ctrl+Alt+G)</source>
         <translation>Prohledat přeložené řetězce na chyby shody rodu přídavného a
 podstatného jména (ukrajinská gramatika). (Ctrl+Alt+G)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1687"/>
+        <location filename="../main_window.py" line="1718"/>
         <source>&amp;Sessions</source>
         <translation>&amp;Relace</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1690"/>
+        <location filename="../main_window.py" line="1721"/>
         <source>&amp;New Session…</source>
         <translation>&amp;Nová relace…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1694"/>
+        <location filename="../main_window.py" line="1725"/>
         <source>Start a named work session that saves your search filter, cursor, and per-session translation count. (Ctrl+Shift+N)</source>
         <translation>Spustit pojmenovanou pracovní relaci, která ukládá filtr hledání, kurzor a počet překladů na relaci. (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1701"/>
+        <location filename="../main_window.py" line="1732"/>
         <source>&amp;Save Session</source>
         <translation>&amp;Uložit relaci</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1709"/>
+        <location filename="../main_window.py" line="1740"/>
         <source>Save Session &amp;As…</source>
         <translation>Uložit relaci &amp;jako…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1718"/>
+        <location filename="../main_window.py" line="1749"/>
         <source>&amp;Manage Sessions…</source>
         <translation>&amp;Spravovat relace…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1725"/>
+        <location filename="../main_window.py" line="1756"/>
         <source>Recent Sessions</source>
         <translation>Nedávné relace</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1908"/>
+        <location filename="../main_window.py" line="1939"/>
         <source>Check for &amp;Updates…</source>
         <translation>Zkontrolovat &amp;aktualizace…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2401"/>
+        <location filename="../main_window.py" line="2434"/>
         <source>All Supported Files (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;String Files (*.strings *.dlstrings *.ilstrings);;Plugin Files (*.esp *.esm *.esl);;BA2 Archives (*.ba2 *.BA2);;Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Všechny podporované soubory (*.strings *.dlstrings *.ilstrings *.esp *.esm *.esl *.ba2 *.txt *.STRINGS *.DLSTRINGS *.ILSTRINGS *.ESP *.ESM *.ESL *.BA2 *.TXT);;Soubory řetězců (*.strings *.dlstrings *.ilstrings);;Soubory pluginů (*.esp *.esm *.esl);;Archivy BA2 (*.ba2 *.BA2);;Soubory TXT rozhraní (*.txt *.TXT);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2431"/>
+        <location filename="../main_window.py" line="2464"/>
         <source>Unsupported File</source>
         <translation>Nepodporovaný soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2433"/>
+        <location filename="../main_window.py" line="2466"/>
         <source>This .txt file does not appear to be a Starfield interface translation file.
 Expected format: $KEY&lt;TAB&gt;VALUE lines encoded as UTF-16.</source>
         <translation>Tento soubor .txt zřejmě není překladový soubor rozhraní Starfieldu.
 Očekávaný formát: řádky $KEY&lt;TAB&gt;HODNOTA kódované jako UTF-16.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2541"/>
-        <location filename="../main_window.py" line="2668"/>
-        <location filename="../main_window.py" line="2713"/>
-        <location filename="../main_window.py" line="2744"/>
-        <location filename="../main_window.py" line="2781"/>
-        <location filename="../main_window.py" line="2861"/>
-        <location filename="../main_window.py" line="2950"/>
-        <location filename="../main_window.py" line="5528"/>
-        <location filename="../main_window.py" line="5743"/>
-        <location filename="../main_window.py" line="5800"/>
-        <location filename="../main_window.py" line="5863"/>
-        <location filename="../main_window.py" line="5944"/>
+        <location filename="../main_window.py" line="2574"/>
+        <location filename="../main_window.py" line="2701"/>
+        <location filename="../main_window.py" line="2746"/>
+        <location filename="../main_window.py" line="2777"/>
+        <location filename="../main_window.py" line="2814"/>
+        <location filename="../main_window.py" line="2895"/>
+        <location filename="../main_window.py" line="2985"/>
+        <location filename="../main_window.py" line="5664"/>
+        <location filename="../main_window.py" line="5879"/>
+        <location filename="../main_window.py" line="5936"/>
+        <location filename="../main_window.py" line="5999"/>
+        <location filename="../main_window.py" line="6080"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2542"/>
+        <location filename="../main_window.py" line="2575"/>
         <source>Failed to load:
 {error}</source>
         <translation>Nepodařilo se načíst:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2630"/>
+        <location filename="../main_window.py" line="2663"/>
         <source>Localized Plugin</source>
         <translation>Lokalizovaný plugin</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2632"/>
+        <location filename="../main_window.py" line="2665"/>
         <source>{name} is a localized plugin.
 Its text is stored in companion .strings/.dlstrings/.ilstrings files.
 Open those files instead to translate them.</source>
@@ -2826,325 +2821,326 @@ Jeho text je uložen v doprovodných souborech .strings/.dlstrings/.ilstrings.
 Otevřete je místo toho pro překlad.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2655"/>
-        <location filename="../main_window.py" line="2700"/>
+        <location filename="../main_window.py" line="2688"/>
+        <location filename="../main_window.py" line="2733"/>
         <source>Loaded {count} strings from {name}</source>
         <translation>Načteno {count} řetězců z {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2669"/>
+        <location filename="../main_window.py" line="2702"/>
         <source>Failed to load plugin:
 {error}</source>
         <translation>Nepodařilo se načíst plugin:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2690"/>
+        <location filename="../main_window.py" line="2723"/>
         <source>Encoding: utf-16</source>
         <translation>Kódování: utf-16</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2714"/>
+        <location filename="../main_window.py" line="2747"/>
         <source>Failed to load TXT:
 {error}</source>
         <translation>Nepodařilo se načíst TXT:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2850"/>
+        <location filename="../main_window.py" line="2884"/>
         <source>Saved successfully ✓</source>
         <translation>Úspěšně uloženo ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2852"/>
+        <location filename="../main_window.py" line="2886"/>
         <source>Saved ✓  {name}</source>
         <translation>Uloženo ✓  {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2862"/>
-        <location filename="../main_window.py" line="2951"/>
+        <location filename="../main_window.py" line="2896"/>
+        <location filename="../main_window.py" line="2986"/>
         <source>Failed to save:
 {error}</source>
         <translation>Nepodařilo se uložit:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2880"/>
+        <location filename="../main_window.py" line="2914"/>
         <source>Interface TXT Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Soubory TXT rozhraní (*.txt *.TXT);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2886"/>
+        <location filename="../main_window.py" line="2920"/>
         <source>Plugin Files (*.esp *.esm *.esl);;All Files (*)</source>
         <translation>Soubory pluginů (*.esp *.esm *.esl);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2899"/>
+        <location filename="../main_window.py" line="2933"/>
         <source>Bethesda String Files (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;All Files (*)</source>
         <translation>Soubory řetězců Bethesda (*.strings *.dlstrings *.ilstrings *.STRINGS *.DLSTRINGS *.ILSTRINGS);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2904"/>
+        <location filename="../main_window.py" line="2938"/>
         <source>Save As</source>
         <translation>Uložit jako</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2941"/>
+        <location filename="../main_window.py" line="2976"/>
         <source>Saved to {filename}</source>
         <translation>Uloženo do {filename}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2963"/>
+        <location filename="../main_window.py" line="2998"/>
         <source>No Selection</source>
         <translation>Žádný výběr</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2963"/>
+        <location filename="../main_window.py" line="2998"/>
         <source>Select strings first.</source>
         <translation>Nejprve vyberte řetězce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2997"/>
+        <location filename="../main_window.py" line="3032"/>
         <source>Added {count} protected terms</source>
         <translation>Přidáno {count} chráněných termínů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3023"/>
+        <location filename="../main_window.py" line="3058"/>
         <source>Same Language</source>
         <translation>Stejný jazyk</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3024"/>
+        <location filename="../main_window.py" line="3059"/>
         <source>Source and target languages are identical.</source>
         <translation>Zdrojový a cílový jazyk jsou totožné.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3068"/>
+        <location filename="../main_window.py" line="3103"/>
         <source>Nothing to Translate</source>
         <translation>Není co překládat</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3069"/>
+        <location filename="../main_window.py" line="3104"/>
         <source>All selected strings are already translated.</source>
         <translation>Všechny vybrané řetězce jsou již přeloženy.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3088"/>
-        <location filename="../main_window.py" line="3228"/>
+        <location filename="../main_window.py" line="3128"/>
+        <location filename="../main_window.py" line="3336"/>
         <source>Translating {current}/{total}...</source>
         <translation>Překládá se {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3135"/>
+        <location filename="../main_window.py" line="3243"/>
         <source>Pre-flight Cost Estimate</source>
         <translation>Předběžný odhad nákladů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3142"/>
+        <location filename="../main_window.py" line="3250"/>
         <source>&lt;b&gt;Claude API — estimated cost for this batch&lt;/b&gt;</source>
         <translation>&lt;b&gt;Claude API — odhadované náklady této dávky&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3154"/>
+        <location filename="../main_window.py" line="3262"/>
         <source>Model:</source>
         <translation>Model:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3155"/>
+        <location filename="../main_window.py" line="3263"/>
         <source>Strings to translate:</source>
         <translation>Řetězce k překladu:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3165"/>
+        <location filename="../main_window.py" line="3273"/>
         <source>Est. input tokens:</source>
         <translation>Odh. vstupní tokeny:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3166"/>
+        <location filename="../main_window.py" line="3274"/>
         <source>Est. output tokens:</source>
         <translation>Odh. výstupní tokeny:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3190"/>
+        <location filename="../main_window.py" line="3298"/>
         <source>Est. cost (USD):</source>
         <translation>Odh. náklady (USD):</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3192"/>
+        <location filename="../main_window.py" line="3300"/>
         <source>Cache savings:</source>
         <translation>Úspora mezipaměti:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3193"/>
+        <location filename="../main_window.py" line="3301"/>
         <source>~{pct:.0f}% via prompt caching</source>
         <translation>~{pct:.0f}% díky mezipaměti promptů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5440"/>
-        <location filename="../main_window.py" line="5661"/>
+        <location filename="../main_window.py" line="5576"/>
+        <location filename="../main_window.py" line="5797"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Textové soubory (*.txt *.TXT);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3246"/>
+        <location filename="../main_window.py" line="3354"/>
         <source>Translating: {current}/{total}</source>
         <translation>Překládání: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3332"/>
+        <location filename="../main_window.py" line="3440"/>
         <source>{n} strings translated</source>
         <translation>{n} řetězců přeloženo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3339"/>
+        <location filename="../main_window.py" line="3447"/>
         <source>{ok} translated, {fail} failed</source>
         <translation>{ok} přeloženo, {fail} selhalo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3391"/>
+        <location filename="../main_window.py" line="3499"/>
         <source>Complete</source>
         <translation>Dokončeno</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3392"/>
+        <location filename="../main_window.py" line="3500"/>
         <source>{msg}
 Check log for details.</source>
         <translation>{msg}
 Podrobnosti naleznete v protokolu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3476"/>
+        <location filename="../main_window.py" line="3584"/>
         <source>Ollama force-stop cancelled.</source>
         <translation>Vynucené zastavení Ollama zrušeno.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3520"/>
+        <location filename="../main_window.py" line="3628"/>
         <source>Force-stopping Ollama: %s</source>
         <translation>Vynucené zastavování Ollama: %s</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3555"/>
+        <location filename="../main_window.py" line="3663"/>
         <source>Force-stop command failed to start — see translator.log</source>
         <translation>Příkaz vynuceného zastavení se nepodařilo spustit — viz translator.log</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3580"/>
+        <location filename="../main_window.py" line="3688"/>
         <source>Ollama restarted — GPU freed.</source>
         <translation>Ollama restartována — GPU uvolněn.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3586"/>
+        <location filename="../main_window.py" line="3694"/>
         <source>Ollama was not running — GPU already free.</source>
         <translation>Ollama neběžela — GPU je již volný.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3592"/>
+        <location filename="../main_window.py" line="3700"/>
         <source>exit code %s</source>
         <translation>návratový kód %s</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3595"/>
+        <location filename="../main_window.py" line="3703"/>
         <source>incorrect password</source>
         <translation>nesprávné heslo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3598"/>
+        <location filename="../main_window.py" line="3706"/>
         <source>authentication failed — check &apos;Requires root&apos; / your password</source>
         <translation>ověření selhalo — zkontrolujte „Vyžaduje root“ / své heslo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3601"/>
+        <location filename="../main_window.py" line="3709"/>
         <source>Ollama restart failed: %s</source>
         <translation>Restart Ollama selhal: %s</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4231"/>
+        <location filename="../main_window.py" line="4339"/>
         <source>Self-review: checking translation quality…</source>
         <translation>Samokontrola: kontrola kvality překladu…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4290"/>
+        <location filename="../main_window.py" line="4398"/>
         <source>Self-review pass {n}: retranslating {c} string(s)…</source>
         <translation>Samokontrola, průchod {n}: opětovný překlad {c} řetězců…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4310"/>
+        <location filename="../main_window.py" line="4418"/>
         <source>{n} string(s) translated.</source>
         <translation>Přeloženo {n} řetězců.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4313"/>
+        <location filename="../main_window.py" line="4421"/>
         <source>Auto-fixed {n} issue(s) mechanically.</source>
         <translation>Mechanicky opraveno {n} problémů.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4317"/>
+        <location filename="../main_window.py" line="4425"/>
         <source>Retranslated {n} string(s) across {p} review pass(es).</source>
         <translation>Znovu přeloženo {n} řetězců během {p} průchodů kontroly.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4323"/>
+        <location filename="../main_window.py" line="4431"/>
         <source>All critical issues were resolved automatically — no manual review needed.</source>
         <translation>Všechny kritické problémy byly vyřešeny automaticky — ruční kontrola není potřeba.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4330"/>
+        <location filename="../main_window.py" line="4438"/>
         <source>{n} string(s) could not be fixed automatically (no further progress) and need manual review.</source>
         <translation>{n} řetězců se nepodařilo opravit automaticky (žádný další pokrok) — vyžadují ruční kontrolu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4336"/>
+        <location filename="../main_window.py" line="4444"/>
         <source>{n} string(s) still need manual review.</source>
         <translation>{n} řetězců stále vyžaduje ruční kontrolu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4340"/>
+        <location filename="../main_window.py" line="4448"/>
         <source>Open Translation → Quality Check for details. Cosmetic/visual issues were left unchanged.</source>
         <translation>Podrobnosti: Překlad → Kontrola kvality. Kosmetické/vizuální problémy zůstaly beze změny.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4352"/>
+        <location filename="../main_window.py" line="4460"/>
         <source>Self-review complete — all critical issues fixed</source>
         <translation>Samokontrola dokončena — všechny kritické problémy opraveny</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4355"/>
-        <location filename="../main_window.py" line="4362"/>
+        <location filename="../main_window.py" line="4463"/>
+        <location filename="../main_window.py" line="4470"/>
         <source>Self-Review Complete</source>
         <translation>Samokontrola dokončena</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4359"/>
+        <location filename="../main_window.py" line="4467"/>
         <source>Self-review done — {n} need manual review</source>
         <translation>Samokontrola dokončena — {n} vyžaduje ruční kontrolu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4365"/>
+        <location filename="../main_window.py" line="4473"/>
         <source>Translation + self-review complete</source>
         <translation>Překlad a samokontrola dokončeny</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4469"/>
+        <location filename="../main_window.py" line="4577"/>
         <source>Quality check passed — no issues found</source>
         <translation>Kontrola kvality prošla — žádné problémy nenalezeny</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4505"/>
+        <location filename="../main_window.py" line="4613"/>
         <source>Running AI quality check ({n} strings)…</source>
         <translation>Probíhá kontrola kvality AI ({n} řetězců)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4506"/>
+        <location filename="../main_window.py" line="3176"/>
+        <location filename="../main_window.py" line="4614"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4511"/>
+        <location filename="../main_window.py" line="4619"/>
         <source>AI Quality Check</source>
         <translation>Kontrola kvality AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4679"/>
+        <location filename="../main_window.py" line="4787"/>
         <source>Ready to export:
 
   • {total} translated strings total
@@ -3159,7 +3155,7 @@ Export which set?</source>
 Kterou sadu exportovat?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4782"/>
+        <location filename="../main_window.py" line="4890"/>
         <source>Found {n} string(s) with quality issues ({e} error(s), {w} warning(s)).
 
 Retranslate them all with quality feedback hints?</source>
@@ -3168,32 +3164,32 @@ Retranslate them all with quality feedback hints?</source>
 Přeložit je všechny znovu s nápovědami ke kvalitě?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4913"/>
+        <location filename="../main_window.py" line="5021"/>
         <source>AI-fixing {n} string(s)…</source>
         <translation>Oprava {n} řetězců pomocí AI…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4920"/>
+        <location filename="../main_window.py" line="5028"/>
         <source>AI Fix {current}/{total}…</source>
         <translation>Oprava AI {current}/{total}…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5059"/>
+        <location filename="../main_window.py" line="5167"/>
         <source>Macro applied to row {n}.</source>
         <translation>Makro použito na řádek {n}.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5061"/>
+        <location filename="../main_window.py" line="5169"/>
         <source>Macro: no changes on row {n}.</source>
         <translation>Makro: žádné změny v řádku {n}.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5180"/>
+        <location filename="../main_window.py" line="5288"/>
         <source>Open macro editor for batch regex-replace</source>
         <translation>Otevřít editor maker pro dávkovou náhradu regulárním výrazem</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5731"/>
+        <location filename="../main_window.py" line="5867"/>
         <source>
 
 (Skipped {count} untranslated entries)</source>
@@ -3202,106 +3198,106 @@ Přeložit je všechny znovu s nápovědami ke kvalitě?</translation>
 (Přeskočeno {count} nepřeložených položek)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5979"/>
+        <location filename="../main_window.py" line="6115"/>
         <source>Translation Memory (*.txt *.tmx);;Text Files (*.txt);;TMX Files (*.tmx);;All Files (*)</source>
         <translation>Překladová paměť (*.txt *.tmx);;Textové soubory (*.txt);;Soubory TMX (*.tmx);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6013"/>
+        <location filename="../main_window.py" line="6149"/>
         <source>Translation memory loaded: {loaded} entries, {applied} applied to current file</source>
         <translation>Překladová paměť načtena: {loaded} položek, {applied} aplikováno na aktuální soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6023"/>
+        <location filename="../main_window.py" line="6159"/>
         <source>Load Failed</source>
         <translation>Načtení selhalo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6024"/>
+        <location filename="../main_window.py" line="6160"/>
         <source>Could not load translation memory:
 {error}</source>
         <translation>Nepodařilo se načíst překladovou paměť:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6038"/>
+        <location filename="../main_window.py" line="6174"/>
         <source>Export Translation Memory</source>
         <translation>Exportovat překladovou paměť</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6039"/>
+        <location filename="../main_window.py" line="6175"/>
         <source>No translation memory loaded and no translations in the current file.</source>
         <translation>Žádná překladová paměť není načtena a v aktuálním souboru nejsou žádné překlady.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6051"/>
+        <location filename="../main_window.py" line="6186"/>
         <source>Export Translation Memory as TMX</source>
         <translation>Exportovat překladovou paměť jako TMX</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6053"/>
+        <location filename="../main_window.py" line="6188"/>
         <source>TMX Files (*.tmx);;All Files (*)</source>
         <translation>Soubory TMX (*.tmx);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6065"/>
+        <location filename="../main_window.py" line="6200"/>
         <source>Exported {n} translation units to {path}</source>
         <translation>Exportováno {n} překladových jednotek do {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6074"/>
+        <location filename="../main_window.py" line="6209"/>
         <source>Could not export translation memory:
 {error}</source>
         <translation>Nepodařilo se exportovat překladovou paměť:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6108"/>
+        <location filename="../main_window.py" line="6234"/>
         <source>NexusMods TM loaded ({label}): {n} entries, {applied} applied</source>
         <translation>Překladová paměť NexusMods načtena ({label}): {n} položek, použito {applied}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6120"/>
+        <location filename="../main_window.py" line="6246"/>
         <source>NexusMods merge: {applied} translation(s) applied.</source>
         <translation>Sloučení NexusMods: použito {applied} překladů.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6149"/>
+        <location filename="../main_window.py" line="6275"/>
         <source>Lore RAG Unavailable</source>
         <translation>RAG lore není k dispozici</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6150"/>
+        <location filename="../main_window.py" line="6276"/>
         <source>Failed to open the lore database. Check the log for details.</source>
         <translation>Nepodařilo se otevřít databázi lore. Podrobnosti najdete v protokolu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6175"/>
+        <location filename="../main_window.py" line="6308"/>
         <source>Font auto-fix applied to {n} string(s)</source>
         <translation>Automatická oprava písma použita na {n} řetězců</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6210"/>
+        <location filename="../main_window.py" line="6343"/>
         <source>Not in ESP Mode</source>
         <translation>Není v režimu ESP</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6211"/>
+        <location filename="../main_window.py" line="6344"/>
         <source>Open the ESP/ESM file in the main table first.</source>
         <translation>Nejprve otevřete soubor ESP/ESM v hlavní tabulce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6221"/>
+        <location filename="../main_window.py" line="6354"/>
         <source>Not Found</source>
         <translation>Nenalezeno</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6222"/>
+        <location filename="../main_window.py" line="6355"/>
         <source>0x{fid:08X} / {fs} not found in the current file.</source>
         <translation>0x{fid:08X} / {fs} nebyl v aktuálním souboru nalezen.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6240"/>
+        <location filename="../main_window.py" line="6373"/>
         <source>Config file does not exist yet. Settings will be saved on first use.
 
 Config path: {path}</source>
@@ -3310,485 +3306,485 @@ Config path: {path}</source>
 Cesta ke konfiguraci: {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6252"/>
-        <location filename="../main_window.py" line="6277"/>
+        <location filename="../main_window.py" line="6385"/>
+        <location filename="../main_window.py" line="6410"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>Soubory JSON (*.json *.JSON);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6888"/>
+        <location filename="../main_window.py" line="7021"/>
         <source>Companion Strings</source>
         <translation>Doprovodné řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6890"/>
+        <location filename="../main_window.py" line="7023"/>
         <source>No companion reference is loaded.
 Open a .strings/.dlstrings/.ilstrings file that has sibling files and accept the prompt to load them as a read-only reference.</source>
         <translation>Není načtena žádná doprovodná reference.
 Otevřete soubor .strings/.dlstrings/.ilstrings, který má sousední soubory, a potvrďte výzvu k jejich načtení jako referenci jen ke čtení.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6931"/>
+        <location filename="../main_window.py" line="7165"/>
         <source>Loading plugins for migration…</source>
         <translation>Načítání pluginů pro migraci…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6943"/>
+        <location filename="../main_window.py" line="7177"/>
         <source>Failed to load one or more plugins:
 {error}</source>
         <translation>Nepodařilo se načíst jeden nebo více pluginů:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6969"/>
+        <location filename="../main_window.py" line="7203"/>
         <source>No Target Plugin</source>
         <translation>Žádný cílový plugin</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6970"/>
+        <location filename="../main_window.py" line="7204"/>
         <source>Open the new plugin in the editor before migrating so the translations have somewhere to go.</source>
         <translation>Před migrací otevřete nový plugin v editoru, aby překlady měly kam jít.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7003"/>
+        <location filename="../main_window.py" line="7237"/>
         <source>Migrated {n} translation(s) from the previous mod version.</source>
         <translation>Migrováno {n} překladů z předchozí verze módu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7010"/>
+        <location filename="../main_window.py" line="7244"/>
         <source>No matching pending strings to migrate in the open plugin.</source>
         <translation>V otevřeném pluginu nejsou žádné odpovídající čekající řetězce k migraci.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7155"/>
+        <location filename="../main_window.py" line="7389"/>
         <source>AI-assisted localization tool for Starfield and other Bethesda games.&lt;br&gt;Designed for &lt;b&gt;Ukrainian&lt;/b&gt; localization of Starfield string files.</source>
         <translation>Lokalizační nástroj s podporou AI pro Starfield a další hry Bethesda.&lt;br&gt;Navrženo pro &lt;b&gt;ukrajinskou&lt;/b&gt; lokalizaci souborů řetězců Starfieldu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7200"/>
+        <location filename="../main_window.py" line="7434"/>
         <source>&lt;span style=&apos;color:#666&apos;&gt;Press &lt;b&gt;F1&lt;/b&gt; for all keyboard shortcuts · &lt;b&gt;Shift+F1&lt;/b&gt; then click any widget for context help&lt;/span&gt;</source>
         <translation>&lt;span style=&apos;color:#666&apos;&gt;Stiskněte &lt;b&gt;F1&lt;/b&gt; pro všechny klávesové zkratky · &lt;b&gt;Shift+F1&lt;/b&gt; a poté klikněte na libovolný prvek pro kontextovou nápovědu&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3395"/>
+        <location filename="../main_window.py" line="3503"/>
         <source>Success</source>
         <translation>Úspěch</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5438"/>
+        <location filename="../main_window.py" line="5574"/>
         <source>Export to TXT</source>
         <translation>Exportovat do TXT</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5977"/>
+        <location filename="../main_window.py" line="6113"/>
         <source>Load Translation Memory</source>
         <translation>Načíst překladovou paměť</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5447"/>
+        <location filename="../main_window.py" line="5583"/>
         <source>Exporting to {filename}...</source>
         <translation>Exportuje se do {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5512"/>
+        <location filename="../main_window.py" line="5648"/>
         <source>Exported {count} strings to {filename} ✓</source>
         <translation>Exportováno {count} řetězců do {filename} ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5518"/>
-        <location filename="../main_window.py" line="5853"/>
+        <location filename="../main_window.py" line="5654"/>
+        <location filename="../main_window.py" line="5989"/>
         <source>Export Complete</source>
         <translation>Export dokončen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5519"/>
+        <location filename="../main_window.py" line="5655"/>
         <source>Successfully exported {count} strings to:
 {path}</source>
         <translation>Úspěšně exportováno {count} řetězců do:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5529"/>
+        <location filename="../main_window.py" line="5665"/>
         <source>Failed to export:
 {error}</source>
         <translation>Export selhal:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5659"/>
+        <location filename="../main_window.py" line="5795"/>
         <source>Import from TXT</source>
         <translation>Importovat z TXT</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5668"/>
+        <location filename="../main_window.py" line="5804"/>
         <source>Importing from {filename}...</source>
         <translation>Importuje se z {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5606"/>
-        <location filename="../main_window.py" line="5637"/>
+        <location filename="../main_window.py" line="5742"/>
+        <location filename="../main_window.py" line="5773"/>
         <source>Importing {current}/{total}...</source>
         <translation>Importuje se {current}/{total}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1606"/>
+        <location filename="../main_window.py" line="1637"/>
         <source>Load Translation &amp;Memory...</source>
         <translation>Načíst překladovou &amp;paměť...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2398"/>
-        <location filename="../main_window.py" line="5072"/>
+        <location filename="../main_window.py" line="2431"/>
+        <location filename="../main_window.py" line="5180"/>
         <source>Open File</source>
         <translation>Otevřít soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3435"/>
+        <location filename="../main_window.py" line="3543"/>
         <source>Stopping translation...</source>
         <translation>Zastavuje se překlad...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4205"/>
+        <location filename="../main_window.py" line="4313"/>
         <source>Quality: {errors} error(s), {warnings} warning(s) — open Translation → Quality Check for details</source>
         <translation>Kvalita: {errors} chyb(y), {warnings} varování — otevřete Překlad → Kontrola kvality pro podrobnosti</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5642"/>
+        <location filename="../main_window.py" line="5778"/>
         <source>Importing: {current}/{total}</source>
         <translation>Importování: {current}/{total}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5722"/>
+        <location filename="../main_window.py" line="5858"/>
         <source>Imported {count} translations from {filename} ✓</source>
         <translation>Importováno {count} překladů z {filename} ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5728"/>
+        <location filename="../main_window.py" line="5864"/>
         <source>Successfully imported {count} translations from:
 {path}</source>
         <translation>Úspěšně importováno {count} překladů z:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5735"/>
-        <location filename="../main_window.py" line="5790"/>
+        <location filename="../main_window.py" line="5871"/>
+        <location filename="../main_window.py" line="5926"/>
         <source>Import Complete</source>
         <translation>Import dokončen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5744"/>
+        <location filename="../main_window.py" line="5880"/>
         <source>Failed to import:
 {error}</source>
         <translation>Import selhal:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5755"/>
+        <location filename="../main_window.py" line="5891"/>
         <source>Import from XML (SST)</source>
         <translation>Importovat z XML (SST)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5757"/>
+        <location filename="../main_window.py" line="5893"/>
         <source>XML Files (*.xml *.sst);;All Files (*)</source>
         <translation>Soubory XML (*.xml *.sst);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5764"/>
+        <location filename="../main_window.py" line="5900"/>
         <source>Importing from XML {filename}...</source>
         <translation>Importuje se z XML {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5774"/>
+        <location filename="../main_window.py" line="5910"/>
         <source>No Translations</source>
         <translation>Žádné překlady</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5775"/>
+        <location filename="../main_window.py" line="5911"/>
         <source>No valid translations found in the XML file.</source>
         <translation>V souboru XML nebyly nalezeny žádné platné překlady.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5784"/>
+        <location filename="../main_window.py" line="5920"/>
         <source>Imported {count} translations from XML ✓</source>
         <translation>Importováno {count} překladů z XML ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5791"/>
+        <location filename="../main_window.py" line="5927"/>
         <source>Successfully imported {count} translations from XML.</source>
         <translation>Úspěšně importováno {count} překladů z XML.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5801"/>
+        <location filename="../main_window.py" line="5937"/>
         <source>Failed to import XML:
 {error}</source>
         <translation>Nepodařilo se importovat XML:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5815"/>
+        <location filename="../main_window.py" line="5951"/>
         <source>Export to XML (SST)</source>
         <translation>Exportovat do XML (SST)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5817"/>
+        <location filename="../main_window.py" line="5953"/>
         <source>XML Files (*.xml);;All Files (*)</source>
         <translation>Soubory XML (*.xml);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5824"/>
+        <location filename="../main_window.py" line="5960"/>
         <source>Exporting to XML {filename}...</source>
         <translation>Exportuje se do XML {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5847"/>
+        <location filename="../main_window.py" line="5983"/>
         <source>Exported {count} entries to XML ✓</source>
         <translation>Exportováno {count} položek do XML ✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5854"/>
+        <location filename="../main_window.py" line="5990"/>
         <source>Successfully exported {count} entries to XML.</source>
         <translation>Úspěšně exportováno {count} položek do XML.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5864"/>
+        <location filename="../main_window.py" line="6000"/>
         <source>Failed to export XML:
 {error}</source>
         <translation>Export XML selhal:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5920"/>
+        <location filename="../main_window.py" line="6056"/>
         <source>Comparison</source>
         <translation>Porovnání</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5921"/>
+        <location filename="../main_window.py" line="6057"/>
         <source>No string data found in comparison file.</source>
         <translation>V porovnávacím souboru nebyla nalezena žádná data řetězců.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5927"/>
+        <location filename="../main_window.py" line="6063"/>
         <source>Comparison loaded: {count} strings mapped.</source>
         <translation>Porovnání načteno: {count} řetězců spárováno.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5933"/>
+        <location filename="../main_window.py" line="6069"/>
         <source>Comparison Loaded</source>
         <translation>Porovnání načteno</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5935"/>
+        <location filename="../main_window.py" line="6071"/>
         <source>Comparison data from {filename} loaded.
 Differences are highlighted in yellow.</source>
         <translation>Porovnávací data z {filename} načtena.
 Rozdíly jsou zvýrazněny žlutě.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5945"/>
+        <location filename="../main_window.py" line="6081"/>
         <source>Failed to load comparison file:
 {error}</source>
         <translation>Nepodařilo se načíst porovnávací soubor:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6238"/>
+        <location filename="../main_window.py" line="6371"/>
         <source>Config File</source>
         <translation>Konfigurační soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6250"/>
+        <location filename="../main_window.py" line="6383"/>
         <source>Export Settings</source>
         <translation>Exportovat nastavení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6262"/>
+        <location filename="../main_window.py" line="6395"/>
         <source>Export Successful</source>
         <translation>Export úspěšný</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6263"/>
+        <location filename="../main_window.py" line="6396"/>
         <source>Settings exported to:
 {path}</source>
         <translation>Nastavení exportováno do:
 {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4739"/>
-        <location filename="../main_window.py" line="6073"/>
-        <location filename="../main_window.py" line="6267"/>
+        <location filename="../main_window.py" line="4847"/>
+        <location filename="../main_window.py" line="6208"/>
+        <location filename="../main_window.py" line="6400"/>
         <source>Export Failed</source>
         <translation>Export selhal</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6267"/>
+        <location filename="../main_window.py" line="6400"/>
         <source>Could not export settings.</source>
         <translation>Nepodařilo se exportovat nastavení.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6275"/>
+        <location filename="../main_window.py" line="6408"/>
         <source>Import Settings</source>
         <translation>Importovat nastavení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4597"/>
-        <location filename="../main_window.py" line="6288"/>
+        <location filename="../main_window.py" line="4705"/>
+        <location filename="../main_window.py" line="6421"/>
         <source>Import Failed</source>
         <translation>Import selhal</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6289"/>
+        <location filename="../main_window.py" line="6422"/>
         <source>Could not import settings file.</source>
         <translation>Nepodařilo se importovat soubor nastavení.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6298"/>
+        <location filename="../main_window.py" line="6431"/>
         <source>Validation Warnings</source>
         <translation>Varování ověření</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6299"/>
+        <location filename="../main_window.py" line="6432"/>
         <source>Imported settings have issues:
 </source>
         <translation>Importovaná nastavení mají problémy:
 </translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6337"/>
+        <location filename="../main_window.py" line="6470"/>
         <source>Import Successful</source>
         <translation>Import úspěšný</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3270"/>
+        <location filename="../main_window.py" line="3378"/>
         <source>Error: {error}</source>
         <translation>Chyba: {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3360"/>
+        <location filename="../main_window.py" line="3468"/>
         <source>Complete: {count} successful</source>
         <translation>Dokončeno: {count} úspěšně</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3362"/>
+        <location filename="../main_window.py" line="3470"/>
         <source>, {count} failed</source>
         <translation>, {count} selhalo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1490"/>
+        <location filename="../main_window.py" line="1521"/>
         <source>&amp;Approve Selected</source>
         <translation>&amp;Schválit vybrané</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1494"/>
+        <location filename="../main_window.py" line="1525"/>
         <source>Accept the current AI translation and advance to the next row (Ctrl+Enter)</source>
         <translation>Přijmout aktuální AI překlad a přejít na další řádek (Ctrl+Enter)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1500"/>
+        <location filename="../main_window.py" line="1531"/>
         <source>&amp;Reject Selected</source>
         <translation>&amp;Zamítnout vybrané</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1504"/>
+        <location filename="../main_window.py" line="1535"/>
         <source>Clear the translation for selected rows and mark them as pending (Ctrl+R)</source>
         <translation>Vymazat překlad pro vybrané řádky a označit je jako čekající (Ctrl+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1511"/>
+        <location filename="../main_window.py" line="1542"/>
         <source>&amp;Next Untranslated</source>
         <translation>&amp;Další nepřeložený</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1515"/>
+        <location filename="../main_window.py" line="1546"/>
         <source>Jump to the next untranslated string (F7)</source>
         <translation>Přejít na další nepřeložený řetězec (F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1521"/>
+        <location filename="../main_window.py" line="1552"/>
         <source>&amp;Previous Untranslated</source>
         <translation>&amp;Předchozí nepřeložený</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1525"/>
+        <location filename="../main_window.py" line="1556"/>
         <source>Jump to the previous untranslated string (Shift+F7)</source>
         <translation>Přejít na předchozí nepřeložený řetězec (Shift+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1544"/>
+        <location filename="../main_window.py" line="1575"/>
         <source>Run post-translation quality checks (Ctrl+F7)</source>
         <translation>Spustit kontroly kvality po překladu (Ctrl+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1861"/>
+        <location filename="../main_window.py" line="1892"/>
         <source>&amp;Command Palette…</source>
         <translation>&amp;Paleta příkazů…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1865"/>
+        <location filename="../main_window.py" line="1896"/>
         <source>Open the searchable command palette (Ctrl+K)</source>
         <translation>Otevřít vyhledávací paletu příkazů (Ctrl+K)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1549"/>
+        <location filename="../main_window.py" line="1580"/>
         <source>Auto-Retranslate &amp;Issues…</source>
         <translation>Automaticky znovu přeložit &amp;problémy…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1358"/>
+        <location filename="../main_window.py" line="1355"/>
         <source>String &amp;Diff Viewer...</source>
         <translation>Prohlížeč &amp;rozdílů řetězců...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1432"/>
+        <location filename="../main_window.py" line="1451"/>
         <source>Compare Game &amp;Versions…</source>
         <translation>Porovnat &amp;verze hry…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1437"/>
+        <location filename="../main_window.py" line="1456"/>
         <source>Compare two game-version source files to see what strings were
 added, removed, or modified, and migrate unchanged translations.</source>
         <translation>Porovnat dva zdrojové soubory verzí hry a zjistit, které řetězce byly
 přidány, odebrány nebo upraveny, a migrovat nezměněné překlady.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1444"/>
+        <location filename="../main_window.py" line="1463"/>
         <source>Batch Compare Game &amp;Folders…</source>
         <translation>Dávkově porovnat &amp;složky hry…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1448"/>
+        <location filename="../main_window.py" line="1467"/>
         <source>Compare all .strings files across two game-version folders
 and generate a combined migration report.</source>
         <translation>Porovnat všechny soubory .strings ve dvou složkách verzí hry
 a vygenerovat kombinovanou migrační zprávu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1531"/>
+        <location filename="../main_window.py" line="1562"/>
         <source>&amp;Batch Translate Folder…</source>
         <translation>&amp;Dávkově přeložit složku…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1534"/>
+        <location filename="../main_window.py" line="1565"/>
         <source>Scan a folder of binary string files (.strings/.dlstrings/.ilstrings),
 auto-fix mechanical issues, and AI-translate untranslated/poor-quality strings.</source>
         <translation>Prohledat složku binárních souborů řetězců (.strings/.dlstrings/.ilstrings),
 automaticky opravit mechanické chyby a AI přeložit nepřeložené/nekvalitní řetězce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1541"/>
+        <location filename="../main_window.py" line="1572"/>
         <source>&amp;Quality Check…</source>
         <translation>&amp;Kontrola kvality…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1554"/>
+        <location filename="../main_window.py" line="1585"/>
         <source>Run quality check and automatically retranslate all strings with errors or warnings, sending quality feedback to the AI model. (Ctrl+Shift+F7)</source>
         <translation>Spustit kontrolu kvality a automaticky znovu přeložit všechny řetězce s chybami nebo varováními, přičemž se AI modelu odešle zpětná vazba o kvalitě. (Ctrl+Shift+F7)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1576"/>
+        <location filename="../main_window.py" line="1607"/>
         <source>&amp;Import Quality Report…</source>
         <translation>&amp;Importovat zprávu o kvalitě…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1581"/>
+        <location filename="../main_window.py" line="1612"/>
         <source>Load a previously exported JSON quality report.
 Row positions are remapped to the current file automatically.
 Use this to restore quality check results after reloading the app.</source>
@@ -3797,12 +3793,12 @@ Pozice řádků se automaticky mapují na aktuální soubor.
 Použijte k obnovení výsledků kontroly kvality po opětovném načtení aplikace.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1592"/>
+        <location filename="../main_window.py" line="1623"/>
         <source>Export &amp;Training Data (JSONL)…</source>
         <translation>Exportovat &amp;trénovací data (JSONL)…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1596"/>
+        <location filename="../main_window.py" line="1627"/>
         <source>Export approved translations as a JSONL fine-tuning dataset.
 Compatible with Unsloth, Axolotl, and LLaMA-Factory.
 Only rows with status &apos;translated&apos; are included.</source>
@@ -3811,187 +3807,231 @@ Kompatibilní s Unsloth, Axolotl a LLaMA-Factory.
 Zahrnuty jsou pouze řádky se stavem &apos;translated&apos;.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1623"/>
+        <location filename="../main_window.py" line="1654"/>
         <source>Export Translation Memory as TMX...</source>
         <translation>Exportovat překladovou paměť jako TMX...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1627"/>
+        <location filename="../main_window.py" line="1658"/>
         <source>Export the active translation memory (or current file&apos;s translations)
 as a TMX file compatible with OmegaT, SDL Trados, and Memsource.</source>
         <translation>Exportovat aktivní překladovou paměť (nebo překlady aktuálního souboru)
 jako soubor TMX kompatibilní s OmegaT, SDL Trados a Memsource.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1635"/>
+        <location filename="../main_window.py" line="1666"/>
         <source>&amp;Discover New Terms…</source>
         <translation>&amp;Objevit nové termíny…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1639"/>
+        <location filename="../main_window.py" line="1670"/>
         <source>Scan the loaded strings for candidate protected terms not yet in the
 protection list, then review and approve them before adding.</source>
         <translation>Prohledat načtené řetězce pro kandidáty na chráněné termíny, které ještě nejsou v
 seznamu ochrany, poté je zkontrolovat a schválit před přidáním.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1647"/>
+        <location filename="../main_window.py" line="1678"/>
         <source>&amp;Check Consistency…</source>
         <translation>&amp;Zkontrolovat konzistenci…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1652"/>
+        <location filename="../main_window.py" line="1683"/>
         <source>Scan all translated strings for the same source text rendered
 differently and let you pick a canonical translation for each group.</source>
         <translation>Prohledat všechny přeložené řetězce pro stejný zdrojový text vykreslený
 odlišně a umožnit vám vybrat kanonický překlad pro každou skupinu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1729"/>
+        <location filename="../main_window.py" line="1760"/>
         <source>&amp;Glossary</source>
         <translation>&amp;Glosář</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1730"/>
+        <location filename="../main_window.py" line="1761"/>
         <source>&amp;Edit Glossary…</source>
         <translation>&amp;Upravit glosář…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1736"/>
+        <location filename="../main_window.py" line="1767"/>
         <source>&amp;Show Suggestions Panel</source>
         <translation>&amp;Zobrazit panel návrhů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1745"/>
+        <location filename="../main_window.py" line="1776"/>
         <source>Check &amp;Glossary Compliance…</source>
         <translation>Zkontrolovat &amp;soulad s glosářem…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1753"/>
+        <location filename="../main_window.py" line="1784"/>
         <source>&amp;Claude AI</source>
         <translation>&amp;Claude AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1755"/>
+        <location filename="../main_window.py" line="1786"/>
         <source>Show &amp;AI Assistant</source>
         <translation>Zobrazit &amp;AI asistenta</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1768"/>
+        <location filename="../main_window.py" line="1799"/>
         <source>&amp;Review Current Translation</source>
         <translation>&amp;Zkontrolovat aktuální překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1773"/>
+        <location filename="../main_window.py" line="1804"/>
         <source>Ask Claude to review the selected string&apos;s translation for quality issues (Ctrl+Shift+R)</source>
         <translation>Požádat Claude o kontrolu překladu vybraného řetězce na problémy s kvalitou (Ctrl+Shift+R)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1781"/>
+        <location filename="../main_window.py" line="1812"/>
         <source>&amp;Suggest Translation</source>
         <translation>&amp;Navrhnout překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1786"/>
+        <location filename="../main_window.py" line="1817"/>
         <source>Ask Claude to translate the current string (result shown in AI Assistant panel) (Ctrl+Shift+T)</source>
         <translation>Požádat Claude o překlad aktuálního řetězce (výsledek zobrazen v panelu AI asistenta) (Ctrl+Shift+T)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1891"/>
+        <location filename="../main_window.py" line="1922"/>
         <source>&amp;Help</source>
         <translation>&amp;Nápověda</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1894"/>
+        <location filename="../main_window.py" line="1925"/>
         <source>&amp;What&apos;s This?</source>
         <translation>&amp;Co je to?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1900"/>
+        <location filename="../main_window.py" line="1931"/>
         <source>&amp;Keyboard Shortcuts…</source>
         <translation>&amp;Klávesové zkratky…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="1915"/>
+        <location filename="../main_window.py" line="1946"/>
         <source>&amp;About…</source>
         <translation>&amp;O aplikaci…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2360"/>
+        <location filename="../main_window.py" line="2393"/>
         <source>(empty)</source>
         <translation>(prázdné)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2376"/>
+        <location filename="../main_window.py" line="2409"/>
         <source>Clear Recent Files</source>
         <translation>Vymazat nedávné soubory</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2484"/>
+        <location filename="../main_window.py" line="2517"/>
         <source>{n} files dropped — opened {name}. Open additional files one at a time.</source>
         <translation>Přetaženo {n} souborů — otevřen {name}. Další soubory otevírejte po jednom.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2518"/>
+        <location filename="../main_window.py" line="2551"/>
         <source>Loaded {count} strings from {name} ({enc})</source>
         <translation>Načteno {count} řetězců z {name} ({enc})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2574"/>
+        <location filename="../main_window.py" line="2607"/>
         <source>Load Companion Files</source>
         <translation>Načíst doprovodné soubory</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2736"/>
+        <location filename="../main_window.py" line="2769"/>
         <source>Opening archive {filename}...</source>
         <translation>Otevírá se archiv {filename}...</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2745"/>
+        <location filename="../main_window.py" line="2778"/>
         <source>Failed to open archive:
 {error}</source>
         <translation>Nepodařilo se otevřít archiv:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2753"/>
+        <location filename="../main_window.py" line="2786"/>
         <source>No Strings Found</source>
         <translation>Nenalezeny žádné řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2755"/>
+        <location filename="../main_window.py" line="2788"/>
         <source>{name} does not contain any .strings / .dlstrings / .ilstrings files.</source>
         <translation>{name} neobsahuje žádné soubory .strings / .dlstrings / .ilstrings.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2782"/>
+        <location filename="../main_window.py" line="2815"/>
         <source>Failed to extract strings file from archive:
 {error}</source>
         <translation>Nepodařilo se extrahovat soubor řetězců z archivu:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2806"/>
+        <location filename="../main_window.py" line="2839"/>
         <source>Loaded {count} strings from {entry} (in {archive})</source>
         <translation>Načteno {count} řetězců z {entry} (v {archive})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2892"/>
+        <location filename="../main_window.py" line="2926"/>
         <source>BA2 Archives (*.ba2 *.BA2);;All Files (*)</source>
         <translation>Archivy BA2 (*.ba2 *.BA2);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3397"/>
+        <location filename="../main_window.py" line="3505"/>
         <source>Translation complete</source>
         <translation>Překlad dokončen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3240"/>
+        <location filename="../main_window.py" line="3348"/>
         <source>ETA: {t}</source>
         <translation>ETA: {t}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2576"/>
+        <location filename="../main_window.py" line="1396"/>
+        <source>Find Player-&amp;Referring Strings</source>
+        <translation>Najít řetězce &amp;odkazující na hráče</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1399"/>
+        <source>Select the strings that address or describe the player («you», &lt;Alias=Player&gt;, [PLYR]).
+These are the gender-sensitive lines affected by the Player Gender setting
+in gendered target languages (Ukrainian, Polish, German, …).</source>
+        <translation>Vybere řetězce, které oslovují hráče nebo jej popisují («ty», &lt;Alias=Player&gt;, [PLYR]).
+Jde o řádky závislé na rodu, které ovlivňuje nastavení „Pohlaví hráče“
+v cílových jazycích s gramatickým rodem (ukrajinština, polština, němčina, …).</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1438"/>
+        <source>UI &amp;Width-Fit Simulator…</source>
+        <translation>Simulátor &amp;šířky rozhraní…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1441"/>
+        <source>Measure each translated label&apos;s rendered pixel width against the
+space its widget actually has, and flag the ones that will clip.
+Cyrillic and German run 15–30% longer than English; buttons, menu
+labels and HUD text have no room to grow.</source>
+        <translation>Změří skutečnou pixelovou šířku každého přeloženého popisku proti
+místu, které jeho widget opravdu má, a označí ty, které se oříznou.
+Cyrilice a němčina jsou o 15–30 % delší než angličtina; tlačítka, popisky
+nabídek a text HUD nemají žádnou rezervu.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1497"/>
+        <source>Mine &amp;Official Terminology (TM + Glossary)…</source>
+        <translation>Získat &amp;oficiální terminologii (PP + glosář)…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="1501"/>
+        <source>Align the base game&apos;s official languages (shipped side-by-side and
+keyed on identical string IDs) to auto-build an authoritative TM +
+glossary of Bethesda&apos;s canonical terminology — no AI calls.</source>
+        <translation>Zarovná oficiální jazyky základní hry (dodávané vedle sebe a klíčované
+na shodná ID řetězců) a automaticky z nich sestaví autoritativní překladovou
+paměť a glosář kanonické terminologie Bethesdy — bez jediného volání AI.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="2609"/>
         <source>Found companion string file(s):
 {names}
 
@@ -4002,367 +4042,442 @@ Load them as a read-only reference dictionary? They keep their own independent I
 Načíst je jako referenční slovník jen ke čtení? Zachovávají vlastní nezávislé prostory ID a nikdy se nezapisují do {loaded}, takže ukládání zůstává bezpečné.  Zobrazíte je kdykoli přes Překlad ▸ Doprovodné řetězce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="2607"/>
+        <location filename="../main_window.py" line="2640"/>
         <source>Loaded {n} companion reference strings (read-only)</source>
         <translation>Načteno {n} doprovodných referenčních řetězců (jen ke čtení)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3134"/>
+        <location filename="../main_window.py" line="3165"/>
+        <source>Player Gender Not Set</source>
+        <translation>Pohlaví hráče není nastaveno</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3167"/>
+        <source>{n} of the {total} strings about to be translated address or describe the player («you», &lt;Alias=Player&gt;, …), and {lang} inflects for gender.</source>
+        <translation>{n} z {total} řetězců, které se chystají k překladu, oslovuje hráče nebo jej popisuje («ty», &lt;Alias=Player&gt;, …) a {lang} se skloňuje podle rodu.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3171"/>
+        <source>No player gender is set, so the model will pick a gender per line — which can come out inconsistent. Set one now, or continue anyway.</source>
+        <translation>Pohlaví hráče není nastaveno, takže model zvolí rod pro každý řádek zvlášť — výsledek může být nekonzistentní. Nastavte je nyní, nebo přesto pokračujte.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3174"/>
+        <source>Set Gender…</source>
+        <translation>Nastavit pohlaví…</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3175"/>
+        <source>Translate Anyway</source>
+        <translation>Přesto přeložit</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3177"/>
+        <source>Don&apos;t warn me again</source>
+        <translation>Příště nevarovat</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3196"/>
+        <source>Male</source>
+        <translation>Mužské</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3196"/>
+        <source>Female</source>
+        <translation>Ženské</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3196"/>
+        <source>Neutral (avoid gendered forms)</source>
+        <translation>Neutrální (vyhnout se rodovým tvarům)</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3200"/>
+        <source>Player Gender</source>
+        <translation>Pohlaví hráče</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3201"/>
+        <source>Grammatical gender for lines addressing/describing the player:</source>
+        <translation>Gramatický rod pro řádky oslovující nebo popisující hráče:</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3211"/>
+        <source>Player gender set to {g}</source>
+        <translation>Pohlaví hráče nastaveno na {g}</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="3242"/>
         <source>Pre-flight Token Estimate</source>
         <translation>Předběžný odhad tokenů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3141"/>
+        <location filename="../main_window.py" line="3249"/>
         <source>&lt;b&gt;Claude Code — token estimate for this batch&lt;/b&gt;</source>
         <translation>&lt;b&gt;Claude Code — odhad tokenů pro tuto dávku&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3176"/>
+        <location filename="../main_window.py" line="3284"/>
         <source>&lt;b&gt;Runs on your Claude Code subscription — no per-token cost.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Běží na vašem předplatném Claude Code — bez poplatku za token.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3198"/>
+        <location filename="../main_window.py" line="3306"/>
         <source>&lt;i&gt;Estimates use ~3.5 chars/token. Actual usage depends on prompt caching state and output length.&lt;/i&gt;</source>
         <translation>&lt;i&gt;Odhady používají ~3,5 znaku/token. Skutečná spotřeba závisí na stavu ukládání promptu do mezipaměti a délce výstupu.&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3415"/>
+        <location filename="../main_window.py" line="3523"/>
         <source>Total: {total}  ·  Done: {done} ({pct})  ·  Left: {left}</source>
         <translation>Celkem: {total}  ·  Hotovo: {done} ({pct})  ·  Zbývá: {left}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3654"/>
+        <location filename="../main_window.py" line="3762"/>
         <source>Select a translated row first</source>
         <translation>Nejprve vyberte přeložený řádek</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3660"/>
+        <location filename="../main_window.py" line="3768"/>
         <source>The selected row has no translation to apply</source>
         <translation>Vybraný řádek nemá žádný překlad k použití</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3666"/>
+        <location filename="../main_window.py" line="3774"/>
         <source>Applied translation to {n} identical row(s)</source>
         <translation>Překlad použit na {n} shodných řádků</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3670"/>
+        <location filename="../main_window.py" line="3778"/>
         <source>No other rows share this source text</source>
         <translation>Žádný jiný řádek nemá tento zdrojový text</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3924"/>
+        <location filename="../main_window.py" line="4032"/>
         <source>No glossary matches for this string.</source>
         <translation>Pro tento řetězec nejsou žádné shody v glosáři.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3928"/>
+        <location filename="../main_window.py" line="4036"/>
         <source>{n} glossary match(es) — double-click to copy target term:</source>
         <translation>{n} shod(y) v glosáři — dvojklikem zkopírujete cílový termín:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3970"/>
+        <location filename="../main_window.py" line="4078"/>
         <source>Copied &quot;{term}&quot; to clipboard.</source>
         <translation>Zkopírováno „{term}“ do schránky.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3978"/>
+        <location filename="../main_window.py" line="4086"/>
         <source>Glossary Disabled</source>
         <translation>Glosář zakázán</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="3979"/>
+        <location filename="../main_window.py" line="4087"/>
         <source>Enable the glossary in Settings → Preferences to use this feature.</source>
         <translation>Povolte glosář v Nastavení → Předvolby pro použití této funkce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4011"/>
+        <location filename="../main_window.py" line="4119"/>
         <source>Glossary Compliance</source>
         <translation>Soulad s glosářem</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4012"/>
+        <location filename="../main_window.py" line="4120"/>
         <source>All translated strings comply with the glossary.</source>
         <translation>Všechny přeložené řetězce splňují glosář.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4025"/>
+        <location filename="../main_window.py" line="4133"/>
         <source>Glossary Compliance Issues</source>
         <translation>Problémy se souladem s glosářem</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4079"/>
+        <location filename="../main_window.py" line="4187"/>
         <source>Encoding: {enc} (manual override)</source>
         <translation>Kódování: {enc} (manuální přepsání)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4080"/>
+        <location filename="../main_window.py" line="4188"/>
         <source>Manually overridden to {enc}</source>
         <translation>Manuálně přepsáno na {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4082"/>
+        <location filename="../main_window.py" line="4190"/>
         <source>Encoding: {enc} (auto, {conf}%)</source>
         <translation>Kódování: {enc} (automaticky, {conf} %)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4085"/>
+        <location filename="../main_window.py" line="4193"/>
         <source>Auto-detected: {method}</source>
         <translation>Automaticky detekováno: {method}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4087"/>
+        <location filename="../main_window.py" line="4195"/>
         <source>Encoding: {enc}</source>
         <translation>Kódování: {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4103"/>
+        <location filename="../main_window.py" line="4211"/>
         <source>Override File Encoding</source>
         <translation>Přepsat kódování souboru</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4111"/>
+        <location filename="../main_window.py" line="4219"/>
         <source>&lt;b&gt;Currently:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;Source:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;Method:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;Confidence:&lt;/b&gt; {conf}%</source>
         <translation>&lt;b&gt;Aktuálně:&lt;/b&gt; {enc}&lt;br&gt;&lt;b&gt;Zdroj:&lt;/b&gt; {src}&lt;br&gt;&lt;b&gt;Metoda:&lt;/b&gt; {method}&lt;br&gt;&lt;b&gt;Spolehlivost:&lt;/b&gt; {conf} %</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4125"/>
+        <location filename="../main_window.py" line="4233"/>
         <source>Select encoding to apply:</source>
         <translation>Vyberte kódování k použití:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4140"/>
+        <location filename="../main_window.py" line="4248"/>
         <source>⚠ Changing encoding re-decodes all strings from their raw bytes. If the file is already UTF-8, choosing CP1251 will produce garbled text.</source>
         <translation>⚠ Změna kódování znovu dekóduje všechny řetězce z jejich surových bajtů. Pokud je soubor již UTF-8, výběr CP1251 způsobí nečitelný text.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4170"/>
+        <location filename="../main_window.py" line="4278"/>
         <source>Re-decoded {count} strings as {enc}</source>
         <translation>Znovu dekódováno {count} řetězců jako {enc}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4449"/>
+        <location filename="../main_window.py" line="4557"/>
         <source>Claude translation applied to row {row}.</source>
         <translation>Překlad Claude aplikován na řádek {row}.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4557"/>
+        <location filename="../main_window.py" line="4665"/>
         <source>Import Quality Report</source>
         <translation>Importovat zprávu o kvalitě</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4560"/>
+        <location filename="../main_window.py" line="4668"/>
         <source>Quality Reports (*.json *.csv *);;JSON Quality Report (*.json);;CSV Quality Report (*.csv);;All Files (*)</source>
         <translation>Zprávy o kvalitě (*.json *.csv *);;JSON zpráva o kvalitě (*.json);;CSV zpráva o kvalitě (*.csv);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4598"/>
+        <location filename="../main_window.py" line="4706"/>
         <source>Could not load quality report:
 {error}</source>
         <translation>Nepodařilo se načíst zprávu o kvalitě:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4622"/>
+        <location filename="../main_window.py" line="4730"/>
         <source>Quality report imported — {ok} strings matched, {skip} skipped</source>
         <translation>Zpráva o kvalitě importována — {ok} řetězců spárováno, {skip} přeskočeno</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4628"/>
+        <location filename="../main_window.py" line="4736"/>
         <source>Quality report imported — {n} strings</source>
         <translation>Zpráva o kvalitě importována — {n} řetězců</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4661"/>
-        <location filename="../main_window.py" line="4686"/>
-        <location filename="../main_window.py" line="4711"/>
+        <location filename="../main_window.py" line="4769"/>
+        <location filename="../main_window.py" line="4794"/>
+        <location filename="../main_window.py" line="4819"/>
         <source>Export Training Data</source>
         <translation>Exportovat trénovací data</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4662"/>
-        <location filename="../main_window.py" line="6470"/>
-        <location filename="../main_window.py" line="6503"/>
+        <location filename="../main_window.py" line="4770"/>
+        <location filename="../main_window.py" line="6603"/>
+        <location filename="../main_window.py" line="6636"/>
         <source>No translated strings found. Translate some strings first.</source>
         <translation>Nenalezeny žádné přeložené řetězce. Nejprve přeložte některé řetězce.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4689"/>
+        <location filename="../main_window.py" line="4797"/>
         <source>Clean only ({n})</source>
         <translation>Pouze čisté ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4693"/>
+        <location filename="../main_window.py" line="4801"/>
         <source>All translated ({n})</source>
         <translation>Všechny přeložené ({n})</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4713"/>
+        <location filename="../main_window.py" line="4821"/>
         <source>JSONL Dataset (*.jsonl);;All files (*)</source>
         <translation>Dataset JSONL (*.jsonl);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4740"/>
+        <location filename="../main_window.py" line="4848"/>
         <source>Could not write file:
 {error}</source>
         <translation>Nepodařilo se zapsat soubor:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4745"/>
+        <location filename="../main_window.py" line="4853"/>
         <source>Training data exported — {n} examples → {path}</source>
         <translation>Trénovací data exportována — {n} příkladů → {path}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4771"/>
+        <location filename="../main_window.py" line="4879"/>
         <source>Auto-Retranslate</source>
         <translation>Automatický opětovný překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4772"/>
+        <location filename="../main_window.py" line="4880"/>
         <source>No errors or warnings found — translations look good.</source>
         <translation>Nenalezeny žádné chyby ani varování — překlady vypadají dobře.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4780"/>
+        <location filename="../main_window.py" line="4888"/>
         <source>Auto-Retranslate Issues</source>
         <translation>Automaticky znovu přeložit problémy</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4843"/>
+        <location filename="../main_window.py" line="4951"/>
         <source>Retranslating {n} string(s) with quality feedback…</source>
         <translation>Znovu překládá se {n} řetězc(ů) se zpětnou vazbou kvality…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4850"/>
+        <location filename="../main_window.py" line="4958"/>
         <source>Retranslating {current}/{total}…</source>
         <translation>Znovu překládá se {current}/{total}…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="4986"/>
+        <location filename="../main_window.py" line="5094"/>
         <source>Rejected {n} translation(s)</source>
         <translation>Zamítnuto {n} překlad(ů)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5006"/>
+        <location filename="../main_window.py" line="5114"/>
         <source>Wrapped to first untranslated</source>
         <translation>Přeskočeno na první nepřeložený</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5008"/>
-        <location filename="../main_window.py" line="5027"/>
+        <location filename="../main_window.py" line="5116"/>
+        <location filename="../main_window.py" line="5135"/>
         <source>No untranslated strings remaining</source>
         <translation>Nezbývají žádné nepřeložené řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5025"/>
+        <location filename="../main_window.py" line="5133"/>
         <source>Wrapped to last untranslated</source>
         <translation>Přeskočeno na poslední nepřeložený</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5073"/>
+        <location filename="../main_window.py" line="5181"/>
         <source>Open a string or plugin file</source>
         <translation>Otevřít soubor řetězců nebo plugin</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5076"/>
+        <location filename="../main_window.py" line="5184"/>
         <source>Save the current file</source>
         <translation>Uložit aktuální soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5079"/>
+        <location filename="../main_window.py" line="5187"/>
         <source>Save the current file to a new location</source>
         <translation>Uložit aktuální soubor na nové místo</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5084"/>
+        <location filename="../main_window.py" line="5192"/>
         <source>Translate the selected strings using AI</source>
         <translation>Přeložit vybrané řetězce pomocí AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5088"/>
+        <location filename="../main_window.py" line="5196"/>
         <source>Translate all untranslated strings</source>
         <translation>Přeložit všechny nepřeložené řetězce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5092"/>
+        <location filename="../main_window.py" line="5200"/>
         <source>Accept the AI translation and advance to next row</source>
         <translation>Přijmout AI překlad a přejít na další řádek</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5096"/>
+        <location filename="../main_window.py" line="5204"/>
         <source>Clear the translation and mark as pending</source>
         <translation>Vymazat překlad a označit jako čekající</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5100"/>
+        <location filename="../main_window.py" line="5208"/>
         <source>Stop the in-progress translation batch</source>
         <translation>Zastavit probíhající dávku překladu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5104"/>
-        <location filename="../main_window.py" line="7229"/>
+        <location filename="../main_window.py" line="5212"/>
+        <location filename="../main_window.py" line="7463"/>
         <source>Jump to the next untranslated string</source>
         <translation>Přejít na další nepřeložený řetězec</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5108"/>
+        <location filename="../main_window.py" line="5216"/>
         <source>Jump to the previous untranslated string</source>
         <translation>Přejít na předchozí nepřeložený řetězec</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5114"/>
+        <location filename="../main_window.py" line="5222"/>
         <source>Search strings by ID, text, or status</source>
         <translation>Hledat řetězce podle ID, textu nebo stavu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5120"/>
+        <location filename="../main_window.py" line="5228"/>
         <source>Run post-translation quality checks</source>
         <translation>Spustit kontroly kvality po překladu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5124"/>
+        <location filename="../main_window.py" line="5232"/>
         <source>Retranslate all rows with quality errors using feedback hints</source>
         <translation>Znovu přeložit všechny řádky s chybami kvality pomocí nápověd zpětné vazby</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5130"/>
+        <location filename="../main_window.py" line="5238"/>
         <source>Open the glossary editor</source>
         <translation>Otevřít editor glosáře</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5132"/>
+        <location filename="../main_window.py" line="5240"/>
         <source>Show or hide the glossary suggestions panel</source>
         <translation>Zobrazit nebo skrýt panel návrhů glosáře</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5136"/>
+        <location filename="../main_window.py" line="5244"/>
         <source>Open the searchable command palette</source>
         <translation>Otevřít vyhledávací paletu příkazů</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5139"/>
+        <location filename="../main_window.py" line="5247"/>
         <source>Open the Preferences dialog</source>
         <translation>Otevřít dialog Předvolby</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5219"/>
+        <location filename="../main_window.py" line="5322"/>
+        <source>Open a file first</source>
+        <translation>Nejprve otevřete soubor</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="5326"/>
+        <source>No player-referring strings found</source>
+        <translation>Nenalezeny žádné řetězce odkazující na hráče</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="5334"/>
+        <source>{n} player-referring string(s) — gender-sensitive in gendered languages</source>
+        <translation>Řetězců odkazujících na hráče: {n} — závislé na rodu v jazycích s rodem</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="5355"/>
         <source>Translation prompt updated</source>
         <translation>Prompt překladu aktualizován</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5956"/>
+        <location filename="../main_window.py" line="6092"/>
         <source>TM: {n:,}</source>
         <translation>PP: {n:,}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5966"/>
+        <location filename="../main_window.py" line="6102"/>
         <source>No translation memory loaded</source>
         <translation>Není načtena žádná překladová paměť</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6301"/>
+        <location filename="../main_window.py" line="6434"/>
         <source>
 
 Import anyway?</source>
@@ -4371,7 +4486,7 @@ Import anyway?</source>
 Přesto importovat?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6339"/>
+        <location filename="../main_window.py" line="6472"/>
         <source>Settings imported from:
 {path}
 
@@ -4382,79 +4497,79 @@ Restart may be required for some changes to take effect.</source>
 U některých změn může být nutný restart.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6413"/>
-        <location filename="../main_window.py" line="6423"/>
+        <location filename="../main_window.py" line="6546"/>
+        <location filename="../main_window.py" line="6556"/>
         <source>Discover Terms</source>
         <translation>Objevit termíny</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6413"/>
+        <location filename="../main_window.py" line="6546"/>
         <source>No strings loaded.</source>
         <translation>Žádné řetězce nejsou načteny.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6424"/>
+        <location filename="../main_window.py" line="6557"/>
         <source>No new candidate terms found in the loaded strings.</source>
         <translation>V načtených řetězcích nebyly nalezeny žádné nové kandidátní termíny.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6450"/>
+        <location filename="../main_window.py" line="6583"/>
         <source>Terms Added</source>
         <translation>Termíny přidány</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6451"/>
+        <location filename="../main_window.py" line="6584"/>
         <source>{n} term(s) added to the protection list.</source>
         <translation>{n} termín(ů) přidáno do seznamu ochrany.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6469"/>
-        <location filename="../main_window.py" line="6478"/>
+        <location filename="../main_window.py" line="6602"/>
+        <location filename="../main_window.py" line="6611"/>
         <source>Consistency Check</source>
         <translation>Kontrola konzistence</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6480"/>
+        <location filename="../main_window.py" line="6613"/>
         <source>No inconsistencies found — all translated strings are consistent.</source>
         <translation>Nenalezeny žádné nekonzistence — všechny přeložené řetězce jsou konzistentní.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6502"/>
+        <location filename="../main_window.py" line="6635"/>
         <source>Gender Agreement Check</source>
         <translation>Kontrola shody rodu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6524"/>
+        <location filename="../main_window.py" line="6657"/>
         <source>(no sessions yet)</source>
         <translation>(zatím žádné relace)</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6574"/>
+        <location filename="../main_window.py" line="6707"/>
         <source>Session “{name}” started.</source>
         <translation>Relace „{name}“ zahájena.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6585"/>
+        <location filename="../main_window.py" line="6718"/>
         <source>Session saved: {name}</source>
         <translation>Relace uložena: {name}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6632"/>
+        <location filename="../main_window.py" line="6765"/>
         <source>Session Not Found</source>
         <translation>Relace nenalezena</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6633"/>
+        <location filename="../main_window.py" line="6766"/>
         <source>Session “{name}” could not be loaded.</source>
         <translation>Relaci „{name}“ se nepodařilo načíst.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6647"/>
+        <location filename="../main_window.py" line="6780"/>
         <source>Open Session File?</source>
         <translation>Otevřít soubor relace?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6649"/>
+        <location filename="../main_window.py" line="6782"/>
         <source>This session is for:
 {path}
 
@@ -4465,12 +4580,12 @@ Open that file now?</source>
 Otevřít tento soubor nyní?</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6659"/>
+        <location filename="../main_window.py" line="6792"/>
         <source>File Not Found</source>
         <translation>Soubor nenalezen</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6661"/>
+        <location filename="../main_window.py" line="6794"/>
         <source>The session file no longer exists:
 {path}
 
@@ -4481,170 +4596,185 @@ You can still use the session context, but the file will need to be opened manua
 Kontext relace lze stále použít, soubor však bude nutné otevřít ručně.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6684"/>
+        <location filename="../main_window.py" line="6817"/>
         <source>Session “{name}” resumed — {n} strings translated in session.</source>
         <translation>Relace „{name}“ obnovena — {n} řetězců přeloženo v relaci.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6817"/>
+        <location filename="../main_window.py" line="6950"/>
         <source>Loading files for version comparison…</source>
         <translation>Načítají se soubory pro porovnání verzí…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6828"/>
-        <location filename="../main_window.py" line="6942"/>
+        <location filename="../main_window.py" line="6961"/>
+        <location filename="../main_window.py" line="7176"/>
         <source>Load Error</source>
         <translation>Chyba načtení</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6829"/>
+        <location filename="../main_window.py" line="6962"/>
         <source>Failed to load one or more files:
 {error}</source>
         <translation>Nepodařilo se načíst jeden nebo více souborů:
 {error}</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="6876"/>
+        <location filename="../main_window.py" line="7009"/>
         <source>Migrated {n} translation(s) from previous version.</source>
         <translation>Migrováno {n} překlad(ů) z předchozí verze.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7027"/>
+        <location filename="../main_window.py" line="7108"/>
+        <source>Official {src}→{tgt} localization</source>
+        <translation>Oficiální lokalizace {src}→{tgt}</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="7122"/>
+        <source>Official</source>
+        <translation>Oficiální</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="7137"/>
+        <source>Official terminology imported: {tm} TM entries, {gloss} glossary terms.</source>
+        <translation>Importována oficiální terminologie: {tm} položek PP, {gloss} termínů glosáře.</translation>
+    </message>
+    <message>
+        <location filename="../main_window.py" line="7261"/>
         <source>Keyboard Shortcuts</source>
         <translation>Klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7033"/>
+        <location filename="../main_window.py" line="7267"/>
         <source>Action</source>
         <translation>Akce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7033"/>
+        <location filename="../main_window.py" line="7267"/>
         <source>Shortcut</source>
         <translation>Zkratka</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7033"/>
+        <location filename="../main_window.py" line="7267"/>
         <source>Category</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7047"/>
+        <location filename="../main_window.py" line="7281"/>
         <source>—</source>
         <translation>—</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7092"/>
+        <location filename="../main_window.py" line="7326"/>
         <source>Up to Date</source>
         <translation>Aktuální</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7093"/>
+        <location filename="../main_window.py" line="7327"/>
         <source>You are already running the latest version ({ver}).</source>
         <translation>Již používáte nejnovější verzi ({ver}).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7099"/>
+        <location filename="../main_window.py" line="7333"/>
         <source>Update Check Failed</source>
         <translation>Kontrola aktualizací selhala</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7100"/>
+        <location filename="../main_window.py" line="7334"/>
         <source>Could not reach the update server:
 </source>
         <translation>Nepodařilo se připojit k aktualizačnímu serveru:
 </translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7132"/>
+        <location filename="../main_window.py" line="7366"/>
         <source>About Bethesda Strings AI Translator</source>
         <translation>O aplikaci Bethesda Strings AI Translator</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7221"/>
+        <location filename="../main_window.py" line="7455"/>
         <source>Welcome to Bethesda Strings AI Translator</source>
         <translation>Vítejte v Bethesda Strings AI Translator</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7227"/>
+        <location filename="../main_window.py" line="7461"/>
         <source>Open a .strings, .dlstrings, .ilstrings or ESP/ESM file</source>
         <translation>Otevřít soubor .strings, .dlstrings, .ilstrings nebo ESP/ESM</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7228"/>
+        <location filename="../main_window.py" line="7462"/>
         <source>Translate all untranslated strings with AI</source>
         <translation>Přeložit všechny nepřeložené řetězce pomocí AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7230"/>
+        <location filename="../main_window.py" line="7464"/>
         <source>Approve the selected translation</source>
         <translation>Schválit vybraný překlad</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7231"/>
+        <location filename="../main_window.py" line="7465"/>
         <source>Open the command palette to find any action</source>
         <translation>Otevřít paletu příkazů pro vyhledání libovolné akce</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7232"/>
+        <location filename="../main_window.py" line="7466"/>
         <source>Show all keyboard shortcuts</source>
         <translation>Zobrazit všechny klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7233"/>
+        <location filename="../main_window.py" line="7467"/>
         <source>Enter What&apos;s This? mode — click any widget for help</source>
         <translation>Vstoupit do režimu Co je to? — klikněte na libovolný widget pro nápovědu</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7283"/>
+        <location filename="../main_window.py" line="7517"/>
         <source>Source language of the text to translate.
 Set to Russian for Starfield&apos;s shipped strings.</source>
         <translation>Zdrojový jazyk textu k překladu.
 Pro dodávané řetězce Starfield nastavte na ruštinu.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7287"/>
+        <location filename="../main_window.py" line="7521"/>
         <source>Target language for AI translation output.
 Typically Ukrainian for this project.</source>
         <translation>Cílový jazyk pro výstup AI překladu.
 Pro tento projekt typicky ukrajinština.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7291"/>
+        <location filename="../main_window.py" line="7525"/>
         <source>Minimum quality score (1–10). Strings already rated at or above this
 threshold are skipped when running Translate All.</source>
         <translation>Minimální skóre kvality (1–10). Řetězce již ohodnocené na nebo nad touto
 hranicí jsou při spuštění Přeložit vše přeskočeny.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7295"/>
+        <location filename="../main_window.py" line="7529"/>
         <source>Currently loaded file path and format.
 Drag-and-drop a file here to open it.</source>
         <translation>Aktuálně načtená cesta k souboru a formát.
 Přetáhněte sem soubor pro jeho otevření.</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5138"/>
+        <location filename="../main_window.py" line="5246"/>
         <source>Preferences</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5144"/>
+        <location filename="../main_window.py" line="5252"/>
         <source>Import translations from a TXT file</source>
         <translation>Importovat překlady ze souboru TXT</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5147"/>
+        <location filename="../main_window.py" line="5255"/>
         <source>Export translations to a TXT file</source>
         <translation>Exportovat překlady do souboru TXT</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5150"/>
+        <location filename="../main_window.py" line="5258"/>
         <source>Import from xTranslator SST XML</source>
         <translation>Importovat z xTranslator SST XML</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="5153"/>
+        <location filename="../main_window.py" line="5261"/>
         <source>Export to xTranslator SST XML</source>
         <translation>Exportovat do xTranslator SST XML</translation>
     </message>
@@ -4894,6 +5024,164 @@ na aktuálně otevřený soubor.  Stávající překlady zůstanou zachovány.</
         <location filename="../nexusmods_browser_dialog.py" line="999"/>
         <source>✓  Merge requested: {loaded} string(s) from {len(paths)} file(s).</source>
         <translation>✓  Požadováno sloučení: {loaded} řetězců z {len(paths)} souborů.</translation>
+    </message>
+</context>
+<context>
+    <name>OfficialTMDialog</name>
+    <message>
+        <location filename="../official_tm_dialog.py" line="137"/>
+        <source>Mine Official Terminology (TM + Glossary)</source>
+        <translation>Získání oficiální terminologie (PP + glosář)</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="149"/>
+        <source>Aligns the base game&apos;s official languages (shipped side-by-side in the localization archive, keyed on identical string IDs) to build an authoritative Translation Memory + glossary of Bethesda&apos;s canonical terminology — no AI calls. Point this at your game&apos;s Data folder.</source>
+        <translation>Zarovná oficiální jazyky základní hry (dodávané vedle sebe v lokalizačním archivu, klíčované na shodná ID řetězců) a sestaví z nich autoritativní překladovou paměť a glosář kanonické terminologie Bethesdy — bez volání AI. Zvolte složku Data své hry.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="159"/>
+        <source>Game Data folder:</source>
+        <translation>Složka Data hry:</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="163"/>
+        <source>Browse…</source>
+        <translation>Procházet…</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="169"/>
+        <source>Languages</source>
+        <translation>Jazyky</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="171"/>
+        <source>Source:</source>
+        <translation>Zdroj:</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="175"/>
+        <source>Official target:</source>
+        <translation>Oficiální cílový jazyk:</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="182"/>
+        <source>Reference languages (annotate glossary, optional)</source>
+        <translation>Referenční jazyky (poznámky v glosáři, volitelné)</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="184"/>
+        <source>Codes (comma-separated):</source>
+        <translation>Kódy (oddělené čárkou):</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="186"/>
+        <source>e.g. pl, ru — a Slavic cross-reference</source>
+        <translation>např. pl, ru — slovanský křížový odkaz</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="192"/>
+        <source>Build Translation Memory</source>
+        <translation>Vytvořit překladovou paměť</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="194"/>
+        <source>Build glossary</source>
+        <translation>Vytvořit glosář</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="199"/>
+        <location filename="../official_tm_dialog.py" line="302"/>
+        <location filename="../official_tm_dialog.py" line="308"/>
+        <location filename="../official_tm_dialog.py" line="312"/>
+        <location filename="../official_tm_dialog.py" line="316"/>
+        <location filename="../official_tm_dialog.py" line="378"/>
+        <source>Mine</source>
+        <translation>Získat</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="216"/>
+        <source>Source</source>
+        <translation>Zdroj</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="216"/>
+        <source>Official target</source>
+        <translation>Oficiální překlad</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="217"/>
+        <source>Count</source>
+        <translation>Počet</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="217"/>
+        <source>Consistency</source>
+        <translation>Konzistence</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="217"/>
+        <source>References</source>
+        <translation>Odkazy</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="231"/>
+        <source>Import into TM &amp;&amp; Glossary</source>
+        <translation>Importovat do PP &amp;&amp; glosáře</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="235"/>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="246"/>
+        <source>Select Game Data Folder</source>
+        <translation>Vyberte složku Data hry</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="262"/>
+        <source>No official .strings languages found under that folder.</source>
+        <translation>V této složce nebyly nalezeny žádné oficiální jazyky .strings.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="280"/>
+        <source>Found {n} official language(s): {langs}</source>
+        <translation>Nalezeno oficiálních jazyků: {n} — {langs}</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="303"/>
+        <source>Please choose a valid game Data folder.</source>
+        <translation>Zvolte prosím platnou složku Data hry.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="309"/>
+        <source>No language pair detected. Pick a Data folder first.</source>
+        <translation>Nebyl zjištěn žádný jazykový pár. Nejprve zvolte složku Data.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="313"/>
+        <source>Source and target languages must differ.</source>
+        <translation>Zdrojový a cílový jazyk se musí lišit.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="317"/>
+        <source>Enable at least one of TM or glossary.</source>
+        <translation>Zapněte alespoň překladovou paměť nebo glosář.</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="326"/>
+        <source>Scanning…</source>
+        <translation>Prohledávání…</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="358"/>
+        <source>{plugins} plugin(s), {aligned} aligned strings → {tm} TM entries, {gloss} glossary terms ({src} → {tgt}).</source>
+        <translation>Pluginů: {plugins}, zarovnaných řetězců: {aligned} → položek PP: {tm}, termínů glosáře: {gloss} ({src} → {tgt}).</translation>
+    </message>
+    <message>
+        <location filename="../official_tm_dialog.py" line="377"/>
+        <source>Mining failed.</source>
+        <translation>Získávání selhalo.</translation>
     </message>
 </context>
 <context>
@@ -5279,74 +5567,104 @@ Používejte neformální jazyk. Stažené tvary jsou přirozené…</translatio
 <context>
     <name>PromptEditorDialog</name>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="82"/>
+        <location filename="../prompt_editor_dialog.py" line="84"/>
         <source>Translation Prompt Editor</source>
         <translation>Editor promptů překladu</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="105"/>
+        <location filename="../prompt_editor_dialog.py" line="108"/>
         <source>Customize the translation system prompt. Edits apply to every backend (Ollama, Claude API, Claude Code CLI).
 The formatting-token rules that protect &lt;Alias=…&gt;, %s, [[STRUCT_BREAK…]] etc. are fixed and shown in the preview.</source>
         <translation>Přizpůsobte systémový prompt překladu. Změny platí pro každý backend (Ollama, Claude API, Claude Code CLI).
 Pravidla formátovacích tokenů chránící &lt;Alias=…&gt;, %s, [[STRUCT_BREAK…]] atd. jsou pevná a zobrazená v náhledu.</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="116"/>
+        <location filename="../prompt_editor_dialog.py" line="119"/>
         <source>Source:</source>
         <translation>Zdroj:</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="125"/>
+        <location filename="../prompt_editor_dialog.py" line="128"/>
         <source>Target:</source>
         <translation>Cíl:</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="144"/>
+        <location filename="../prompt_editor_dialog.py" line="147"/>
         <source>Style rule for target language (Rule 1)</source>
         <translation>Pravidlo stylu pro cílový jazyk (Pravidlo 1)</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="148"/>
+        <location filename="../prompt_editor_dialog.py" line="151"/>
         <source>Register, script, quotation and terminology guidance for this language…</source>
         <translation>Pokyny k registru, písmu, uvozovkám a terminologii pro tento jazyk…</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="159"/>
+        <location filename="../prompt_editor_dialog.py" line="162"/>
         <source>Reset this language</source>
         <translation>Obnovit tento jazyk</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="165"/>
+        <location filename="../prompt_editor_dialog.py" line="168"/>
         <source>Extra instructions — appended to every prompt (all languages)</source>
         <translation>Další pokyny — připojené ke každému promptu (všechny jazyky)</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="169"/>
+        <location filename="../prompt_editor_dialog.py" line="172"/>
         <source>Optional project-wide guidance, e.g. “Prefer established fan-translation vocabulary.” Leave blank for none.</source>
         <translation>Volitelné pokyny pro celý projekt, např. „Upřednostňujte zavedenou slovní zásobu fanouškovských překladů.“ Ponechte prázdné, pokud žádné.</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="184"/>
+        <location filename="../prompt_editor_dialog.py" line="187"/>
         <source>Preview — assembled system prompt</source>
         <translation>Náhled — sestavený systémový prompt</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="201"/>
+        <location filename="../prompt_editor_dialog.py" line="204"/>
         <source>Restore All Defaults</source>
         <translation>Obnovit vše na výchozí</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="214"/>
+        <location filename="../prompt_editor_dialog.py" line="217"/>
         <source>Translation preferences</source>
         <translation>Předvolby překladu</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="320"/>
+        <location filename="../prompt_editor_dialog.py" line="223"/>
+        <source>Unspecified</source>
+        <translation>Neurčeno</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="224"/>
+        <source>Male</source>
+        <translation>Mužské</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="225"/>
+        <source>Female</source>
+        <translation>Ženské</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="226"/>
+        <source>Neutral (avoid gendered forms)</source>
+        <translation>Neutrální (vyhnout se rodovým tvarům)</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="230"/>
+        <source>Grammatical gender for player-referring text in gendered target languages. Only affects languages that inflect for gender (Ukrainian, Polish, German, …).</source>
+        <translation>Gramatický rod textu vztahujícího se k hráči v cílových jazycích s rodem. Týká se pouze jazyků, které se skloňují podle rodu (ukrajinština, polština, němčina, …).</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="234"/>
+        <source>Player gender:</source>
+        <translation>Pohlaví hráče:</translation>
+    </message>
+    <message>
+        <location filename="../prompt_editor_dialog.py" line="351"/>
         <source>● Customized</source>
         <translation>● Přizpůsobeno</translation>
     </message>
     <message>
-        <location filename="../prompt_editor_dialog.py" line="322"/>
+        <location filename="../prompt_editor_dialog.py" line="353"/>
         <source>Default</source>
         <translation>Výchozí</translation>
     </message>
@@ -6044,129 +6362,129 @@ Zavřete tento dialog pro spuštění opětovného překladu.</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settings_dialog.py" line="174"/>
+        <location filename="../settings_dialog.py" line="181"/>
         <source>Preferences</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="236"/>
+        <location filename="../settings_dialog.py" line="243"/>
         <source>Ollama AI Settings</source>
         <translation>Nastavení Ollama AI</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="241"/>
+        <location filename="../settings_dialog.py" line="248"/>
         <source>API URL:</source>
         <translation>API URL:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="267"/>
+        <location filename="../settings_dialog.py" line="274"/>
         <source>Model:</source>
         <translation>Model:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="273"/>
+        <location filename="../settings_dialog.py" line="280"/>
         <source>Token Limit:</source>
         <translation>Limit tokenů:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="272"/>
+        <location filename="../settings_dialog.py" line="279"/>
         <source>Maximum number of tokens to generate (num_predict)</source>
         <translation>Maximální počet tokenů k vygenerování (num_predict)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="279"/>
+        <location filename="../settings_dialog.py" line="286"/>
         <source>Context Limit:</source>
         <translation>Limit kontextu:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="278"/>
+        <location filename="../settings_dialog.py" line="285"/>
         <source>Context window size in tokens (num_ctx). Increasing this uses more VRAM.</source>
         <translation>Velikost kontextového okna v tokenech (num_ctx). Zvýšení spotřebuje více VRAM.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="372"/>
+        <location filename="../settings_dialog.py" line="353"/>
         <source>Connection Test</source>
         <translation>Test připojení</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="374"/>
+        <location filename="../settings_dialog.py" line="355"/>
         <source>Test Connection</source>
         <translation>Otestovat připojení</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="376"/>
+        <location filename="../settings_dialog.py" line="357"/>
         <source>● Not tested</source>
         <translation>● Netestováno</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="385"/>
+        <location filename="../settings_dialog.py" line="366"/>
         <source>Game Term Protection</source>
         <translation>Ochrana herních termínů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="388"/>
+        <location filename="../settings_dialog.py" line="369"/>
         <source>Enable automatic term protection</source>
         <translation>Povolit automatickou ochranu termínů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="390"/>
+        <location filename="../settings_dialog.py" line="371"/>
         <source>Protect game-specific terms, IDs, and names from translation</source>
         <translation>Chránit herně specifické termíny, ID a názvy před překladem</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="393"/>
+        <location filename="../settings_dialog.py" line="374"/>
         <source>Protect English text from translation</source>
         <translation>Chránit anglický text před překladem</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="421"/>
+        <location filename="../settings_dialog.py" line="402"/>
         <source>Custom terms file:</source>
         <translation>Vlastní soubor termínů:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="423"/>
+        <location filename="../settings_dialog.py" line="404"/>
         <source>Path to custom protected terms file</source>
         <translation>Cesta k vlastnímu souboru chráněných termínů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="428"/>
+        <location filename="../settings_dialog.py" line="409"/>
         <source>Browse...</source>
         <translation>Procházet...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="435"/>
+        <location filename="../settings_dialog.py" line="416"/>
         <source>View/Edit Protected Terms</source>
         <translation>Zobrazit/Upravit chráněné termíny</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="450"/>
+        <location filename="../settings_dialog.py" line="431"/>
         <source>Appearance</source>
         <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="461"/>
+        <location filename="../settings_dialog.py" line="442"/>
         <source>Theme:</source>
         <translation>Téma:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="460"/>
+        <location filename="../settings_dialog.py" line="441"/>
         <source>Choose a built-in or custom theme</source>
         <translation>Vyberte vestavěné nebo vlastní téma</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="261"/>
-        <location filename="../settings_dialog.py" line="1437"/>
-        <location filename="../settings_dialog.py" line="1465"/>
+        <location filename="../settings_dialog.py" line="268"/>
+        <location filename="../settings_dialog.py" line="1433"/>
+        <location filename="../settings_dialog.py" line="1461"/>
         <source>Refresh</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="297"/>
+        <location filename="../settings_dialog.py" line="304"/>
         <source>e.g. sv restart ollama  (empty = soft stop only)</source>
         <translation>např. sv restart ollama  (prázdné = jen měkké zastavení)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="301"/>
+        <location filename="../settings_dialog.py" line="308"/>
         <source>Command run when you press Stop, to forcibly restart/kill the Ollama server and free the GPU immediately.
 Closing sockets alone does not interrupt a wedged GPU mid-generation.
 Linux: sv restart ollama · systemctl restart ollama · pkill -x ollama
@@ -6179,40 +6497,40 @@ Windows: taskkill /F /T /IM ollama.exe  (bez administrátora, pokud Ollama běž
 Pokud je potřeba root, zaškrtněte níže „Vyžaduje root“ pro dialog s heslem.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="315"/>
-        <location filename="../settings_dialog.py" line="1366"/>
+        <location filename="../settings_dialog.py" line="322"/>
+        <location filename="../settings_dialog.py" line="1362"/>
         <source>Auto-detect</source>
         <translation>Automaticky zjistit</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="317"/>
+        <location filename="../settings_dialog.py" line="324"/>
         <source>Guess the force-stop command for this operating system</source>
         <translation>Odhadnout příkaz vynuceného zastavení pro tento operační systém</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="321"/>
+        <location filename="../settings_dialog.py" line="328"/>
         <source>Force-stop command:</source>
         <translation>Příkaz vynuceného zastavení:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="324"/>
+        <location filename="../settings_dialog.py" line="331"/>
         <source>Requires root — show a password dialog (Linux)</source>
         <translation>Vyžaduje root — zobrazit dialog s heslem (Linux)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="329"/>
+        <location filename="../settings_dialog.py" line="336"/>
         <source>Run the command as root.  When sudo is available you get the app&apos;s own themed password dialog (the password is fed to &apos;sudo -S&apos;); otherwise it falls back to graphical sudo (sudo -A askpass) or pkexec.  No NOPASSWD rule or terminal needed.
 Leave off for a non-root command such as &apos;pkill -x ollama&apos; or, on Windows, &apos;taskkill&apos; (ignored there).</source>
         <translation>Spustit příkaz jako root.  Když je k dispozici sudo, zobrazí se vlastní stylizovaný dialog s heslem aplikace (heslo se předá do „sudo -S“); jinak se použije grafické sudo (sudo -A askpass) nebo pkexec.  Není potřeba pravidlo NOPASSWD ani terminál.
 Nechte vypnuté pro příkaz bez root, jako „pkill -x ollama“, nebo ve Windows pro „taskkill“ (tam se ignoruje).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="405"/>
+        <location filename="../settings_dialog.py" line="386"/>
         <source>Protect proper nouns and lore terms (faction/company/ship/character names, resources, UI terms, loaded term file)</source>
         <translation>Chránit vlastní jména a termíny lore (názvy frakcí/společností/lodí/postav, zdroje, termíny rozhraní, načtený soubor termínů)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="411"/>
+        <location filename="../settings_dialog.py" line="392"/>
         <source>When enabled, faction names (Freestar Collective, UC…), company names, ship names, character names,
 creature/resource names, UI abbreviations (HUD, GPS…), and terms loaded from the custom terms file
 are replaced with placeholder tokens so the AI cannot modify them.
@@ -6227,47 +6545,47 @@ Když je vypnuto (výchozí), AI může tyto názvy volně překládat — užit
 lokalizované názvy frakcí/míst (např. «Об&apos;єднані колонії» místo «United Colonies»).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="440"/>
+        <location filename="../settings_dialog.py" line="421"/>
         <source>ℹ️ Format tags, game IDs, XML/alias tokens, and user-added custom terms are always protected regardless of the setting above.</source>
         <translation>ℹ️ Formátovací tagy, herní ID, tokeny XML/aliasů a uživatelem přidané vlastní termíny jsou vždy chráněny bez ohledu na výše uvedené nastavení.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="493"/>
+        <location filename="../settings_dialog.py" line="474"/>
         <source>Interface Language:</source>
         <translation>Jazyk rozhraní:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="499"/>
+        <location filename="../settings_dialog.py" line="480"/>
         <source>OS default</source>
         <translation>Výchozí OS</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="500"/>
+        <location filename="../settings_dialog.py" line="481"/>
         <source> pt</source>
         <translation> pt</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="503"/>
+        <location filename="../settings_dialog.py" line="484"/>
         <source>Set 0 to follow the OS font size. Changes apply after restart.</source>
         <translation>Nastavte 0 pro sledování velikosti písma OS. Změny se projeví po restartu.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="505"/>
+        <location filename="../settings_dialog.py" line="486"/>
         <source>Interface font size</source>
         <translation>Velikost písma rozhraní</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="506"/>
+        <location filename="../settings_dialog.py" line="487"/>
         <source>Font Size:</source>
         <translation>Velikost písma:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="509"/>
+        <location filename="../settings_dialog.py" line="490"/>
         <source>Color-blind friendly status colors</source>
         <translation>Barvy stavu přátelské pro daltoniky</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="513"/>
+        <location filename="../settings_dialog.py" line="494"/>
         <source>Replace green/red status indicators with blue/orange.
 Improves visibility for deuteranopia (red-green color blindness).
 Status symbols (✓ ⚠ ✗) always convey state regardless of color.</source>
@@ -6276,72 +6594,72 @@ Zlepšuje viditelnost pro deuteranopii (červeno-zelená barvoslepost).
 Symboly stavu (✓ ⚠ ✗) vždy sdělují stav bez ohledu na barvu.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="518"/>
+        <location filename="../settings_dialog.py" line="499"/>
         <source>Color-blind mode</source>
         <translation>Režim pro daltoniky</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="523"/>
+        <location filename="../settings_dialog.py" line="504"/>
         <source>Manage Themes...</source>
         <translation>Spravovat témata...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="533"/>
+        <location filename="../settings_dialog.py" line="514"/>
         <source>Background / Wallpaper</source>
         <translation>Pozadí / Tapeta</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="536"/>
+        <location filename="../settings_dialog.py" line="517"/>
         <source>Enable custom background</source>
         <translation>Povolit vlastní pozadí</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="543"/>
+        <location filename="../settings_dialog.py" line="524"/>
         <source>Path to image or video file…</source>
         <translation>Cesta k obrázku nebo videu…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="548"/>
+        <location filename="../settings_dialog.py" line="529"/>
         <source>File:</source>
         <translation>Soubor:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="553"/>
+        <location filename="../settings_dialog.py" line="534"/>
         <source>Cover  (fill, crop edges)</source>
         <translation>Vyplnit  (vyplnit, oříznout okraje)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="554"/>
+        <location filename="../settings_dialog.py" line="535"/>
         <source>Contain  (fit inside, letterbox)</source>
         <translation>Vejít  (vejít dovnitř, letterbox)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="555"/>
+        <location filename="../settings_dialog.py" line="536"/>
         <source>Stretch  (distort to fill)</source>
         <translation>Roztáhnout  (deformovat pro vyplnění)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="556"/>
+        <location filename="../settings_dialog.py" line="537"/>
         <source>Tile  (repeat)</source>
         <translation>Dlaždice  (opakovat)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="557"/>
+        <location filename="../settings_dialog.py" line="538"/>
         <source>Center  (original size, centered)</source>
         <translation>Na střed  (původní velikost, vystředěno)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="562"/>
+        <location filename="../settings_dialog.py" line="543"/>
         <source>Fit mode:</source>
         <translation>Režim přizpůsobení:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="578"/>
+        <location filename="../settings_dialog.py" line="559"/>
         <source>Opacity:</source>
         <translation>Krytí:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="582"/>
+        <location filename="../settings_dialog.py" line="563"/>
         <source>Images: PNG, JPG, BMP, TIFF, WEBP, SVG, GIF (animated)
 Video: MP4, AVI, MKV, WEBM, MOV, WMV and more
 (Video requires PySide6-Multimedia and GStreamer plugins)</source>
@@ -6350,84 +6668,84 @@ Video: MP4, AVI, MKV, WEBM, MOV, WMV a další
 (Video vyžaduje PySide6-Multimedia a pluginy GStreamer)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="595"/>
+        <location filename="../settings_dialog.py" line="576"/>
         <source>Translation Preferences</source>
         <translation>Předvolby překladu</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="602"/>
+        <location filename="../settings_dialog.py" line="588"/>
         <source>Default Source:</source>
         <translation>Výchozí zdroj:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="608"/>
+        <location filename="../settings_dialog.py" line="595"/>
         <source>Default Target:</source>
         <translation>Výchozí cíl:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="614"/>
+        <location filename="../settings_dialog.py" line="620"/>
         <source>Default Quality:</source>
         <translation>Výchozí kvalita:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="620"/>
+        <location filename="../settings_dialog.py" line="626"/>
         <source>Long String Threshold:</source>
         <translation>Prahová hodnota dlouhého řetězce:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="659"/>
+        <location filename="../settings_dialog.py" line="655"/>
         <source>Books</source>
         <translation>Knihy</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="660"/>
+        <location filename="../settings_dialog.py" line="656"/>
         <source>Notes</source>
         <translation>Poznámky</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="661"/>
+        <location filename="../settings_dialog.py" line="657"/>
         <source>Terminals</source>
         <translation>Terminály</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="662"/>
+        <location filename="../settings_dialog.py" line="658"/>
         <source>Dialogue</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="663"/>
+        <location filename="../settings_dialog.py" line="659"/>
         <source>Quests</source>
         <translation>Úkoly</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="664"/>
+        <location filename="../settings_dialog.py" line="660"/>
         <source>UI</source>
         <translation>Rozhraní</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="665"/>
+        <location filename="../settings_dialog.py" line="661"/>
         <source>System</source>
         <translation>Systém</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="674"/>
+        <location filename="../settings_dialog.py" line="670"/>
         <source>String types to skip during AI batch translation.
 Skipped strings are left untranslated (marked as pending).</source>
         <translation>Typy řetězců, které se mají při dávkovém překladu AI přeskočit.
 Přeskočené řetězce zůstanou nepřeložené (označené jako čekající).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="677"/>
+        <location filename="../settings_dialog.py" line="673"/>
         <source>Skip Types:</source>
         <translation>Přeskočit typy:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="687"/>
+        <location filename="../settings_dialog.py" line="683"/>
         <source>Translation Memory</source>
         <translation>Překladová paměť</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="710"/>
+        <location filename="../settings_dialog.py" line="706"/>
         <source>Minimum similarity required for a fuzzy translation memory match.
 Higher = stricter (fewer but more accurate matches).
 100% = exact matches only.  Default: ~46%.</source>
@@ -6436,27 +6754,27 @@ Vyšší = přísnější (méně, ale přesnějších shod).
 100 % = pouze přesné shody. Výchozí: ~46 %.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="718"/>
+        <location filename="../settings_dialog.py" line="714"/>
         <source>Min. fuzzy similarity:</source>
         <translation>Min. fuzzy podobnost:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="753"/>
+        <location filename="../settings_dialog.py" line="749"/>
         <source>Storage</source>
         <translation>Úložiště</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="760"/>
+        <location filename="../settings_dialog.py" line="756"/>
         <source>Active config dir:</source>
         <translation>Aktivní adresář konfigurace:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="764"/>
+        <location filename="../settings_dialog.py" line="760"/>
         <source>(default: ~/.config/BethesdaModTools)</source>
         <translation>(výchozí: ~/.config/BethesdaModTools)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="766"/>
+        <location filename="../settings_dialog.py" line="762"/>
         <source>Override the directory where config.json and other app data are stored.
 Leave blank to use the default location.
 Takes effect after restarting the application.</source>
@@ -6465,7 +6783,7 @@ Ponechte prázdné pro použití výchozího umístění.
 Projeví se po restartu aplikace.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="848"/>
+        <location filename="../settings_dialog.py" line="844"/>
         <source>Silently checks the GitHub releases page shortly after launch.
 Shows a dialog only when a new version is found, and lists recent
 release notes in the &apos;What&apos;s New&apos; panel on the welcome screen.
@@ -6476,27 +6794,27 @@ na úvodní obrazovce vypíše poznámky k posledním vydáním.
 Nepřenášejí se žádné osobní údaje — pouze GET požadavek na GitHub API.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="982"/>
+        <location filename="../settings_dialog.py" line="978"/>
         <source>NexusMods</source>
         <translation>NexusMods</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1033"/>
+        <location filename="../settings_dialog.py" line="1029"/>
         <source>Optional: NexusMods file group ID to attach uploaded files to an existing group.</source>
         <translation>Volitelné: ID skupiny souborů NexusMods pro připojení nahraných souborů k existující skupině.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1035"/>
+        <location filename="../settings_dialog.py" line="1031"/>
         <source>File Group ID:</source>
         <translation>ID skupiny souborů:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1039"/>
+        <location filename="../settings_dialog.py" line="1035"/>
         <source>(auto-detect from Firefox / Chromium)</source>
         <translation>(automatické zjištění z Firefoxu / Chromia)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1041"/>
+        <location filename="../settings_dialog.py" line="1037"/>
         <source>Optional: path to a Cookie-Editor JSON export for free-user NexusMods downloads.
 Export steps: install the &apos;Cookie-Editor&apos; browser extension → visit nexusmods.com
 → open Cookie-Editor → Export → JSON → save the file → select it here.
@@ -6507,44 +6825,47 @@ Kroky exportu: nainstalujte rozšíření prohlížeče „Cookie-Editor“ → 
 Ponechte prázdné pro automatické zjištění cookies z Firefoxu nebo Chromia.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1051"/>
+        <location filename="../settings_dialog.py" line="1047"/>
         <source>Cookies JSON:</source>
         <translation>JSON cookies:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="545"/>
-        <location filename="../settings_dialog.py" line="772"/>
-        <location filename="../settings_dialog.py" line="812"/>
-        <location filename="../settings_dialog.py" line="1047"/>
+        <location filename="../settings_dialog.py" line="526"/>
+        <location filename="../settings_dialog.py" line="768"/>
+        <location filename="../settings_dialog.py" line="808"/>
+        <location filename="../settings_dialog.py" line="1043"/>
         <source>Browse…</source>
         <translation>Procházet…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="254"/>
+        <location filename="../settings_dialog.py" line="261"/>
         <source>Type any Ollama model name or pick from the list.
 Installed models are detected automatically and the list refreshes while this window is open (e.g. after &apos;ollama pull&apos;).</source>
         <translation>Zadejte libovolný název modelu Ollama nebo vyberte ze seznamu.
 Nainstalované modely se rozpoznají automaticky a seznam se obnovuje, dokud je toto okno otevřené (např. po „ollama pull“).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="263"/>
+        <location filename="../settings_dialog.py" line="270"/>
         <source>Re-scan installed models now (also refreshes automatically)</source>
         <translation>Znovu prohledat nainstalované modely (obnovuje se i automaticky)</translation>
     </message>
     <message>
-        <source>OLLAMA_NUM_PARALLEL (set where 'ollama serve' launches — runit /etc/sv/ollama/run, a systemd drop-in, or your shell, not in this app) sets concurrent GPU slots; match it to the app's parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so lower it if the model keeps reloading from VRAM eviction — restart Ollama after changing it.</source>
+        <location filename="../settings_dialog.py" line="172"/>
+        <source>OLLAMA_NUM_PARALLEL (set where &apos;ollama serve&apos; launches — runit /etc/sv/ollama/run, a systemd drop-in, or your shell, not in this app) sets concurrent GPU slots; match it to the app&apos;s parallel workers for full two-stream throughput. Each slot pre-allocates a whole context window, so lower it if the model keeps reloading from VRAM eviction — restart Ollama after changing it.</source>
         <translation>OLLAMA_NUM_PARALLEL (nastavte tam, kde se spouští ollama serve — runit /etc/sv/ollama/run, systemd drop-in nebo váš shell, ne v této aplikaci) nastavuje počet souběžných GPU slotů; slaďte jej s paralelními pracovníky aplikace pro plnou dvouproudou propustnost. Každý slot předem alokuje celé kontextové okno, takže jej snižte, pokud se model kvůli vytěsňování z VRAM stále znovu načítá — po změně Ollamu restartujte.</translation>
     </message>
     <message>
-        <source>On AMD ROCm cards (gfx10xx, RX 6800/6700), set HSA_ENABLE_SDMA=0 where 'ollama serve' launches to fix GPU ring hangs when long batches freeze.</source>
+        <location filename="../settings_dialog.py" line="173"/>
+        <source>On AMD ROCm cards (gfx10xx, RX 6800/6700), set HSA_ENABLE_SDMA=0 where &apos;ollama serve&apos; launches to fix GPU ring hangs when long batches freeze.</source>
         <translation>Na kartách AMD ROCm (gfx10xx, RX 6800/6700) nastavte HSA_ENABLE_SDMA=0 tam, kde se spouští ollama serve, abyste opravili zamrzání GPU ringu, když dlouhé dávky zamrzají.</translation>
     </message>
     <message>
-        <source>OLLAMA_KV_CACHE_TYPE=q8_0 together with OLLAMA_FLASH_ATTENTION=1 roughly halve the Ollama server's KV-cache VRAM.</source>
+        <location filename="../settings_dialog.py" line="174"/>
+        <source>OLLAMA_KV_CACHE_TYPE=q8_0 together with OLLAMA_FLASH_ATTENTION=1 roughly halve the Ollama server&apos;s KV-cache VRAM.</source>
         <translation>OLLAMA_KV_CACHE_TYPE=q8_0 spolu s OLLAMA_FLASH_ATTENTION=1 zhruba na polovinu sníží VRAM KV cache serveru Ollama.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="396"/>
+        <location filename="../settings_dialog.py" line="377"/>
         <source>When translating from a non-English source (e.g. Russian) to Ukrainian, keep English terminology,
 game codes, and ALL-CAPS acronyms unchanged.
 Character and planet names are still transliterated into the target script — pin a fixed
@@ -6557,38 +6878,70 @@ kteréhokoli jména zafixujte přes Glosář (jeho cílová podoba se dosazuje d
 Poznámka: Toto se automaticky vypne, když je zdrojovým jazykem angličtina.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="774"/>
-        <location filename="../settings_dialog.py" line="814"/>
+        <location filename="../settings_dialog.py" line="600"/>
+        <source>Unspecified</source>
+        <translation>Neurčeno</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="601"/>
+        <source>Male</source>
+        <translation>Mužské</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="602"/>
+        <source>Female</source>
+        <translation>Ženské</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="603"/>
+        <source>Neutral (avoid gendered forms)</source>
+        <translation>Neutrální (vyhnout se rodovým tvarům)</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="609"/>
+        <source>Grammatical gender for lines addressing/describing the player («you», adjectives, past-tense verbs) in gendered languages (Ukrainian, Polish, German, …).
+A .strings file stores one text per ID, so this applies to the whole translation for every player — there is no in-game M/F switch. Choose Neutral for a translation meant for any player.</source>
+        <translation>Gramatický rod pro řádky oslovující nebo popisující hráče («ty», přídavná jména, slovesa v minulém čase) v jazycích s rodem (ukrajinština, polština, němčina, …).
+Soubor .strings ukládá jeden text na ID, takže to platí pro celý překlad a pro každého hráče — ve hře žádný přepínač M/Ž není. Pro překlad určený komukoli zvolte „Neutrální“.</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="614"/>
+        <source>Player Gender:</source>
+        <translation>Pohlaví hráče:</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="770"/>
+        <location filename="../settings_dialog.py" line="810"/>
         <source>Reset</source>
         <translation>Obnovit výchozí</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="775"/>
+        <location filename="../settings_dialog.py" line="771"/>
         <source>Clear override and use the default config directory</source>
         <translation>Zrušit přepsání a použít výchozí adresář konfigurace</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="782"/>
+        <location filename="../settings_dialog.py" line="778"/>
         <source>Config directory:</source>
         <translation>Adresář konfigurace:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="785"/>
+        <location filename="../settings_dialog.py" line="781"/>
         <source>⚠  Restart the application to use the new config directory.</source>
         <translation>⚠  Restartujte aplikaci, aby se použil nový adresář konfigurace.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="800"/>
+        <location filename="../settings_dialog.py" line="796"/>
         <source>Active cache dir:</source>
         <translation>Aktivní adresář mezipaměti:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="804"/>
+        <location filename="../settings_dialog.py" line="800"/>
         <source>(default: SSD if mounted, else config dir)</source>
         <translation>(výchozí: SSD, pokud je připojen, jinak adresář konfigurace)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="806"/>
+        <location filename="../settings_dialog.py" line="802"/>
         <source>Override the directory for the translation cache and other large data files.
 Leave blank to auto-select: /mnt/ssd/… when the SSD is mounted, otherwise the config dir.
 Takes effect after restarting the application.</source>
@@ -6597,47 +6950,47 @@ Ponechte prázdné pro automatický výběr: /mnt/ssd/…, je-li SSD připojen, 
 Projeví se po restartu aplikace.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="815"/>
+        <location filename="../settings_dialog.py" line="811"/>
         <source>Clear override and use the default cache directory</source>
         <translation>Zrušit přepsání a použít výchozí adresář mezipaměti</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="822"/>
+        <location filename="../settings_dialog.py" line="818"/>
         <source>Cache directory:</source>
         <translation>Adresář mezipaměti:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="825"/>
+        <location filename="../settings_dialog.py" line="821"/>
         <source>⚠  Restart the application to use the new cache directory.</source>
         <translation>⚠  Restartujte aplikaci, aby se použil nový adresář mezipaměti.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="839"/>
+        <location filename="../settings_dialog.py" line="835"/>
         <source>Updates</source>
         <translation>Aktualizace</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="843"/>
+        <location filename="../settings_dialog.py" line="839"/>
         <source>Check for updates automatically on startup</source>
         <translation>Při spuštění automaticky kontrolovat aktualizace</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="856"/>
+        <location filename="../settings_dialog.py" line="852"/>
         <source>Check Now…</source>
         <translation>Zkontrolovat nyní…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="871"/>
+        <location filename="../settings_dialog.py" line="867"/>
         <source>Security</source>
         <translation>Zabezpečení</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="874"/>
+        <location filename="../settings_dialog.py" line="870"/>
         <source>Encrypt translation cache</source>
         <translation>Zašifrovat překladovou mezipaměť</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="878"/>
+        <location filename="../settings_dialog.py" line="874"/>
         <source>Protect the on-disk translation cache with AES-256-GCM encryption.
 The key is stored in the system keyring or derived from the machine ID.
 Takes effect on the next cache save.</source>
@@ -6646,12 +6999,12 @@ Klíč je uložen v systémovém klíčenku nebo odvozen z ID počítače.
 Projeví se při příštím uložení mezipaměti.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="885"/>
+        <location filename="../settings_dialog.py" line="881"/>
         <source>Enable security audit log</source>
         <translation>Povolit bezpečnostní audit log</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="889"/>
+        <location filename="../settings_dialog.py" line="885"/>
         <source>Write a JSON-lines audit log of security-relevant events
 (file open/save, translation batches, settings changes).
 No translated text is ever recorded.</source>
@@ -6660,27 +7013,27 @@ No translated text is ever recorded.</source>
 Nikdy se nezaznamenává přeložený text.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="901"/>
+        <location filename="../settings_dialog.py" line="897"/>
         <source>unavailable</source>
         <translation>nedostupné</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="902"/>
+        <location filename="../settings_dialog.py" line="898"/>
         <source>Key storage: {backend}</source>
         <translation>Úložiště klíčů: {backend}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="910"/>
+        <location filename="../settings_dialog.py" line="906"/>
         <source>AI Quality Check</source>
         <translation>Kontrola kvality AI</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="913"/>
+        <location filename="../settings_dialog.py" line="909"/>
         <source>Enable AI quality check after rule-based QC</source>
         <translation>Povolit kontrolu kvality AI po kontrole založené na pravidlech</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="917"/>
+        <location filename="../settings_dialog.py" line="913"/>
         <source>Run the fine-tuned qcgemma4-st Ollama model on each translated string
 after the rule-based quality check. Slower but catches issues the rules miss.
 Requires the model to be registered: ollama create qcgemma4-st -f Modelfile.qc</source>
@@ -6689,22 +7042,22 @@ po kontrole kvality založené na pravidlech. Pomalejší, ale zachytí problém
 Vyžaduje registraci modelu: ollama create qcgemma4-st -f Modelfile.qc</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="925"/>
+        <location filename="../settings_dialog.py" line="921"/>
         <source>Ollama model name for AI quality checks</source>
         <translation>Název modelu Ollama pro kontroly kvality AI</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="926"/>
+        <location filename="../settings_dialog.py" line="922"/>
         <source>AI QC model:</source>
         <translation>Model kontroly kvality AI:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="929"/>
+        <location filename="../settings_dialog.py" line="925"/>
         <source>Automatic self-review after translation</source>
         <translation>Automatická samokontrola po překladu</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="936"/>
+        <location filename="../settings_dialog.py" line="932"/>
         <source>After each translation batch, automatically run the quality check,
 mechanically fix every fixable issue, and AI-retranslate any string
 still left with a critical (non-visual) issue — with no prompts.
@@ -6717,17 +7070,17 @@ Kosmetické/vizuální problémy (přetečení rozhraní, přidané uvozovky, me
 zůstanou nedotčené. Skončí jedinou souhrnnou zprávou.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="949"/>
+        <location filename="../settings_dialog.py" line="945"/>
         <source>Lore RAG (Context Retrieval)</source>
         <translation>RAG lore (získávání kontextu)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="953"/>
+        <location filename="../settings_dialog.py" line="949"/>
         <source>Inject lore context into translation prompts</source>
         <translation>Vkládat kontext lore do překladových promptů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="958"/>
+        <location filename="../settings_dialog.py" line="954"/>
         <source>When enabled, relevant lore articles (factions, places, characters) are
 retrieved from the local lore database and prepended to each translation
 prompt so the AI uses accurate Starfield terminology.
@@ -6738,67 +7091,67 @@ promptu, aby AI používala správnou terminologii Starfieldu.
 Použijte Překlad → Kontext RAG lore… ke stažení článků z UESP.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="973"/>
+        <location filename="../settings_dialog.py" line="969"/>
         <source>Maximum characters of lore context injected per prompt.
 Higher values give more context but consume more tokens.</source>
         <translation>Maximální počet znaků kontextu lore vložených na prompt.
 Vyšší hodnoty dávají více kontextu, ale spotřebují více tokenů.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="976"/>
+        <location filename="../settings_dialog.py" line="972"/>
         <source>Max context chars:</source>
         <translation>Max. znaků kontextu:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="998"/>
-        <location filename="../settings_dialog.py" line="1818"/>
+        <location filename="../settings_dialog.py" line="994"/>
+        <location filename="../settings_dialog.py" line="1814"/>
         <source>Sign in with Nexus Mods</source>
         <translation>Přihlásit se přes Nexus Mods</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1000"/>
+        <location filename="../settings_dialog.py" line="996"/>
         <source>Authorise this app in your browser to obtain an API key via Nexus Mods Single Sign-On. This is the only supported sign-in method — Nexus Mods&apos; API Acceptable Use Policy forbids public apps from using a pasted personal API key.</source>
         <translation>Autorizujte tuto aplikaci v prohlížeči a získejte klíč API přes jednotné přihlášení (SSO) Nexus Mods. Toto je jediná podporovaná metoda přihlášení — zásady přijatelného použití API Nexus Mods zakazují veřejným aplikacím používat vložený osobní klíč API.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1007"/>
+        <location filename="../settings_dialog.py" line="1003"/>
         <source>Sign out</source>
         <translation>Odhlásit se</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1009"/>
+        <location filename="../settings_dialog.py" line="1005"/>
         <source>Forget the Nexus Mods API key and SSO token stored on this device.</source>
         <translation>Zapomenout klíč API Nexus Mods a token SSO uložené v tomto zařízení.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1012"/>
+        <location filename="../settings_dialog.py" line="1008"/>
         <source>Nexus Mods:</source>
         <translation>Nexus Mods:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1023"/>
+        <location filename="../settings_dialog.py" line="1019"/>
         <source>The registered SSO application slug Nexus Mods assigned you. The slug must be approved by Nexus Mods staff — an unregistered value makes the sign-in page show &quot;Application ID was invalid&quot;.
 Leave blank to use the built-in default.</source>
         <translation>Registrovaný slug SSO aplikace, který vám Nexus Mods přidělil. Slug musí schválit tým Nexus Mods — neregistrovaná hodnota způsobí, že přihlašovací stránka zobrazí „Application ID was invalid“.
 Ponechte prázdné pro použití vestavěné výchozí hodnoty.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1028"/>
+        <location filename="../settings_dialog.py" line="1024"/>
         <source>SSO App Slug:</source>
         <translation>Slug SSO aplikace:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1057"/>
+        <location filename="../settings_dialog.py" line="1053"/>
         <source>Claude MCP Servers</source>
         <translation>Servery MCP Claude</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1061"/>
+        <location filename="../settings_dialog.py" line="1057"/>
         <source>Let Claude call tools on remote MCP servers (chat panel)</source>
         <translation>Povolit Claude volat nástroje na vzdálených serverech MCP (panel chatu)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1065"/>
+        <location filename="../settings_dialog.py" line="1061"/>
         <source>When enabled, the Claude AI Assistant chat panel connects Claude to the
 remote MCP servers below (Messages API MCP connector). Claude can call
 their tools during a conversation — e.g. a glossary, lore database, or
@@ -6811,22 +7164,22 @@ server webového vyhledávání. Anthropic naváže spojení MCP na straně serv
 Přidávejte pouze servery, kterým důvěřujete; jejich nástroje běží s tokenem, který zadáte.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1075"/>
+        <location filename="../settings_dialog.py" line="1071"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1075"/>
+        <location filename="../settings_dialog.py" line="1071"/>
         <source>Server URL</source>
         <translation>URL serveru</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1075"/>
+        <location filename="../settings_dialog.py" line="1071"/>
         <source>Auth token (optional)</source>
         <translation>Ověřovací token (volitelné)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1080"/>
+        <location filename="../settings_dialog.py" line="1076"/>
         <source>Name: a short unique label referenced internally (letters/digits/_).
 Server URL: the MCP server endpoint (Streamable HTTP / SSE).
 Auth token: optional bearer token; stored obfuscated on disk.
@@ -6837,152 +7190,152 @@ Ověřovací token: volitelný bearer token; uložen na disku obfuskovaně.
 Řádky bez názvu nebo URL jsou ignorovány.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1095"/>
+        <location filename="../settings_dialog.py" line="1091"/>
         <source>Add Server</source>
         <translation>Přidat server</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1098"/>
+        <location filename="../settings_dialog.py" line="1094"/>
         <source>Remove Selected</source>
         <translation>Odebrat vybrané</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1108"/>
+        <location filename="../settings_dialog.py" line="1104"/>
         <source>Audio / TTS Preview</source>
         <translation>Náhled zvuku / TTS</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1111"/>
+        <location filename="../settings_dialog.py" line="1107"/>
         <source>Enable Audio Preview panel</source>
         <translation>Povolit panel náhledu zvuku</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1116"/>
+        <location filename="../settings_dialog.py" line="1112"/>
         <source>Show the Audio Preview dock so you can play the original game audio
 and synthesize a TTS read-out of your translation for timing comparison.</source>
         <translation>Zobrazit dok náhledu zvuku, abyste mohli přehrát původní herní zvuk
 a syntetizovat čtení TTS svého překladu pro porovnání délky.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1123"/>
+        <location filename="../settings_dialog.py" line="1119"/>
         <source>eSpeak-NG (built-in)</source>
         <translation>eSpeak-NG (vestavěný)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1124"/>
+        <location filename="../settings_dialog.py" line="1120"/>
         <source>Piper (neural, external binary)</source>
         <translation>Piper (neuronový, externí binární soubor)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1125"/>
+        <location filename="../settings_dialog.py" line="1121"/>
         <source>None (duration estimate only)</source>
         <translation>Žádný (pouze odhad délky)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1132"/>
+        <location filename="../settings_dialog.py" line="1128"/>
         <source>TTS engine:</source>
         <translation>Modul TTS:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1137"/>
+        <location filename="../settings_dialog.py" line="1133"/>
         <source>eSpeak-NG voice code, e.g. uk, ru, de, fr, en-us.
 Run `espeak-ng --voices` for the full list.</source>
         <translation>Kód hlasu eSpeak-NG, např. uk, ru, de, fr, en-us.
 Spusťte `espeak-ng --voices` pro úplný seznam.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1140"/>
+        <location filename="../settings_dialog.py" line="1136"/>
         <source>eSpeak voice:</source>
         <translation>Hlas eSpeak:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1146"/>
+        <location filename="../settings_dialog.py" line="1142"/>
         <source>eSpeak-NG words-per-minute rate (default 130 — slower than natural
 speech to better match game dialogue cadence).</source>
         <translation>Rychlost eSpeak-NG ve slovech za minutu (výchozí 130 — pomalejší než přirozená
 řeč, aby lépe odpovídala tempu herních dialogů).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1149"/>
+        <location filename="../settings_dialog.py" line="1145"/>
         <source>eSpeak speed (WPM):</source>
         <translation>Rychlost eSpeak (slov/min):</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1154"/>
+        <location filename="../settings_dialog.py" line="1150"/>
         <source>Path to the Piper binary, or just &apos;piper&apos; if on PATH.</source>
         <translation>Cesta k binárnímu souboru Piper nebo jen „piper“, je-li v PATH.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1156"/>
-        <location filename="../settings_dialog.py" line="1167"/>
-        <location filename="../settings_dialog.py" line="1181"/>
-        <location filename="../settings_dialog.py" line="1214"/>
-        <location filename="../settings_dialog.py" line="1230"/>
-        <location filename="../settings_dialog.py" line="1409"/>
+        <location filename="../settings_dialog.py" line="1152"/>
+        <location filename="../settings_dialog.py" line="1163"/>
+        <location filename="../settings_dialog.py" line="1177"/>
+        <location filename="../settings_dialog.py" line="1210"/>
+        <location filename="../settings_dialog.py" line="1226"/>
+        <location filename="../settings_dialog.py" line="1405"/>
         <source>…</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1160"/>
+        <location filename="../settings_dialog.py" line="1156"/>
         <source>Piper binary:</source>
         <translation>Binární soubor Piper:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1164"/>
+        <location filename="../settings_dialog.py" line="1160"/>
         <source>path/to/model.onnx</source>
         <translation>cesta/k/modelu.onnx</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1165"/>
+        <location filename="../settings_dialog.py" line="1161"/>
         <source>Path to the Piper .onnx voice model file.</source>
         <translation>Cesta k souboru hlasového modelu Piper .onnx.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1171"/>
+        <location filename="../settings_dialog.py" line="1167"/>
         <source>Piper model:</source>
         <translation>Model Piper:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1175"/>
+        <location filename="../settings_dialog.py" line="1171"/>
         <source>Root dir of extracted game audio files</source>
         <translation>Kořenový adresář extrahovaných herních zvukových souborů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1177"/>
+        <location filename="../settings_dialog.py" line="1173"/>
         <source>Directory containing extracted Starfield/Fallout/Skyrim audio files.
 The panel will try to auto-locate files by form ID from the filename.</source>
         <translation>Adresář obsahující extrahované zvukové soubory Starfield/Fallout/Skyrim.
 Panel se pokusí soubory automaticky najít podle Form ID z názvu souboru.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1185"/>
+        <location filename="../settings_dialog.py" line="1181"/>
         <source>Audio directory:</source>
         <translation>Adresář zvuku:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1188"/>
+        <location filename="../settings_dialog.py" line="1184"/>
         <source>Auto-synthesize TTS on string selection</source>
         <translation>Automaticky syntetizovat TTS při výběru řetězce</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1194"/>
+        <location filename="../settings_dialog.py" line="1190"/>
         <source>Automatically synthesize the TTS read-out whenever you select
 a new string. May slow down navigation if synthesis takes &gt; 1 s.</source>
         <translation>Automaticky syntetizovat čtení TTS při každém výběru
 nového řetězce. Může zpomalit navigaci, pokud syntéza trvá &gt; 1 s.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1200"/>
+        <location filename="../settings_dialog.py" line="1196"/>
         <source>Native game voice playback (Starfield)</source>
         <translation>Přehrávání původního herního hlasu (Starfield)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1206"/>
+        <location filename="../settings_dialog.py" line="1202"/>
         <source>Game Data dir with *Voices*.ba2 archives</source>
         <translation>Složka Data hry s archivy *Voices*.ba2</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1208"/>
+        <location filename="../settings_dialog.py" line="1204"/>
         <source>Starfield &apos;Data&apos; directory containing the voice archives
 (e.g. &apos;Starfield - Voices01.ba2&apos;).  In ESP/ESM mode the dialogue
 FormID is resolved automatically; in .strings mode enter a FormID
@@ -6993,141 +7346,141 @@ dialogu zjistí automaticky; v režimu .strings zadejte FormID
 ručně v panelu náhledu zvuku.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1218"/>
+        <location filename="../settings_dialog.py" line="1214"/>
         <source>Voice Data directory:</source>
         <translation>Adresář s hlasovými daty:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1226"/>
+        <location filename="../settings_dialog.py" line="1222"/>
         <source>Path to vgmstream-cli, or just &apos;vgmstream-cli&apos; if on PATH.
 Required to decode Wwise .wem voice clips (ffmpeg cannot).</source>
         <translation>Cesta k vgmstream-cli, nebo jen „vgmstream-cli“, pokud je v PATH.
 Vyžadováno k dekódování hlasových klipů Wwise .wem (ffmpeg to neumí).</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1234"/>
+        <location filename="../settings_dialog.py" line="1230"/>
         <source>vgmstream binary:</source>
         <translation>Spustitelný soubor vgmstream:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1238"/>
+        <location filename="../settings_dialog.py" line="1234"/>
         <source>English (Voices01/02)</source>
         <translation>Angličtina (Voices01/02)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1239"/>
+        <location filename="../settings_dialog.py" line="1235"/>
         <source>German (_de)</source>
         <translation>Němčina (_de)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1240"/>
+        <location filename="../settings_dialog.py" line="1236"/>
         <source>Spanish (_es)</source>
         <translation>Španělština (_es)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1241"/>
+        <location filename="../settings_dialog.py" line="1237"/>
         <source>French (_fr)</source>
         <translation>Francouzština (_fr)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1242"/>
+        <location filename="../settings_dialog.py" line="1238"/>
         <source>Japanese (_ja)</source>
         <translation>Japonština (_ja)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1250"/>
+        <location filename="../settings_dialog.py" line="1246"/>
         <source>Which voice language pack to index for playback.</source>
         <translation>Který jazykový balíček hlasu indexovat pro přehrávání.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1252"/>
+        <location filename="../settings_dialog.py" line="1248"/>
         <source>Voice language:</source>
         <translation>Jazyk hlasu:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1277"/>
+        <location filename="../settings_dialog.py" line="1273"/>
         <source>Next tip →</source>
         <translation>Další tip →</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1316"/>
+        <location filename="../settings_dialog.py" line="1312"/>
         <source>💡 Tip: Uses translategemma3-st (custom modified) optimized for Starfield Ukrainian localization. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
         <translation>💡 Tip: používá translategemma3-st (vlastní úprava) optimalizovaný pro ukrajinskou lokalizaci Starfieldu. Používejte anglické kotvy: &apos;To Ukrainian:&apos;, &apos;To English:&apos; atd.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1321"/>
+        <location filename="../settings_dialog.py" line="1317"/>
         <source>💡 Tip: Uses Gemma 4 Opus 48B (Starfield-tuned). Highest quality, slower. Use English anchors: &apos;To Ukrainian:&apos;, &apos;To English:&apos;, etc.</source>
         <translation>💡 Tip: používá Gemma 4 Opus 48B (vyladěno pro Starfield). Nejvyšší kvalita, pomalejší. Používejte anglické kotvy: &apos;To Ukrainian:&apos;, &apos;To English:&apos; atd.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1326"/>
+        <location filename="../settings_dialog.py" line="1322"/>
         <source>💡 Tip: Claude Code backend selected — runs on your Claude Code subscription with no Claude API cost. Requires the &apos;claude&apos; CLI installed and logged in (run &apos;claude&apos; once). No API key needed.</source>
         <translation>💡 Tip: vybrán backend Claude Code — běží na vašem předplatném Claude Code bez nákladů na Claude API. Vyžaduje nainstalované a přihlášené CLI „claude“ (jednou spusťte „claude“). Klíč API není potřeba.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1332"/>
+        <location filename="../settings_dialog.py" line="1328"/>
         <source>💡 Tip: Claude backend selected. Configure your API key in the Claude section below.</source>
         <translation>💡 Tip: vybrán backend Claude. Nakonfigurujte svůj klíč API v sekci Claude níže.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1336"/>
+        <location filename="../settings_dialog.py" line="1332"/>
         <source>💡 Tip: Custom model selected. Ensure it supports your target language and follows the system prompt configured above.</source>
         <translation>💡 Tip: vybrán vlastní model. Ujistěte se, že podporuje váš cílový jazyk a řídí se systémovým promptem nastaveným výše.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1368"/>
+        <location filename="../settings_dialog.py" line="1364"/>
         <source>No known service manager (sv / systemctl / rc-service) was found on PATH. Enter the command manually, e.g. &apos;pkill -x ollama&apos;.</source>
         <translation>V PATH nebyl nalezen žádný známý správce služeb (sv / systemctl / rc-service). Zadejte příkaz ručně, např. „pkill -x ollama“.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1404"/>
+        <location filename="../settings_dialog.py" line="1400"/>
         <source>● No API URL set</source>
         <translation>● Není nastavena URL adresa API</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1451"/>
+        <location filename="../settings_dialog.py" line="1447"/>
         <source>● {n} model(s) loaded</source>
         <translation>● Načteno {n} modelů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1457"/>
+        <location filename="../settings_dialog.py" line="1453"/>
         <source>● New model detected: {name}</source>
         <translation>● Zjištěn nový model: {name}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1466"/>
+        <location filename="../settings_dialog.py" line="1462"/>
         <source>● Refresh failed</source>
         <translation>● Obnovení selhalo</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1469"/>
+        <location filename="../settings_dialog.py" line="1465"/>
         <source>Refresh Failed</source>
         <translation>Obnovení selhalo</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1470"/>
+        <location filename="../settings_dialog.py" line="1466"/>
         <source>Could not load models from {url}:
 {error}</source>
         <translation>Nepodařilo se načíst modely z {url}:
 {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1573"/>
+        <location filename="../settings_dialog.py" line="1569"/>
         <source>● Checking Claude Code CLI...</source>
         <translation>● Kontrola CLI Claude Code...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1579"/>
+        <location filename="../settings_dialog.py" line="1575"/>
         <source>● &apos;claude&apos; CLI not found</source>
         <translation>● CLI „claude“ nenalezeno</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1582"/>
+        <location filename="../settings_dialog.py" line="1578"/>
         <source>Claude Code Not Found</source>
         <translation>Claude Code nenalezeno</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1584"/>
+        <location filename="../settings_dialog.py" line="1580"/>
         <source>The &apos;claude&apos; command could not be found.
 
 • Install Claude Code, then run &apos;claude&apos; once to log in.
@@ -7138,17 +7491,17 @@ Vyžadováno k dekódování hlasových klipů Wwise .wem (ffmpeg to neumí).</t
 • Nebo nastavte proměnnou prostředí CLAUDE_CLI_PATH na jeho cestu.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1600"/>
+        <location filename="../settings_dialog.py" line="1596"/>
         <source>● Claude Code ready ✓</source>
         <translation>● Claude Code připraveno ✓</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1603"/>
+        <location filename="../settings_dialog.py" line="1599"/>
         <source>Claude Code Ready</source>
         <translation>Claude Code připraveno</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1605"/>
+        <location filename="../settings_dialog.py" line="1601"/>
         <source>Found the &apos;claude&apos; CLI:
   {cli}
 {version}
@@ -7165,17 +7518,17 @@ Model „{model}“ poběží jako --model {alias} na vašem předplatném Claud
 Pokud požadavky selžou, jednou spusťte „claude“ v terminálu a ověřte, že jste přihlášeni.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1634"/>
+        <location filename="../settings_dialog.py" line="1630"/>
         <source>● Uses Claude API key</source>
         <translation>● Používá klíč Claude API</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1637"/>
+        <location filename="../settings_dialog.py" line="1633"/>
         <source>Claude API Backend</source>
         <translation>Backend Claude API</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1639"/>
+        <location filename="../settings_dialog.py" line="1635"/>
         <source>Model &apos;{model}&apos; uses the metered Claude API.
 
 Set your Anthropic API key in the Claude section below. To avoid API costs, pick a &apos;Claude Code&apos; model instead — it runs on your Claude Code subscription.</source>
@@ -7184,119 +7537,119 @@ Set your Anthropic API key in the Claude section below. To avoid API costs, pick
 Nastavte svůj klíč Anthropic API v sekci Claude níže. Chcete-li se vyhnout nákladům na API, zvolte místo toho model „Claude Code“ — běží na vašem předplatném Claude Code.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1647"/>
+        <location filename="../settings_dialog.py" line="1643"/>
         <source>● Testing Ollama...</source>
         <translation>● Testování Ollama...</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1660"/>
+        <location filename="../settings_dialog.py" line="1656"/>
         <source>● Model &apos;{model}&apos; not found</source>
         <translation>● Model &apos;{model}&apos; nenalezen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1663"/>
+        <location filename="../settings_dialog.py" line="1659"/>
         <source>Model Not Found</source>
         <translation>Model nenalezen</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1670"/>
+        <location filename="../settings_dialog.py" line="1666"/>
         <source>● Connected ✓</source>
         <translation>● Připojeno ✓</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1672"/>
+        <location filename="../settings_dialog.py" line="1668"/>
         <source>Success</source>
         <translation>Úspěch</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1672"/>
+        <location filename="../settings_dialog.py" line="1668"/>
         <source>Connected to Ollama!
 Model &apos;{model}&apos; is ready.</source>
         <translation>Připojeno k Ollama!
 Model &apos;{model}&apos; je připraven.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1675"/>
+        <location filename="../settings_dialog.py" line="1671"/>
         <source>● Connection failed</source>
         <translation>● Připojení selhalo</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1678"/>
+        <location filename="../settings_dialog.py" line="1674"/>
         <source>Connection Error</source>
         <translation>Chyba připojení</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1685"/>
+        <location filename="../settings_dialog.py" line="1681"/>
         <source>● Error</source>
         <translation>● Chyba</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1687"/>
+        <location filename="../settings_dialog.py" line="1683"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1687"/>
+        <location filename="../settings_dialog.py" line="1683"/>
         <source>Unexpected error: {error}</source>
         <translation>Neočekávaná chyba: {error}</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1694"/>
+        <location filename="../settings_dialog.py" line="1690"/>
         <source>Select Config Directory</source>
         <translation>Vybrat adresář konfigurace</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1709"/>
+        <location filename="../settings_dialog.py" line="1705"/>
         <source>Select Cache Directory</source>
         <translation>Vybrat adresář mezipaměti</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1734"/>
+        <location filename="../settings_dialog.py" line="1730"/>
         <source>Select Background</source>
         <translation>Vybrat pozadí</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1742"/>
+        <location filename="../settings_dialog.py" line="1738"/>
         <source>Select Protected Terms File</source>
         <translation>Vybrat soubor chráněných termínů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1743"/>
+        <location filename="../settings_dialog.py" line="1739"/>
         <source>Text Files (*.txt *.TXT);;All Files (*)</source>
         <translation>Textové soubory (*.txt *.TXT);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1751"/>
+        <location filename="../settings_dialog.py" line="1747"/>
         <source>Select Cookie-Editor JSON Export</source>
         <translation>Vybrat export JSON z Cookie-Editoru</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1752"/>
+        <location filename="../settings_dialog.py" line="1748"/>
         <source>JSON Files (*.json *.JSON);;All Files (*)</source>
         <translation>Soubory JSON (*.json *.JSON);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1764"/>
+        <location filename="../settings_dialog.py" line="1760"/>
         <source>Waiting for browser…</source>
         <translation>Čekání na prohlížeč…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1765"/>
+        <location filename="../settings_dialog.py" line="1761"/>
         <source>Connecting to Nexus Mods…</source>
         <translation>Připojování k Nexus Mods…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1773"/>
+        <location filename="../settings_dialog.py" line="1769"/>
         <source>Authorise in your browser, then return here…</source>
         <translation>Autorizujte v prohlížeči a poté se vraťte sem…</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1786"/>
+        <location filename="../settings_dialog.py" line="1782"/>
         <source>Nexus Mods sign-in failed</source>
         <translation>Přihlášení k Nexus Mods selhalo</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1788"/>
+        <location filename="../settings_dialog.py" line="1784"/>
         <source>Could not complete Single Sign-On:
 
 {0}
@@ -7309,178 +7662,163 @@ Please try again. If your browser showed &quot;Application ID was invalid&quot;,
 Zkuste to znovu. Pokud váš prohlížeč zobrazil „Application ID was invalid“, slug SSO aplikace není registrován — zkontrolujte Nastavení → NexusMods → Slug SSO aplikace.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1809"/>
+        <location filename="../settings_dialog.py" line="1805"/>
         <source>✓ Signed in — an API key is stored for this device.</source>
         <translation>✓ Přihlášeno — klíč API je uložen pro toto zařízení.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1811"/>
+        <location filename="../settings_dialog.py" line="1807"/>
         <source>Not signed in. Click “Sign in with Nexus Mods” to authorise.</source>
         <translation>Nepřihlášeno. Klikněte na „Přihlásit se přes Nexus Mods“ pro autorizaci.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1830"/>
+        <location filename="../settings_dialog.py" line="1826"/>
         <source>Select Piper Binary</source>
         <translation>Vybrat binární soubor Piper</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1830"/>
+        <location filename="../settings_dialog.py" line="1826"/>
         <source>Executable (*);;All Files (*)</source>
         <translation>Spustitelný soubor (*);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1838"/>
+        <location filename="../settings_dialog.py" line="1834"/>
         <source>Select Piper Voice Model</source>
         <translation>Vybrat hlasový model Piper</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1839"/>
+        <location filename="../settings_dialog.py" line="1835"/>
         <source>ONNX model (*.onnx);;All Files (*)</source>
         <translation>Model ONNX (*.onnx);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1848"/>
+        <location filename="../settings_dialog.py" line="1844"/>
         <source>Select audio files directory</source>
         <translation>Vybrat adresář zvukových souborů</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1858"/>
+        <location filename="../settings_dialog.py" line="1854"/>
         <source>Select game Data directory (with *Voices*.ba2)</source>
         <translation>Vyberte adresář Data hry (s *Voices*.ba2)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1867"/>
+        <location filename="../settings_dialog.py" line="1863"/>
         <source>Select vgmstream-cli binary</source>
         <translation>Vyberte spustitelný soubor vgmstream-cli</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1869"/>
+        <location filename="../settings_dialog.py" line="1865"/>
         <source>All Files (*)</source>
         <translation>Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1882"/>
+        <location filename="../settings_dialog.py" line="1878"/>
         <source>⚠  Restart the application to apply the new language.</source>
         <translation>⚠  Restartujte aplikaci pro použití nového jazyka.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1937"/>
+        <location filename="../settings_dialog.py" line="1933"/>
         <source>Unsaved Changes</source>
         <translation>Neuložené změny</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1938"/>
+        <location filename="../settings_dialog.py" line="1934"/>
         <source>You have unsaved changes.
 Discard them and close?</source>
         <translation>Máte neuložené změny.
 Zahodit je a zavřít?</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1954"/>
-        <location filename="../settings_dialog.py" line="1971"/>
+        <location filename="../settings_dialog.py" line="1950"/>
+        <location filename="../settings_dialog.py" line="1967"/>
         <source>Cache</source>
         <translation>Mezipaměť</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1954"/>
+        <location filename="../settings_dialog.py" line="1950"/>
         <source>No translation cache is active.</source>
         <translation>Žádná překladová mezipaměť není aktivní.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1958"/>
+        <location filename="../settings_dialog.py" line="1954"/>
         <source>Remove all cached translations?
 This cannot be undone.</source>
         <translation>Odebrat všechny uložené překlady v mezipaměti?
 Tuto akci nelze vrátit zpět.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1971"/>
+        <location filename="../settings_dialog.py" line="1967"/>
         <source>Translation cache cleared.</source>
         <translation>Překladová mezipaměť vymazána.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="619"/>
+        <location filename="../settings_dialog.py" line="625"/>
         <source>Character count threshold for &apos;long&apos; strings</source>
         <translation>Prahová hodnota počtu znaků pro &apos;dlouhé&apos; řetězce</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="648"/>
+        <location filename="../settings_dialog.py" line="644"/>
         <source>Long String Action:</source>
         <translation>Akce pro dlouhý řetězec:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="624"/>
-        <source>Translate</source>
-        <translation>Přeložit</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="491"/>
+        <location filename="../settings_dialog.py" line="472"/>
         <source>✓ = complete translation  ·  others are community work-in-progress</source>
         <translation>✓ = kompletní překlad  ·  ostatní jsou ve vývoji komunity</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="625"/>
-        <source>Original</source>
-        <translation>Původní</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="626"/>
-        <source>Skip</source>
-        <translation>Přeskočit</translation>
-    </message>
-    <message>
-        <location filename="../settings_dialog.py" line="679"/>
+        <location filename="../settings_dialog.py" line="675"/>
         <source>Auto-save after translation</source>
         <translation>Automaticky uložit po překladu</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="724"/>
+        <location filename="../settings_dialog.py" line="720"/>
         <source>Performance</source>
         <translation>Výkon</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="727"/>
+        <location filename="../settings_dialog.py" line="723"/>
         <source>Enable translation cache</source>
         <translation>Povolit překladovou mezipaměť</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="730"/>
+        <location filename="../settings_dialog.py" line="726"/>
         <source>Cache completed translations to disk so repeated strings are returned instantly.</source>
         <translation>Ukládat dokončené překlady na disk, aby se opakující se řetězce vracely okamžitě.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="734"/>
-        <location filename="../settings_dialog.py" line="1957"/>
+        <location filename="../settings_dialog.py" line="730"/>
+        <location filename="../settings_dialog.py" line="1953"/>
         <source>Clear Cache</source>
         <translation>Vymazat mezipaměť</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="735"/>
+        <location filename="../settings_dialog.py" line="731"/>
         <source>Remove all cached translations from memory and disk</source>
         <translation>Odebrat všechny uložené překlady z paměti a disku</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="743"/>
+        <location filename="../settings_dialog.py" line="739"/>
         <source>Number of parallel translation threads (1–32). Higher values increase throughput but may overwhelm Ollama. Default: 10.</source>
         <translation>Počet paralelních překladových vláken (1–32). Vyšší hodnoty zvyšují propustnost, ale mohou přetížit Ollama. Výchozí: 10.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="747"/>
+        <location filename="../settings_dialog.py" line="743"/>
         <source>Parallel workers:</source>
         <translation>Paralelní pracovníci:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="289"/>
+        <location filename="../settings_dialog.py" line="296"/>
         <source>Ollama CPU threads:</source>
         <translation>CPU vlákna Ollama:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="284"/>
+        <location filename="../settings_dialog.py" line="291"/>
         <source>Auto</source>
         <translation>Automaticky</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="643"/>
+        <location filename="../settings_dialog.py" line="639"/>
         <source>Action to take for strings exceeding the threshold:
 - Translate: Proceed with translation (may take long)
 - Original: Immediately return original text
@@ -7491,12 +7829,12 @@ Tuto akci nelze vrátit zpět.</translation>
 - Přeskočit: Ponechat nepřeložené a označit jako čekající</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="286"/>
+        <location filename="../settings_dialog.py" line="293"/>
         <source>CPU threads passed to Ollama per request (0 = auto). Tune this to match your CPU core count for best performance.</source>
         <translation>Počet CPU vláken předaných Ollama na požadavek (0 = auto). Laděte podle počtu jader CPU pro nejlepší výkon.</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1664"/>
+        <location filename="../settings_dialog.py" line="1660"/>
         <source>Model &apos;{model}&apos; is not installed.
 
 Available models:
@@ -7507,7 +7845,7 @@ Dostupné modely:
 </translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1667"/>
+        <location filename="../settings_dialog.py" line="1663"/>
         <source>
 
 Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</source>
@@ -7516,7 +7854,7 @@ Install with: ollama create &lt;model-name&gt; -f Modelfile.&lt;model-name&gt;</
 Nainstalujte pomocí: ollama create &lt;název-modelu&gt; -f Modelfile.&lt;název-modelu&gt;</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="1679"/>
+        <location filename="../settings_dialog.py" line="1675"/>
         <source>Could not connect to Ollama at {url}
 
 Make sure Ollama is running:
@@ -7529,244 +7867,302 @@ Ujistěte se, že Ollama běží:
   • Výchozí URL: http://localhost:11434</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="2095"/>
+        <location filename="../settings_dialog.py" line="2099"/>
         <source>Keyboard Shortcuts</source>
         <translation>Klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="2124"/>
+        <location filename="../settings_dialog.py" line="2128"/>
         <source>Reset All to Defaults</source>
         <translation>Obnovit vše na výchozí</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="114"/>
         <source>Press F7 to jump instantly to the next untranslated string.</source>
         <translation>Stiskněte F7 pro okamžitý přechod na další nepřeložený řetězec.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="115"/>
         <source>Ctrl+Enter approves the current translation and advances to the next string.</source>
         <translation>Ctrl+Enter schválí aktuální překlad a přejde na další řetězec.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="116"/>
         <source>Ctrl+R rejects the current translation and marks it for retranslation.</source>
         <translation>Ctrl+R odmítne aktuální překlad a označí jej k opětovnému přeložení.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="117"/>
         <source>Ctrl+K opens the Command Palette — fuzzy-search any action without touching the mouse.</source>
         <translation>Ctrl+K otevře paletu příkazů — fuzzy vyhledávání libovolné akce bez použití myši.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="118"/>
         <source>Translation Memory pre-loads known translations from a previous file — matched strings are never sent to the AI.</source>
         <translation>Překladová paměť přednačte známé překlady z předchozího souboru — shodné řetězce se nikdy neodesílají do AI.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="119"/>
         <source>Batch Translate Folder (File menu) retranslates an entire directory of string files in one run.</source>
         <translation>„Dávkově přeložit složku“ (nabídka „Soubor“) znovu přeloží celý adresář se soubory řetězců v jednom průchodu.</translation>
     </message>
     <message>
-        <source>The QC dialog's 'Auto-Retranslate Issues' button queues all flagged strings for a single batch fix.</source>
+        <location filename="../settings_dialog.py" line="120"/>
+        <source>The QC dialog&apos;s &apos;Auto-Retranslate Issues&apos; button queues all flagged strings for a single batch fix.</source>
         <translation>Tlačítko „Automaticky přeložit problémy“ v dialogu KK zařadí všechny označené řetězce do fronty jedné dávkové opravy.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="121"/>
         <source>Ctrl+Alt+K opens the Consistency Checker — find the same source string with different translations.</source>
         <translation>Ctrl+Alt+K otevře kontrolu konzistence — najde stejný zdrojový řetězec s různými překlady.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="122"/>
         <source>Ctrl+Alt+G runs the Ukrainian gender agreement checker for adjective–noun mismatches.</source>
         <translation>Ctrl+Alt+G spustí ukrajinskou kontrolu shody rodu pro neshody přídavné jméno–podstatné jméno.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="123"/>
         <source>ти/ви register consistency is handled in the translation prompt — the AI keeps informal ти or formal ви consistent per speaker automatically.</source>
         <translation>Konzistence registru ти/ви se řeší v promptu překladu — AI automaticky udržuje neformální ти nebo formální ви konzistentně u každého mluvčího.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="124"/>
         <source>Focus Mode shows one string at a time full-screen — great for distraction-free reviewing.</source>
         <translation>Režim soustředění zobrazuje jeden řetězec po druhém na celou obrazovku — skvělé pro kontrolu bez rozptylování.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="125"/>
         <source>The Difficulty Estimator (0–100 score) helps you prioritise which strings need manual review.</source>
         <translation>Odhadovač obtížnosti (skóre 0–100) vám pomáhá určit priority, které řetězce potřebují ruční kontrolu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="126"/>
         <source>Drag and drop a .strings, .dlstrings, .ilstrings, .esp, .esm, or .ba2 file onto the window to open it.</source>
         <translation>Přetáhněte na okno soubor .strings, .dlstrings, .ilstrings, .esp, .esm nebo .ba2, abyste jej otevřeli.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="127"/>
         <source>The Diff Viewer (word-level) shows exactly what changed between two game versions of the same file.</source>
         <translation>Prohlížeč rozdílů (na úrovni slov) přesně ukáže, co se změnilo mezi dvěma herními verzemi téhož souboru.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="128"/>
         <source>The Glossary Manager ensures consistent terminology — add key terms and the AI will respect them in every call.</source>
         <translation>Správce glosáře zajišťuje konzistentní terminologii — přidejte klíčové termíny a AI je bude respektovat při každém volání.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="129"/>
         <source>Protected terms are replaced with unique tokens before the AI sees the string and restored afterward.</source>
         <translation>Chráněné termíny se před tím, než je AI uvidí, nahradí jedinečnými tokeny a poté se obnoví.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="130"/>
         <source>The Audit Log records every file operation and batch without ever storing actual string content.</source>
         <translation>Auditní protokol zaznamenává každou operaci se souborem a každou dávku, aniž by kdy ukládal skutečný obsah řetězců.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="131"/>
         <source>Crash Recovery auto-saves progress periodically — if the app crashes, your work is offered on next launch.</source>
         <translation>Obnova po pádu pravidelně automaticky ukládá postup — pokud aplikace spadne, při dalším spuštění se vám vaše práce nabídne.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="132"/>
         <source>The NexusMods Browser lets you search, preview, and download translation mods without leaving the app.</source>
         <translation>Prohlížeč NexusMods umožňuje vyhledávat, prohlížet a stahovat překladové módy, aniž byste opustili aplikaci.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="133"/>
         <source>Version Comparison migrates unchanged translations from an old file to a new game version automatically.</source>
         <translation>Porovnání verzí automaticky přenese nezměněné překlady ze starého souboru do nové verze hry.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="134"/>
         <source>Load lore snippets in the Lore RAG Manager to give the AI contextual accuracy for faction names and world events.</source>
         <translation>Načtěte úryvky loru ve správci Lore RAG, abyste AI dodali kontextovou přesnost pro názvy frakcí a herní události.</translation>
     </message>
     <message>
-        <source>The Font Checker identifies characters missing from Starfield's Scaleform SWF font atlases.</source>
+        <location filename="../settings_dialog.py" line="135"/>
+        <source>The Font Checker identifies characters missing from Starfield&apos;s Scaleform SWF font atlases.</source>
         <translation>Kontrola písem identifikuje znaky chybějící v atlasech písem Scaleform SWF hry Starfield.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="136"/>
         <source>Ctrl+M opens the Macro Editor — record repetitive edits as named macros and replay them with one click.</source>
         <translation>Ctrl+M otevře editor maker — nahrávejte opakující se úpravy jako pojmenovaná makra a přehrávejte je jedním kliknutím.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="137"/>
         <source>Translator Profiles let you define per-locale style rules and author metadata for each language.</source>
         <translation>Profily překladatele umožňují definovat stylová pravidla podle jazyka a metadata autora pro každý jazyk.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="138"/>
         <source>Session Manager (Ctrl+Shift+N) saves your search and filter state so you can resume exactly where you left off.</source>
         <translation>Správce relací (Ctrl+Shift+N) ukládá stav hledání a filtrů, takže můžete pokračovat přesně tam, kde jste skončili.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="139"/>
         <source>The Plugin Validator dialog scans ESP/ESM files for NPC dialogue camera bugs before packaging.</source>
         <translation>Dialog validátoru pluginů prohledává soubory ESP/ESM na chyby kamery v dialozích NPC před zabalením.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="140"/>
         <source>Shift+C copies the source text of the selected row; Shift+V pastes it into the translation column.</source>
         <translation>Shift+C zkopíruje zdrojový text vybraného řádku; Shift+V jej vloží do sloupce překladu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="141"/>
         <source>The status bar shows Total / Done / Left % and an ETA countdown during AI translation batches.</source>
         <translation>Stavový řádek zobrazuje během dávkových AI překladů Celkem / Hotovo / Zbývá % a odpočet ETA.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="142"/>
         <source>Advanced Search supports full regex across source and translation columns simultaneously.</source>
         <translation>Pokročilé hledání podporuje plné regulární výrazy současně ve sloupcích zdroje a překladu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="143"/>
         <source>BA2 archives with multiple .strings entries show a picker so you can choose which file to open.</source>
         <translation>Archivy BA2 s více položkami .strings zobrazí výběr, abyste mohli zvolit, který soubor otevřít.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="144"/>
         <source>The Claude Chat Panel (dock) lets you ask Claude about the selected string and apply its suggestion directly.</source>
         <translation>Panel chatu Claude (dok) umožňuje zeptat se Claude na vybraný řetězec a jeho návrh rovnou použít.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="145"/>
         <source>TTS Preview synthesizes a read-out of your translation for timing comparison with the original game audio.</source>
         <translation>Náhled TTS syntetizuje přečtení vašeho překladu pro porovnání načasování s původním zvukem hry.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="146"/>
         <source>The Dialogue Tree Viewer shows the Quest → Topic → Response hierarchy from an ESP/ESM file as an interactive tree.</source>
         <translation>Prohlížeč stromu dialogů zobrazuje hierarchii Úkol → Téma → Odpověď ze souboru ESP/ESM jako interaktivní strom.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="147"/>
         <source>Pop out the string table to a second monitor via Window → Pop-out Table for multi-monitor workflows.</source>
         <translation>Vysuňte tabulku řetězců na druhý monitor přes „Okno → Vysunout tabulku“ pro práci s více monitory.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="148"/>
         <source>The Visual Context Preview renders the selected string inside a faithful in-game UI widget mockup.</source>
         <translation>Náhled vizuálního kontextu vykresluje vybraný řetězec uvnitř věrné napodobeniny herního prvku rozhraní.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="149"/>
         <source>The fine-tuned qcgemma4-st model checks 16 issue codes including GLOSSARY_MISMATCH, UNTRANSLATED, and REPETITION_ARTIFACT.</source>
         <translation>Doladěný model qcgemma4-st kontroluje 16 kódů problémů včetně GLOSSARY_MISMATCH, UNTRANSLATED a REPETITION_ARTIFACT.</translation>
     </message>
     <message>
-        <source>Enable 'Protect English text' when translating RU→UK to keep English terminology untouched.</source>
+        <location filename="../settings_dialog.py" line="150"/>
+        <source>Enable &apos;Protect English text&apos; when translating RU→UK to keep English terminology untouched.</source>
         <translation>Při překladu RU→UK zapněte „Chránit anglický text“, aby anglická terminologie zůstala nedotčená.</translation>
     </message>
     <message>
-        <source>English anchors such as 'To Ukrainian:' and 'To English:' in the Modelfile structure the model's output reliably.</source>
+        <location filename="../settings_dialog.py" line="151"/>
+        <source>English anchors such as &apos;To Ukrainian:&apos; and &apos;To English:&apos; in the Modelfile structure the model&apos;s output reliably.</source>
         <translation>Anglické kotvy jako „To Ukrainian:“ a „To English:“ v Modelfile spolehlivě strukturují výstup modelu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="152"/>
         <source>Increasing num_ctx uses more VRAM but lets the model see longer strings and richer system prompts.</source>
         <translation>Zvýšení num_ctx spotřebuje více VRAM, ale umožní modelu vidět delší řetězce a bohatší systémové prompty.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="153"/>
         <source>The Translation Cache (SHA-256 keyed) avoids retranslating identical strings across different files or sessions.</source>
         <translation>Překladová mezipaměť (klíčovaná SHA-256) se vyhýbá opakovanému překládání identických řetězců napříč různými soubory nebo relacemi.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="154"/>
         <source>xTranslator SST XML files can be imported and exported — string IDs are matched first, then source text.</source>
         <translation>Soubory SST XML z xTranslatoru lze importovat a exportovat — řetězce se párují nejprve podle ID, poté podle zdrojového textu.</translation>
     </message>
     <message>
-        <source>Consistency Checker's auto-replace rewrites all variants to your chosen canonical form in one click.</source>
+        <location filename="../settings_dialog.py" line="155"/>
+        <source>Consistency Checker&apos;s auto-replace rewrites all variants to your chosen canonical form in one click.</source>
         <translation>Automatická náhrada v kontrole konzistence přepíše všechny varianty na vámi zvolený kanonický tvar jedním kliknutím.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="156"/>
         <source>Pre-load Translation Memory before a Batch Translate run to skip strings that are already translated.</source>
         <translation>Před spuštěním dávkového překladu přednačte překladovou paměť, abyste přeskočili již přeložené řetězce.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="157"/>
         <source>The Spell Checker supports Hunspell, spylls (pure Python), or a CLI fallback depending on what is installed.</source>
         <translation>Kontrola pravopisu podporuje Hunspell, spylls (čistý Python) nebo záložní CLI podle toho, co je nainstalováno.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="158"/>
         <source>The Gender Checker uses a Ukrainian noun gender dictionary — extend the dictionary to improve detection coverage.</source>
         <translation>Kontrola rodu používá slovník rodu ukrajinských podstatných jmen — rozšiřte slovník pro lepší pokrytí detekce.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="159"/>
         <source>Pop out the Translation Editor pane as a floating dock for a larger, more comfortable editing area.</source>
         <translation>Vysuňte panel editoru překladu jako plovoucí dok pro větší a pohodlnější oblast úprav.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="160"/>
         <source>The Claude API key is stored with AES-256-GCM encryption via the system keyring — never in plaintext on disk.</source>
         <translation>Klíč API Claude se ukládá se šifrováním AES-256-GCM přes systémovou klíčenku — nikdy jako prostý text na disku.</translation>
     </message>
     <message>
-        <source>To retranslate only failed strings, open the QC dialog and click 'Auto-Retranslate Issues'.</source>
+        <location filename="../settings_dialog.py" line="161"/>
+        <source>To retranslate only failed strings, open the QC dialog and click &apos;Auto-Retranslate Issues&apos;.</source>
         <translation>Chcete-li znovu přeložit jen chybné řetězce, otevřete dialog KK a klikněte na „Automaticky přeložit problémy“.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="162"/>
         <source>The Pre-Translation Estimator learns from your manual corrections — it improves automatically as you work.</source>
         <translation>Odhadovač před překladem se učí z vašich ručních oprav — zlepšuje se automaticky během práce.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="163"/>
         <source>All keyboard shortcuts can be reassigned in Settings → Keyboard Shortcuts to match your personal workflow.</source>
         <translation>Všechny klávesové zkratky lze přemapovat v „Nastavení → Klávesové zkratky“ tak, aby vyhovovaly vašemu pracovnímu postupu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="164"/>
         <source>The Lore RAG search tab lets you preview exactly which context snippets will be injected for a given string.</source>
         <translation>Karta hledání Lore RAG umožňuje zobrazit náhled, které úryvky kontextu budou pro daný řetězec vloženy.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="165"/>
         <source>Use the Register Checker to ensure you address the player consistently with either ти or ви throughout the whole file.</source>
         <translation>Pomocí kontroly registru oslovujte hráče v celém souboru konzistentně buď ти, nebo ви.</translation>
     </message>
     <message>
-        <source>The 'Protect proper nouns' option keeps faction, company, ship, and character names from being translated by the AI.</source>
+        <location filename="../settings_dialog.py" line="166"/>
+        <source>The &apos;Protect proper nouns&apos; option keeps faction, company, ship, and character names from being translated by the AI.</source>
         <translation>Volba „Chránit vlastní jména“ brání AI v překladu názvů frakcí, firem, lodí a postav.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="167"/>
         <source>Rejected strings are highlighted in red in the table so you can find them quickly for manual correction.</source>
         <translation>Odmítnuté řetězce jsou v tabulce zvýrazněny červeně, abyste je rychle našli k ruční opravě.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="168"/>
         <source>The AI repetition artifact checker catches copy-paste loops and model hallucinations before they reach the player.</source>
         <translation>Kontrola artefaktů opakování AI zachytí smyčky kopírování a vkládání a halucinace modelu dříve, než se dostanou k hráči.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="169"/>
         <source>Newline count mismatch detection ensures your translation preserves the same line breaks as the source.</source>
         <translation>Detekce neshody počtu konců řádků zajišťuje, že váš překlad zachová stejné zalomení řádků jako zdroj.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="170"/>
         <source>Russian character leakage detection flags any Cyrillic characters from the wrong script in a Ukrainian output.</source>
         <translation>Detekce úniku ruských znaků označí jakékoli znaky cyrilice z nesprávného písma v ukrajinském výstupu.</translation>
     </message>
     <message>
+        <location filename="../settings_dialog.py" line="171"/>
         <source>Export the Version Comparison report as HTML or CSV for review by other team members.</source>
         <translation>Exportujte zprávu o porovnání verzí jako HTML nebo CSV pro kontrolu ostatními členy týmu.</translation>
     </message>
@@ -7848,22 +8244,22 @@ Ujistěte se, že Ollama běží:
 <context>
     <name>StringEditDialog</name>
     <message>
-        <location filename="../string_table.py" line="823"/>
+        <location filename="../string_table.py" line="837"/>
         <source>Edit String - ID: {id}</source>
         <translation>Upravit řetězec – ID: {id}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="830"/>
+        <location filename="../string_table.py" line="844"/>
         <source>&lt;b&gt;String ID:&lt;/b&gt; {id}</source>
         <translation>&lt;b&gt;ID řetězce:&lt;/b&gt; {id}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="834"/>
+        <location filename="../string_table.py" line="848"/>
         <source>&lt;b&gt;Original Text:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Původní text:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="845"/>
+        <location filename="../string_table.py" line="859"/>
         <source>&lt;b&gt;Translated Text:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Přeložený text:&lt;/b&gt;</translation>
     </message>
@@ -7871,52 +8267,52 @@ Ujistěte se, že Ollama běží:
 <context>
     <name>StringTableModel</name>
     <message>
-        <location filename="../string_table.py" line="643"/>
+        <location filename="../string_table.py" line="657"/>
         <source>Translated — quality error</source>
         <translation>Přeloženo — chyba kvality</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="645"/>
+        <location filename="../string_table.py" line="659"/>
         <source>Translated — quality warning</source>
         <translation>Přeloženo — varování kvality</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="646"/>
+        <location filename="../string_table.py" line="660"/>
         <source>Translated — OK</source>
         <translation>Přeloženo — OK</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="650"/>
+        <location filename="../string_table.py" line="664"/>
         <source>Pending — difficulty: {level}</source>
         <translation>Čekající — obtížnost: {level}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="653"/>
+        <location filename="../string_table.py" line="667"/>
         <source>Pending</source>
         <translation>Čekající</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="655"/>
+        <location filename="../string_table.py" line="669"/>
         <source>Translation error</source>
         <translation>Chyba překladu</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="657"/>
+        <location filename="../string_table.py" line="671"/>
         <source>String ID: {id}</source>
         <translation>ID řetězce: {id}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="659"/>
+        <location filename="../string_table.py" line="673"/>
         <source>Original: {text}</source>
         <translation>Původní: {text}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="662"/>
+        <location filename="../string_table.py" line="676"/>
         <source>Translation: {text}</source>
         <translation>Překlad: {text}</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="662"/>
+        <location filename="../string_table.py" line="676"/>
         <source>Not translated</source>
         <translation>Nepřeloženo</translation>
     </message>
@@ -7924,37 +8320,37 @@ Ujistěte se, že Ollama běží:
 <context>
     <name>StringTableView</name>
     <message>
-        <location filename="../string_table.py" line="1089"/>
+        <location filename="../string_table.py" line="1103"/>
         <source>Edit String...</source>
         <translation>Upravit řetězec...</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1092"/>
+        <location filename="../string_table.py" line="1106"/>
         <source>View Diff...</source>
         <translation>Zobrazit rozdíly...</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1097"/>
+        <location filename="../string_table.py" line="1111"/>
         <source>Copy Translation	Ctrl+C</source>
         <translation>Kopírovat překlad	Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1100"/>
+        <location filename="../string_table.py" line="1114"/>
         <source>Copy Source	Ctrl+Shift+C</source>
         <translation>Kopírovat zdroj	Ctrl+Shift+C</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1105"/>
+        <location filename="../string_table.py" line="1119"/>
         <source>Paste to Translation	Ctrl+V</source>
         <translation>Vložit do překladu	Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1108"/>
+        <location filename="../string_table.py" line="1122"/>
         <source>Fill Translation from Source	Ctrl+Shift+V</source>
         <translation>Vyplnit překlad ze zdroje	Ctrl+Shift+V</translation>
     </message>
     <message>
-        <location filename="../string_table.py" line="1112"/>
+        <location filename="../string_table.py" line="1126"/>
         <source>Assign Character Profile…</source>
         <translation>Přiřadit profil postavy…</translation>
     </message>
@@ -8308,163 +8704,94 @@ QMainWindow { background-color: #1e1e2e; color: #cdd6f4; }</translation>
 <context>
     <name>ThemeManager</name>
     <message>
-        <location filename="../theme_manager.py" line="932"/>
+        <location filename="../theme_manager.py" line="939"/>
         <source>Follows the OS light/dark preference. Currently using: {theme}.</source>
         <translation>Respektuje předvolbu světlého/tmavého režimu OS. Aktuálně používá: {theme}.</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="937"/>
+        <location filename="../theme_manager.py" line="944"/>
         <source>Default dark theme with blue accents (slate colors)</source>
         <translation>Výchozí tmavé téma s modrými akcenty (břidlicové barvy)</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="938"/>
+        <location filename="../theme_manager.py" line="945"/>
         <source>Deep dark blue, minimal contrast</source>
         <translation>Hluboká tmavě modrá, minimální kontrast</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="939"/>
+        <location filename="../theme_manager.py" line="946"/>
         <source>Arctic blue-gray palette, soft on eyes</source>
         <translation>Arktická modro-šedá paleta, šetrná k očím</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="940"/>
+        <location filename="../theme_manager.py" line="947"/>
         <source>Purple-accented dark theme</source>
         <translation>Tmavé téma s fialovými akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="941"/>
+        <location filename="../theme_manager.py" line="948"/>
         <source>Warm dark theme with blue selection</source>
         <translation>Teplé tmavé téma s modrým výběrem</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="942"/>
+        <location filename="../theme_manager.py" line="949"/>
         <source>Clean light theme with blue accents</source>
         <translation>Čisté světlé téma s modrými akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="943"/>
+        <location filename="../theme_manager.py" line="950"/>
         <source>Low-contrast dark, optimized for readability</source>
         <translation>Tmavé s nízkým kontrastem, optimalizováno pro čitelnost</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="944"/>
+        <location filename="../theme_manager.py" line="951"/>
         <source>Warm retro dark with amber/orange accents</source>
         <translation>Teplá retro tmavá s jantarově oranžovými akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="945"/>
+        <location filename="../theme_manager.py" line="952"/>
         <source>Deep navy cyberpunk with blue highlights</source>
         <translation>Tmavě námořnicky modrý kyberpunk s modrými akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="946"/>
+        <location filename="../theme_manager.py" line="953"/>
         <source>Classic terminal dark with vibrant green accents</source>
         <translation>Klasická tmavá konzole se sytě zelenými akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="947"/>
+        <location filename="../theme_manager.py" line="954"/>
         <source>Atom editor inspired, muted blue accents</source>
         <translation>Inspirováno editorem Atom, tlumené modré akcenty</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="948"/>
+        <location filename="../theme_manager.py" line="955"/>
         <source>Low-contrast light, warm cream — complement to Solarized Dark</source>
         <translation>Světlý s nízkým kontrastem, teplá krémová — doplněk k Solarized Dark</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="949"/>
+        <location filename="../theme_manager.py" line="956"/>
         <source>Warm cream light theme, easy on eyes for long sessions</source>
         <translation>Teplý krémový světlý motiv, šetrný k očím při dlouhých sezeních</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="950"/>
+        <location filename="../theme_manager.py" line="957"/>
         <source>Game-accurate dark navy UI — colors from Starfield Interface SWF/GFX assets</source>
         <translation>Herně věrné tmavě modré rozhraní — barvy z assetů SWF/GFX rozhraní Starfieldu</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="951"/>
+        <location filename="../theme_manager.py" line="958"/>
         <source>Green-on-black terminal/computer screen aesthetic from the game</source>
         <translation>Estetika zeleného textu na černé obrazovce terminálu/počítače ze hry</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="952"/>
+        <location filename="../theme_manager.py" line="959"/>
         <source>WCAG AAA black/white/cyan theme for visually impaired users</source>
         <translation>Téma WCAG AAA černá/bílá/tyrkysová pro uživatele se zrakovým postižením</translation>
     </message>
     <message>
-        <location filename="../theme_manager.py" line="959"/>
+        <location filename="../theme_manager.py" line="966"/>
         <source>Custom theme loaded from {path}.qss</source>
         <translation>Vlastní téma načteno z {path}.qss</translation>
-    </message>
-</context>
-<context>
-    <name>TranslationDialog</name>
-    <message>
-        <location filename="../translation_dialog.py" line="23"/>
-        <source>Batch Translation</source>
-        <translation>Dávkový překlad</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="36"/>
-        <source>Filter Strings</source>
-        <translation>Filtrovat řetězce</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="39"/>
-        <source>Only untranslated strings</source>
-        <translation>Pouze nepřeložené řetězce</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="43"/>
-        <source>Minimum length:</source>
-        <translation>Minimální délka:</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="54"/>
-        <source>Maximum length:</source>
-        <translation>Maximální délka:</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="71"/>
-        <source>ID</source>
-        <translation>ID</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="71"/>
-        <source>Original</source>
-        <translation>Původní</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="71"/>
-        <source>Preview</source>
-        <translation>Náhled</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="84"/>
-        <source>Select All</source>
-        <translation>Vybrat vše</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="88"/>
-        <source>Clear Selection</source>
-        <translation>Zrušit výběr</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="94"/>
-        <source>Translate Selected</source>
-        <translation>Přeložit vybrané</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="192"/>
-        <location filename="../translation_dialog.py" line="226"/>
-        <source>Translating {current}/{total}...</source>
-        <translation>Překládá se {current}/{total}...</translation>
-    </message>
-    <message>
-        <location filename="../translation_dialog.py" line="232"/>
-        <source>✓ Translated {count} strings</source>
-        <translation>✓ Přeloženo {count} řetězců</translation>
     </message>
 </context>
 <context>
@@ -9015,73 +9342,108 @@ Aktualizovány budou pouze řetězce, které jsou aktuálně nepřeložené nebo
 <context>
     <name>VisualContextPreview</name>
     <message>
-        <location filename="../visual_context_preview.py" line="544"/>
+        <location filename="../visual_context_preview.py" line="569"/>
         <source>Visual Context Preview</source>
         <translation>Náhled vizuálního kontextu</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="566"/>
+        <location filename="../visual_context_preview.py" line="591"/>
         <source>Context:</source>
         <translation>Kontext:</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="569"/>
+        <location filename="../visual_context_preview.py" line="594"/>
         <source>Override the auto-detected UI context for this string</source>
         <translation>Přepsat automaticky zjištěný kontext rozhraní pro tento řetězec</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="571"/>
+        <location filename="../visual_context_preview.py" line="596"/>
         <source>Auto-detect</source>
         <translation>Automaticky rozpoznat</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="578"/>
+        <location filename="../visual_context_preview.py" line="603"/>
         <source>View:</source>
         <translation>Zobrazení:</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="581"/>
-        <location filename="../visual_context_preview.py" line="682"/>
-        <location filename="../visual_context_preview.py" line="700"/>
+        <location filename="../visual_context_preview.py" line="606"/>
+        <location filename="../visual_context_preview.py" line="709"/>
+        <location filename="../visual_context_preview.py" line="727"/>
         <source>Source</source>
         <translation>Zdroj</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="586"/>
-        <location filename="../visual_context_preview.py" line="686"/>
-        <location filename="../visual_context_preview.py" line="706"/>
+        <location filename="../visual_context_preview.py" line="611"/>
+        <location filename="../visual_context_preview.py" line="713"/>
+        <location filename="../visual_context_preview.py" line="733"/>
         <source>Translation</source>
         <translation>Překlad</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="591"/>
+        <location filename="../visual_context_preview.py" line="616"/>
         <source>Both</source>
         <translation>Obojí</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="717"/>
+        <location filename="../visual_context_preview.py" line="744"/>
         <source>Src: {s}  Trl: {t} ({r}%)</source>
         <translation>Zdroj: {s}  Překl.: {t} ({r}%)</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="723"/>
+        <location filename="../visual_context_preview.py" line="750"/>
         <source>Chars: {n}</source>
         <translation>Znaky: {n}</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="727"/>
+        <location filename="../visual_context_preview.py" line="754"/>
         <source>Lines: {n}/{m}</source>
         <translation>Řádky: {n}/{m}</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="730"/>
+        <location filename="../visual_context_preview.py" line="757"/>
         <source>OVERFLOW</source>
         <translation>PŘETEČENÍ</translation>
     </message>
     <message>
-        <location filename="../visual_context_preview.py" line="732"/>
+        <location filename="../visual_context_preview.py" line="759"/>
         <source>✓ Fits</source>
         <translation>✓ Vejde se</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="805"/>
+        <source>CLIPS</source>
+        <translation>OŘÍZNUTO</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="805"/>
+        <source>fits</source>
+        <translation>vejde se</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="819"/>
+        <source>Rendered width measured from the game font&apos;s own advance widths.</source>
+        <translation>Šířka změřená z vlastních šířek znaků herního písma.</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="820"/>
+        <source>Widget: {label} — {note}</source>
+        <translation>Widget: {label} — {note}</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="822"/>
+        <source>The budget is an estimate for a 1920×1080 stage; tune it in Translation → UI Width-Fit Simulator.</source>
+        <translation>Limit je odhad pro scénu 1920×1080; upravte jej v Překlad → Simulátor šířky rozhraní.</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="828"/>
+        <source>×{r:.2f} the width of the English source, which fit by construction.</source>
+        <translation>×{r:.2f} šířky anglického originálu, který se z podstaty vešel.</translation>
+    </message>
+    <message>
+        <location filename="../visual_context_preview.py" line="832"/>
+        <source>Approximate: contains runtime text (a name or number) or glyphs with no metric in this font.</source>
+        <translation>Přibližně: obsahuje text doplňovaný za běhu (jméno nebo číslo) nebo glyfy bez metriky v tomto písmu.</translation>
     </message>
 </context>
 <context>
@@ -9281,6 +9643,410 @@ Záloha: {bak}</translation>
     </message>
 </context>
 <context>
+    <name>WidthFitDialog</name>
+    <message>
+        <location filename="../width_fit_dialog.py" line="150"/>
+        <source>UI Width-Fit Simulator</source>
+        <translation>Simulátor šířky rozhraní</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="170"/>
+        <source>Simulate Fit</source>
+        <translation>Simulovat vejití</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="175"/>
+        <source>Widget:</source>
+        <translation>Widget:</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="178"/>
+        <source>Auto-detect guesses each string&apos;s widget from its shape.
+Pick a specific widget to test every label against that one box.</source>
+        <translation>Automatická detekce odhaduje widget každého řetězce podle jeho tvaru.
+Vyberte konkrétní widget, chcete-li všechny popisky měřit proti jednomu poli.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="181"/>
+        <source>Auto-detect</source>
+        <translation>Automaticky rozpoznat</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="186"/>
+        <source>Also list tight fits (&gt;90%)</source>
+        <translation>Zobrazit i těsná vejití (&gt;90 %)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="188"/>
+        <source>Include strings that fit but come within 10% of the edge — these
+break first when the budget estimate is slightly off.</source>
+        <translation>Zahrne řetězce, které se vejdou, ale zbývá jim méně než 10 % k okraji —
+právě ty se rozbijí jako první, když je odhad limitu mírně mimo.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="206"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="206"/>
+        <location filename="../width_fit_dialog.py" line="366"/>
+        <source>Widget</source>
+        <translation>Widget</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="206"/>
+        <source>Source</source>
+        <translation>Zdroj</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="207"/>
+        <source>Translation</source>
+        <translation>Překlad</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="207"/>
+        <source>Width</source>
+        <translation>Šířka</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="207"/>
+        <source>Budget</source>
+        <translation>Limit</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="208"/>
+        <source>Fill</source>
+        <translation>Zaplnění</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="208"/>
+        <source>vs Source</source>
+        <translation>vs. zdroj</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="222"/>
+        <source>Jump to String</source>
+        <translation>Přejít na řetězec</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="228"/>
+        <source>Export CSV…</source>
+        <translation>Exportovat CSV…</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="235"/>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="241"/>
+        <source>Font Metrics</source>
+        <translation>Metriky písma</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="246"/>
+        <source>Font file:</source>
+        <translation>Soubor písma:</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="250"/>
+        <source>Optional — override with a game SWF atlas or TTF/OTF</source>
+        <translation>Volitelné — lze nahradit herním SWF atlasem nebo TTF/OTF</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="256"/>
+        <source>Load advance widths from a SWF or TTF font</source>
+        <translation>Načíst šířky znaků z písma SWF nebo TTF</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="261"/>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="262"/>
+        <source>Go back to the bundled Starfield fonts</source>
+        <translation>Zpět k přibaleným písmům Starfieldu</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="274"/>
+        <source>Real Widgets from the Game (recommended)</source>
+        <translation>Skutečné widgety ze hry (doporučeno)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="279"/>
+        <source>Point this at your game&apos;s Data folder to read the &lt;b&gt;actual&lt;/b&gt; widget bounds out of its Scaleform SWFs, instead of testing against an estimate. Each field also names its own font, so the right face and size are used automatically.</source>
+        <translation>Zvolte složku Data své hry, aby se &lt;b&gt;skutečné&lt;/b&gt; hranice widgetů načetly z jejích Scaleform SWF místo měření proti odhadu. Každé pole navíc uvádí vlastní písmo, takže se automaticky použije správný řez i velikost.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="291"/>
+        <source>…/Starfield/Data</source>
+        <translation>…/Starfield/Data</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="296"/>
+        <source>Select the game&apos;s Data folder</source>
+        <translation>Vyberte složku Data hry</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="300"/>
+        <source>Scan Game UI</source>
+        <translation>Prohledat rozhraní hry</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="312"/>
+        <source>Check the tightest build (large-font menu, where it is tighter)</source>
+        <translation>Kontrolovat nejtěsnější sestavení (nabídka s velkým písmem, je-li těsnější)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="316"/>
+        <source>Starfield ships a large-font variant of most menus (missionmenu_lrg).
+Where the text grows the box usually does not — up to 2.6× — so a label
+that only just fits the normal menu clips there.
+
+Decided per widget, not across the board: of the 589 widgets that exist in
+both builds, 251 grow the font, 336 keep it, and 2 even shrink it. So the
+build with the least room is measured — whichever one that is — and the
+line below says what happened for the widget you picked.</source>
+        <translation>Starfield dodává u většiny nabídek variantu s velkým písmem (missionmenu_lrg).
+Tam, kde text roste, pole obvykle ne — až 2,6× — takže popisek, který se do běžné
+nabídky sotva vejde, se tam ořízne.
+
+Rozhoduje se u každého widgetu zvlášť, ne plošně: z 589 widgetů, které existují
+v obou sestaveních, 251 písmo zvětšuje, 336 je ponechává a 2 je dokonce zmenšují.
+Měří se proto sestavení s nejmenším prostorem — ať je to kterékoli — a řádek níže
+uvádí, jak to dopadlo u zvoleného widgetu.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="329"/>
+        <source>Test against:</source>
+        <translation>Měřit proti:</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="335"/>
+        <source>A real text field from the game. Only fields that CLIP are listed —
+wrapping fields grow instead of truncating, so width is not their bug.
+Type to filter.</source>
+        <translation>Skutečné textové pole ze hry. Uvedena jsou jen pole, která OŘEZÁVAJÍ —
+pole se zalamováním rostou místo zkracování, šířka tedy není jejich chyba.
+Psaním filtrujete.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="350"/>
+        <source>Widget Budgets (editable)</source>
+        <translation>Limity widgetů (upravitelné)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="355"/>
+        <source>Measured text width is exact — it comes from the font&apos;s own advance widths. The budgets below are estimates for a 1920×1080 stage; correct them if you know a widget&apos;s real width. The “vs Source” column does not depend on them at all.</source>
+        <translation>Změřená šířka textu je přesná — pochází z vlastních šířek znaků písma. Limity níže jsou odhady pro scénu 1920×1080; opravte je, pokud znáte skutečnou šířku widgetu. Sloupec „vs. zdroj“ na nich vůbec nezávisí.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="366"/>
+        <source>Text width (px)</source>
+        <translation>Šířka textu (px)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="367"/>
+        <source>Font size (px)</source>
+        <translation>Velikost písma (px)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="367"/>
+        <source>Notes</source>
+        <translation>Poznámky</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="382"/>
+        <source>This widget draws its text in CAPS.</source>
+        <translation>Tento widget vykresluje text VELKÝMI písmeny.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="405"/>
+        <source>Estimated default — not read from the game&apos;s SWF. Verify it against your own UI if you can.</source>
+        <translation>Odhadovaná výchozí hodnota — nenačtená ze SWF hry. Pokud můžete, ověřte ji ve svém rozhraní.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="418"/>
+        <source>Load Font Metrics</source>
+        <translation>Načíst metriky písma</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="420"/>
+        <source>Fonts (*.swf *.ttf *.otf);;All files (*)</source>
+        <translation>Písma (*.swf *.ttf *.otf);;Všechny soubory (*)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="429"/>
+        <location filename="../width_fit_dialog.py" line="439"/>
+        <location filename="../width_fit_dialog.py" line="517"/>
+        <location filename="../width_fit_dialog.py" line="681"/>
+        <location filename="../width_fit_dialog.py" line="872"/>
+        <source>Width-Fit Simulator</source>
+        <translation>Simulátor šířky</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="430"/>
+        <source>Could not parse that font: {err}</source>
+        <translation>Toto písmo se nepodařilo načíst: {err}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="441"/>
+        <source>That font contains glyphs but no advance-width table, so it cannot be used to measure text.
+
+SWF font tags only carry widths when their HasLayout flag is set. Keeping the current metrics.</source>
+        <translation>Toto písmo obsahuje glyfy, ale nemá tabulku šířek, takže jím nelze měřit text.
+
+Značky písem SWF nesou šířky jen s nastaveným příznakem HasLayout. Stávající metriky zůstávají.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="467"/>
+        <source>⚠ No font metrics available — data/fonts/ is missing. Load a SWF or TTF to measure text.</source>
+        <translation>⚠ Nejsou dostupné metriky písma — chybí data/fonts/. Načtěte SWF nebo TTF, abyste mohli měřit text.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="473"/>
+        <source>Measuring with: {name} (loaded file, used for every widget)</source>
+        <translation>Měřeno pomocí: {name} (načtený soubor, použit pro každý widget)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="481"/>
+        <source>Measuring with the bundled Starfield fonts — {names}</source>
+        <translation>Měřeno přibalenými písmy Starfieldu — {names}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="488"/>
+        <source>Select the Game Data Folder</source>
+        <translation>Vyberte složku Data hry</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="502"/>
+        <source>Scanning…</source>
+        <translation>Prohledávání…</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="512"/>
+        <source>Scanning {name}… ({n})</source>
+        <translation>Prohledávání {name}… ({n})</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="518"/>
+        <source>Could not scan the game UI: {err}</source>
+        <translation>Rozhraní hry se nepodařilo prohledat: {err}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="530"/>
+        <source>⚠ No UI text fields found there — is that the game&apos;s Data folder?</source>
+        <translation>⚠ Nebyla tam nalezena žádná textová pole rozhraní — je to opravdu složka Data hry?</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="560"/>
+        <source>{listed} measurable clipping widgets from {swfs} SWFs. “~” marks a widget whose font size the SWF does not state — it is inferred from the box height, so treat those as approximate.</source>
+        <translation>Měřitelných ořezávajících widgetů: {listed} z {swfs} SWF. „~“ označuje widget, jehož velikost písma SWF neuvádí — je odvozena z výšky pole, berte ji tedy jako přibližnou.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="611"/>
+        <source> &lt;b&gt;Worst case:&lt;/b&gt; the &lt;b&gt;{swf}&lt;/b&gt; build has less room, so that is the one measured.</source>
+        <translation> &lt;b&gt;Nejhorší případ:&lt;/b&gt; sestavení &lt;b&gt;{swf}&lt;/b&gt; má méně místa, měří se tedy ono.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="617"/>
+        <source> This is the large-font build, and nothing is tighter — it already is the worst case.</source>
+        <translation> Toto je sestavení s velkým písmem a nic není těsnější — už jde o nejhorší případ.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="621"/>
+        <source> Its large-font build gives no less room, so this already is the worst case.</source>
+        <translation> Jeho sestavení s velkým písmem nedává méně místa, jde tedy už o nejhorší případ.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="627"/>
+        <source> ⚠ This menu reuses this name and box for more than one field, so its large-font twin cannot be told apart — it was &lt;b&gt;not&lt;/b&gt; checked.</source>
+        <translation> ⚠ Tato nabídka používá stejný název a pole pro více polí, takže jeho protějšek s velkým písmem nelze rozlišit — &lt;b&gt;nebyl&lt;/b&gt; zkontrolován.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="632"/>
+        <source> This menu ships no large-font build, so only this one is checked.</source>
+        <translation> Tato nabídka se nedodává se sestavením s velkým písmem, kontroluje se tedy jen toto.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="642"/>
+        <source>exact — the game states this font size</source>
+        <translation>přesně — hra tuto velikost písma uvádí</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="644"/>
+        <source>font size inferred from the box height</source>
+        <translation>velikost písma odvozena z výšky pole</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="649"/>
+        <source>&lt;b&gt;{label}&lt;/b&gt; — {w:.0f}px of usable width at {f:.0f}px. Font: {note}. Bounds are exact; {conf}.{worst}</source>
+        <translation>&lt;b&gt;{label}&lt;/b&gt; — {w:.0f} px využitelné šířky při {f:.0f} px. Písmo: {note}. Hranice jsou přesné; {conf}.{worst}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="682"/>
+        <source>No font metrics loaded — nothing can be measured.</source>
+        <translation>Nejsou načteny metriky písma — nelze nic změřit.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="712"/>
+        <source>Error during scan: {err}</source>
+        <translation>Chyba při prohledávání: {err}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="740"/>
+        <source>No length-critical strings found — this file is all prose, which wraps rather than clipping.</source>
+        <translation>Nenalezeny žádné délkově kritické řetězce — tento soubor tvoří souvislý text, který se zalamuje, nikoli ořezává.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="745"/>
+        <source>✓ All {n} length-critical string(s) fit their widget.</source>
+        <translation>✓ Všech {n} délkově kritických řetězců se vejde do svého widgetu.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="749"/>
+        <source>{over} of {n} length-critical string(s) overflow  ·  {prose} prose string(s) skipped</source>
+        <translation>Přetéká: {over} z {n} délkově kritických řetězců  ·  přeskočeno souvislého textu: {prose}</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="784"/>
+        <source>Approximate: this string contains runtime text (a name, a number) or characters with no metric in the loaded font, so its final width is not fully knowable here.</source>
+        <translation>Přibližně: tento řetězec obsahuje text doplňovaný za běhu (jméno, číslo) nebo znaky bez metriky v načteném písmu, takže jeho konečnou šířku zde nelze plně určit.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="800"/>
+        <source>Overflows by {n:.0f} px</source>
+        <translation>Přetéká o {n:.0f} px</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="806"/>
+        <source>Fits, but with almost no margin.</source>
+        <translation>Vejde se, ale téměř bez rezervy.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="816"/>
+        <source>Translated width as a multiple of the English source width. The English fit by construction, so a high value means overflow regardless of how accurate the budget estimate is.</source>
+        <translation>Šířka překladu jako násobek šířky anglického originálu. Angličtina se z podstaty vešla, takže vysoká hodnota znamená přetečení bez ohledu na to, jak přesný je odhad limitu.</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="845"/>
+        <source>Export Width-Fit Report</source>
+        <translation>Exportovat zprávu o šířce</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="847"/>
+        <source>CSV (*.csv);;All files (*)</source>
+        <translation>CSV (*.csv);;Všechny soubory (*)</translation>
+    </message>
+    <message>
+        <location filename="../width_fit_dialog.py" line="873"/>
+        <source>Could not write the report: {err}</source>
+        <translation>Zprávu se nepodařilo zapsat: {err}</translation>
+    </message>
+</context>
+<context>
     <name>_RegexReplaceDialog</name>
     <message>
         <location filename="../macro_dialog.py" line="39"/>
@@ -9361,12 +10127,12 @@ Záloha: {bak}</translation>
 <context>
     <name>_TermDiscoveryDialog</name>
     <message>
-        <location filename="../main_window.py" line="7312"/>
+        <location filename="../main_window.py" line="7546"/>
         <source>Discovered Terms — Review &amp; Approve</source>
         <translation>Objevené termíny — Zkontrolovat &amp; Schválit</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7320"/>
+        <location filename="../main_window.py" line="7554"/>
         <source>Candidate terms extracted from the loaded strings.
 Check the ones to add to the protection list. Edit category as needed.
 &lt;b&gt;Score&lt;/b&gt; = cross-match count × 3 + frequency (higher = stronger signal).</source>
@@ -9375,52 +10141,52 @@ Zaškrtněte ty, které chcete přidat do seznamu ochrany. Podle potřeby upravt
 &lt;b&gt;Skóre&lt;/b&gt; = počet křížových shod × 3 + frekvence (vyšší = silnější signál).</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7330"/>
+        <location filename="../main_window.py" line="7564"/>
         <source>Filter:</source>
         <translation>Filtr:</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7332"/>
+        <location filename="../main_window.py" line="7566"/>
         <source>type to filter…</source>
         <translation>pište pro filtrování…</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7336"/>
+        <location filename="../main_window.py" line="7570"/>
         <source>Select All</source>
         <translation>Vybrat vše</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7338"/>
+        <location filename="../main_window.py" line="7572"/>
         <source>Select None</source>
         <translation>Nevybrat nic</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7348"/>
+        <location filename="../main_window.py" line="7582"/>
         <source>✓</source>
         <translation>✓</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7348"/>
+        <location filename="../main_window.py" line="7582"/>
         <source>Term</source>
         <translation>Termín</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7349"/>
+        <location filename="../main_window.py" line="7583"/>
         <source>Category</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7349"/>
+        <location filename="../main_window.py" line="7583"/>
         <source>Freq</source>
         <translation>Frekvence</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7349"/>
+        <location filename="../main_window.py" line="7583"/>
         <source>Score</source>
         <translation>Skóre</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="7365"/>
+        <location filename="../main_window.py" line="7599"/>
         <source>{len(self._candidates)} candidates found</source>
         <translation>Nalezeno {len(self._candidates)} kandidátů</translation>
     </message>
@@ -9428,27 +10194,27 @@ Zaškrtněte ty, které chcete přidat do seznamu ochrany. Podle potřeby upravt
 <context>
     <name>_WelcomeWidget</name>
     <message>
-        <location filename="../main_window.py" line="206"/>
+        <location filename="../main_window.py" line="208"/>
         <source>Bethesda Strings AI Translator</source>
         <translation>Překladač řetězců Bethesda AI</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="214"/>
+        <location filename="../main_window.py" line="216"/>
         <source>Open a string file or plugin to begin</source>
         <translation>Otevřete soubor řetězců nebo plugin pro začátek</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="222"/>
+        <location filename="../main_window.py" line="224"/>
         <source>Open File</source>
         <translation>Otevřít soubor</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="247"/>
+        <location filename="../main_window.py" line="249"/>
         <source>or drag &amp; drop files here</source>
         <translation>nebo sem přetáhněte soubory</translation>
     </message>
     <message>
-        <location filename="../main_window.py" line="272"/>
+        <location filename="../main_window.py" line="274"/>
         <source>What&apos;s New</source>
         <translation>Novinky</translation>
     </message>
