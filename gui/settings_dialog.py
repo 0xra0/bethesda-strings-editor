@@ -1338,7 +1338,9 @@ class SettingsDialog(QDialog):
 
     def _show_tip(self) -> None:
         tip = self._GENERAL_TIPS[self._tip_index % len(self._GENERAL_TIPS)]
-        self._lbl_tip.setText(f"💡 {self.tr(tip)}")
+        # QT_TRANSLATE_NOOP is typed as returning object; str() is a no-op on the
+        # real string it yields and gives self.tr() the identical bytes to look up.
+        self._lbl_tip.setText(f"💡 {self.tr(str(tip))}")
 
     @Slot()
     def _next_tip(self) -> None:
