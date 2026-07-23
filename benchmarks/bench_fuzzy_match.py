@@ -9,6 +9,13 @@ consistency checker.  best_fuzzy_match() is O(N) in the candidate set and is
 called once per untranslated string, so its per-candidate cost multiplied by
 the translation-memory size is what the user feels when a large TM is loaded.
 
+That is exactly why production never calls it over the whole memory:
+TranslationMemory.get_fuzzy narrows the pool through a FuzzyIndex first (a
+lazily-built, *sound* pre-filter — it only drops candidates best_fuzzy_match
+would have rejected anyway), then scores the survivors.  Section C measures
+both, so the number that matters is the production one and the speedup is
+visible next to it.
+
 Measures three scenarios:
 
   A) primitives      — raw levenshtein_distance / longest_common_substring /
@@ -17,8 +24,10 @@ Measures three scenarios:
   B) fuzzy_score     — scored pairs per second on a realistic mix (identical,
                        near-miss, and unrelated strings exercise every branch).
 
-  C) best_fuzzy_match— end-to-end TM lookup: score one source against a whole
-                       translation memory and return the best hit.
+  C) best_fuzzy_match— end-to-end TM lookup, full scan vs the FuzzyIndex-narrowed
+                       path production actually runs (mirrors
+                       TranslationMemory.get_fuzzy): score one source against a
+                       whole translation memory and return the best hit.
 """
 
 import random
@@ -28,6 +37,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from gui.fuzzy_match import (
+    FuzzyIndex,
     best_fuzzy_match,
     fuzzy_score,
     levenshtein_distance,
@@ -135,32 +145,105 @@ def bench_fuzzy_score(n: int = 20000) -> None:
     print(f"  Matched (score not None): {matched:,}  ({matched/n:.0%})")
 
 
-# ── Benchmark C: best_fuzzy_match (TM lookup) ─────────────────────────────────
+# ── Benchmark C: best_fuzzy_match (TM lookup), full scan vs FuzzyIndex ─────────
 
-def bench_best_match(tm_sizes=(500, 2000, 8000), n_queries: int = 50) -> None:
-    _hr(f"C  best_fuzzy_match  —  {n_queries} queries vs TM of {tm_sizes}")
+def _build_tm(tm_size: int, rng: random.Random) -> dict[str, str]:
+    """A source→translation memory of *tm_size* unique sources.
+
+    Deduped like the real map (TranslationMemory._by_src is keyed by source),
+    so both paths below scan the same pool and the correctness cross-check is
+    exact.  A limited word vocabulary means random generation collides, so we
+    top up until the dict actually holds tm_size distinct sources.
+    """
+    by_src: dict[str, str] = {}
+    while len(by_src) < tm_size:
+        by_src[_rand_string(rng.randint(2, 8), rng)] = "<translation>"
+    return by_src
+
+
+def _lookup_indexed(index: FuzzyIndex, by_src: dict[str, str], query: str):
+    """One narrowed lookup, exactly as TranslationMemory.get_fuzzy does it."""
+    candidates = []
+    for src in index.candidates(query):
+        translation = by_src.get(src)
+        if translation:
+            candidates.append((src, translation))
+    if not candidates:
+        return None, 0
+    result = best_fuzzy_match(query, candidates, max_score=3.0)
+    return (result[0] if result else None), len(candidates)
+
+
+def bench_best_match(tm_sizes=(500, 2000, 8000), n_queries: int = 50,
+                     indexed_only_size: int = 50000) -> None:
+    _hr(f"C  best_fuzzy_match  —  full scan vs FuzzyIndex, {n_queries} queries")
+    print("  (the FuzzyIndex column is the path production runs — "
+          "TranslationMemory.get_fuzzy)")
     rng = random.Random(99)
 
     for tm_size in tm_sizes:
-        tm = [
-            (_rand_string(rng.randint(2, 8), rng), "<translation>")
-            for _ in range(tm_size)
-        ]
+        by_src = _build_tm(tm_size, rng)
+        pool = list(by_src.items())
         # Queries are near-misses of random TM entries so some actually hit.
-        queries = [_mutate(tm[rng.randrange(tm_size)][0], rng) for _ in range(n_queries)]
+        sources = list(by_src.keys())
+        queries = [_mutate(rng.choice(sources), rng) for _ in range(n_queries)]
+
+        # Full scan — best_fuzzy_match over the entire memory.
+        t0 = time.perf_counter()
+        full_results = [
+            (r[0] if (r := best_fuzzy_match(q, pool, max_score=3.0)) else None)
+            for q in queries
+        ]
+        full_ms = _elapsed_ms(t0)
+
+        # FuzzyIndex — build once (production builds it lazily, once per TM),
+        # then narrow every query through it before scoring.
+        t0 = time.perf_counter()
+        index = FuzzyIndex(by_src)
+        build_ms = _elapsed_ms(t0)
 
         t0 = time.perf_counter()
-        hits = 0
+        idx_results = []
+        total_cands = 0
         for q in queries:
-            if best_fuzzy_match(q, tm) is not None:
-                hits += 1
-        elapsed = _elapsed_ms(t0)
+            res, n_cands = _lookup_indexed(index, by_src, q)
+            idx_results.append(res)
+            total_cands += n_cands
+        idx_ms = _elapsed_ms(t0)
 
-        per_query = elapsed / n_queries                  # ms
-        per_candidate_us = per_query / tm_size * 1000     # ms → µs
-        print(f"  TM {tm_size:6,} entries | {elapsed:8.1f} ms total  "
-              f"({per_query:6.2f} ms/query, "
-              f"{per_candidate_us:4.2f} µs/candidate)  hits={hits}/{n_queries}")
+        full_q = full_ms / n_queries
+        idx_q = idx_ms / n_queries
+        speedup = full_ms / idx_ms if idx_ms else float("inf")
+        agree = "yes" if full_results == idx_results else "NO ⚠"
+        avg_cands = total_cands / n_queries
+        hits = sum(r is not None for r in idx_results)
+        print(f"  TM {tm_size:6,} | full {full_q:7.2f} ms/q | "
+              f"index {idx_q:6.3f} ms/q (build {build_ms:5.1f} ms, "
+              f"{avg_cands:5.1f}/{tm_size} cands) | "
+              f"{speedup:5.1f}× | same={agree} hits={hits}/{n_queries}")
+
+    # One indexed-only row at a size where the full scan is too slow to bother
+    # with — this is where the pre-filter earns its keep (the miner's TM runs to
+    # six figures).  Full scan is skipped, not because it would differ, but
+    # because n_queries × tm_size scans would dominate the whole benchmark.
+    by_src = _build_tm(indexed_only_size, rng)
+    sources = list(by_src.keys())
+    queries = [_mutate(rng.choice(sources), rng) for _ in range(n_queries)]
+    t0 = time.perf_counter()
+    index = FuzzyIndex(by_src)
+    build_ms = _elapsed_ms(t0)
+    t0 = time.perf_counter()
+    total_cands = 0
+    hits = 0
+    for q in queries:
+        res, n_cands = _lookup_indexed(index, by_src, q)
+        total_cands += n_cands
+        hits += res is not None
+    idx_ms = _elapsed_ms(t0)
+    print(f"  TM {indexed_only_size:6,} | full   (skipped)    | "
+          f"index {idx_ms / n_queries:6.3f} ms/q (build {build_ms:5.1f} ms, "
+          f"{total_cands / n_queries:5.1f}/{indexed_only_size} cands) | "
+          f"    — | same=  —  hits={hits}/{n_queries}")
 
 
 # ── main ──────────────────────────────────────────────────────────────────────

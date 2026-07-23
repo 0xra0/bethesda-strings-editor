@@ -15,7 +15,7 @@ python benchmarks/bench_translation_cache.py
 |--------|-------------------|------------------|
 | `bench_core_io.py` | `bethesda_strings/core.py` | `.strings`/`.dlstrings` parse + serialize throughput, `get_by_id` lookup, dedup-on-save. The path every file open/save hits. |
 | `bench_term_protector.py` | `gui/term_protector.py` | `batch_update()` recompile avoidance, content-hash skip, span cache, longest-match-first correctness. |
-| `bench_fuzzy_match.py` | `gui/fuzzy_match.py` | Levenshtein / longest-common-substring primitives, `fuzzy_score` throughput, and `best_fuzzy_match` translation-memory lookup. |
+| `bench_fuzzy_match.py` | `gui/fuzzy_match.py` | Levenshtein / longest-common-substring primitives, `fuzzy_score` throughput, and `best_fuzzy_match` translation-memory lookup — full scan vs the `FuzzyIndex`-narrowed path production runs (`TranslationMemory.get_fuzzy`), with a same-result cross-check. |
 | `bench_translation_cache.py` | `gui/translation_cache.py` | `make_key` (sha256), LRU set+evict, get hit/miss, and concurrent throughput under a 10-thread pool. |
 
 These are diagnostics, not pass/fail tests — they have no assertions on timing,
@@ -30,3 +30,10 @@ Notes worth knowing when reading the output:
 - `levenshtein_distance` / `longest_common_substring` are O(n·m) DP in pure
   Python, so their cost grows with the *square* of the string length — the
   fuzzy benchmark deliberately uses short, game-realistic strings.
+- Section C's `full` column is `best_fuzzy_match` over the whole memory (O(N) per
+  lookup); the `index` column narrows candidates through `FuzzyIndex` first, as
+  `TranslationMemory.get_fuzzy` does on every uncached string. The `same=yes`
+  check confirms the pre-filter returns the identical winner — it is sound, not
+  approximate. The speedup grows with TM size, which is the point: the miner's
+  TM runs to six figures, and the `full` path is skipped at the largest size
+  because scanning it per query would dominate the whole run.
