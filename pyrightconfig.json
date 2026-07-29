@@ -1,7 +1,27 @@
 {
-    "pythonVersion": "3.11",
+    // The *lowest* Python this project supports (pyproject `requires-python =
+    // ">=3.10"`, ruff `target-version = "py310"`, mypy `python_version =
+    // "3.10"`, conda env `bethesda-strings-editor` on 3.10.x) — deliberately
+    // NOT the 3.12 interpreter CI happens to run pyright under. A higher value
+    // silently accepts 3.11+ syntax and stdlib that breaks on the real floor.
+    "pythonVersion": "3.10",
     "typeCheckingMode": "standard",
-    "exclude": ["scripts/"],
+
+    // The three rules below are off because of PySide6's shipped stubs, not
+    // because of anything in this codebase. Turning any of them back on adds
+    // 473 errors (456 / 8 / 9 respectively, measured with pyright 1.1.409),
+    // every one a stub artifact rather than a real defect:
+    //   reportAttributeAccessIssue      — enum members the stubs don't expose
+    //                                     on the class, e.g. `QDialogButtonBox
+    //                                     .Close`
+    //   reportCallIssue                 — ctor forms the stubs give no overload
+    //                                     for, e.g. the keyword signal
+    //                                     connection `QShortcut(seq, self,
+    //                                     activated=handler)`
+    //   reportIncompatibleMethodOverride — virtuals whose stub signature is
+    //                                     narrower than the one we must
+    //                                     override, e.g. QAbstractItemModel
+    //                                     .data, QGraphicsItem.paint
     "reportAttributeAccessIssue": "none",
     "reportCallIssue": "none",
     "reportIncompatibleMethodOverride": "none"
