@@ -1,10 +1,27 @@
+# Optional local hooks — CI is authoritative (.github/workflows/lint.yml).
+# Install with:  pip install pre-commit && pre-commit install
+# Bump the rev with:  pre-commit autoupdate
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.1
+    # Keep this in step with the ruff CI runs, or the hook passes on a version
+    # CI does not use and the PR fails anyway. astral-sh/ruff-action resolves no
+    # pin from this repo (requirements.txt only *documents* `ruff>=0.15`, it does
+    # not install it), so it takes the latest release — 0.16.0 as of this pin.
+    rev: v0.16.0
     hooks:
-      # Linter
-      - id: ruff
+      # `ruff check`, the one thing CI enforces. --fix rewrites what it can; the
+      # hook then reports failure so the rewritten files get re-staged.
+      # (`id: ruff` also still works but pre-commit prints it as
+      # "ruff (legacy alias)" — `ruff-check` is the current name.)
+      - id: ruff-check
         args: [--fix]
-      # Formatter (optional — normalises trailing whitespace, blank lines)
-      - id: ruff-format
-        args: [--check]
+
+      # `ruff-format` is deliberately NOT enabled. This codebase has never been
+      # run through the formatter — `ruff format --check .` would reformat 167 of
+      # 190 files — and CI checks lint only, never formatting. Enabled here, the
+      # hook blocks any commit touching one of those files (including
+      # gui/main_window.py and bethesda_strings/core.py), and the only way out is
+      # to reformat the whole file, burying the real change in an unrelated diff.
+      # Adopting the formatter is a one-off repo-wide reformat plus a CI step,
+      # not a hook someone flips on locally.
+      # - id: ruff-format

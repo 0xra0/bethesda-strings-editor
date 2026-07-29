@@ -58,9 +58,11 @@ Configuration lives in `pyproject.toml` (ruff) and `pyrightconfig.json`.
 - **ruff** — `E`, `W`, `F` rule sets, line length **110**. `E501` (line too
   long) is ignored globally because QSS theme strings and Qt file-filter
   strings cannot be wrapped; `E741` and `E731` are ignored as deliberate style.
-- **pyright** — `standard` mode, `scripts/` excluded, and three Qt-noisy rules
+- **pyright** — `standard` mode, `pythonVersion` 3.10 (the supported floor, not
+  the 3.12 CI runs it under), whole tree checked, and three Qt-noisy rules
   turned off (`reportAttributeAccessIssue`, `reportCallIssue`,
-  `reportIncompatibleMethodOverride`).
+  `reportIncompatibleMethodOverride`) because PySide6's stubs generate 473
+  false positives across them.
 
 **Run pyright in the same environment you installed `requirements.txt` into.**
 It resolves imports from whatever interpreter it finds, so running it against a
@@ -79,9 +81,15 @@ pip install pre-commit
 pre-commit install
 ```
 
-Two ruff hooks run on `git commit`: the linter with `--fix` (it rewrites what
-it can), and the formatter with `--check` — that one **reports** and fails the
-commit rather than reformatting, so run `ruff format .` yourself when it does.
+One hook runs on `git commit`: `ruff check --fix`, the same lint CI enforces.
+It rewrites what it can and then fails, so you re-stage the fixed files.
+
+`ruff-format` is in the config but commented out on purpose. The codebase has
+never been run through the formatter (`ruff format --check .` would reformat
+167 of 190 files) and no workflow checks formatting, so enabling the hook would
+block any commit touching one of those files and force an unrelated whole-file
+reformat into the diff. Adopting it is a one-off repo-wide reformat plus a CI
+step, not a local toggle.
 
 ## UI translations
 
