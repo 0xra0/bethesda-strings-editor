@@ -24,6 +24,7 @@ locally-running `Ollama <https://ollama.ai>`_ model.
    :caption: Contributing
 
    contributing
+   forking
 
 .. toctree::
    :maxdepth: 1

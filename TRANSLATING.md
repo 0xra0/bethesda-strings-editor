@@ -2,6 +2,13 @@
 
 Thank you for helping translate Bethesda Strings Editor!
 
+> **This guide is about the app's own interface** — its menus, dialogs and
+> buttons, held in Qt `.ts` files. That is a different thing from the language
+> the editor translates *game strings* into: those are Starfield locale codes
+> (`uk`, `pl`, `ptbr`) wired through Python tables, and adding one is covered by
+> [FORKING.md](FORKING.md#2-adding-a-translation-target-language). The two are
+> independent — neither requires the other.
+
 ## Status
 
 Every locale currently carries all **1,735** UI strings — none is a stub. What
@@ -29,7 +36,7 @@ speaker. These are the most valuable to contribute to: you are polishing, not
 starting from scratch.
 
 Want to add a new language? Open an issue or a PR — see
-[Adding a new language](#adding-a-new-language).
+[Adding a new interface language](#adding-a-new-interface-language).
 
 ---
 
@@ -115,7 +122,11 @@ Leave these **empty** (they fall back to English):
 
 ---
 
-## Adding a new language
+## Adding a new interface language
+
+(For a new *translation target* — the language game strings are translated into
+— see [FORKING.md §2](FORKING.md#2-adding-a-translation-target-language)
+instead.)
 
 1. Copy an existing locale as a starting template:
 

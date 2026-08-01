@@ -81,6 +81,8 @@ All 9 official Starfield languages plus Russian, Ukrainian, and Korean:
 
 Each language pair has a dedicated system prompt with register rules, script conventions, and native examples.
 
+Not listed here? A target language is an entry in a handful of tables, not a rewrite — [FORKING.md](FORKING.md) walks through adding one, from the one-line minimum to the word lists and quality checks.
+
 ---
 
 ## Features
@@ -351,6 +353,22 @@ UI translations live in `gui/translations/<locale>.ts`. After editing any `.ts` 
 Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`, `ko_KR` — 1,735 strings each, all filled in.
 
 **English and Ukrainian are maintained by [@0xra0](https://github.com/0xra0); every other locale is community-maintained** — machine-assisted and not proofread by a native speaker, because the author does not speak them. Corrections are very welcome: see [TRANSLATING.md](TRANSLATING.md).
+
+Note that this is the app's *own* UI, which is a different thing from the language it translates game strings **into** — see [FORKING.md](FORKING.md) for that one.
+
+---
+
+## Forking
+
+[**FORKING.md**](FORKING.md) is the guide for making this editor your own:
+
+- **Adding a translation target language** — the one-line minimum, then display name, style rule, encoding pair, gender, word list + checker, spell-check and quality-check wiring, with a checklist and a worked Czech example
+- **Custom prompts** — the Prompt Editor's three layers with no code, and how `to_system_prompt()` assembles them with code (including which parts of the built-in prompt are Ukrainian-specific and should be swapped in a fork)
+- **Adding a translation backend** — the worker signal interface and where routing happens
+- **Other extension points** — themes, plugin field types, string categories, lore injection, new settings
+- **Keeping a fork mergeable** with upstream
+
+Everything there is an entry in an existing table rather than a modified line, which is what lets a fork rebase cleanly.
 
 ---
 
