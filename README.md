@@ -304,25 +304,31 @@ gui/                           PySide6 application layer
   desktop_notify.py            Cross-platform batch-complete notifications (notify-send / tray)
   crash_recovery.py            Periodic auto-save and recovery dialog
 
-data/
-  fonts/                       Game fonts extracted from Starfield SWF assets
-                               (also the advance-width source for the width-fit simulator)
-    RF_35_M.ttf                Cyrillic body font (UK locale, $MAIN_Font)
-    RF_55_M.ttf                Cyrillic bold
-    RF_55_SB.ttf               Cyrillic semi-bold
-    NB_Architekt_Light.ttf     Latin body font (EN locale)
-    NB_Architekt.ttf           Latin bold
-  dialogue_bg_tile.png         50×50 noise tile from dialoguemenu.swf
+data/                          (see data/README.md for provenance and exact figures)
+  fonts/                       Game fonts exported from Starfield's Scaleform SWFs with JPEXS
+                               (also the advance-width source for the width-fit simulator).
+                               All five are 1024 units/em and declare weight 400 — the weight
+                               is in the outlines, so faces are picked by family, not metadata
+    RF_35_M.ttf                Cyrillic body face (UK locale, $MAIN_Font); 573 glyphs
+    RF_55_M.ttf                Cyrillic bold role — ~10 % wider per glyph than RF_35_M
+    RF_55_SB.ttf               Cyrillic semibold — ~16 % wider, ~19 % on the ALL-CAPS
+                               text that button labels are made of
+    NB_Architekt_Light.ttf     Latin display face (EN locale); no Cyrillic coverage at all
+    NB_Architekt.ttf           Latin bold role — only ~3 % wider than the Light cut
+  dialogue_bg_tile.png         50×50 noise tile from dialoguemenu.swf (tiled by the preview)
+  dialogue_panel_ref.png       597×147 export of the panel sprite the preview's measurements
+                               were verified against; reference only, no code loads it
   *_words.txt                  Word lists for source-language leak detection (10 languages) and,
                                for Korean, the 조사 particle checker; loaded per language pair
-                               rather than all at once (~331 MB → ~44 MB for an EN→KO session)
+                               rather than all at once (~329 MB → ~45 MB for an EN→KO session)
 
 scripts/
   extract_sharegpt_dataset.py  Export EN→target string pairs as ShareGPT JSONL
   create_qc_dataset.py         Generate QC training dataset (14,928 examples, 16 issue codes)
   compile_translations.sh      Recompile .ts → .qm UI translation files
   fetch_dictionaries.py        Download Hunspell .aff/.dic dictionaries into dicts/ (Windows/macOS spell-check bundle)
-  download_lang_dicts.py       Download word-frequency lists into data/ (source-language leak detection)
+  download_lang_dicts.py       Download word-frequency lists into data/ (de/es/fr/it/pl/ptbr —
+                               Korean uses the same upstream but was fetched by hand)
   extract_starfield_glossary.py Build starfield_glossary.json from string files (local artifact, untracked)
   nexusmods_upload.py          Publish a release to NexusMods (driven by the release workflow)
   install_file_associations.sh Register the Linux desktop entry, MIME types and icons
