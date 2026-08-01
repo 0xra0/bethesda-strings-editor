@@ -103,6 +103,19 @@ Commit only the `.ts` source — `.qm` binaries are gitignored and are rebuilt b
 the release workflow. See [TRANSLATING.md](TRANSLATING.md) for the full guide,
 including who maintains which locale.
 
+This is the app's own interface, not the language it translates game strings
+into. For that one — and for custom prompts, extra quality checks, or a new
+backend — see [FORKING.md](FORKING.md).
+
+## Adding a translation target language
+
+Every per-language table is a `dict.get()` with a fallback, so an unregistered
+code degrades silently rather than raising: a missing style rule becomes a
+generic one, a missing encoding pair becomes Windows-1252, a missing word list
+turns the leak and coverage checks off. [FORKING.md §2](FORKING.md#2-adding-a-translation-target-language)
+lists every table in order with a checklist, and names the two tests that will
+fail if you add a word-list checker without registering its downloader.
+
 ## Translation backends
 
 The app has three, chosen by the model name in the settings — there is no
