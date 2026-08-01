@@ -179,5 +179,12 @@ def text_has_russian_words(text: str, threshold: int = 3) -> bool:
 
 def preload() -> None:
     """Trigger dictionary load in a background thread so the first translation
-    request doesn't pay the ~1 s startup cost."""
+    request doesn't pay the ~1 s startup cost.
+
+    Idempotent — see ``uk_word_checker.preload``.  This is the 35 MB list, so
+    the thread it would have re-spawned each batch is also the most expensive
+    one to hand a second copy of the work to.
+    """
+    if _ru_dict is not None or _load_failed:
+        return
     threading.Thread(target=_load_dict, daemon=True, name="ru-dict-preload").start()

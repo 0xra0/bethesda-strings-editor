@@ -18,8 +18,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
+
+# The Ukrainian word list has exactly one owner; see _is_neut_adj.  Importing it
+# costs nothing here — uk_word_checker reads the file lazily, on first lookup.
+from gui.uk_word_checker import word_is_ukrainian
 
 # ── Gender codes ───────────────────────────────────────────────────────────────
 M = "M"   # masculine (чоловічий)
@@ -172,19 +175,6 @@ _NEUT_NOUN_E: frozenset = frozenset({
     "слово", "небо", "добро", "зло",
 })
 
-# ── Word-list loader (lazy singleton) ─────────────────────────────────────────
-_uk_words: Optional[Set[str]] = None
-
-def _get_uk_words() -> Set[str]:
-    global _uk_words
-    if _uk_words is None:
-        p = Path(__file__).resolve().parent.parent / "data" / "ukrainian_words.txt"
-        try:
-            _uk_words = set(p.read_text("utf-8").splitlines())
-        except OSError:
-            _uk_words = set()
-    return _uk_words
-
 
 def _is_neut_adj(word_lower: str) -> bool:
     """
@@ -194,14 +184,26 @@ def _is_neut_adj(word_lower: str) -> bool:
     followed by -ий (hard) or -ій (soft) is a real Ukrainian word.
     This rejects verbs like 'переможе' (stem 'перемож' → 'переможий' ✗)
     while accepting adjectives like 'свіже' (stem 'свіж' → 'свіжий' ✓).
+
+    The lookup goes through ``uk_word_checker``, which owns the single copy of
+    ``data/ukrainian_words.txt``.  This module used to load the same 271 k-word
+    file into a second set of its own, so a session that ran both the gender
+    check and Ukrainian leak detection held ~78 MB of identical strings instead
+    of ~35 MB.  The two sets were provably interchangeable — the file has no
+    uppercase entries and none shorter than three characters, which is all the
+    checker's loader normalises away — and every query here is a lowercase stem
+    of five characters or more.
+
+    ``word_is_ukrainian`` returns None when the word list is missing, which is
+    falsy, so a missing file still means "not a neuter adjective" rather than a
+    crash — the same outcome the old empty-set fallback produced.
     """
     if word_lower in _NEUT_NOUN_E:
         return False
     stem = word_lower[:-1]   # strip -е or -є
     if not stem:
         return False
-    words = _get_uk_words()
-    return (stem + "ий") in words or (stem + "ій") in words
+    return bool(word_is_ukrainian(stem + "ий")) or bool(word_is_ukrainian(stem + "ій"))
 
 
 # ── Tokeniser ──────────────────────────────────────────────────────────────────

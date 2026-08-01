@@ -99,5 +99,14 @@ def dict_loaded() -> bool:
 
 
 def preload() -> None:
-    """Trigger dictionary load in a background thread."""
+    """Trigger dictionary load in a background thread.
+
+    Idempotent: ``preload_language_dictionaries`` runs at the start of *every*
+    batch and promises callers that repeating it is free, so once the list is
+    loaded (or has failed to load) there is nothing left to do and no thread is
+    spawned.  Without this guard a long EN→UK session started a fresh thread per
+    batch, each one only to take ``_load_lock`` and find the work already done.
+    """
+    if _uk_dict is not None or _load_failed:
+        return
     threading.Thread(target=_load_dict, daemon=True, name="uk-dict-preload").start()

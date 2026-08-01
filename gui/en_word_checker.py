@@ -178,5 +178,11 @@ def dict_loaded() -> bool:
 
 
 def preload() -> None:
-    """Trigger dictionary load in a background thread."""
+    """Trigger dictionary load in a background thread.
+
+    Idempotent — see ``uk_word_checker.preload``.  English is warmed for every
+    language pair, so this is the one that repeats most.
+    """
+    if _en_dict is not None or _load_failed:
+        return
     threading.Thread(target=_load_dict, daemon=True, name="en-dict-preload").start()
