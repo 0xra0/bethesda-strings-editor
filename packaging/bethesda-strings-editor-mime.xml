@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Glob patterns are matched case-insensitively unless the glob says
+  case-sensitive="true", so one lowercase pattern per extension already covers
+  .DLSTRINGS and .DlStRiNgS.  This file used to carry an uppercase duplicate of
+  every pattern; they matched nothing the lowercase ones did not.  Checked
+  against update-mime-database + xdg-mime in an isolated XDG_DATA_HOME: a lone
+  *.dlstrings rule claims all three spellings, and an empty database claims none
+  of them (the control that makes the first result mean something).
+
+  Glob weight is a tie-break between packages claiming one extension; the
+  default is 50 and nothing in shared-mime-info 2.x claims any of these seven.
+  Magic priority likewise only orders types whose magic both match, and TES4 and
+  BTDX are mutually exclusive four-byte signatures — so neither number is
+  load-bearing here, and neither is worth churning.
+-->
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
 
   <!-- Bethesda localization string files (.strings / .dlstrings / .ilstrings).
-       All three share the same binary layout (8-byte header, directory entries,
-       data block); dlstrings/ilstrings have a 4-byte length prefix per entry. -->
+       No magic, because there is nothing to key on: the file opens with a plain
+       little-endian entry count, not a signature.  The extension is the whole
+       of the evidence (bethesda_strings/core.py: 8-byte header of two uint32,
+       then 8-byte directory entries of ID + relative offset, then the data
+       block — .dlstrings/.ilstrings prefix each string with a 4-byte length,
+       .strings null-terminate instead).
+
+       Weight stays below the plugin/archive rules deliberately: *.strings is
+       also what Apple's plain-text Localizable.strings files are called, and a
+       magicless extension claim is the only claim any rule can make for either.
+       Winning that fight harder is not something a Bethesda tool should do. -->
   <mime-type type="application/x-bethesda-strings">
     <comment>Bethesda Localization Strings</comment>
     <comment xml:lang="uk">Файл локалізованих рядків Bethesda</comment>
@@ -11,13 +35,12 @@
     <glob pattern="*.strings" weight="70"/>
     <glob pattern="*.dlstrings" weight="70"/>
     <glob pattern="*.ilstrings" weight="70"/>
-    <glob pattern="*.STRINGS" weight="70"/>
-    <glob pattern="*.DLSTRINGS" weight="70"/>
-    <glob pattern="*.ILSTRINGS" weight="70"/>
   </mime-type>
 
-  <!-- Elder Scrolls Plugin / Master / Light plugin files.
-       All start with the ASCII magic "TES4" (0x54455334). -->
+  <!-- Elder Scrolls Plugin / Master / Light plugin files.  All three start with
+       the ASCII magic "TES4" (0x54455334) regardless of extension — 140 of 140
+       plugins in a full Starfield install, .esp/.esm/.esl alike, so the magic
+       identifies a renamed plugin the globs would miss. -->
   <mime-type type="application/x-bethesda-plugin">
     <comment>Bethesda Plugin</comment>
     <comment xml:lang="uk">Плагін Bethesda</comment>
@@ -28,13 +51,16 @@
     <glob pattern="*.esp" weight="80"/>
     <glob pattern="*.esm" weight="80"/>
     <glob pattern="*.esl" weight="80"/>
-    <glob pattern="*.ESP" weight="80"/>
-    <glob pattern="*.ESM" weight="80"/>
-    <glob pattern="*.ESL" weight="80"/>
   </mime-type>
 
-  <!-- Bethesda Archive 2 files (GNRL type, zlib-compressed).
-       Magic bytes: ASCII "BTDX" (0x42544458) at offset 0. -->
+  <!-- Bethesda Archive 2 files: ASCII "BTDX" (0x42544458) at offset 0, then a
+       uint32 version and a four-byte archive type.  The type covers every .ba2,
+       which is wider than what the app reads: a full Starfield install has 208
+       archives, 142 of them v2 GNRL (the general archives holding the .strings
+       files), 47 v2 DX10 and 19 v3 DX10 (textures).  ba2_handler.py reads GNRL
+       only, zlib-compressed, and rejects DX10 with an explanation — so a
+       double-clicked texture archive opens the app and is turned away there,
+       rather than not being recognised as a BA2 at all. -->
   <mime-type type="application/x-bethesda-archive">
     <comment>Bethesda Archive 2</comment>
     <comment xml:lang="uk">Архів Bethesda 2</comment>
@@ -43,7 +69,6 @@
       <match type="string" value="BTDX" offset="0"/>
     </magic>
     <glob pattern="*.ba2" weight="80"/>
-    <glob pattern="*.BA2" weight="80"/>
   </mime-type>
 
 </mime-info>

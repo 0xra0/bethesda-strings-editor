@@ -1,10 +1,29 @@
 [Desktop Entry]
+Type=Application
 Name=Bethesda Strings Editor
-Comment=AI-assisted localization editor for Bethesda Starfield
+GenericName=Game Localization Editor
+Comment=Translate Bethesda game strings, plugins and BA2 archives with AI assistance
+# Placeholder, right only for a distro package that installs this file as-is.
+# gui/file_associations.desktop_entry_text() rewrites this line (and Icon=) to
+# wherever the app actually sits, which for a source checkout is the interpreter
+# plus main.py — so the value below is what a packager overrides, not a path
+# anyone should expect to exist.
 Exec=/usr/bin/bethesda-strings-editor %f
 Icon=bethesda-strings-editor
-Type=Application
-Categories=Development;Utility;
-Keywords=localization;translation;modding;starfield;bethesda;
-StartupWMClass=bethesda-strings-editor
+Terminal=false
+# One main category only. "Development;Utility;" named two, which makes the app
+# appear twice in some menus — desktop-file-validate warns about exactly that.
+# Translation is a registered *additional* category whose related main category
+# is Development, so this pair validates clean and says what the app is.
+Categories=Development;Translation;
+Keywords=localization;translation;modding;starfield;bethesda;strings;esp;esm;ba2;
+# Qt's WM_CLASS is (res_name, res_class) = (basename of the executable,
+# QCoreApplication::applicationName()). main.py sets the application name to
+# "Bethesda Strings AI Translator", so that is the class every shell sees no
+# matter how the app was started; the res_name half varies with the launcher
+# ("python", "main.py", the frozen binary). This key used to hold the res_name
+# spelling, which therefore matched only a frozen build whose executable was
+# named bethesda-strings-editor — anyone running from source got an unbound
+# window in the dash. Measured with xprop against a live PySide6 window.
+StartupWMClass=Bethesda Strings AI Translator
 MimeType=application/x-bethesda-strings;application/x-bethesda-plugin;application/x-bethesda-archive;
