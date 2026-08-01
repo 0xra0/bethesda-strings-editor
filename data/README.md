@@ -25,7 +25,7 @@ English left in the output, Russian leaking into Ukrainian, and how
 |---|---:|---:|---:|---:|---|
 | `english_words.txt` | 370,105 | 370,078 | 4.0 MB | +39 MB | `gui/en_word_checker.py` |
 | `russian_words.txt` | 1,532,879 | 1,526,255 | 33.4 MB | +215 MB | `gui/ru_word_checker.py` |
-| `ukrainian_words.txt` | 271,468 | 271,468 | 5.7 MB | +35 MB | `gui/uk_word_checker.py`, `gui/gender_checker.py` |
+| `ukrainian_words.txt` | 271,468 | 271,468 | 5.7 MB | +35 MB | `gui/uk_word_checker.py` (and `gui/gender_checker.py` through it) |
 | `german_words.txt` | 50,000 | 49,180 | 647 KB | +5.6 MB | `gui/de_word_checker.py` |
 | `spanish_words.txt` | 50,000 | 49,271 | 643 KB | +5.6 MB | `gui/es_word_checker.py` |
 | `french_words.txt` | 50,000 | 46,403 | 638 KB | +5.6 MB | `gui/fr_word_checker.py` |
@@ -69,12 +69,13 @@ therefore pays ~45 MB and never touches the 215 MB Russian set.
   counts Hangul characters directly as its primary signal and only falls back to
   the list.
 
-`ukrainian_words.txt` is the one file read twice, by two independent consumers
-that do not share a cache: `uk_word_checker` keeps a lowercased `frozenset`, and
-`gender_checker` builds its own `set` of the raw lines. A session that runs the
-Ukrainian gender check as well as leak detection therefore holds ~78 MB of
-Ukrainian words, not 35. Both are lazy, so a session that runs neither pays
-nothing.
+`ukrainian_words.txt` has two consumers but only one copy in memory:
+`uk_word_checker` owns the `frozenset`, and `gender_checker` looks words up
+through it. It used to load the same 271 k words into a second set of its own,
+so a session running both the gender check and Ukrainian leak detection held
+~78 MB of identical strings; it is ~35 MB now, and the gender check adds
+nothing at all once the pair has been preloaded. The load stays lazy, so a
+session that runs neither still pays nothing.
 
 ## Fonts — `fonts/*.ttf`
 
@@ -134,12 +135,22 @@ Note that the spec's `data/*.png` glob still bundles it into releases (3.4 KB).
 
 | Files | How |
 |---|---|
-| `german` `spanish` `french` `italian` `polish` `portuguese` | `python scripts/download_lang_dicts.py` — hermitdave/FrequencyWords, 2018 corpus, MIT |
-| `korean` | Same upstream (`ko/ko_50k.txt`), but **not** in that script's `LANG_CONFIGS` — it was fetched by hand |
+| `german` `spanish` `french` `italian` `polish` `portuguese` | `python scripts/download_lang_dicts.py` — hermitdave/FrequencyWords, **2018** corpus, MIT |
+| `korean` | Same script and upstream, pinned to the **2016** corpus — see below |
 | `english` | `python scripts/download_en_dict.py` — dwyl/english-words `words_alpha.txt` |
 | `ukrainian` | `python scripts/build_uk_dict.py` — scrapes slovnyk.ua at ~2 req/s, 30–60 min, resumable |
 | `russian` | No script in the repo; upstream is Poliklot/russian-words (1.5 M inflected forms) |
 | `fonts/`, `*.png` | Extracted from the game with JPEXS Free Flash Decompiler; no script |
+
+Every one of the seven frequency lists is byte-identical to its upstream, and
+`download_lang_dicts.py` reproduces them exactly — which is why the corpus year
+is pinned per language rather than globally. The six European lists come from
+the 2018 corpus; Korean is the 2016 one, and stays there deliberately: it is the
+list `ko_particle_checker`'s "stem is a real word" guard was measured against
+(0 false positives over 5,353 real Korean strings), so moving to the 2018
+corpus is a data change that needs re-measuring, not something a refresh run
+should do as a side effect. `tests/test_download_lang_dicts.py` pins both the
+per-language coverage and the two corpus years.
 
 ## Licensing
 

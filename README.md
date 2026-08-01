@@ -327,8 +327,8 @@ scripts/
   create_qc_dataset.py         Generate QC training dataset (14,928 examples, 16 issue codes)
   compile_translations.sh      Recompile .ts → .qm UI translation files
   fetch_dictionaries.py        Download Hunspell .aff/.dic dictionaries into dicts/ (Windows/macOS spell-check bundle)
-  download_lang_dicts.py       Download word-frequency lists into data/ (de/es/fr/it/pl/ptbr —
-                               Korean uses the same upstream but was fetched by hand)
+  download_lang_dicts.py       Download word-frequency lists into data/ (de/es/fr/it/ko/pl/ptbr;
+                               reproduces the committed files byte for byte)
   extract_starfield_glossary.py Build starfield_glossary.json from string files (local artifact, untracked)
   nexusmods_upload.py          Publish a release to NexusMods (driven by the release workflow)
   install_file_associations.sh Register the Linux desktop entry, MIME types and icons
@@ -360,7 +360,7 @@ Supported locales: `uk_UA`, `de_DE`, `fr_FR`, `es_ES`, `pl_PL`, `cs_CZ`, `ko_KR`
 python -m pytest tests/
 ```
 
-943 tests across 46 files, all pure Python — no Qt event loop, no network, no game install. Binary formats are exercised with hand-built record and tag bytes and the AI backends with fake clients; the one end-to-end voice-decode test self-skips when Starfield and `vgmstream-cli` aren't present.
+1,007 tests across 51 files, all pure Python — no Qt event loop, no network, no game install. Binary formats are exercised with hand-built record and tag bytes and the AI backends with fake clients; the one end-to-end voice-decode test self-skips when Starfield and `vgmstream-cli` aren't present.
 
 ---
 
