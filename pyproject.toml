@@ -1,14 +1,66 @@
+# The app is run from source or shipped as a PyInstaller bundle
+# (bethesda_strings_editor.spec). No wheel is ever built and there is no
+# [build-system] table, so nothing here is installed by pip — [project] is
+# metadata other tools read, and requirements.txt is the file CI, the release
+# workflow and the install instructions actually use.
 [project]
 name = "bethesda-strings-editor"
+# One of three places the version lives, and the two that are hand-maintained
+# are this one and main.py's setApplicationVersion() literal; _version.py is
+# overwritten by the release workflow from the git tag. All three read 0.2.5,
+# which is also the newest tag.
 version = "0.2.5"
+description = "AI-assisted localization editor for Bethesda game files — .strings, ESP/ESM plugins and BA2 archives"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "0xra" }]
+# The supported floor, pinned identically in ruff's target-version below and in
+# pyrightconfig.json's pythonVersion. CI runs the tests and pyright on 3.12, so
+# what actually exercises 3.10 is the conda env the suite is run in locally.
 requires-python = ">=3.10"
-dependencies = ["PySide6>=6.6", "requests>=2.31"]
+# Mirrors the core block of requirements.txt, which is the authoritative list.
+# This table had drifted to "PySide6>=6.6, requests>=2.31" — two stale floors
+# and two missing entries. cryptography and anthropic are imported lazily,
+# inside the functions that need them (the AES-256-GCM secret store, the Claude
+# backend), so a missing one surfaces when that feature is first used rather
+# than at startup; they are required all the same for the app to do what it
+# advertises. The optional extras (keyring, curl-cffi, py7zr, rarfile,
+# hunspell/spylls) each have a runtime fallback and are documented, with the
+# fallback, in requirements.txt.
+dependencies = [
+    "PySide6>=6.11",
+    "requests>=2.33",
+    "cryptography>=48.0",
+    "anthropic>=0.104",
+]
+
+[project.urls]
+Homepage = "https://github.com/0xra0/bethesda-strings-editor"
+Issues = "https://github.com/0xra0/bethesda-strings-editor/issues"
+Changelog = "https://github.com/0xra0/bethesda-strings-editor/blob/main/CHANGELOG.md"
+NexusMods = "https://www.nexusmods.com/starfield/mods/17158"
 
 # ── Ruff ────────────────────────────────────────────────────────────────────
+# Nothing here declares a ruff version, so the lint workflow's ruff-action logs
+# "Could not parse version from pyproject.toml. Using latest version." and
+# installs whatever is newest on the day it runs. requirements.txt asks for
+# ruff>=0.15 during development. The counts quoted below were measured with the
+# version CI last installed and reproduce on older ones.
 [tool.ruff]
 target-version = "py310"
+# E501 is ignored, W505 is not selected, and no formatter runs — so this width
+# constrains nothing today. It records the intended one.
 line-length = 110
-exclude = [".git", "__pycache__", "dist", "build", ".venv", "venv", "data"]
+
+# extend-exclude, not exclude: `exclude` *replaces* ruff's default list instead
+# of adding to it, so the explicit list that used to sit here quietly gave up
+# .mypy_cache, .ruff_cache, .pytest_cache, .tox, node_modules and the rest of
+# the defaults. Measured on a probe tree holding one unused import per
+# directory: the old list linted 4 files, this one lints 1. Everything it named
+# other than `build` and `data` was already a default — `dist` is one, `build`
+# is not (only `_build` is), and PyInstaller writes both. `data/` holds no .py
+# at all; it is named so a stray script dropped there is not linted as source.
+extend-exclude = ["build", "data"]
 
 [tool.ruff.lint]
 select = [
@@ -17,20 +69,32 @@ select = [
     "F",   # pyflakes (unused imports, undefined names, etc.)
 ]
 ignore = [
-    # Stylistic choices that are intentional in this codebase:
-    "E741",   # ambiguous variable name (l/O/I) — common single-letter in comprehensions
-    "E731",   # lambda assignment — used for concise predicate callbacks in Qt signal wiring
-    "E501",   # line too long — CSS/QSS theme strings and Qt file-filter strings can't be wrapped
+    # Deliberate style choices, with what each currently suppresses:
+    "E741",   # ambiguous name (l/O/I) — 7 hits, single letters in comprehensions
+    "E731",   # lambda assignment — 2 hits, concise predicates in Qt signal wiring
+    # 321 hits, 312 of them in gui/. The QSS/HTML blocks in the theme and export
+    # paths and the Qt file-filter strings named here originally are the cases
+    # that genuinely cannot wrap, but they are not the whole set: translatable
+    # self.tr() UI text, the prompt and dial instruction tables in
+    # ollama_worker.py, and regexes carrying a trailing comment make up the rest.
+    "E501",   # line too long
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# sys.path manipulation before imports is intentional in CLI scripts
-"scripts/*" = ["E402", "F841"]
-# QApplication must be assigned to a local to stay alive during Qt tests
-"tests/*"      = ["F841"]
-"benchmarks/*" = ["F841"]
+# QApplication has to be held in a local or Qt tears it down mid-test. Six F841
+# hits, all in test_diff_viewer.py: five are that, and the sixth is a light-mode
+# diff computed only as a foil for the dark-mode assertions.
+"tests/*" = ["F841"]
+# scripts/* used to ignore E402 and F841, and benchmarks/* F841. None of the
+# three fired on any file. Ruff exempts sys.path mutation from E402 on its own,
+# which is precisely the case the scripts entry existed for, so re-adding it
+# would only hide a real one.
 
 # ── mypy ────────────────────────────────────────────────────────────────────
+# No workflow runs mypy. Pyright is the type checker and its configuration is
+# pyrightconfig.json; this section is kept for anyone who prefers mypy locally,
+# as CONTRIBUTING.md says. It is therefore not kept in step with pyright's
+# rule set, and a clean run here is not the check CI enforces.
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true   # PySide6 stubs exist but some APIs vary by version
@@ -48,6 +112,11 @@ module = ["PySide6.*", "shiboken6.*"]
 ignore_errors = true
 
 # ── pytest ───────────────────────────────────────────────────────────────────
+# There is no pytest.ini, setup.cfg or tox.ini, so this is the whole
+# configuration. Both keys record intent rather than changing anything today:
+# collection yields the same 1,007 tests with or without testpaths (no
+# test_*.py lives outside tests/), and python_files only narrows the default by
+# dropping *_test.py, of which the repo has none.
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
