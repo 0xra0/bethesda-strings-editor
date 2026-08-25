@@ -1604,8 +1604,14 @@ class OllamaWorker(QObject):
                         # Primary skipped; followers also skip
                         completed_count += 1 + len(req_followers)
                         self.progress.emit(completed_count, total)
-                    elif translated and self._is_untranslated_echo(
-                        req.original_text, translated, req.source_lang, req.target_lang
+                    elif (
+                        translated
+                        and self._is_untranslated_echo(
+                            req.original_text, translated, req.source_lang, req.target_lang
+                        )
+                        # A string term protection covers end to end is returned
+                        # verbatim on purpose — not an echo to discard.
+                        and not self._is_protected_verbatim(req.original_text)
                     ):
                         # Defensive: an untranslated echo must NEVER be saved or fanned
                         # out to dedup followers (a single echoed primary would otherwise
@@ -2135,6 +2141,31 @@ class OllamaWorker(QObject):
         # Merge token maps
         token_map.update(english_token_map)
 
+        # Protection covered every translatable character — there is nothing to
+        # ask the model.  Restore and return now, before the network call.
+        #
+        # Left to run, this string reached the model as a bare [[TK_…]], came back
+        # unchanged (correctly — a token is all it was given), restored to a
+        # byte-identical copy of the source, and was then discarded by the echo
+        # guard as "the model never translated this".  The row shipped blank, and
+        # a re-run repeated every step identically: 296 of the 343 empty rows in
+        # quality_report_20260810_093056.  Returning here makes the intent
+        # explicit and skips a pointless call for each such string.
+        if self._protection_covers_everything(protected_text, token_map):
+            restored = protected_text
+            if self.term_protector is not None:
+                try:
+                    restored = self.term_protector.restore_text(
+                        protected_text, token_map, protected_text
+                    )
+                except Exception:
+                    restored = req.original_text
+            logger.debug(
+                "String %s: fully covered by term protection — returning it "
+                "verbatim without a model call", req.string_id,
+            )
+            return restored or req.original_text
+
         # Tokenize structural newlines so the AI cannot collapse paragraph breaks.
         # Must happen after term protection so \\n escape sequences (already protected
         # as "newline" tokens) are not confused with actual newline characters.
@@ -2569,8 +2600,14 @@ class OllamaWorker(QObject):
             # is the single most important fix for the report: an echo that reached the
             # cache used to be replayed on every re-run, and one echoed primary used to
             # be copied onto all of its (up to thousands of) duplicate rows.
-            if translated and self._is_untranslated_echo(
-                req.original_text, translated, req.source_lang, req.target_lang
+            if (
+                translated
+                and self._is_untranslated_echo(
+                    req.original_text, translated, req.source_lang, req.target_lang
+                )
+                # ...unless the copy is verbatim because term protection covers the
+                # whole string, in which case it is the intended result.
+                and not self._is_protected_verbatim(req.original_text)
             ):
                 logger.warning(
                     "String %s: model returned an untranslated echo of the source "
@@ -3551,7 +3588,20 @@ class OllamaWorker(QObject):
                     and text.lower() in original_text.lower()
                 ):
                     return ""
-            if 7 <= orig_len <= 15 and text_len < max(3, int(orig_len * 0.4)):
+            # Mid-length shrink floor.  A flat 40 % floor blanked *correct*
+            # East-Slavic output: «Сопротивление» → «Опір» (13 → 4 chars) and
+            # «Стрельбище» → «Тир» (10 → 3) are exact translations, and the
+            # discard left the row empty — 3 of the 343 blank rows in
+            # quality_report_20260810_093056.  Ukrainian routinely renders a
+            # Russian word in far fewer characters, so the pair gets the relaxed
+            # floor its two neighbouring guards already use `closely_related`
+            # for; unrelated pairs keep the strict one.  The `text_len == 1`
+            # check above still catches a genuinely empty reply either way.
+            _shrink_floor = (
+                max(2, int(orig_len * 0.2)) if closely_related
+                else max(3, int(orig_len * 0.4))
+            )
+            if 7 <= orig_len <= 15 and text_len < _shrink_floor:
                 return ""
             if orig_len > 15 and text_len < max(3, int(orig_len * 0.12)):
                 return ""
@@ -3834,6 +3884,61 @@ class OllamaWorker(QObject):
     def _norm_for_echo(s: str) -> str:
         """Whitespace-collapsed, case-folded form for echo comparison."""
         return re.sub(r"\s+", " ", s.strip()).casefold()
+
+    @staticmethod
+    def _protection_covers_everything(
+        protected_text: str, token_map: Dict[str, str]
+    ) -> bool:
+        """True when term protection left nothing for the model to translate.
+
+        Removing every token in *token_map* from *protected_text* must leave no
+        alphanumeric character behind — only whitespace and punctuation.  When
+        that holds, the model would be handed a bare ``[[TK_…]]`` and could only
+        hand it straight back, so ``restore_text`` reproduces the source exactly.
+        Knowing that up front is what lets the echo guard tell an intended
+        passthrough from a model that never translated anything.
+
+        Keyed off the token map rather than a token-shaped regex so it stays
+        correct for every token flavour in play (``[[TK_…]]`` terms,
+        ``__EN……__`` English/glossary spans, ``[[STRUCT_BREAK_*]]`` newlines).
+        """
+        if not protected_text or not token_map:
+            return False
+        remainder = protected_text
+        for token in token_map:
+            remainder = remainder.replace(token, " ")
+        return not any(ch.isalnum() for ch in remainder)
+
+    def _protection_exclusions(self) -> list:
+        """Categories term protection skips for this run.
+
+        "Protect named entities" off excludes ``SOFT_CATEGORIES`` — proper nouns
+        the user wants localised rather than locked (a ru→uk job wants «Брэдбери I»
+        transliterated to «Бредбері I», not echoed).  Shared by the protect call
+        and by ``_is_protected_verbatim`` so the two can never disagree about what
+        was locked.
+        """
+        from gui.term_protector import SOFT_CATEGORIES
+
+        return [] if self.protect_named_entities else list(SOFT_CATEGORIES)
+
+    def _is_protected_verbatim(self, source: str) -> bool:
+        """True when protection covers every translatable character of *source*.
+
+        Such a string is returned unchanged *by design*, so a verbatim result is
+        the correct answer rather than the "model echoed the source" failure that
+        ``_is_untranslated_echo`` reports.  Span-scanning is cached inside
+        ``TermProtector``, so re-deriving this at the guard is cheap.
+        """
+        if not source or not self.enable_term_protection or not self.term_protector:
+            return False
+        try:
+            protected, token_map = self.term_protector.protect_text(
+                source, exclude_categories=self._protection_exclusions()
+            )
+        except Exception:
+            return False
+        return self._protection_covers_everything(protected, token_map)
 
     @classmethod
     def _is_untranslated_echo(

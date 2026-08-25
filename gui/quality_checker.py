@@ -199,8 +199,22 @@ _TAG_PATTERNS: List[Tuple[str, str]] = [
     (r'\\"',                             "escape_quote"),
 ]
 
+# Labels whose matching is case-SIGNIFICANT.  Everything else is folded, which is
+# right for markup — <BR>, <ALIAS=…> and </FONT> are all real spellings of the
+# same tag — but wrong for printf, where case *is* the conversion: %u is unsigned
+# decimal and %U is not a conversion at all, and %x/%X are lower- and upper-case
+# hex.  Folding it invented tags out of Starfield's deliberately-scrambled
+# terminal text — ".MG%UYOL;{M&:AF" read as a missing %u, the lone MISSING_TAG
+# error in quality_report_20260810_093056 — and merged two specifiers that print
+# differently.  (3 phantom matches over the shipped starfield_ru.STRINGS.xml.)
+_CASE_SENSITIVE_LABELS: frozenset = frozenset({"printf_var"})
+
 _COMPILED_PATTERNS = [
-    (re.compile(pat, re.IGNORECASE), _label) for pat, _label in _TAG_PATTERNS
+    (
+        re.compile(pat, 0 if _label in _CASE_SENSITIVE_LABELS else re.IGNORECASE),
+        _label,
+    )
+    for pat, _label in _TAG_PATTERNS
 ]
 
 
@@ -209,15 +223,20 @@ def _extract_tags(text: str) -> Counter:
 
     Deduplicates by (start, end) span so a tag matched by multiple overlapping
     patterns (e.g. </font> by both font_close and xml_close) is counted once.
+
+    Case-folded per label: markup is spelling-insensitive, printf specifiers are
+    not (see ``_CASE_SENSITIVE_LABELS``), so those keep the case they were
+    written in and %x never counts as %X.
     """
     seen_spans: set[tuple[int, int]] = set()
     found = []
-    for pat, _ in _COMPILED_PATTERNS:
+    for pat, label in _COMPILED_PATTERNS:
+        keep_case = label in _CASE_SENSITIVE_LABELS
         for m in pat.finditer(text):
             span = (m.start(), m.end())
             if span not in seen_spans:
                 seen_spans.add(span)
-                found.append(m.group(0).lower())
+                found.append(m.group(0) if keep_case else m.group(0).lower())
     return Counter(found)
 
 

@@ -102,13 +102,13 @@ def test_pure_numbers_are_not_codes(tp):
         assert _protected_originals(tp, s) == set(), s
 
 
-def test_known_limitation_bare_roman_letter_before_symbol(tp):
-    # A code that is a *bare* Roman-numeral letter (C/D/I/L/M/V/X) immediately
-    # followed by a non-word char, right after a Cyrillic word, is claimed by the
-    # star_system_name protector first ("код C" → "Bradbury I"-style name), so the
-    # trailing "$1000" is left unprotected.  Accepted: real obfuscated codes are
-    # multi-char alphanumerics (VH1QCR4P$KU) that never hit this.
-    assert "C$1000" not in _protected_originals(tp, "код C$1000 тут")
+def test_bare_roman_letter_before_symbol_is_still_a_code(tp):
+    # Was a documented limitation: star_system_name used to match "<any Cyrillic
+    # words> + [IVXLCDM]+", so "код C" was claimed as a system designation and the
+    # trailing "$1000" fell outside every span.  That pattern now requires a
+    # well-formed Roman numeral after a capitalised name, so "код C" is not a
+    # designation and obf_code gets the whole token.
+    assert "C$1000" in _protected_originals(tp, "код C$1000 тут")
 
 
 # ── obf_acronym: vowel-less uppercase codes ─────────────────────────────────────

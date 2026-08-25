@@ -203,14 +203,30 @@ class XMLHandler:
         data: List[Dict[str, Any]],
         source_lang: str = "Russian",
         dest_lang: str = "Ukrainian",
-    ) -> None:
+    ) -> int:
         """Write translations to an SST XML file in xTranslator format.
+
+        Rows with no translation are **omitted**, and the count of entries
+        actually written is returned.
+
+        An SST file is a patch dictionary: an entry *claims* a finished
+        translation for its sID, so an empty ``<Dest>`` does not read as "not
+        translated yet" — it reads as "translate this to the empty string", and
+        the game draws nothing where the text should be.  Exporting untranslated
+        rows verbatim put 343 such entries into a real ru→uk file (every
+        EMPTY_TRANSLATION error in quality_report_20260810_093056).  Omitting
+        them is also what makes write→parse lossless, since ``parse_sst_xml``
+        has always skipped entries with no ``<Dest>``.
 
         Args:
             file_path:   output path
             data:        list of dicts with keys: id, original, translated, list_index
             source_lang: source language name
             dest_lang:   destination language name
+
+        Returns:
+            Number of entries written (rows without an id or a translation are
+            skipped and not counted).
         """
         try:
             root = ET.Element("SSTXMLRessources")
@@ -223,13 +239,21 @@ class XMLHandler:
 
             content = ET.SubElement(root, "Content")
 
+            skipped = 0
             for item in data:
                 string_id = item.get("id")
                 if string_id is None:
+                    skipped += 1
                     continue
                 original   = item.get("original", "") or ""
                 translated = item.get("translated", "") or ""
                 list_idx   = item.get("list_index", 0)
+
+                # No translation → no entry.  Writing <Dest></Dest> would tell
+                # the game to render this string as nothing at all.
+                if not translated.strip():
+                    skipped += 1
+                    continue
 
                 # xTranslator uses 'String' with 6-digit hex sID; TXT-keyed
                 # string IDs (non-int) are written verbatim and matched by Source.
@@ -243,7 +267,12 @@ class XMLHandler:
             ET.indent(tree, space="  ")
             tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
-            logger.info(f"Wrote {len(data)} entries to SST XML '{file_path}'")
+            written = len(data) - skipped
+            logger.info(
+                f"Wrote {written} entries to SST XML '{file_path}'"
+                + (f" ({skipped} untranslated row(s) omitted)" if skipped else "")
+            )
+            return written
 
         except Exception as exc:
             logger.error(f"Failed to write SST XML '{file_path}': {exc}")
