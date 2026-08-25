@@ -5977,20 +5977,28 @@ class MainWindow(QMainWindow):
             source_lang = self.combo_source_lang.currentData()
             dest_lang = self.combo_target_lang.currentData()
 
-            XMLHandler.write_sst_xml(file_path, data_to_export, source_lang, dest_lang)
+            # write_sst_xml omits rows with no translation — an empty <Dest> is
+            # not "not translated yet" to the game, it is "render nothing here".
+            # Report what actually landed in the file, not the row count, so a
+            # part-finished project cannot look complete.
+            written = XMLHandler.write_sst_xml(
+                file_path, data_to_export, source_lang, dest_lang
+            )
+            omitted = len(data_to_export) - written
 
             self.statusBar().showMessage(
-                self.tr("Exported {count} entries to XML ✓").format(
-                    count=len(data_to_export)
-                )
+                self.tr("Exported {count} entries to XML ✓").format(count=written)
             )
-            QMessageBox.information(
-                self,
-                self.tr("Export Complete"),
-                self.tr("Successfully exported {count} entries to XML.").format(
-                    count=len(data_to_export)
-                ),
+            message = self.tr("Successfully exported {count} entries to XML.").format(
+                count=written
             )
+            if omitted:
+                message += "\n\n" + self.tr(
+                    "{omitted} untranslated row(s) were left out. An empty "
+                    "translation would show as blank text in game, so those "
+                    "strings keep their original text instead."
+                ).format(omitted=omitted)
+            QMessageBox.information(self, self.tr("Export Complete"), message)
 
         except Exception as e:
             logger.error(f"XML export failed: {e}", exc_info=True)

@@ -24,6 +24,12 @@ SOFT_CATEGORIES: frozenset = frozenset({
     "creature", "resource", "system", "ui", "game_term",
     "company_prefix", "company_full", "location_suffix",
     "lore",  # lore terms are proper nouns — translate unless user opts in to protect them
+    # A planet/system designation is a proper noun too.  It lived among the
+    # STRUCTURAL_PATTERNS (<Alias=…>, %s) where nothing can switch it off, so a
+    # ru→uk run could never ask for «Брэдбери I» → «Бредбері I»: the term came
+    # back verbatim, the echo guard read that as "the model never translated
+    # this", and the row shipped empty.
+    "star_system_name",
 })
 
 
@@ -117,8 +123,31 @@ class TermProtector:
             "obf_code",
         ),
         (r"\b[B-DF-HJ-NP-TV-Z]{3,}\b", "obf_acronym"),
+        # Planet/system designation: ONE capitalised Cyrillic word (internal
+        # hyphens kept, for «Аль-Баттани»), a well-formed Roman numeral, and an
+        # optional single-letter body suffix («I-a» … «VIII-f» — a–f are the only
+        # suffix letters the shipped game files use).
+        #
+        # Every part of that is load-bearing.  The predecessor was
+        # `[Cyrillic]+(\s+[Cyrillic]+)*\s+[IVXLCDM]+`: an *unbounded* run of
+        # Cyrillic words followed by anything spelled out of I V X L C D M.  A
+        # lone `C` or `D` qualifies under that class, so it matched — and, being
+        # the whole string, replaced with a single token before the model saw a
+        # word — «Портативный CD-плеер» (a CD player), «Шкура ходока четырёхногих
+        # карпов C» and «Активировать вспомогательное питание блока D».  It also
+        # swallowed the verb of every quest objective («Отправиться на Арктур
+        # II»), which then shipped untranslated.  6,051 rows — 12 % of a real
+        # starfield_ru file — reached the model as a bare [[TK_…]] token.
+        #
+        # So: the leading run is a single word (a descriptive «Малый»/«Проксима»
+        # is translatable and must stay outside the token), and the numeral is
+        # matched as a numeral rather than as a letter set — `(?=[IVX])` forces
+        # it non-empty, and the trailing `(?![A-Za-z])` stops `V` from matching
+        # the start of "Vault".
         (
-            r"\b[А-ЯЁа-яёЄєІіЇїҐґ]+(?:\s+[А-ЯЁа-яёЄєІіЇїҐґ]+)*\s+[IVXLCDM]+(?:[-–—][a-zA-Zа-яА-ЯЁёЄєІіЇїҐґ]+)?\b",
+            r"\b[А-ЯЁЄІЇҐ][а-яёєіїґ]+(?:[-–—][А-ЯЁЄІЇҐ][а-яёєіїґ]+)*"
+            r"\s+(?=[IVX])X{0,3}(?:IX|IV|V?I{0,3})"
+            r"(?:[-–—][a-z])?(?![A-Za-z])",
             "star_system_name",
         ),
     ]
